@@ -231,13 +231,14 @@ namespace AI
             var union = new StateSet(this);
             foreach (var state in stateSet.states)
             {
-                union.AddState(state, true);
+                union.AddState(state);
             }
 
             return union;
         }
         
         // Properties
-        public List<State> States => states;
+        
+        public IEnumerable<State> States => states;
     }
 }
