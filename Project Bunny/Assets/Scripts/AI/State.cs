@@ -51,6 +51,7 @@ namespace AI
         }
         
         // Properties
+        
         public string Key => key;
         public int Value => value;
     }
