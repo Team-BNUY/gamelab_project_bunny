@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AI
 {
-    public class Planner : MonoBehaviour
+    public class Planner
     {
         private class Node
         {
