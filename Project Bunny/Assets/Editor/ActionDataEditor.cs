@@ -2,7 +2,7 @@ using AI;
 using UnityEditor;
 
 [CustomEditor(typeof(ActionData), true)]
-public class GActionDataEditor : UnityEditor.Editor
+public class GActionDataEditor : Editor
 {
     protected SerializedProperty hasTarget, targetTag, preconditionStates, afterEffectStates;
     protected new SerializedProperty name;

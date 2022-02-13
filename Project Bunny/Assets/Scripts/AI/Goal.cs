@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace AI
 {
-    public class Goal : MonoBehaviour
+    public class Goal
     {
         private StateSet stateSet;
         private bool temporary;

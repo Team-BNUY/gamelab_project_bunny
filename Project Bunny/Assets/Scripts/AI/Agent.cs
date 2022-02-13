@@ -11,7 +11,8 @@ namespace AI
         [SerializeField] 
         private List<ActionData> actionsData;
 
-        private Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
+        protected Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
+        
         private List<Action> actions = new List<Action>();
         private StateSet beliefStates = new StateSet();
         private Action currentAction;
@@ -20,6 +21,7 @@ namespace AI
         private Goal currentGoal;
         private AnimationState animationState;
         private Animator animator;
+        
         private static readonly int Idle = Animator.StringToHash("Idle");
         private static readonly int Locomotion = Animator.StringToHash("Locomotion");
         private static readonly int Speed = Animator.StringToHash("Speed");
@@ -35,7 +37,7 @@ namespace AI
         /// <summary>
         /// Initializes the Agent's actions from its list of ActionData
         /// </summary>
-        private void Start()
+        protected virtual void Start()
         {
             foreach(var data in actionsData)
             {
@@ -57,7 +59,7 @@ namespace AI
                 if (currentAction.HasTarget && (!currentAction.NavMeshAgent.hasPath || !(distanceToTarget < 0.2f))) return;
                 
                 currentAction.Perform();
-                SetAnimatorParameters();
+                //SetAnimatorParameters();
 
                 return;
             }
@@ -66,7 +68,7 @@ namespace AI
             if(planner == null || actionQueue == null)
             {
                 planner = new Planner();
-
+                
                 // Sorts the goal states by priority (higher number = higher priority) from those that have a plan
                 var sortedGoals = goals.OrderByDescending(g => g.Value);
                 foreach(var goal in sortedGoals)
@@ -104,7 +106,7 @@ namespace AI
                 if(!currentAction.HasTarget)
                 {
                     currentAction.Running = true;
-                    SetAnimatorParameters();
+                    //SetAnimatorParameters();
                 }
 
                 // If the current action's destination location is a game object with a tag instead of a global position, sets the target location as the tagged game object's position
@@ -118,7 +120,7 @@ namespace AI
                 // If the current action's destination location is not the zero vector, makes the agent go towards its target location
                 currentAction.Running = true;
                 currentAction.NavMeshAgent.SetDestination(currentAction.Target);
-                SetAnimatorParameters();
+                //SetAnimatorParameters();
             }
             // Resets the planner to allow for a new plan for a new goal to be calculated
             else
@@ -148,7 +150,7 @@ namespace AI
                 actionQueue = null;    
             }
             
-            SetAnimatorParameters();
+            //SetAnimatorParameters();
         }
 
         /// <summary>
