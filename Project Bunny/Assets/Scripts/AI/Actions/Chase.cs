@@ -4,7 +4,7 @@ namespace AI.Actions
 {
     public class Chase : Action
     {
-        private Transform kid;
+        private Transform _kid;
         
         public Chase(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Agent agent, bool hasTarget, string targetTag)
              : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget, targetTag)
@@ -14,15 +14,15 @@ namespace AI.Actions
 
         public override void Perform()
         {
-            navMeshAgent.SetDestination(kid.position);
+            navMeshAgent.SetDestination(_kid.position);
         }
     
         public override bool PrePerform()
         {
             var kids = Object.FindObjectsOfType<SimpleCharacterController>();
-            kid = FindClosest(kids, navMeshAgent).transform;
+            _kid = FindClosest(kids, navMeshAgent).transform;
 
-            if (!kid) return false;
+            if (!_kid) return false;
             
             agent.AnimationState = AnimationState.Locomotion;
 

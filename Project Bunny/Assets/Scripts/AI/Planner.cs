@@ -8,33 +8,33 @@ namespace AI
     {
         private class Node
         {
-            private Node parent;
-            private int cost;
-            private StateSet states;
-            private Action action;
+            private Node _parent;
+            private int _cost;
+            private StateSet _states;
+            private Action _action;
 
             public Node(Node parent, int cost, StateSet allStates, Action action)
             {
-                this.parent = parent;
-                this.cost = cost;
-                states = new StateSet(allStates);
-                this.action = action;
+                this._parent = parent;
+                this._cost = cost;
+                _states = new StateSet(allStates);
+                this._action = action;
             }
 
             public Node(Node parent, int cost, StateSet worldStates, StateSet beliefStates, Action action)
             {
-                this.parent = parent;
-                this.cost = cost;
-                states = worldStates.Union(beliefStates);
-                this.action = action;
+                this._parent = parent;
+                this._cost = cost;
+                _states = worldStates.Union(beliefStates);
+                this._action = action;
             }
             
             // Properties
             
-            public Node Parent => parent;
-            public int Cost => cost;
-            public StateSet States => states;
-            public Action Action => action;
+            public Node Parent => _parent;
+            public int Cost => _cost;
+            public StateSet States => _states;
+            public Action Action => _action;
         }
         
         /// <summary>

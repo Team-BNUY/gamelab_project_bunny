@@ -6,16 +6,18 @@ namespace AI
 {
     public abstract class Action
     {
-        private string name = "Action";
-        private int cost;
-        private StateSet preconditionStates, afterEffectStates;
-        private string  targetTag;
-        private bool hasTarget, running;
+        private string _name;
+        private int _cost;
+        private StateSet _preconditionStates, _afterEffectStates;
+        private string  _targetTag;
+        private bool _hasTarget;
+        private bool _running;
 
         protected NavMeshAgent navMeshAgent;
         protected Agent agent;
         protected Vector3 target;
-        protected bool invoked, success = true;
+        protected bool invoked;
+        protected bool success = true;
 
         /// <summary>
         /// Constructor to initialize the members that need a non-default value
@@ -29,12 +31,12 @@ namespace AI
         /// <param name="targetTag">The tag of the Action's target transform to reach</param>
         public Action(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Agent agent, bool hasTarget, string targetTag)
         {
-            this.name = name;
-            this.Cost = cost;
-            this.preconditionStates = preconditionStates;
-            this.afterEffectStates = afterEffectStates;
-            this.hasTarget = hasTarget;
-            this.targetTag = targetTag;
+            _name = name;
+            _cost = cost;
+            _preconditionStates = preconditionStates;
+            _afterEffectStates = afterEffectStates;
+            _hasTarget = hasTarget;
+            _targetTag = targetTag;
             this.agent = agent;
             navMeshAgent = agent.GetComponent<NavMeshAgent>();
         }
@@ -46,7 +48,7 @@ namespace AI
         /// <returns>True if the Action is achievable given the <paramref name="conditionStates"/></returns>
         public bool IsAchievableGiven(StateSet conditionStates)
         {
-            return preconditionStates.States.All(s => conditionStates.HasState(s.Key));
+            return _preconditionStates.States.All(s => conditionStates.HasState(s.Key));
         }
 
         /// <summary>
@@ -117,14 +119,13 @@ namespace AI
 
         public string Name
         {
-            get => name;
-            set => name = value;
+            get => _name;
+            set => _name = value;
         }
 
         public string TargetTag
         {
-            get => targetTag;
-            set => targetTag = value;
+            get => _targetTag;
         }
 
         public Vector3 Target
@@ -136,30 +137,27 @@ namespace AI
         public NavMeshAgent NavMeshAgent
         {
             get => navMeshAgent;
-            set => navMeshAgent = value;
         }
 
         public StateSet AfterEffectStates
         {
-            get => afterEffectStates;
+            get => _afterEffectStates;
         }            
 
         public bool HasTarget
         {
-            get => hasTarget;
-            set => hasTarget = value;
+            get => _hasTarget;
         }
 
         public bool Running
         {
-            get => running;
-            set => running = value;
+            get => _running;
+            set => _running = value;
         }
 
         public int Cost
         {
-            get => cost;
-            set => cost = value;
+            get => _cost;
         }
     }
 }

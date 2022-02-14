@@ -8,19 +8,18 @@ namespace AI
 {
     public class Agent : MonoBehaviour
     {
-        [SerializeField] 
-        private List<ActionData> actionsData;
+        [SerializeField] private List<ActionData> _actionsData;
 
         protected Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
         
-        private List<Action> actions = new List<Action>();
-        private StateSet beliefStates = new StateSet();
-        private Action currentAction;
-        private Planner planner;
-        private Queue<Action> actionQueue;
-        private Goal currentGoal;
-        private AnimationState animationState;
-        private Animator animator;
+        private List<Action> _actions = new List<Action>();
+        private StateSet _beliefStates = new StateSet();
+        private Action _currentAction;
+        private Planner _planner;
+        private Queue<Action> _actionQueue;
+        private Goal _currentGoal;
+        private AnimationState _animationState;
+        private Animator _animator;
         
         private static readonly int Idle = Animator.StringToHash("Idle");
         private static readonly int Locomotion = Animator.StringToHash("Locomotion");
@@ -31,7 +30,7 @@ namespace AI
         /// </summary>
         private void Awake()
         {
-            animator = GetComponent<Animator>();
+            _animator = GetComponent<Animator>();
         }
         
         /// <summary>
@@ -39,7 +38,7 @@ namespace AI
         /// </summary>
         protected virtual void Start()
         {
-            foreach(var data in actionsData)
+            foreach(var data in _actionsData)
             {
                 data.Create(this);
             }
@@ -51,81 +50,81 @@ namespace AI
         private void LateUpdate()
         {
             // If an action is running
-            if(currentAction is {Running: true})
+            if(_currentAction is {Running: true})
             {
                 // Performs the action if the agent has arrived to destination or if the current action does not have a target location
-                var distanceToTarget = Vector3.Distance(currentAction.Target, transform.position);
+                var distanceToTarget = Vector3.Distance(_currentAction.Target, transform.position);
                 
-                if (currentAction.HasTarget && (!currentAction.NavMeshAgent.hasPath || !(distanceToTarget < 0.2f))) return;
+                if (_currentAction.HasTarget && (!_currentAction.NavMeshAgent.hasPath || !(distanceToTarget < 0.2f))) return;
                 
-                currentAction.Perform();
+                _currentAction.Perform();
                 //SetAnimatorParameters();
 
                 return;
             }
 
             // If the agent has no plan of action
-            if(planner == null || actionQueue == null)
+            if(_planner == null || _actionQueue == null)
             {
-                planner = new Planner();
+                _planner = new Planner();
                 
                 // Sorts the goal states by priority (higher number = higher priority) from those that have a plan
                 var sortedGoals = goals.OrderByDescending(g => g.Value);
                 foreach(var goal in sortedGoals)
                 {   
-                    actionQueue = planner.Plan(actions, goal.Key.StateSet, beliefStates);
+                    _actionQueue = _planner.Plan(_actions, goal.Key.StateSet, _beliefStates);
 
-                    if (actionQueue == null) continue;
+                    if (_actionQueue == null) continue;
                     
                     // Sets the agent's current goal as the first goal by priority order that can be reached through the agent's usable actions 
-                    currentGoal = goal.Key;
+                    _currentGoal = goal.Key;
                     break;
                 }
             }
 
             // Resets the planner if the goal state is reached to allow for a new plan for a new goal to be calculated
-            if(actionQueue is {Count: 0})
+            if(_actionQueue is {Count: 0})
             {
                 // Removes the current goal from the agent's set of goals if it is marked as to be removed once accomplished
-                if (currentGoal.Temporary)
+                if (_currentGoal.Temporary)
                 {
-                    goals.Remove(currentGoal);
+                    goals.Remove(_currentGoal);
                 }
 
-                planner = null;
+                _planner = null;
             }
         
-            if (actionQueue == null || actionQueue.Count <= 0) return;
+            if (_actionQueue == null || _actionQueue.Count <= 0) return;
             
             // If the action queue is not empty, dequeues the next actions and sets it as the current action
-            currentAction = actionQueue.Dequeue();
+            _currentAction = _actionQueue.Dequeue();
             // If the current action's pre-perform conditions have been met
-            if(currentAction.PrePerform())
+            if(_currentAction.PrePerform())
             {
                 // If the current action has no target
-                if(!currentAction.HasTarget)
+                if(!_currentAction.HasTarget)
                 {
-                    currentAction.Running = true;
+                    _currentAction.Running = true;
                     //SetAnimatorParameters();
                 }
 
                 // If the current action's destination location is a game object with a tag instead of a global position, sets the target location as the tagged game object's position
-                if (currentAction.Target == Vector3.zero && !string.IsNullOrWhiteSpace(currentAction.TargetTag))
+                if (_currentAction.Target == Vector3.zero && !string.IsNullOrWhiteSpace(_currentAction.TargetTag))
                 {
-                    currentAction.Target = GameObject.FindWithTag(currentAction.TargetTag).transform.position;
+                    _currentAction.Target = GameObject.FindWithTag(_currentAction.TargetTag).transform.position;
                 }
 
-                if (currentAction.Target == Vector3.zero) return;
+                if (_currentAction.Target == Vector3.zero) return;
                 
                 // If the current action's destination location is not the zero vector, makes the agent go towards its target location
-                currentAction.Running = true;
-                currentAction.NavMeshAgent.SetDestination(currentAction.Target);
+                _currentAction.Running = true;
+                _currentAction.NavMeshAgent.SetDestination(_currentAction.Target);
                 //SetAnimatorParameters();
             }
             // Resets the planner to allow for a new plan for a new goal to be calculated
             else
             {
-                actionQueue = null;
+                _actionQueue = null;
             }
         }
 
@@ -135,7 +134,7 @@ namespace AI
         /// <param name="animatorParameter"></param>
         public void SetAnimatorParameter(string animatorParameter)
         {
-            animator.SetTrigger(animatorParameter);
+            _animator.SetTrigger(animatorParameter);
         }
 
         /// <summary>
@@ -143,11 +142,11 @@ namespace AI
         /// </summary>
         public void CompleteAction()
         {
-            currentAction.Running = false;
-            if(currentAction.PostPerform() == false)
+            _currentAction.Running = false;
+            if(_currentAction.PostPerform() == false)
             {
-                planner = null;
-                actionQueue = null;    
+                _planner = null;
+                _actionQueue = null;    
             }
             
             //SetAnimatorParameters();
@@ -158,26 +157,26 @@ namespace AI
         /// </summary>
         public void InterruptGoal()
         {
-            actionQueue = null;
-            currentAction.Running = false;
-            currentAction = null;
+            _actionQueue = null;
+            _currentAction.Running = false;
+            _currentAction = null;
         }
     
         /// <summary>
         /// Sets the agent's animator parameters
         /// </summary>
-        private void SetAnimatorParameters()
+        private void SetAnimatorParameters() // TODO Uncomment calls as soon as the agent has an animator controller
         {
-            animator.SetFloat(Speed, GetComponent<NavMeshAgent>().speed);
-            switch(animationState)
+            _animator.SetFloat(Speed, GetComponent<NavMeshAgent>().speed);
+            switch(_animationState)
             {
                 case AnimationState.Idle:
-                    animator.SetBool(Idle, true);
-                    animator.SetBool(Locomotion, false);
+                    _animator.SetBool(Idle, true);
+                    _animator.SetBool(Locomotion, false);
                     break;
                 case AnimationState.Locomotion:
-                    animator.SetBool(Idle, false);
-                    animator.SetBool(Locomotion, true);
+                    _animator.SetBool(Idle, false);
+                    _animator.SetBool(Locomotion, true);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -186,14 +185,14 @@ namespace AI
         
         // Properties
         
-        public List<Action> Actions => actions;
+        public List<Action> Actions => _actions;
 
-        public StateSet BeliefStates => beliefStates;
+        public StateSet BeliefStates => _beliefStates;
 
         public AnimationState AnimationState
         {
-            get => animationState;
-            set => animationState = value;
+            get => _animationState;
+            set => _animationState = value;
         }
     }
 }
