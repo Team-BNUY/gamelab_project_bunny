@@ -5,14 +5,14 @@ namespace AI
 {
     public class StateSet
     {
-        private List<State> states;
+        private List<State> _states;
         
         /// <summary>
         /// Default constructor initializing an empty list of State
         /// </summary>
         public StateSet()
         {
-            states = new List<State>();
+            _states = new List<State>();
         }
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace AI
         /// <param name="state">The state to add to the states</param>
         public StateSet(State state)
         {
-            states = new List<State> { new State(state) };
+            _states = new List<State> { new State(state) };
         }
     
         /// <summary>
@@ -30,11 +30,11 @@ namespace AI
         /// <param name="states">An enumerable of states to add to the states</param>
         public StateSet(IEnumerable<State> states)
         {
-            this.states = new List<State>();
+            this._states = new List<State>();
             foreach(var state in states)
             {
                 var stateCopy = new State(state);
-                this.states.Add(stateCopy);
+                this._states.Add(stateCopy);
             }
         }
         
@@ -44,10 +44,10 @@ namespace AI
         /// <param name="stateSet"></param>
         public StateSet(StateSet stateSet)
         {
-            states = new List<State>();
-            foreach (var stateCopy in stateSet.states.Select(s => new State(s)))
+            _states = new List<State>();
+            foreach (var stateCopy in stateSet._states.Select(s => new State(s)))
             {
-                states.Add(stateCopy);
+                _states.Add(stateCopy);
             }
         }
         
@@ -58,7 +58,7 @@ namespace AI
         /// <returns>True if the states contain a State with <paramref name="key"/></returns>
         public bool HasState(string key)
         {
-            return states.Any(s => s.Key == key);
+            return _states.Any(s => s.Key == key);
         }
         
         /// <summary>
@@ -86,7 +86,7 @@ namespace AI
                 return;
             }
 
-            states.Add(new State(state));
+            _states.Add(new State(state));
         }
         
         /// <summary>
@@ -115,7 +115,7 @@ namespace AI
                 return;
             }
 
-            states.Add(new State(key, value));
+            _states.Add(new State(key, value));
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace AI
         /// <param name="keepLowestValues">Whether or not the lowest value should be kept if a State within <paramref name="stateSet"/> already exists in the states</param>
         public void AddStates(StateSet stateSet, bool keepLowestValues = false)
         {
-            foreach (var state in stateSet.states)
+            foreach (var state in stateSet._states)
             {
                 AddState(state, keepLowestValues);
             }
@@ -163,7 +163,7 @@ namespace AI
             }
             else if (value > 0)
             {
-                states.Add(new State(key, value));
+                _states.Add(new State(key, value));
             }
         }
         
@@ -175,7 +175,7 @@ namespace AI
         {
             if(!HasState(key)) return;
             
-            states.Remove(GetState(key));
+            _states.Remove(GetState(key));
         }
     
         /// <summary>
@@ -190,7 +190,7 @@ namespace AI
             }
             else
             {
-                states.Add(new State(state));
+                _states.Add(new State(state));
             }
         }
         
@@ -207,7 +207,7 @@ namespace AI
             }
             else
             {
-                states.Add(new State(key, value));
+                _states.Add(new State(key, value));
             }
         }
         
@@ -218,7 +218,7 @@ namespace AI
         /// <returns>The State with <paramref name="key"/> if found in the states, null otherwise</returns>
         public State GetState(string key)
         {
-            return states.Find(s => s.Key == key);
+            return _states.Find(s => s.Key == key);
         }
         
         /// <summary>
@@ -229,7 +229,7 @@ namespace AI
         public StateSet Union(StateSet stateSet)
         {
             var union = new StateSet(this);
-            foreach (var state in stateSet.states)
+            foreach (var state in stateSet._states)
             {
                 union.AddState(state);
             }
@@ -239,6 +239,6 @@ namespace AI
         
         // Properties
         
-        public IEnumerable<State> States => states;
+        public IEnumerable<State> States => _states;
     }
 }

@@ -6,10 +6,8 @@ namespace AI
     [Serializable]
     public class State
     {
-        [SerializeField] 
-        private string key;
-        [SerializeField]
-        private int value;
+        [SerializeField] private string _key;
+        [SerializeField] private int _value;
         
         /// <summary>
         /// Constructor that initializes the State's key and value to <paramref name="key"/> and <paramref name="value"/> respectively
@@ -18,8 +16,8 @@ namespace AI
         /// <param name="value">The value of the State</param>
         public State(string key, int value)
         {
-            this.key = key;
-            this.value = value;
+            _key = key;
+            _value = value;
         }
         
         /// <summary>
@@ -28,8 +26,8 @@ namespace AI
         /// <param name="state">The State to copy the key and value</param>
         public State(State state)
         {
-            key = state.key;
-            value = state.value;
+            _key = state._key;
+            _value = state._value;
         }
         
         /// <summary>
@@ -38,7 +36,7 @@ namespace AI
         /// <param name="addedValue">The value to add to the State's value</param>
         public void AddValue(int addedValue)
         {
-            value += addedValue;
+            _value += addedValue;
         }
         
         /// <summary>
@@ -47,12 +45,12 @@ namespace AI
         /// <param name="newValue">The new value for the State</param>
         public void SetValue(int newValue)
         {
-            value = newValue;
+            _value = newValue;
         }
         
         // Properties
         
-        public string Key => key;
-        public int Value => value;
+        public string Key => _key;
+        public int Value => _value;
     }
 }
