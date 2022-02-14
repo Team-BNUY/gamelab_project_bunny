@@ -27,7 +27,9 @@ namespace Player
         void Update()
         {
             if (isLocalPlayer)
-                movementInput = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            {
+                //movementInput = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            }
         }
 
         private void FixedUpdate()
