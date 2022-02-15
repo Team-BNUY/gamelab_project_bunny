@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 namespace Input
 {
@@ -8,6 +9,8 @@ namespace Input
         [Header("Input")]
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private float _movementSpeed;
+        [SerializeField] private Camera _playerCamera;
+        [SerializeField] private GameObject _playerModel;
         private Vector3 _currentPosition;
 
         private void Awake()
@@ -40,15 +43,15 @@ namespace Input
         {
             var mousePosition = Mouse.current.position.ReadValue();
             var rotation = MousePosToRotationInput(mousePosition);
-            transform.rotation = Quaternion.Euler(0f, rotation, 0f);
+            _playerModel.transform.rotation = Quaternion.Euler(0f, rotation, 0f);
         }
         
         private float MousePosToRotationInput(Vector2 mousePos)
         {
             var target = transform;
-            if (Camera.main is { })
+            if (_playerCamera is { })
             {
-                Vector3 objectPos = Camera.main.WorldToScreenPoint(target.position);
+                Vector3 objectPos = _playerCamera.WorldToScreenPoint(target.position);
 
                 mousePos.x = mousePos.x - objectPos.x;
                 mousePos.y = mousePos.y - objectPos.y;

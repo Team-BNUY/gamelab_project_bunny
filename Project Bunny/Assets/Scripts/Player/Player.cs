@@ -20,7 +20,7 @@ namespace Player
             if (isLocalPlayer)
             {
                 local = this;
-                camera = Camera.main;
+                //camera = Camera.main;
             }
         }
 
