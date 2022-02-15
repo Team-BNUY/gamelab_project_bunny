@@ -9,9 +9,9 @@ public class SimpleCharacterController : MonoBehaviour
     
     private void Update()
     {
-        var x = Input.GetAxis("Horizontal");
-        var z = Input.GetAxis("Vertical");
-        velocity = new Vector3(x, 0f, z).normalized;
+        //var x = Input.GetAxis("Horizontal");
+        //var z = Input.GetAxis("Vertical");
+        //velocity = new Vector3(x, 0f, z).normalized;
         
         transform.Translate(velocity * Time.deltaTime * speed);
     }
