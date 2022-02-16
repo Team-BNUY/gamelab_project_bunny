@@ -13,6 +13,6 @@ public class SimpleCharacterController : MonoBehaviour
         //var z = Input.GetAxis("Vertical");
         //velocity = new Vector3(x, 0f, z).normalized;
         
-        transform.Translate(velocity * Time.deltaTime * speed);
+        //transform.Translate(velocity * Time.deltaTime * speed);
     }
 }
