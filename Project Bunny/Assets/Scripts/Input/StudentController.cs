@@ -36,7 +36,7 @@ namespace Input
             
             if(_playerCamera != null)
             {
-                _playerCamera.transform.eulerAngles = new Vector3(cameraAngle,0,0);
+                _playerCamera.transform.eulerAngles = new Vector3(_cameraAngle,0,0);
             }
         }
 
@@ -95,8 +95,10 @@ namespace Input
                         
                     }
 
+                    Debug.Log(finalRotation);
+
                     if(inputRotationR.magnitude > 0.1f || inputRotationL.magnitude > 0.1f)
-                    _playerModel.transform.rotation = Quaternion.RotateTowards(_playerModel.transform.rotation, finalRotation, turnRate * Time.deltaTime);
+                    _playerModel.transform.rotation = Quaternion.RotateTowards(_playerModel.transform.rotation, finalRotation, _turnRate * Time.deltaTime);
                 }
             }
             
