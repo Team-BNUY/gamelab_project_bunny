@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: ChaseStudent
   m_EditorClassIdentifier: 
   name: Chase Student
-  cost: 0
+  cost: 1
   hasTarget: 0
-  targetTag: 
   preconditionStates: []
   afterEffectStates:
-  - key: sentStudentToTimeout
-    value: 1
+  - _key: caughtStudent
+    _value: 1
+  _speed: 4

@@ -15,18 +15,18 @@ namespace AI
 
             public Node(Node parent, int cost, StateSet allStates, Action action)
             {
-                this._parent = parent;
-                this._cost = cost;
+                _parent = parent;
+                _cost = cost;
                 _states = new StateSet(allStates);
-                this._action = action;
+                _action = action;
             }
 
             public Node(Node parent, int cost, StateSet worldStates, StateSet beliefStates, Action action)
             {
-                this._parent = parent;
-                this._cost = cost;
+                _parent = parent;
+                _cost = cost;
                 _states = worldStates.Union(beliefStates);
-                this._action = action;
+                _action = action;
             }
             
             // Properties

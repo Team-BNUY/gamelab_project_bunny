@@ -34,14 +34,11 @@ namespace AI
         }
         
         /// <summary>
-        /// Initializes the Agent's actions from its list of ActionData
+        /// Initializes the Agent's list of actions
         /// </summary>
         protected virtual void Start()
         {
-            foreach(var data in _actionsData)
-            {
-                data.Create(this);
-            }
+            CreateActions();
         }
         
         /// <summary>
@@ -106,15 +103,14 @@ namespace AI
                 {
                     _currentAction.Running = true;
                     //SetAnimatorParameters();
+
+                    return;
                 }
 
-                // If the current action's destination location is a game object with a tag instead of a global position, sets the target location as the tagged game object's position
-                if (_currentAction.Target == Vector3.zero && !string.IsNullOrWhiteSpace(_currentAction.TargetTag))
+                if (_currentAction.Target == Vector3.zero)
                 {
-                    _currentAction.Target = GameObject.FindWithTag(_currentAction.TargetTag).transform.position;
+                    Debug.LogWarning("You most likely forgot to set a target for " + _currentAction.Name + "!");
                 }
-
-                if (_currentAction.Target == Vector3.zero) return;
                 
                 // If the current action's destination location is not the zero vector, makes the agent go towards its target location
                 _currentAction.Running = true;
@@ -161,7 +157,18 @@ namespace AI
             _currentAction.Running = false;
             _currentAction = null;
         }
-    
+        
+        /// <summary>
+        /// Initializes the Agent's actions from its list of ActionData
+        /// </summary>
+        private void CreateActions()
+        {
+            foreach(var data in _actionsData)
+            {
+                data.Create(this);
+            }
+        }
+
         /// <summary>
         /// Sets the agent's animator parameters
         /// </summary>
