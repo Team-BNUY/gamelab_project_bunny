@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,7 +10,6 @@ namespace AI
         private string _name;
         private int _cost;
         private StateSet _preconditionStates, _afterEffectStates;
-        private string  _targetTag;
         private bool _hasTarget;
         private bool _running;
 
@@ -29,14 +29,13 @@ namespace AI
         /// <param name="agent">The agent that can perform the action</param>
         /// <param name="hasTarget">Whether or not the Action has a target position to reach</param>
         /// <param name="targetTag">The tag of the Action's target transform to reach</param>
-        public Action(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Agent agent, bool hasTarget, string targetTag)
+        public Action(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Agent agent, bool hasTarget)
         {
             _name = name;
             _cost = cost;
             _preconditionStates = preconditionStates;
             _afterEffectStates = afterEffectStates;
             _hasTarget = hasTarget;
-            _targetTag = targetTag;
             this.agent = agent;
             navMeshAgent = agent.GetComponent<NavMeshAgent>();
         }
@@ -88,18 +87,18 @@ namespace AI
         /// <summary>
         /// Finds the closest object of type T on the nav mesh used by <paramref name="nmAgent"/>
         /// </summary>
-        /// <param name="array">The array of objects to search in</param>
+        /// <param name="elements">The elements of objects to search in</param>
         /// <param name="nmAgent">The nav mesh agent that uses the nav mesh to calculate the path distance</param>
-        /// <typeparam name="T">The type of the object</typeparam>
+        /// <typeparam name="TP">The type of the object</typeparam>
         /// <returns>The closest object of type T on the nav mesh</returns>
-        public static T FindClosest<T>(T[] array, NavMeshAgent nmAgent) where T : MonoBehaviour
+        public static TP FindClosest<TP>(List<TP> elements, NavMeshAgent nmAgent) where TP : MonoBehaviour
         {
-            var closest = default(T);
+            var closest = default(TP);
 
-            if (array.Length == 0) return null;
+            if (elements.Count == 0) return null;
             
             var smallestLength = int.MaxValue;
-            foreach (var element in array)
+            foreach (var element in elements)
             {
                 var path = new NavMeshPath();
                 nmAgent.CalculatePath(element.transform.position, path);
@@ -121,11 +120,6 @@ namespace AI
         {
             get => _name;
             set => _name = value;
-        }
-
-        public string TargetTag
-        {
-            get => _targetTag;
         }
 
         public Vector3 Target
