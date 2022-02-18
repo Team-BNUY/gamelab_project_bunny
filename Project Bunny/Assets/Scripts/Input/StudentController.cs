@@ -25,14 +25,6 @@ namespace Input
             {
                 _characterController = gameObject.GetComponent<CharacterController>();
             }
-<<<<<<< HEAD
-=======
-            
-            if(_playerCamera != null)
-            {
-                _playerCamera.transform.eulerAngles = new Vector3(_cameraAngle,0,0);
-            }
->>>>>>> 7-codegameplay-set-up-base-camera
         }
 
         private void FixedUpdate()
@@ -89,14 +81,8 @@ namespace Input
                         
                 }
 
-<<<<<<< HEAD
                 if((inputRotationR.magnitude > 0.1f) || (inputRotationL.magnitude > 0.1f))
                 {
-=======
-                    Debug.Log(finalRotation);
-
-                    if(inputRotationR.magnitude > 0.1f || inputRotationL.magnitude > 0.1f)
->>>>>>> 7-codegameplay-set-up-base-camera
                     _playerModel.transform.rotation = Quaternion.RotateTowards(_playerModel.transform.rotation, finalRotation, _turnRate * Time.deltaTime);
                 }
             }
