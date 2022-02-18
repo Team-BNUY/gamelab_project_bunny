@@ -41,9 +41,7 @@ namespace Input
         {
             var mousePosition = Mouse.current.position.ReadValue();
             var rotation = MousePosToRotationInput(mousePosition);
-            Debug.Log(rotation);
             _playerModel.transform.rotation = Quaternion.Euler(0f, rotation, 0f);
-
         }
 
         private float MousePosToRotationInput(Vector2 mousePos)
