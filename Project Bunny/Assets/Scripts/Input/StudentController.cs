@@ -5,13 +5,6 @@ namespace Input
 {
     public class StudentController : MonoBehaviour
     {
-        public bool hasSomethingEquipped;
-
-        public void EquipUnequipSomething()
-        {
-            hasSomethingEquipped = !hasSomethingEquipped;
-        }
-        
         [Header("Input")]
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private float _movementSpeed;

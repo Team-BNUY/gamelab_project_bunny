@@ -11,9 +11,9 @@ namespace AI
         [SerializeField] private List<ActionData> _actionsData;
 
         protected Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
+        protected StateSet beliefStates = new StateSet();
         
         private List<Action> _actions = new List<Action>();
-        private StateSet _beliefStates = new StateSet();
         private Action _currentAction;
         private Planner _planner;
         private Queue<Action> _actionQueue;
@@ -69,7 +69,7 @@ namespace AI
                 var sortedGoals = goals.OrderByDescending(g => g.Value);
                 foreach(var goal in sortedGoals)
                 {   
-                    _actionQueue = _planner.Plan(_actions, goal.Key.StateSet, _beliefStates);
+                    _actionQueue = _planner.Plan(_actions, goal.Key.StateSet, beliefStates);
 
                     if (_actionQueue == null) continue;
                     
@@ -193,8 +193,6 @@ namespace AI
         // Properties
         
         public List<Action> Actions => _actions;
-
-        public StateSet BeliefStates => _beliefStates;
 
         public AnimationState AnimationState
         {

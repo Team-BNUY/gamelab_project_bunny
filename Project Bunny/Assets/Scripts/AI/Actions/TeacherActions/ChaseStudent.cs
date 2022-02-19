@@ -19,7 +19,10 @@ namespace AI.Actions.TeacherActions
 
         public override bool PrePerform()
         {
-            _target = _teacher.TargetStudent.transform;
+            if (_teacher.TargetStudent)
+            {
+                _target = _teacher.TargetStudent.transform;
+            }
 
             if (!_target) return false;
             
