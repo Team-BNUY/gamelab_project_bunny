@@ -16,10 +16,14 @@ namespace Player
         private void Awake()
         {
             if (_characterController == null)
+            {
                 _characterController = GetComponent<CharacterController>();
+            }
 
             if (view == null)
+            {
                 view = GetComponent<PhotonView>();
+            }
 
             GetComponent<PlayerInput>().actionEvents[0].AddListener(OnMove);
             GetComponent<PlayerInput>().actionEvents[1].AddListener(OnLook);
