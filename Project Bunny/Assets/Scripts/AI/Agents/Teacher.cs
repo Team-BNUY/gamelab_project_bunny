@@ -29,7 +29,7 @@ namespace AI.Agents
             _allStudents = FindObjectsOfType<StudentController>(); // TODO Take from an eventual future GameManager
             
             // Goals
-            var sentToTimeout = new State("caughtStudent", 1);
+            var sentToTimeout = new State("caughtBadStudent", 1);
             var states = new StateSet(sentToTimeout);
             var goal = new Goal(states, false);
             goals.Add(goal, 1);
@@ -78,7 +78,7 @@ namespace AI.Agents
             // Ordering the students by distance and iterating through all of them
             foreach (var student in _allStudents.OrderBy(s => Vector3.Distance(transform.position, s.transform.position)))
             {   
-                //if(!student.hasSomethingEquipped && !_badStudents.ContainsKey(student)) continue;
+                //if(!student.hasSomethingEquipped && !_badStudents.ContainsKey(student)) continue; // TODO Adapt to whatever makes a student bad
                 
                 // If the student holds a tool or if it is already in the list of bad students
                 var myTransform = transform;

@@ -16,9 +16,9 @@ MonoBehaviour:
   cost: 1
   hasTarget: 0
   preconditionStates:
-  - _key: seenStudent
+  - _key: seenBadStudent
     _value: 1
   afterEffectStates:
-  - _key: caughtStudent
+  - _key: caughtBadStudent
     _value: 1
   _speed: 4
