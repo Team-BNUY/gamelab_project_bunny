@@ -26,7 +26,7 @@ namespace AI.Agents
         protected override void Start()
         {
             // Fetching all students
-            _allStudents = FindObjectsOfType<StudentController>();
+            _allStudents = FindObjectsOfType<StudentController>(); // TODO Take from an eventual future GameManager
             
             // Goals
             var sentToTimeout = new State("caughtStudent", 1);
