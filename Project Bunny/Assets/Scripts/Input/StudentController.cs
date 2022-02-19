@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Input
+namespace Player
 {
     public class StudentController : MonoBehaviour
     {
@@ -30,18 +30,30 @@ namespace Input
 
         #region InputSystem
 
+        
+        /// <summary>
+        /// Change player's position and orientation in global axes
+        /// </summary>
         private void MoveStudent()
         {
             _characterController.Move(_currentPosition * (_movementSpeed * Time.deltaTime));
             _playerModel.rotation = _currentRotation;
         }
 
+        
+        /// <summary>
+        /// DO NOT CHANGE NAME: Translates 2D Vector input action into position coordinates in world space
+        /// </summary>
+        /// <param name="value"></param>
         public void OnMove(InputAction.CallbackContext value)
         {
             var inputMovement = value.ReadValue<Vector2>();
             _currentPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
         }
 
+        /// <summary>
+        /// DO NOT CHANGE NAME: Translate mouse 2D Vector input action into angular rotation
+        /// </summary>
         public void OnLook()
         {
             var mousePosition = Mouse.current.position.ReadValue();
@@ -49,6 +61,12 @@ namespace Input
             _currentRotation = Quaternion.Euler(0f, rotation, 0f);
         }
 
+        /// <summary>
+        /// Utility function that uses mouse position to return angle between player and on-screen mouse pointer
+        /// TODO: Put in Utilities script
+        /// </summary>
+        /// <param name="mousePos"></param>
+        /// <returns></returns>
         private float MousePosToRotationInput(Vector2 mousePos)
         {
             var target = _playerModel.transform;
