@@ -2,19 +2,23 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
 
-public class ConnectToServer : MonoBehaviourPunCallbacks
+namespace Networking
 {
-    void Start()
+    public class ConnectToServer : MonoBehaviourPunCallbacks
     {
-        PhotonNetwork.ConnectUsingSettings();
-    }
+        void Start()
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
 
-    public override void OnConnectedToMaster() {
-        PhotonNetwork.JoinLobby();
-    }
+        public override void OnConnectedToMaster()
+        {
+            PhotonNetwork.JoinLobby();
+        }
 
-    public override void OnJoinedLobby()
-    {
-        SceneManager.LoadScene("Lobby");
+        public override void OnJoinedLobby()
+        {
+            SceneManager.LoadScene("Lobby");
+        }
     }
 }

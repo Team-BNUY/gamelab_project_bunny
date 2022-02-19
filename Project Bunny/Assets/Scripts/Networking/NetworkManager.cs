@@ -1,16 +1,20 @@
 using UnityEngine;
 using Photon.Pun;
 
-public class NetworkManager : MonoBehaviour
+namespace Networking
 {
-    [SerializeField] GameObject playerPrefab;
-
-    void Start()
+    public class NetworkManager : MonoBehaviour
     {
-        SpawnPlayer();
-    }
+        [SerializeField] GameObject playerPrefab;
 
-    private void SpawnPlayer() {
-        PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity);
+        void Start()
+        {
+            SpawnPlayer();
+        }
+
+        private void SpawnPlayer()
+        {
+            PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity);
+        }
     }
 }
