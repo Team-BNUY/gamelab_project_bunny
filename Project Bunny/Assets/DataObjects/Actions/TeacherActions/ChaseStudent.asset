@@ -15,7 +15,9 @@ MonoBehaviour:
   name: Chase Student
   cost: 1
   hasTarget: 0
-  preconditionStates: []
+  preconditionStates:
+  - _key: seenStudent
+    _value: 1
   afterEffectStates:
   - _key: caughtStudent
     _value: 1
