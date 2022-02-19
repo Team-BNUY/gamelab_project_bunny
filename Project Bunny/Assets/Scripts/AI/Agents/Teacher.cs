@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Input;
+using Player;
 using UnityEngine;
 
 namespace AI.Agents
@@ -8,7 +8,7 @@ namespace AI.Agents
     public class Teacher : Agent
     {
         // Events
-        public delegate void SeeBadStudent(StudentController student);
+        public delegate void SeeBadStudent(NetworkStudentController student);
         public static event SeeBadStudent OnSeenBadStudent;
         
         // View parameters
@@ -16,9 +16,9 @@ namespace AI.Agents
         [SerializeField] [Min(0f)] private float _viewDistance;
         
         // Students references
-        private StudentController[] _allStudents;
-        private StudentController _targetStudent;
-        private Dictionary<StudentController, Vector3> _badStudents = new Dictionary<StudentController, Vector3>();
+        private NetworkStudentController[] _allStudents;
+        private NetworkStudentController _targetStudent;
+        private Dictionary<NetworkStudentController, Vector3> _badStudents = new Dictionary<NetworkStudentController, Vector3>();
         
         /// <summary>
         /// References all the students, add the goals and create the actions
@@ -26,7 +26,7 @@ namespace AI.Agents
         protected override void Start()
         {
             // Fetching all students
-            _allStudents = FindObjectsOfType<StudentController>(); // TODO Take from an eventual future GameManager
+            _allStudents = FindObjectsOfType<NetworkStudentController>(); // TODO Take from an eventual future GameManager
             
             // Goals
             var sentToTimeout = new State("caughtBadStudent", 1);
@@ -70,7 +70,7 @@ namespace AI.Agents
         /// </summary>
         /// <param name="badStudent">The closest bad student seen</param>
         /// <returns>True if at least one bad student has been seen during the frame</returns>
-        private bool WitnessedBadAction(out StudentController badStudent)
+        private bool WitnessedBadAction(out NetworkStudentController badStudent)
         {
             var badStudentFound = false;
             badStudent = null;
@@ -121,14 +121,14 @@ namespace AI.Agents
         /// Adds the "seenBadStudent" state to the Teacher's beliefs states or increases this state by one if already present
         /// </summary>
         /// <param name="student">The new bad student that has been seen</param>
-        private void RememberStudent(StudentController student)
+        private void RememberStudent(NetworkStudentController student)
         {
             beliefStates.ModifyState("seenBadStudent", 1);
         }
 
         // Properties
 
-        public StudentController TargetStudent
+        public NetworkStudentController TargetStudent
         {
             get => _targetStudent;
         }

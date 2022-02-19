@@ -5,15 +5,17 @@ namespace Player
 {
     public class StudentController : MonoBehaviour
     {
-        [Header("Input")]
+        [Header("Components")]
+        [SerializeField] private Transform _playerModel;
+        [SerializeField] private Camera _playerCamera;
         [SerializeField] private CharacterController _characterController;
+        [SerializeField] private PlayerInput _playerInput;
+        
+        [Header("Input")]
         [SerializeField] private float _movementSpeed;
         private Vector3 _currentPosition;
         private Quaternion _currentRotation;
         
-        [Header("Components")]
-        [SerializeField] private Transform _playerModel;
-        [SerializeField] private Camera _playerCamera;
 
         private void Awake()
         {
@@ -21,13 +23,26 @@ namespace Player
             {
                 _characterController = gameObject.GetComponent<CharacterController>();
             }
+            if (_playerInput == null)
+            {
+                _playerInput = GetComponent<PlayerInput>();
+            }
         }
 
         private void FixedUpdate()
         {
             MoveStudent();
         }
-
+        
+        /// <summary>
+        /// Attach unique instantiated camera with player
+        /// </summary>
+        /// <param name="cam"></param>
+        public void SetCamera(Camera cam)
+        {
+            _playerCamera = cam;
+        }
+        
         #region InputSystem
 
         

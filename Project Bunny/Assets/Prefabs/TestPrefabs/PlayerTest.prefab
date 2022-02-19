@@ -11,10 +11,8 @@ GameObject:
   - component: {fileID: 4197368334970314132}
   - component: {fileID: 4197368334970314121}
   - component: {fileID: 4197368334970314122}
-  - component: {fileID: 4197368334970314123}
-  - component: {fileID: -4800021422788089658}
-  - component: {fileID: 4971798576798396798}
   - component: {fileID: 950292985}
+  - component: {fileID: 689112759729198487}
   m_Layer: 0
   m_Name: PlayerTest
   m_TagString: Player
@@ -64,8 +62,8 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4197368334970314123}
-        m_TargetAssemblyTypeName: Input.StudentController, Assembly-CSharp
+      - m_Target: {fileID: 689112759729198487}
+        m_TargetAssemblyTypeName: Player.StudentController, Assembly-CSharp
         m_MethodName: OnMove
         m_Mode: 0
         m_Arguments:
@@ -80,8 +78,8 @@ MonoBehaviour:
     m_ActionName: Player/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4197368334970314123}
-        m_TargetAssemblyTypeName: Input.StudentController, Assembly-CSharp
+      - m_Target: {fileID: 689112759729198487}
+        m_TargetAssemblyTypeName: Player.StudentController, Assembly-CSharp
         m_MethodName: OnLook
         m_Mode: 1
         m_Arguments:
@@ -91,7 +89,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 1
     m_ActionId: 5651c2f7-1daf-48fe-9dd9-2307a62479db
     m_ActionName: Player/Look[/Mouse/delta]
   m_NeverAutoSwitchControlSchemes: 0
@@ -117,25 +115,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &4197368334970314123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4197368334970314133}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ca7ef462d411bb4386a0e2d6d6bf9cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _characterController: {fileID: 4197368334970314122}
-  _movementSpeed: 10
-  _playerModel: {fileID: 4197368335467973757}
-  _playerCamera: {fileID: 0}
-  _mouseLayerMask:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!195 &950292985
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -158,6 +137,23 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &689112759729198487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4197368334970314133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ca7ef462d411bb4386a0e2d6d6bf9cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerModel: {fileID: 4197368335467973757}
+  _playerCamera: {fileID: 0}
+  _characterController: {fileID: 4197368334970314122}
+  _playerInput: {fileID: 4197368334970314121}
+  _movementSpeed: 5
 --- !u!1 &4197368335467973758
 GameObject:
   m_ObjectHideFlags: 0

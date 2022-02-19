@@ -352,7 +352,7 @@ Transform:
   - {fileID: 1862533173}
   - {fileID: 950205891}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &463540972
 GameObject:
@@ -540,7 +540,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1001 &506664067
 PrefabInstance:
@@ -549,6 +549,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 689112759729198487, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
+      propertyPath: _playerCamera
+      value: 
+      objectReference: {fileID: 8135413970522927827}
+    - target: {fileID: 689112759729198487, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
+      propertyPath: _movementSpeed
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4197368334970314121, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
       propertyPath: m_ActionEvents.Array.data[1].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 1
@@ -563,7 +571,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4197368334970314132, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4197368334970314132, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -608,6 +616,14 @@ PrefabInstance:
     - target: {fileID: 4197368334970314133, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
       propertyPath: m_Name
       value: PlayerTest
+      objectReference: {fileID: 0}
+    - target: {fileID: 6130065600147188359, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
+      propertyPath: _playerCamera
+      value: 
+      objectReference: {fileID: 8135413970522927827}
+    - target: {fileID: 6130065600147188359, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
+      propertyPath: _movementSpeed
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
@@ -1386,7 +1402,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 375071288671061455, guid: b61fdec5a46e1f04fbff59da54a9c10d, type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 375071288671061455, guid: b61fdec5a46e1f04fbff59da54a9c10d, type: 3}
       propertyPath: m_LocalPosition.x
