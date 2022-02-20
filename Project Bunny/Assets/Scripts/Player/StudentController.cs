@@ -11,10 +11,14 @@ namespace Player
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
         
-        [Header("Input")]
+        [Header("Movement")]
         [SerializeField] private float _movementSpeed;
         private Vector3 _currentPosition;
         private Quaternion _currentRotation;
+
+        [Header("Snowball")]
+        private bool _isDigging;
+        private bool _hasSnowball;
         
 
         private void Awake()
@@ -32,6 +36,7 @@ namespace Player
         private void FixedUpdate()
         {
             MoveStudent();
+            DigSnowball();
         }
         
         /// <summary>
@@ -55,20 +60,30 @@ namespace Player
             _playerModel.rotation = _currentRotation;
         }
 
+        private void DigSnowball()
+        {
+            if (_isDigging)
+            {
+                Debug.Log("Digging");
+            }
+        }
+
         
         /// <summary>
         /// DO NOT CHANGE NAME: Translates 2D Vector input action into position coordinates in world space
         /// </summary>
-        /// <param name="value"></param>
-        public void OnMove(InputAction.CallbackContext value)
+        /// <param name="context"></param>
+        // ReSharper disable once UnusedMember.Global
+        public void OnMove(InputAction.CallbackContext context)
         {
-            var inputMovement = value.ReadValue<Vector2>();
+            var inputMovement = context.ReadValue<Vector2>();
             _currentPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
         }
 
         /// <summary>
         /// DO NOT CHANGE NAME: Translate mouse 2D Vector input action into angular rotation
         /// </summary>
+        // ReSharper disable once UnusedMember.Global
         public void OnLook()
         {
             var mousePosition = Mouse.current.position.ReadValue();
@@ -76,6 +91,25 @@ namespace Player
             _currentRotation = Quaternion.Euler(0f, rotation, 0f);
         }
 
+        /// <summary>
+        /// DO NOT CHANGE NAME: Enables for digging process to occur
+        /// </summary>
+        /// <param name="context"></param>
+        // ReSharper disable once UnusedMember.Global
+        public void OnDig(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                _isDigging = true;
+            }
+            if (context.canceled)
+            {
+                _isDigging = false;
+            }
+        }
+
+        #endregion
+        
         /// <summary>
         /// Utility function that uses mouse position to return angle between player and on-screen mouse pointer
         /// TODO: Put in Utilities script
@@ -96,7 +130,5 @@ namespace Player
             var angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
             return 90 - angle;
         }
-
-        #endregion
     }
 }
