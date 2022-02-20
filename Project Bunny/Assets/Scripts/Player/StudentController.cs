@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 
 namespace Player
 {
+    
+    [SelectionBase]
     public class StudentController : MonoBehaviour
     {
         [Header("Components")]
@@ -17,8 +19,12 @@ namespace Player
         private Quaternion _currentRotation;
 
         [Header("Snowball")]
-        [SerializeField] private float _digSnowballTimer;
-        private float _digSnowballCountdown;
+        // TODO: Dynamically instantiate and attach prefab from a Manager
+        [SerializeField] private GameObject _snowballPrefab;
+        [SerializeField] private Transform _playerHand;
+        [SerializeField] private float _digSnowballMaxTime;
+        private GameObject _playerSnowball;
+        private float _digSnowballTimer;
         private bool _isDigging;
         private bool _hasSnowball;
         
@@ -37,7 +43,10 @@ namespace Player
 
         private void FixedUpdate()
         {
-            MoveStudent();
+            if (!_isDigging)
+            {
+                MoveStudent();
+            }
             DigSnowball();
         }
         
@@ -49,10 +58,10 @@ namespace Player
         {
             _playerCamera = cam;
         }
-        
-        #region InputSystem
 
-        
+
+        #region Actions
+
         /// <summary>
         /// Change player's position and orientation in global axes
         /// </summary>
@@ -66,20 +75,22 @@ namespace Player
         {
             if (_isDigging && !_hasSnowball)
             {
-                Debug.Log("Digging");
-                _digSnowballCountdown += Time.deltaTime;
+                _digSnowballTimer += Time.deltaTime;
             }
 
-            if (_digSnowballCountdown >= _digSnowballTimer)
-            {
-                Debug.Log("I have snowball");
-                _hasSnowball = true;
-                _isDigging = false;
-                _digSnowballCountdown = 0.0f;
-            }
+            if (_digSnowballTimer < _digSnowballMaxTime) return;
+
+            _playerSnowball = Instantiate(_snowballPrefab, _playerHand.position, _playerHand.rotation, _playerHand);
+            _hasSnowball = true;
+            _isDigging = false;
+            _digSnowballTimer = 0.0f;
         }
 
+        #endregion
         
+        
+        #region InputSystem
+
         /// <summary>
         /// DO NOT CHANGE NAME: Translates 2D Vector input action into position coordinates in world space
         /// </summary>
@@ -118,6 +129,7 @@ namespace Player
             if (context.canceled)
             {
                 _isDigging = false;
+                _digSnowballTimer = 0.0f;
             }
         }
 

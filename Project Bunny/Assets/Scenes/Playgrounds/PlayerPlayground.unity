@@ -549,6 +549,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 950292985, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 689112759729198487, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
       propertyPath: _playerCamera
       value: 
@@ -557,6 +561,10 @@ PrefabInstance:
       propertyPath: _movementSpeed
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 689112759729198487, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
+      propertyPath: _snowballPrefab
+      value: 
+      objectReference: {fileID: 9027766068581955839, guid: 307af400da2c72f4f9ef1bbacdf9dae4, type: 3}
     - target: {fileID: 4197368334970314121, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
       propertyPath: m_ActionEvents.Array.data[1].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 1
