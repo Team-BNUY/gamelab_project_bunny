@@ -19,7 +19,7 @@ namespace AI.ActionsData.TeacherActionsData
             }
             else
             {
-                Debug.LogError("Assigned wrong agent to a teacher action!");
+                Debug.LogError("Assigned teacher action " + name + "to a non-teacher agent!");
             }
         }
     }

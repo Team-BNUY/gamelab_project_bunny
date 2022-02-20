@@ -59,10 +59,10 @@ namespace AI
             return true;
         }
 
+        public abstract bool PrePerform();
+
         public abstract void Perform();
 
-        public abstract bool PrePerform();
-    
         public abstract bool PostPerform();
 
         /// <summary>

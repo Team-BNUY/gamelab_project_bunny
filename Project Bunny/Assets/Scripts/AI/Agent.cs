@@ -127,10 +127,20 @@ namespace AI
         /// <summary>
         /// Triggers the <paramref name="animatorParameter"/>
         /// </summary>
-        /// <param name="animatorParameter"></param>
+        /// <param name="animatorParameter">The animator parameter's name</param>
         public void SetAnimatorParameter(string animatorParameter)
         {
             _animator.SetTrigger(animatorParameter);
+        }
+        
+        /// <summary>
+        /// Sets the boolean <paramref name="animatorParameter"/> to <paramref name="value"/>
+        /// </summary>
+        /// <param name="animatorParameter">The animator parameter's name</param>
+        /// <param name="value">The boolean value to set the animator parameter</param>
+        public void SetAnimatorParameter(string animatorParameter, bool value) // TODO Uncomment calls as soon as the agent has the appropriate animator parameters
+        {
+            _animator.SetBool(animatorParameter, value);
         }
 
         /// <summary>
@@ -191,8 +201,16 @@ namespace AI
         }
         
         // Properties
-        
-        public List<Action> Actions => _actions;
+
+        public List<Action> Actions
+        {
+            get => _actions;
+        }
+
+        public StateSet BeliefStates
+        {
+            get => beliefStates;
+        }
 
         public AnimationState AnimationState
         {

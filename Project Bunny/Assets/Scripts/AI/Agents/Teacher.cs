@@ -8,17 +8,18 @@ namespace AI.Agents
     public class Teacher : Agent
     {
         // Events
-        public delegate void SeeBadStudent(NetworkStudentController student);
-        public static event SeeBadStudent OnSeenBadStudent;
+        public delegate void StudentInteraction(StudentController student);
+        public static event StudentInteraction OnFoundBadStudent;
+        public static event StudentInteraction OnLostBadStudent;
         
         // View parameters
         [SerializeField] [Range(0f, 180f)] private float _fieldOfView;
         [SerializeField] [Min(0f)] private float _viewDistance;
         
         // Students references
-        private NetworkStudentController[] _allStudents;
-        private NetworkStudentController _targetStudent;
-        private Dictionary<NetworkStudentController, Vector3> _badStudents = new Dictionary<NetworkStudentController, Vector3>();
+        private StudentController[] _allStudents;
+        private StudentController _targetStudent;
+        private Dictionary<StudentController, Vector3> _badStudents = new Dictionary<StudentController, Vector3>();
         
         /// <summary>
         /// References all the students, add the goals and create the actions
@@ -26,14 +27,19 @@ namespace AI.Agents
         protected override void Start()
         {
             // Fetching all students
-            _allStudents = FindObjectsOfType<NetworkStudentController>(); // TODO Take from an eventual future GameManager
+            _allStudents = FindObjectsOfType<StudentController>(); // TODO Take from an eventual future GameManager
             
             // Goals
-            var sentToTimeout = new State("caughtBadStudent", 1);
-            var states = new StateSet(sentToTimeout);
+            var state = new State("searchedForBadStudent", 1);
+            var states = new StateSet(state);
             var goal = new Goal(states, false);
             goals.Add(goal, 1);
             
+            state = new State("caughtBadStudent", 1);
+            states = new StateSet(state);
+            goal = new Goal(states, false);
+            goals.Add(goal, 2);
+
             // Creating actions
             base.Start();
         }
@@ -47,22 +53,28 @@ namespace AI.Agents
             {
                 _targetStudent = badStudent;
             }
+            else if(_targetStudent)
+            {
+                OnLostBadStudent?.Invoke(_targetStudent);
+            }
         }
         
         /// <summary>
-        /// Subscribes to the OnSeenBadStudent(Student student) event
+        /// Subscribes to events
         /// </summary>
         private void OnEnable()
         {
-            OnSeenBadStudent += RememberStudent;
+            OnFoundBadStudent += SeeStudent;
+            OnLostBadStudent += LoseStudent;
         }
         
         /// <summary>
-        /// Unsubscribes to the OnSeenBadStudent(Student student) event
+        /// Unsubscribes to events
         /// </summary>
         private void OnDisable()
         {
-            OnSeenBadStudent -= RememberStudent;
+            OnFoundBadStudent -= SeeStudent;
+            OnLostBadStudent -= LoseStudent;
         }
         
         /// <summary>
@@ -70,7 +82,7 @@ namespace AI.Agents
         /// </summary>
         /// <param name="badStudent">The closest bad student seen</param>
         /// <returns>True if at least one bad student has been seen during the frame</returns>
-        private bool WitnessedBadAction(out NetworkStudentController badStudent)
+        private bool WitnessedBadAction(out StudentController badStudent)
         {
             var badStudentFound = false;
             badStudent = null;
@@ -102,7 +114,7 @@ namespace AI.Agents
                 else
                 {
                     _badStudents.Add(student, studentPosition);
-                    OnSeenBadStudent?.Invoke(student);
+                    OnFoundBadStudent?.Invoke(student);
                 }
                 
                 // Remembers the closest bad student seen 
@@ -118,19 +130,50 @@ namespace AI.Agents
         }
         
         /// <summary>
-        /// Adds the "seenBadStudent" state to the Teacher's beliefs states or increases this state by one if already present
+        /// Adds the "seesBadStudent" state to the Teacher's beliefs states if not already present
         /// </summary>
         /// <param name="student">The new bad student that has been seen</param>
-        private void RememberStudent(NetworkStudentController student)
+        private void SeeStudent(StudentController student)
         {
-            beliefStates.ModifyState("seenBadStudent", 1);
+            beliefStates.AddState("seesBadStudent", 1);
+            RememberStudent(student);
+        }
+        
+        /// <summary>
+        /// Adds the "remembersStudent" state to the Teacher's beliefs states or increases this state by one if already present
+        /// </summary>
+        /// <param name="student">The bad student to remember</param>
+        private void RememberStudent(StudentController student)
+        {
+            beliefStates.ModifyState("remembersBadStudent", 1);
+        }
+        
+        /// <summary>
+        /// Removes the "seesBadStudent" state from the Teacher's beliefs states
+        /// </summary>
+        /// <param name="student">The student that has just been lost</param>
+        private void LoseStudent(StudentController student)
+        {
+            beliefStates.RemoveState("seesBadStudent");
         }
 
         // Properties
 
-        public NetworkStudentController TargetStudent
+        public float FieldOfView
+        {
+            get => _fieldOfView;
+            set => _fieldOfView = value;
+        }
+
+        public StudentController TargetStudent
         {
             get => _targetStudent;
+            set => _targetStudent = value;
+        }
+
+        public Dictionary<StudentController, Vector3> BadStudents
+        {
+            get => _badStudents;
         }
     }
 }
