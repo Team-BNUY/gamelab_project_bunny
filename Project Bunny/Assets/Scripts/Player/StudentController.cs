@@ -17,6 +17,8 @@ namespace Player
         private Quaternion _currentRotation;
 
         [Header("Snowball")]
+        [SerializeField] private float _digSnowballTimer;
+        private float _digSnowballCountdown;
         private bool _isDigging;
         private bool _hasSnowball;
         
@@ -62,9 +64,18 @@ namespace Player
 
         private void DigSnowball()
         {
-            if (_isDigging)
+            if (_isDigging && !_hasSnowball)
             {
                 Debug.Log("Digging");
+                _digSnowballCountdown += Time.deltaTime;
+            }
+
+            if (_digSnowballCountdown >= _digSnowballTimer)
+            {
+                Debug.Log("I have snowball");
+                _hasSnowball = true;
+                _isDigging = false;
+                _digSnowballCountdown = 0.0f;
             }
         }
 
@@ -98,6 +109,8 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnDig(InputAction.CallbackContext context)
         {
+            if (_hasSnowball) return;
+            
             if (context.performed)
             {
                 _isDigging = true;
