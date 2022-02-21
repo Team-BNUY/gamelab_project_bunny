@@ -1,24 +1,29 @@
 using System.Collections.Generic;
 using System.Linq;
+using ExitGames.Client.Photon.StructWrapping;
 using Player;
 using UnityEngine;
 
 namespace AI.Agents
 {
-    public class Teacher : Agent
+    public class Teacher : Agent // TODO Add an action to go to an investigation point to be able to update the fov and the view direction or find another way to do so (particularly for view direction)
     {
         // Events
         public delegate void StudentInteraction(StudentController student);
+        public static event StudentInteraction OnSeeNewBadStudent;
         public static event StudentInteraction OnFoundBadStudent;
         public static event StudentInteraction OnLostBadStudent;
         
         // View parameters
         [SerializeField] [Range(0f, 180f)] private float _fieldOfView;
         [SerializeField] [Min(0f)] private float _viewDistance;
+
+        private Vector3 _viewDirection;
         
         // Students references
         private StudentController[] _allStudents;
         private StudentController _targetStudent;
+        private StudentController _lastTargetStudent;
         private Dictionary<StudentController, Vector3> _badStudents = new Dictionary<StudentController, Vector3>();
         
         /// <summary>
@@ -49,13 +54,24 @@ namespace AI.Agents
         /// </summary>
         private void Update()
         {
+            // TODO Remove when the Teacher has a default action
+            if (currentAction == null)
+            {
+                _fieldOfView = 90f;
+                _viewDirection = transform.forward;
+            }
+            
+            Debug.Log(currentAction);
+            
             if (WitnessedBadAction(out var badStudent))
             {
                 _targetStudent = badStudent;
             }
             else if(_targetStudent)
             {
+                _lastTargetStudent = _targetStudent;
                 OnLostBadStudent?.Invoke(_targetStudent);
+                _targetStudent = null;
             }
         }
         
@@ -64,7 +80,8 @@ namespace AI.Agents
         /// </summary>
         private void OnEnable()
         {
-            OnFoundBadStudent += SeeStudent;
+            OnSeeNewBadStudent += SeeNewStudent;
+            OnFoundBadStudent += FindStudent;
             OnLostBadStudent += LoseStudent;
         }
         
@@ -73,7 +90,8 @@ namespace AI.Agents
         /// </summary>
         private void OnDisable()
         {
-            OnFoundBadStudent -= SeeStudent;
+            OnSeeNewBadStudent -= SeeNewStudent;
+            OnFoundBadStudent -= FindStudent;
             OnLostBadStudent -= LoseStudent;
         }
         
@@ -93,14 +111,13 @@ namespace AI.Agents
                 //if(!student.hasSomethingEquipped && !_badStudents.ContainsKey(student)) continue; // TODO Adapt to whatever makes a student bad
                 
                 // If the student holds a tool or if it is already in the list of bad students
-                var myTransform = transform;
-                var myPosition = myTransform.position;
+                var myPosition = transform.position;
                 var studentPosition = student.transform.position;
                 
                 if(Vector3.Distance(myPosition, studentPosition) > _viewDistance) continue;
                 
                 // If the student is within view distance
-                var angle = Vector3.Angle(myTransform.forward, studentPosition - myPosition);
+                var angle = Vector3.Angle(_viewDirection, studentPosition - myPosition);
 
                 if (2f * angle > _fieldOfView) continue;
                 
@@ -109,12 +126,13 @@ namespace AI.Agents
                 if (_badStudents.ContainsKey(student))
                 {
                     _badStudents[student] = studentPosition;
+                    OnFoundBadStudent?.Invoke(student);
                 }
                 // Adds the new bad student to the list of bad student and invokes the OnSeenBadStudent event
                 else
                 {
                     _badStudents.Add(student, studentPosition);
-                    OnFoundBadStudent?.Invoke(student);
+                    OnSeeNewBadStudent?.Invoke(student);
                 }
                 
                 // Remembers the closest bad student seen 
@@ -132,8 +150,17 @@ namespace AI.Agents
         /// <summary>
         /// Adds the "seesBadStudent" state to the Teacher's beliefs states if not already present
         /// </summary>
+        /// <param name="student">The student found</param>
+        private void FindStudent(StudentController student)
+        {
+            beliefStates.AddState("seesBadStudent", 1);
+        }
+
+        /// <summary>
+        /// Adds the "seesBadStudent" state to the Teacher's beliefs states if not already present and remembers the student's position
+        /// </summary>
         /// <param name="student">The new bad student that has been seen</param>
-        private void SeeStudent(StudentController student)
+        private void SeeNewStudent(StudentController student)
         {
             beliefStates.AddState("seesBadStudent", 1);
             RememberStudent(student);
@@ -155,6 +182,11 @@ namespace AI.Agents
         private void LoseStudent(StudentController student)
         {
             beliefStates.RemoveState("seesBadStudent");
+
+            if (currentAction is {Name: "Chase Student"})
+            {
+                InterruptGoal();
+            }
         }
 
         // Properties
@@ -165,10 +197,20 @@ namespace AI.Agents
             set => _fieldOfView = value;
         }
 
+        public Vector3 ViewDirection
+        {
+            set => _viewDirection = value;
+        }
+
         public StudentController TargetStudent
         {
             get => _targetStudent;
-            set => _targetStudent = value;
+        }
+
+        public StudentController LastTargetStudent
+        {
+            get => _lastTargetStudent;
+            set => _lastTargetStudent = value;
         }
 
         public Dictionary<StudentController, Vector3> BadStudents

@@ -123,8 +123,10 @@ namespace AI
                     var subset = ActionSubset(usableActions, action);
                     var found = BuildGraph(node, ref leaves, subset, goalStates);
 
-                    if(found)
+                    if (found)
+                    {
                         foundPath = true;
+                    }
                 }
             }
 
@@ -148,17 +150,9 @@ namespace AI
         /// <param name="actions">All the current usable actions</param>
         /// <param name="removeMe">The action to remove from the usable actions list</param>
         /// <returns>The difference subset between the actions set and the action to remove</returns>
-        private List<Action> ActionSubset(List<Action> actions, Action removeMe)
+        private List<Action> ActionSubset(IEnumerable<Action> actions, Action removeMe)
         {
-            var subset = new List<Action>();
-
-            foreach(var action in actions)
-            {
-                if(action.Equals(removeMe) == false)
-                    subset.Add(action);
-            }
-
-            return subset;
+            return actions.Where(action => !action.Equals(removeMe)).ToList();
         }
     }
 }

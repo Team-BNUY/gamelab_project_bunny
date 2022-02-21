@@ -8,17 +8,19 @@ namespace AI.Actions.TeacherActions
     public class Investigate : Action
     {
         private Teacher _teacher;
+        
         private StudentController _targetStudent;
         private float _investigationTime;
-        private float _newFieldOfView;
-        private float _originalFieldOfView;
+        private float _fieldOfView;
+
+        private float _timer;
         
-        public Investigate(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher agent, bool hasTarget, float investigationTime, float newFieldOfView)
+        public Investigate(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher agent, bool hasTarget, float investigationTime, float fieldOfView)
              : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
         {
             _teacher = agent;
             _investigationTime = investigationTime;
-            _newFieldOfView = newFieldOfView;
+            _fieldOfView = fieldOfView;
         }
         
         /// <summary>
@@ -31,20 +33,21 @@ namespace AI.Actions.TeacherActions
         }
         
         /// <summary>
-        /// Sets the Teacher's increased field of view and selects the nearest bad student remembered to investigate the position
+        /// Selects the nearest bad student remembered to investigate the position
         /// </summary>
         /// <returns>Always true, no possible fail for this pre-processing</returns>
         public override bool PrePerform()
         {
-            // Sets the new field of view
-            _originalFieldOfView = _teacher.FieldOfView;
-            _teacher.FieldOfView = _newFieldOfView;
+            // Resets parameters
+            invoked = false;
+            _timer = _investigationTime;
             
             // To make sure the Teacher goes first to the last remembered position of the student they were chasing
-            if (_teacher.TargetStudent)
+            if (_teacher.LastTargetStudent)
             {
-                _targetStudent = _teacher.TargetStudent;
-                _teacher.TargetStudent = null;
+                _targetStudent = _teacher.LastTargetStudent;
+                target = _teacher.BadStudents[_targetStudent];
+                _teacher.LastTargetStudent = null;
                 
                 return true;
             }
@@ -58,7 +61,7 @@ namespace AI.Actions.TeacherActions
         }
         
         /// <summary>
-        /// Performs the action for the investigation time
+        /// Sets the Teacher's increased field of view and view distance and performs the action for the investigation time
         /// </summary>
         public override void Perform()
         {
@@ -67,30 +70,33 @@ namespace AI.Actions.TeacherActions
             {
                 PostPerform();
                 _teacher.InterruptGoal();
+
+                return;
             }
             
-            //_teacher.SetAnimatorParameter("Investigate", true);
-            _investigationTime -= Time.deltaTime;
+            _teacher.FieldOfView = _fieldOfView;
+            _teacher.ViewDirection = _teacher.transform.forward;
             
-            if (_investigationTime > 0f) return;
+            //_teacher.SetAnimatorParameter("Investigate", true);
+            _timer -= Time.deltaTime;
+            
+            if (_timer > 0f) return;
             
             if (invoked) return;
             invoked = true;
             
             agent.CompleteAction();
+            Debug.Log("Investigation completed!");
         }
         
         /// <summary>
-        /// Resets the field of view to the original one, removes the target student from the Teacher's list of bad students and decreases the "remembersBadStudent" state by one from the Teacher
+        /// Removes the target student from the Teacher's list of bad students and decreases the "remembersBadStudent" state by one from the Teacher
         /// </summary>
         /// <returns>Always true, no fail possible fail for this post-processing</returns>
         public override bool PostPerform()
         {
-            _teacher.FieldOfView = _originalFieldOfView;
             _teacher.BadStudents.Remove(_targetStudent);
             _teacher.BeliefStates.ModifyState("remembersBadStudent", -1);
-
-            invoked = false;
             
             return true;
         }

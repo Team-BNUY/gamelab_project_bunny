@@ -10,11 +10,13 @@ namespace AI.ActionsData.TeacherActionsData
         [Header("Chase Student")] 
         [SerializeField] private float _speed;
 
+        [SerializeField] [Range(0f, 180f)] private float _fieldOfView;
+
         public override void Create(Agent agent)
         {
             if (agent is Teacher teacher)
             {
-                var action = new ChaseStudent(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), teacher, hasTarget, _speed);
+                var action = new ChaseStudent(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), teacher, hasTarget, _speed, _fieldOfView);
                 teacher.Actions.Add(action);
             }
             else

@@ -7,14 +7,16 @@ namespace AI.Actions.TeacherActions
     {
         private Teacher _teacher;
         private float _speed;
+        private float _fielfOfView;
         
         private Transform _target;
         
-        public ChaseStudent(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher teacher, bool hasTarget, float speed)
+        public ChaseStudent(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher teacher, bool hasTarget, float speed, float fielfOfView)
              : base(name, cost, preconditionStates, afterEffectStates, teacher, hasTarget)
         {
             _teacher = teacher;
             _speed = speed;
+            _fielfOfView = fielfOfView;
         }
         
         /// <summary>
@@ -23,6 +25,9 @@ namespace AI.Actions.TeacherActions
         /// <returns>True if the Teacher has a student target</returns>
         public override bool PrePerform()
         {
+            // Resets parameters
+            invoked = false;
+            
             if (_teacher.TargetStudent)
             {
                 _target = _teacher.TargetStudent.transform;
@@ -36,12 +41,16 @@ namespace AI.Actions.TeacherActions
         }
         
         /// <summary>
-        /// Chases the Action's target
+        /// Sets the Teacher's field of view and chases the Action's target
         /// </summary>
         public override void Perform()
         {
+            var targetPosition = _target.position;
+            _teacher.ViewDirection = targetPosition - _teacher.transform.position;
+            _teacher.FieldOfView = _fielfOfView;
+            
             navMeshAgent.speed = _speed;
-            navMeshAgent.SetDestination(_target.position);
+            navMeshAgent.SetDestination(targetPosition);
         }
         
         /// <summary>
@@ -50,10 +59,6 @@ namespace AI.Actions.TeacherActions
         /// <returns>Always true, no possible fail for this post-processing</returns>
         public override bool PostPerform()
         {
-            _target = null;
-            
-            invoked = false;
-
             return success;
         }
     }

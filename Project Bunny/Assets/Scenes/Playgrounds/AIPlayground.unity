@@ -495,7 +495,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _actionsData:
   - {fileID: 11400000, guid: f9dd4dd768aa6794285e64c481cb3302, type: 2}
-  _fieldOfView: 120
+  - {fileID: 11400000, guid: 243694962ba81454dae29a9db92dfb07, type: 2}
+  _fieldOfView: 90
   _viewDistance: 10
 --- !u!195 &1280607791
 NavMeshAgent:
@@ -625,6 +626,10 @@ PrefabInstance:
       propertyPath: _playerCamera
       value: 
       objectReference: {fileID: 1030920485}
+    - target: {fileID: 689112759729198487, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
+      propertyPath: _movementSpeed
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4197368334970314132, guid: 1e3c9d88fb3fac9429260c702a43bd0c, type: 3}
       propertyPath: m_RootOrder
       value: 3

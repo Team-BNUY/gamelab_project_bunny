@@ -12,9 +12,9 @@ namespace AI
 
         protected Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
         protected StateSet beliefStates = new StateSet();
+        protected Action currentAction;
         
         private List<Action> _actions = new List<Action>();
-        private Action _currentAction;
         private Planner _planner;
         private Queue<Action> _actionQueue;
         private Goal _currentGoal;
@@ -47,14 +47,15 @@ namespace AI
         private void LateUpdate()
         {
             // If an action is running
-            if(_currentAction is {Running: true})
+            if(currentAction is {Running: true})
             {
                 // Performs the action if the agent has arrived to destination or if the current action does not have a target location
-                var distanceToTarget = Vector3.Distance(_currentAction.Target, transform.position);
+                var position = transform.position;
+                var distanceToTarget = Vector2.Distance(new Vector2(currentAction.Target.x, currentAction.Target.z), new Vector2(position.x, position.z));
                 
-                if (_currentAction.HasTarget && (!_currentAction.NavMeshAgent.hasPath || !(distanceToTarget < 0.2f))) return;
+                if (currentAction.HasTarget && distanceToTarget > 0.2f) return;
                 
-                _currentAction.Perform();
+                currentAction.Perform();
                 //SetAnimatorParameters();
 
                 return;
@@ -71,10 +72,15 @@ namespace AI
                 {   
                     _actionQueue = _planner.Plan(_actions, goal.Key.StateSet, beliefStates);
 
-                    if (_actionQueue == null) continue;
+                    if (_actionQueue == null)
+                    {
+                        currentAction = null;
+                        continue;
+                    }
                     
                     // Sets the agent's current goal as the first goal by priority order that can be reached through the agent's usable actions 
                     _currentGoal = goal.Key;
+                    
                     break;
                 }
             }
@@ -94,27 +100,27 @@ namespace AI
             if (_actionQueue == null || _actionQueue.Count <= 0) return;
             
             // If the action queue is not empty, dequeues the next actions and sets it as the current action
-            _currentAction = _actionQueue.Dequeue();
+            currentAction = _actionQueue.Dequeue();
             // If the current action's pre-perform conditions have been met
-            if(_currentAction.PrePerform())
+            if(currentAction.PrePerform())
             {
                 // If the current action has no target
-                if(!_currentAction.HasTarget)
+                if(!currentAction.HasTarget)
                 {
-                    _currentAction.Running = true;
+                    currentAction.Running = true;
                     //SetAnimatorParameters();
 
                     return;
                 }
 
-                if (_currentAction.Target == Vector3.zero)
+                if (currentAction.Target == Vector3.zero)
                 {
-                    Debug.LogWarning("You most likely forgot to set a target for " + _currentAction.Name + "!");
+                    Debug.LogWarning("You most likely forgot to set a target for " + currentAction.Name + "!");
                 }
                 
                 // If the current action's destination location is not the zero vector, makes the agent go towards its target location
-                _currentAction.Running = true;
-                _currentAction.NavMeshAgent.SetDestination(_currentAction.Target);
+                currentAction.Running = true;
+                currentAction.NavMeshAgent.SetDestination(currentAction.Target);
                 //SetAnimatorParameters();
             }
             // Resets the planner to allow for a new plan for a new goal to be calculated
@@ -148,8 +154,8 @@ namespace AI
         /// </summary>
         public void CompleteAction()
         {
-            _currentAction.Running = false;
-            if(_currentAction.PostPerform() == false)
+            currentAction.Running = false;
+            if(currentAction.PostPerform() == false)
             {
                 _planner = null;
                 _actionQueue = null;    
@@ -163,9 +169,11 @@ namespace AI
         /// </summary>
         public void InterruptGoal()
         {
+            Debug.Log(currentAction + " interrupted!");
+            
             _actionQueue = null;
-            _currentAction.Running = false;
-            _currentAction = null;
+            currentAction.Running = false;
+            currentAction = null;
         }
         
         /// <summary>

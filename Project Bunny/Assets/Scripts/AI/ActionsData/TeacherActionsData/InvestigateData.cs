@@ -8,14 +8,14 @@ namespace AI.ActionsData.TeacherActionsData
     public class InvestigateData : ActionData
     {
         [Header("Investigate")] 
-        [SerializeField] [Range(0f, 180f)] private float _newFieldOfView;
+        [SerializeField] [Range(0f, 180f)] private float _fieldOfView;
         [SerializeField] [Min(0f)] private float _investigationTime;
     
         public override void Create(Agent agent)
         {
             if (agent is Teacher teacher)
             {
-                var action = new Investigate(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), teacher, hasTarget, _investigationTime, _newFieldOfView);
+                var action = new Investigate(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), teacher, hasTarget, _investigationTime, _fieldOfView);
                 teacher.Actions.Add(action);
             }
             else
