@@ -23,6 +23,7 @@ namespace Player
         [SerializeField] private GameObject _snowballPrefab;
         [SerializeField] private Transform _playerHand;
         [SerializeField] private float _digSnowballMaxTime;
+        // ReSharper disable once NotAccessedField.Local
         private GameObject _playerSnowball;
         private float _digSnowballTimer;
         private bool _isDigging;
@@ -122,10 +123,12 @@ namespace Player
         {
             if (_hasSnowball) return;
             
+            // If action is being performed, start digging
             if (context.performed)
             {
                 _isDigging = true;
             }
+            // If digging is abruptly cancelled, cancel action and reset timer
             if (context.canceled)
             {
                 _isDigging = false;
