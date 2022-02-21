@@ -14,7 +14,7 @@ namespace Player
         [SerializeField] private PlayerInput _playerInput;
         
         [Header("Movement")]
-        [SerializeField] private float _movementSpeed;
+        [SerializeField] [Min(0)] private float _movementSpeed;
         private Vector3 _currentPosition;
         private Quaternion _currentRotation;
 
@@ -22,7 +22,7 @@ namespace Player
         // TODO: Dynamically instantiate and attach prefab from a Manager
         [SerializeField] private GameObject _snowballPrefab;
         [SerializeField] private Transform _playerHand;
-        [SerializeField] private float _digSnowballMaxTime;
+        [SerializeField] [Min(0)] private float _digSnowballMaxTime;
         // ReSharper disable once NotAccessedField.Local
         private GameObject _playerSnowball;
         private float _digSnowballTimer;
@@ -55,6 +55,7 @@ namespace Player
         /// Attach unique instantiated camera with player
         /// </summary>
         /// <param name="cam"></param>
+        // ReSharper disable once UnusedMember.Global
         public void SetCamera(Camera cam)
         {
             _playerCamera = cam;
