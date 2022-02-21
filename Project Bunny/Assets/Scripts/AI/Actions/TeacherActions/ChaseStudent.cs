@@ -7,16 +7,16 @@ namespace AI.Actions.TeacherActions
     {
         private Teacher _teacher;
         private float _speed;
-        private float _fielfOfView;
+        private float _fieldfOfView;
         
         private Transform _target;
         
-        public ChaseStudent(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher teacher, bool hasTarget, float speed, float fielfOfView)
+        public ChaseStudent(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher teacher, bool hasTarget, float speed, float fieldfOfView)
              : base(name, cost, preconditionStates, afterEffectStates, teacher, hasTarget)
         {
             _teacher = teacher;
             _speed = speed;
-            _fielfOfView = fielfOfView;
+            _fieldfOfView = fieldfOfView;
         }
         
         /// <summary>
@@ -32,7 +32,7 @@ namespace AI.Actions.TeacherActions
             {
                 _target = _teacher.TargetStudent.transform;
             }
-
+            
             if (!_target) return false;
             
             agent.AnimationState = AnimationState.Locomotion;
@@ -46,8 +46,10 @@ namespace AI.Actions.TeacherActions
         public override void Perform()
         {
             var targetPosition = _target.position;
-            _teacher.ViewDirection = targetPosition - _teacher.transform.position;
-            _teacher.FieldOfView = _fielfOfView;
+            var teacherPosition = _teacher.transform.position;
+            var onYPlaneTargetPosition = new Vector3(targetPosition.x, teacherPosition.y, targetPosition.z);
+            _teacher.ViewDirection = onYPlaneTargetPosition - teacherPosition;
+            _teacher.FieldOfView = _fieldfOfView;
             
             navMeshAgent.speed = _speed;
             navMeshAgent.SetDestination(targetPosition);

@@ -15,6 +15,7 @@ namespace AI.Agents
         public static event StudentInteraction OnLostBadStudent;
         
         // View parameters
+        [SerializeField] private Transform _head; 
         [SerializeField] [Range(0f, 180f)] private float _fieldOfView;
         [SerializeField] [Min(0f)] private float _viewDistance;
 
@@ -57,7 +58,6 @@ namespace AI.Agents
             // TODO Remove when the Teacher has a default action
             if (currentAction == null)
             {
-                _fieldOfView = 90f;
                 _viewDirection = transform.forward;
             }
             
@@ -73,6 +73,8 @@ namespace AI.Agents
                 OnLostBadStudent?.Invoke(_targetStudent);
                 _targetStudent = null;
             }
+
+            LookAtViewDirection();
         }
         
         /// <summary>
@@ -146,6 +148,12 @@ namespace AI.Agents
 
             return badStudentFound;
         }
+
+        private void LookAtViewDirection()
+        {
+            var lookDirection = Quaternion.LookRotation(_viewDirection, Vector3.up);
+            _head.rotation = lookDirection;
+        }
         
         /// <summary>
         /// Adds the "seesBadStudent" state to the Teacher's beliefs states if not already present
@@ -154,6 +162,12 @@ namespace AI.Agents
         private void FindStudent(StudentController student)
         {
             beliefStates.AddState("seesBadStudent", 1);
+            
+            if (currentAction is {Name: "Investigate"})
+            {
+                currentAction.PostPerform();
+                InterruptGoal();
+            }
         }
 
         /// <summary>
@@ -164,6 +178,12 @@ namespace AI.Agents
         {
             beliefStates.AddState("seesBadStudent", 1);
             RememberStudent(student);
+            
+            if (currentAction is {Name: "Investigate"})
+            {
+                currentAction.PostPerform();
+                InterruptGoal();
+            }
         }
         
         /// <summary>

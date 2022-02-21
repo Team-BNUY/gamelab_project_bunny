@@ -65,15 +65,6 @@ namespace AI.Actions.TeacherActions
         /// </summary>
         public override void Perform()
         {
-            // Interrupts the action if the Teacher found a bad student during the investigation
-            if (_teacher.TargetStudent)
-            {
-                PostPerform();
-                _teacher.InterruptGoal();
-
-                return;
-            }
-            
             _teacher.FieldOfView = _fieldOfView;
             _teacher.ViewDirection = _teacher.transform.forward;
             
