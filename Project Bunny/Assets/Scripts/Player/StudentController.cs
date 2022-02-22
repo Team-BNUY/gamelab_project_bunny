@@ -23,7 +23,9 @@ namespace Player
         [SerializeField] private GameObject _snowballPrefab;
         [SerializeField] private Transform _playerHand;
         [SerializeField] [Min(0)] private float _digSnowballMaxTime;
-        private GameObject _playerSnowball;
+        [SerializeField, Range(0f, 5f)] private float _throwForce;
+        private GameObject _snowballObject;
+        private Snowball _playerSnowball;
         private float _digSnowballTimer;
         private bool _isDigging;
         private bool _hasSnowball;
@@ -37,7 +39,7 @@ namespace Player
             }
             if (_playerInput == null)
             {
-                _playerInput = GetComponent<PlayerInput>();
+                _playerInput = gameObject.GetComponent<PlayerInput>();
             }
         }
 
@@ -72,6 +74,9 @@ namespace Player
             _playerModel.rotation = _currentRotation;
         }
 
+        /// <summary>
+        /// Activates Digging Stopwatch and creates snowball on hand once digging complete
+        /// </summary>
         private void DigSnowball()
         {
             if (_isDigging && !_hasSnowball)
@@ -81,18 +86,26 @@ namespace Player
 
             if (_digSnowballTimer < _digSnowballMaxTime) return;
 
-            _playerSnowball = Instantiate(_snowballPrefab, _playerHand.position, _playerHand.rotation, _playerHand);
+            _snowballObject = Instantiate(_snowballPrefab, _playerHand.position, _playerHand.rotation, _playerHand);
+            // TODO: Object pooling to avoid using GetComponent at Instantiation
+            _playerSnowball = _snowballObject.GetComponent<Snowball>();
+            _playerSnowball.SetSnowballThrower(this);
             _hasSnowball = true;
             _isDigging = false;
             _digSnowballTimer = 0.0f;
         }
 
+        /// <summary>
+        /// Throws snowball once activated
+        /// </summary>
         private void ThrowSnowball()
         {
-            if (_playerSnowball != null)
-            {
-                _playerSnowball.transform.parent = null;
-            }
+            if (_playerSnowball == null) return;
+            
+            _playerSnowball.ThrowSnowball(_throwForce);
+            _hasSnowball = false;
+            _snowballObject = null;
+            _playerSnowball = null;
         }
 
         #endregion
@@ -144,13 +157,18 @@ namespace Player
             }
         }
 
+        /// <summary>
+        /// DO NOT CHANGE NAME: Activates the throwing of the snowball
+        /// </summary>
+        /// <param name="context"></param>
+        // ReSharper disable once UnusedMember.Global
         public void OnThrow(InputAction.CallbackContext context)
         {
             if (!_hasSnowball) return;
 
             if (context.performed)
             {
-                
+                ThrowSnowball();
             }
         }
 
