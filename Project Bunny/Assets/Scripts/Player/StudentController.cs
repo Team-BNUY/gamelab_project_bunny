@@ -23,7 +23,6 @@ namespace Player
         [SerializeField] private GameObject _snowballPrefab;
         [SerializeField] private Transform _playerHand;
         [SerializeField] [Min(0)] private float _digSnowballMaxTime;
-        // ReSharper disable once NotAccessedField.Local
         private GameObject _playerSnowball;
         private float _digSnowballTimer;
         private bool _isDigging;
@@ -88,6 +87,14 @@ namespace Player
             _digSnowballTimer = 0.0f;
         }
 
+        private void ThrowSnowball()
+        {
+            if (_playerSnowball != null)
+            {
+                _playerSnowball.transform.parent = null;
+            }
+        }
+
         #endregion
         
         
@@ -134,6 +141,16 @@ namespace Player
             {
                 _isDigging = false;
                 _digSnowballTimer = 0.0f;
+            }
+        }
+
+        public void OnThrow(InputAction.CallbackContext context)
+        {
+            if (!_hasSnowball) return;
+
+            if (context.performed)
+            {
+                
             }
         }
 
