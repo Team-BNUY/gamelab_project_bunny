@@ -15,6 +15,7 @@ namespace Player
         
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
+        [SerializeField] [Range(0f, 1f)] private float _playerGravity;
         private Vector3 _currentPosition;
         private Quaternion _currentRotation;
 
@@ -121,7 +122,9 @@ namespace Player
         public void OnMove(InputAction.CallbackContext context)
         {
             var inputMovement = context.ReadValue<Vector2>();
+            var gravity = _playerGravity * Time.deltaTime * 100f;
             _currentPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
+            _currentPosition.y -= gravity;
         }
 
         /// <summary>
