@@ -15,7 +15,7 @@ namespace Player
         
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
-        [SerializeField] [Range(0f, 1f)] private float _playerGravity;
+        [SerializeField] [Range(0f, 3f)] private float _playerGravity;
         private Vector3 _currentPosition;
         private Quaternion _currentRotation;
 
@@ -50,6 +50,7 @@ namespace Player
             {
                 MoveStudent();
             }
+
             DigSnowball();
         }
         
@@ -145,7 +146,7 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnDig(InputAction.CallbackContext context)
         {
-            if (_hasSnowball) return;
+            if (_hasSnowball || !_characterController.isGrounded) return;
             
             // If action is being performed, start digging
             if (context.performed)
