@@ -5,19 +5,30 @@ using Photon.Pun;
 
 namespace Player
 {
-    public class NetworkStudentController : MonoBehaviourPunCallbacks, IPunObservable
+    public class NetworkStudentController : MonoBehaviourPunCallbacks
     {
         [Header("Components")]
         [SerializeField] private Transform _playerModel;
-        [SerializeField] private Camera _playerCamera;
-        [SerializeField] private CinemachineVirtualCamera _playerVirtualCamera;
+        [SerializeField] private GameObject _playerCameraPrefab;
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
-        
-        [Header("Input")]
-        [SerializeField] private float _movementSpeed;
+        private Camera _playerCamera;
+
+        [Header("Movement")]
+        [SerializeField] [Min(0)] private float _movementSpeed;
         private Vector3 _currentPosition;
         private Quaternion _currentRotation;
+
+        [Header("Snowball")]
+        // TODO: Dynamically instantiate and attach prefab from a Manager
+        [SerializeField] private GameObject _snowballPrefab;
+        [SerializeField] private Transform _playerHand;
+        [SerializeField] [Min(0)] private float _digSnowballMaxTime;
+        // ReSharper disable once NotAccessedField.Local
+        private GameObject _playerSnowball;
+        private float _digSnowballTimer;
+        private bool _isDigging;
+        private bool _hasSnowball;
 
         [Header("Network")]
         private PhotonView _view;
@@ -37,6 +48,7 @@ namespace Player
                 _playerInput = GetComponent<PlayerInput>();
             }
 
+            SetCamera();
             _playerInput.actionEvents[0].AddListener(OnMove);
             _playerInput.actionEvents[1].AddListener(OnLook);
         }
@@ -45,7 +57,11 @@ namespace Player
         {
             if (!_view.IsMine) return;
 
-            MoveStudent();
+            if (!_isDigging)
+            {
+                MoveStudent();
+            }
+            DigSnowball();
         }
 
         /// <summary>
@@ -53,44 +69,94 @@ namespace Player
         /// TODO: Find a better system to attach instantiated camera to player
         /// </summary>
         /// <param name="cam"></param>
-        public void SetCamera(GameObject cam)
+        public void SetCamera()
         {
-            _playerCamera = cam.transform.GetChild(0).GetComponent<Camera>();
-            _playerVirtualCamera = cam.GetComponent<CinemachineVirtualCamera>();
-            _playerVirtualCamera.Follow = gameObject.transform;
+            if (!_view.IsMine) return;
+
+            if (_playerCamera != null)
+            {
+                GameObject playerCamera = GameObject.Instantiate(_playerCameraPrefab, Vector3.zero, Quaternion.identity);
+                _playerCamera = playerCamera.transform.GetChild(0).GetComponent<Camera>();
+                playerCamera.GetComponent<CinemachineVirtualCamera>().Follow = gameObject.transform;
+            }
         }
 
-        #region InputSystem
+        #region Actions
 
+        /// <summary>
+        /// Change player's position and orientation in global axes
+        /// </summary>
         private void MoveStudent()
         {
             _characterController.Move(_currentPosition * (_movementSpeed * Time.deltaTime));
             _playerModel.rotation = _currentRotation;
         }
 
+        private void DigSnowball()
+        {
+            if (_isDigging && !_hasSnowball)
+            {
+                _digSnowballTimer += Time.deltaTime;
+            }
+
+            if (_digSnowballTimer < _digSnowballMaxTime) return;
+
+            _playerSnowball = Instantiate(_snowballPrefab, _playerHand.position, _playerHand.rotation, _playerHand);
+            _hasSnowball = true;
+            _isDigging = false;
+            _digSnowballTimer = 0.0f;
+        }
+
+        #endregion
+
+        #region InputSystem
+
         /// <summary>
         /// DO NOT CHANGE NAME: Translates 2D Vector input action into position coordinates in world space
         /// </summary>
-        /// <param name="value"></param>
-        public void OnMove(InputAction.CallbackContext value)
+        /// <param name="context"></param>
+        // ReSharper disable once UnusedMember.Global
+        public void OnMove(InputAction.CallbackContext context)
         {
-            if (!_view.IsMine) return;
-            var inputMovement = value.ReadValue<Vector2>();
+            var inputMovement = context.ReadValue<Vector2>();
             _currentPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
         }
 
         /// <summary>
         /// DO NOT CHANGE NAME: Translate mouse 2D Vector input action into angular rotation
         /// </summary>
-        public void OnLook(InputAction.CallbackContext value)
+        // ReSharper disable once UnusedMember.Global
+        public void OnLook(InputAction.CallbackContext arg)
         {
-            if (!_view.IsMine) return;
             var mousePosition = Mouse.current.position.ReadValue();
             var rotation = MousePosToRotationInput(mousePosition);
-            transform.rotation = Quaternion.Euler(0f, rotation, 0f);
+            _currentRotation = Quaternion.Euler(0f, rotation, 0f);
         }
 
-        
+        /// <summary>
+        /// DO NOT CHANGE NAME: Enables for digging process to occur
+        /// </summary>
+        /// <param name="context"></param>
+        // ReSharper disable once UnusedMember.Global
+        public void OnDig(InputAction.CallbackContext context)
+        {
+            if (_hasSnowball) return;
+
+            // If action is being performed, start digging
+            if (context.performed)
+            {
+                _isDigging = true;
+            }
+            // If digging is abruptly cancelled, cancel action and reset timer
+            if (context.canceled)
+            {
+                _isDigging = false;
+                _digSnowballTimer = 0.0f;
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Utility function that uses mouse position to return angle between player and on-screen mouse pointer
         /// TODO: Put in Utilities script
@@ -102,7 +168,7 @@ namespace Player
             var target = _playerModel.transform;
             if (_playerCamera is { })
             {
-                var objectPos =  _playerCamera.WorldToScreenPoint(target.position);
+                var objectPos = _playerCamera.WorldToScreenPoint(target.position);
 
                 mousePos.x -= objectPos.x;
                 mousePos.y -= objectPos.y;
@@ -111,23 +177,5 @@ namespace Player
             var angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
             return 90 - angle;
         }
-
-        // ReSharper disable Unity.PerformanceAnalysis
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        {
-            if (stream.IsWriting)
-            {
-                // We own this player: send the others our data
-                stream.SendNext(_movementSpeed);
-            }
-            else
-            {
-                // Network player, receive data
-                _movementSpeed = (float)stream.ReceiveNext();
-            }
-        }
-
-        #endregion
     }
 }
-
