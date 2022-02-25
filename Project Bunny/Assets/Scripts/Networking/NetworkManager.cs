@@ -17,7 +17,7 @@ namespace Networking
         private void SpawnPlayer()
         {
             NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
-            player.SetCamera(_playerCamera);
+            player.SetCamera(GameObject.Instantiate(_playerCamera));
         }
     }
 }
