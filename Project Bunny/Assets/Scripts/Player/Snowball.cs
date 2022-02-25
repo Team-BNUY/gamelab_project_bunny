@@ -13,8 +13,7 @@ namespace Player
         private float _throwForce;
         private float _mass;
         private float _initialVelocity;
-        private float _gravity;
-        private readonly float _collisionCheckRadius = 0.1f;
+        private readonly float _collisionCheckRadius = 0.05f;
 
         // ReSharper disable once NotAccessedField.Local
         private StudentController _studentThrower;
@@ -34,10 +33,9 @@ namespace Player
             _lineRenderer.enabled = false;
         }
 
-        public void SetSnowballParams(float force, float gravity)
+        public void SetSnowballParams(float force)
         {
             _throwForce = force * 1000f;
-            _gravity = gravity;
         }
 
         public void DrawTrajectory()
@@ -52,52 +50,51 @@ namespace Player
         
         private List<Vector3> SimulateArc()
         {
-            var lineRendererPoints = new List<Vector3>(); //Reset LineRenderer List for new calculation
+            var lineRendererPoints = new List<Vector3>();
             
-            const float maxDuration = 2f; //INPUT amount of total time for simulation
-            const float timeStepInterval = 0.1f; //INPUT amount of time between each position check
-            const int maxSteps = (int)(maxDuration / timeStepInterval); //Calculates amount of steps simulation will iterate for
-            var directionVector = transform.up; //INPUT launch direction (This Vector3 is automatically normalized for us, keeping it in low and communicable terms)
-            var launchPosition = _snowballTransform.position + _snowballTransform.up; //INPUT launch origin (Important to make sure RayCast is ignoring some layers (easiest to use default Layer 2))
+            const float maxDuration = 1f;
+            const float timeStepInterval = 0.1f;
+            const int maxSteps = (int)(maxDuration / timeStepInterval);
+            var directionVector = transform.forward + new Vector3(0f, 0.2f, 0.0f);
+            var launchPosition = _snowballTransform.position + _snowballTransform.forward;
             
             _initialVelocity = _throwForce / _mass * Time.fixedDeltaTime; //Velocity = Force / Mass * time
             
             for (var i = 0; i < maxSteps; ++i)
             {
                 //Remember f(t) = (x0 + x*t, y0 + y*t - 9.81t²/2)
-                //calculatedPosition = Origin + (transform.up * (speed * which step * the length of a step);
+                //calculatedPosition = Origin + (transform.forward * (speed * which step * the length of a step);
                 var calculatedPosition = launchPosition + directionVector * (_initialVelocity * i * timeStepInterval); //Move both X and Y at a constant speed per Interval
                 calculatedPosition.y += Physics.gravity.y/2 * Mathf.Pow(i * timeStepInterval, 2); //Subtract Gravity from Y
 
-                lineRendererPoints.Add(calculatedPosition); //Add this to the next entry on the list
+                lineRendererPoints.Add(calculatedPosition);
 
                 if (CheckForCollision(calculatedPosition)) //if you hit something, stop adding positions
                 {
-                    break; //stop adding positions
+                    break;
                 }
             }
             return lineRendererPoints;
         }
         
-        private bool CheckForCollision(Vector2 position)
+        private bool CheckForCollision(Vector3 position)
         {
             var hits = Physics.OverlapSphere(position, _collisionCheckRadius); //Measure collision via a small circle at the latest position, dont continue simulating Arc if hit
             return hits.Length > 0;
         }
-    
 
         /// <summary>
         /// Throws Snowball by the Student
         /// </summary>
         /// <param name="force"></param>
-        public void ThrowSnowball(float force)
+        public void ThrowSnowball()
         {
             transform.parent = null;
             _snowballRigidbody.isKinematic = false;
             // TODO: Direction will be handled via hand release on Animation
             var direction = new Vector3(0f, 0.2f, 0.0f);
             direction += _snowballTransform.forward;
-            _snowballRigidbody.AddForce(direction.normalized * force * 1000f);
+            _snowballRigidbody.AddForce(direction.normalized * _throwForce);
             _lineRenderer.enabled = false;
         }
 

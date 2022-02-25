@@ -97,7 +97,7 @@ namespace Player
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _snowballObject.GetComponent<Snowball>();
             _playerSnowball.SetSnowballThrower(this);
-            _playerSnowball.SetSnowballParams(_throwForce , Physics.gravity.y);
+            _playerSnowball.SetSnowballParams(_throwForce);
             _hasSnowball = true;
             _isDigging = false;
             _digSnowballTimer = 0.0f;
@@ -110,7 +110,7 @@ namespace Player
         {
             if (_playerSnowball == null) return;
             
-            _playerSnowball.ThrowSnowball(_throwForce);
+            _playerSnowball.ThrowSnowball();
             _hasSnowball = false;
             _snowballObject = null;
             _playerSnowball = null;
