@@ -216,11 +216,14 @@ MonoBehaviour:
   _characterController: {fileID: 4197368334970314122}
   _playerInput: {fileID: 4197368334970314121}
   _movementSpeed: 10
-  _playerGravity: 2.11
   _snowballPrefab: {fileID: 9027766068581955839, guid: 307af400da2c72f4f9ef1bbacdf9dae4, type: 3}
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 8
   _playerHand: {fileID: 7425404115485554744}
   _digSnowballMaxTime: 2
-  _forceThreshold: 1.5
+  _minForce: 0
+  _maxForce: 0
   _forceIncreaseTimeRate: 1
 --- !u!1 &4197368335467973758
 GameObject:
