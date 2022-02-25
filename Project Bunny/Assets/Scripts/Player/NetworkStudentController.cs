@@ -9,7 +9,6 @@ namespace Player
     {
         [Header("Components")]
         [SerializeField] private Transform _playerModel;
-        [SerializeField] private GameObject _playerCameraPrefab;
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
         private Camera _playerCamera;
@@ -48,9 +47,12 @@ namespace Player
                 _playerInput = GetComponent<PlayerInput>();
             }
 
-            SetCamera();
             _playerInput.actionEvents[0].AddListener(OnMove);
             _playerInput.actionEvents[1].AddListener(OnLook);
+
+            //Test Case
+            //TODO: Add whatever UI we'll have for player name, health, whatever
+            Debug.Log(PhotonNetwork.NickName);
         }
 
         private void FixedUpdate()
@@ -69,13 +71,13 @@ namespace Player
         /// TODO: Find a better system to attach instantiated camera to player
         /// </summary>
         /// <param name="cam"></param>
-        public void SetCamera()
+        public void SetCamera(GameObject playerCamera)
         {
             if (!_view.IsMine) return;
 
             if (_playerCamera != null)
             {
-                GameObject playerCamera = GameObject.Instantiate(_playerCameraPrefab, Vector3.zero, Quaternion.identity);
+                //TODO: object pooling
                 _playerCamera = playerCamera.transform.GetChild(0).GetComponent<Camera>();
                 playerCamera.GetComponent<CinemachineVirtualCamera>().Follow = gameObject.transform;
             }
