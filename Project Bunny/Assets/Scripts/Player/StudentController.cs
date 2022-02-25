@@ -5,6 +5,7 @@ namespace Player
 {
     [SelectionBase]
     [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(PlayerInput))]
     public class StudentController : MonoBehaviour
     {
         [Header("Components")]
@@ -21,6 +22,7 @@ namespace Player
         [Header("Snowball")]
         // TODO: Dynamically instantiate and attach prefab from a Manager
         [SerializeField] private GameObject _snowballPrefab;
+        [SerializeField] private LayerMask _layerMask;
         [SerializeField] private Transform _playerHand;
         [SerializeField] [Min(0)] private float _digSnowballMaxTime;
         [SerializeField] private float _minForce;
@@ -28,6 +30,8 @@ namespace Player
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
         private GameObject _snowballObject;
         private Snowball _playerSnowball;
+        // ReSharper disable once NotAccessedField.Local
+        private LayerMask _currentLayerStanding;
         private float _throwForce;
         private float _digSnowballTimer;
         private bool _isDigging;
@@ -50,6 +54,8 @@ namespace Player
 
         private void Update()
         {
+            GetStandingGround();
+            
             if (!_isDigging)
             {
                 MoveStudent();
@@ -201,6 +207,23 @@ namespace Player
                 ThrowSnowball();
             }
         }
+
+        #endregion
+
+        #region Utilities
+
+        /// <summary>
+        /// Track the current layer of the ground object is standing on
+        /// </summary>
+        private void GetStandingGround()
+        {
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out var hit, 1.0f, _layerMask)) 
+            {
+                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
+                _currentLayerStanding = hit.collider.gameObject.layer;
+            } 
+        }
+        
 
         #endregion
         
