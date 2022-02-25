@@ -136,7 +136,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.2545459
+        value: 0.19999573
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -149,8 +149,8 @@ LineRenderer:
     colorGradient:
       serializedVersion: 2
       key0: {r: 1, g: 1, b: 1, a: 0}
-      key1: {r: 1, g: 1, b: 1, a: 0.78431374}
-      key2: {r: 1, g: 1, b: 1, a: 0.78431374}
+      key1: {r: 1, g: 1, b: 1, a: 0.6862745}
+      key2: {r: 1, g: 1, b: 1, a: 0.6862745}
       key3: {r: 1, g: 1, b: 1, a: 0}
       key4: {r: 1, g: 1, b: 1, a: 0}
       key5: {r: 0, g: 0, b: 0, a: 0}
@@ -165,10 +165,10 @@ LineRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 4241
-      atime2: 62837
+      atime1: 3277
+      atime2: 62258
       atime3: 65535
-      atime4: 0
+      atime4: 65535
       atime5: 0
       atime6: 0
       atime7: 0
@@ -227,3 +227,6 @@ MonoBehaviour:
   _snowballRigidbody: {fileID: -152660347859332919}
   _snowballTransform: {fileID: 5548079061548076500}
   _lineRenderer: {fileID: -5339425659748857153}
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 8

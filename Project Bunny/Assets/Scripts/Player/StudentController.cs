@@ -3,8 +3,8 @@ using UnityEngine.InputSystem;
 
 namespace Player
 {
-    
     [SelectionBase]
+    [RequireComponent(typeof(CharacterController))]
     public class StudentController : MonoBehaviour
     {
         [Header("Components")]
@@ -15,7 +15,6 @@ namespace Player
         
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
-        [SerializeField] [Range(0f, 3f)] private float _playerGravity;
         private Vector3 _currentPosition;
         private Quaternion _currentRotation;
 
@@ -24,12 +23,16 @@ namespace Player
         [SerializeField] private GameObject _snowballPrefab;
         [SerializeField] private Transform _playerHand;
         [SerializeField] [Min(0)] private float _digSnowballMaxTime;
-        [SerializeField, Range(0f, 5f)] private float _throwForce;
+        [SerializeField] private float _minForce;
+        [SerializeField] private float _maxForce;
+        [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
         private GameObject _snowballObject;
         private Snowball _playerSnowball;
+        private float _throwForce;
         private float _digSnowballTimer;
         private bool _isDigging;
         private bool _hasSnowball;
+        private bool _isAiming;
 
 
         private void Awake()
@@ -42,23 +45,28 @@ namespace Player
             {
                 _playerInput = gameObject.GetComponent<PlayerInput>();
             }
+            _throwForce = _minForce;
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             if (!_isDigging)
             {
                 MoveStudent();
             }
-
-            if (_hasSnowball)
+            
+            if (_isAiming)
             {
+                if (_throwForce <= _maxForce)
+                {
+                    IncreaseThrowForce();
+                }
                 _playerSnowball.DrawTrajectory();
             }
-
+            
             DigSnowball();
         }
-        
+
         /// <summary>
         /// Attach unique instantiated camera with player
         /// </summary>
@@ -97,10 +105,15 @@ namespace Player
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _snowballObject.GetComponent<Snowball>();
             _playerSnowball.SetSnowballThrower(this);
-            _playerSnowball.SetSnowballParams(_throwForce);
             _hasSnowball = true;
             _isDigging = false;
             _digSnowballTimer = 0.0f;
+        }
+
+        private void IncreaseThrowForce()
+        {
+            _throwForce += Time.deltaTime * _forceIncreaseTimeRate;
+            _playerSnowball.SetSnowballForce(_throwForce);
         }
 
         /// <summary>
@@ -129,9 +142,9 @@ namespace Player
         public void OnMove(InputAction.CallbackContext context)
         {
             var inputMovement = context.ReadValue<Vector2>();
-            var gravity = _playerGravity * Time.deltaTime * 100f;
+            var gravity = Physics.gravity.y * Time.deltaTime * 100f;
             _currentPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
-            _currentPosition.y -= gravity;
+            _currentPosition.y += gravity;
         }
 
         /// <summary>
@@ -178,6 +191,13 @@ namespace Player
 
             if (context.performed)
             {
+                _isAiming = true;
+            }
+
+            if (context.canceled)
+            {
+                _isAiming = false;
+                _throwForce = _minForce;
                 ThrowSnowball();
             }
         }

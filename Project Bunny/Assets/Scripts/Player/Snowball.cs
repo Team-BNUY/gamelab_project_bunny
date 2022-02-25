@@ -33,21 +33,32 @@ namespace Player
             _lineRenderer.enabled = false;
         }
 
-        public void SetSnowballParams(float force)
+        /// <summary>
+        /// Set Snowball Force through StudentController.cs
+        /// </summary>
+        /// <param name="force"></param>
+        public void SetSnowballForce(float force)
         {
             _throwForce = force * 1000f;
         }
 
+        /// <summary>
+        /// Draw the predictive trajectory using the Simulation Arc method
+        /// </summary>
         public void DrawTrajectory()
         {
             _lineRenderer.enabled = true;
             _lineRenderer.positionCount = SimulateArc().Count;
-            for (var a = 0; a < _lineRenderer.positionCount; a++)
+            for (var index = 0; index < _lineRenderer.positionCount; index++)
             {
-                _lineRenderer.SetPosition(a, SimulateArc()[a]); //Add each Calculated Step to a LineRenderer to display a Trajectory. Look inside LineRenderer in Unity to see exact points and amount of them
+                _lineRenderer.SetPosition(index, SimulateArc()[index]);
             }
         }
         
+        /// <summary>
+        /// Calculates the positions of the next steps using kinematics
+        /// </summary>
+        /// <returns>A list of Vector3 positions that will be used for the line renderer</returns>
         private List<Vector3> SimulateArc()
         {
             var lineRendererPoints = new List<Vector3>();
@@ -69,7 +80,7 @@ namespace Player
 
                 lineRendererPoints.Add(calculatedPosition);
 
-                if (CheckForCollision(calculatedPosition)) //if you hit something, stop adding positions
+                if (CheckForCollision(calculatedPosition))
                 {
                     break;
                 }
@@ -77,8 +88,14 @@ namespace Player
             return lineRendererPoints;
         }
         
+        /// <summary>
+        /// Check if current position in the world is within another object with a collider
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
         private bool CheckForCollision(Vector3 position)
         {
+            // TODO: Use OverlapSphereNoAlloc()
             var hits = Physics.OverlapSphere(position, _collisionCheckRadius); //Measure collision via a small circle at the latest position, dont continue simulating Arc if hit
             return hits.Length > 0;
         }
@@ -86,7 +103,6 @@ namespace Player
         /// <summary>
         /// Throws Snowball by the Student
         /// </summary>
-        /// <param name="force"></param>
         public void ThrowSnowball()
         {
             transform.parent = null;
