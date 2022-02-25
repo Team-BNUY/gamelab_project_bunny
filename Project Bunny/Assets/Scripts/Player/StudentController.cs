@@ -30,7 +30,7 @@ namespace Player
         private float _digSnowballTimer;
         private bool _isDigging;
         private bool _hasSnowball;
-        
+
 
         private void Awake()
         {
@@ -49,6 +49,11 @@ namespace Player
             if (!_isDigging)
             {
                 MoveStudent();
+            }
+
+            if (_hasSnowball)
+            {
+                _playerSnowball.DrawTrajectory();
             }
 
             DigSnowball();
@@ -92,6 +97,7 @@ namespace Player
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _snowballObject.GetComponent<Snowball>();
             _playerSnowball.SetSnowballThrower(this);
+            _playerSnowball.SetSnowballParams(_throwForce , Physics.gravity.y);
             _hasSnowball = true;
             _isDigging = false;
             _digSnowballTimer = 0.0f;
