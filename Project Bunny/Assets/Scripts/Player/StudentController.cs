@@ -61,7 +61,7 @@ namespace Player
                 MoveStudent();
             }
             
-            if (_isAiming)
+            if (_isAiming && _hasSnowball)
             {
                 if (_throwForce <= _maxForce)
                 {
