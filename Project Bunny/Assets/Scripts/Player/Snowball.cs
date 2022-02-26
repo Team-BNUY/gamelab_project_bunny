@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace Player
@@ -12,6 +10,7 @@ namespace Player
         [SerializeField] private Transform _snowballTransform;
         [SerializeField] private LineRenderer _lineRenderer;
         [SerializeField] private ParticleSystem _snowballBurst;
+        [SerializeField] private SnowballType _snowballType;
 
         private float _throwForce;
         private float _mass;
