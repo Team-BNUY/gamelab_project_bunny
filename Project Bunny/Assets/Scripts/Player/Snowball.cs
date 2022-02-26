@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace Player
@@ -9,6 +11,7 @@ namespace Player
         [SerializeField] private Rigidbody _snowballRigidbody;
         [SerializeField] private Transform _snowballTransform;
         [SerializeField] private LineRenderer _lineRenderer;
+        [SerializeField] private ParticleSystem _snowballBurst;
 
         private float _throwForce;
         private float _mass;
@@ -122,6 +125,14 @@ namespace Player
         public void SetSnowballThrower(StudentController student)
         {
             _studentThrower = student;
+        }
+
+        private void OnCollisionEnter(Collision other)
+        {
+            GameObject go = Instantiate(_snowballBurst.gameObject, transform.position, Quaternion.identity);
+            go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
+            go.GetComponent<ParticleSystem>().Play();
+            Destroy(gameObject);
         }
     }
 }
