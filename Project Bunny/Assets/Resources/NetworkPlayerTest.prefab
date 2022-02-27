@@ -26,12 +26,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1118839828153729745}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5824, z: 0.3437}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.58239996, z: 0.3437}
   m_LocalScale: {x: 0.5, y: 0.2404594, z: 0.49141818}
   m_Children: []
-  m_Father: {fileID: 1118839828255377483}
-  m_RootOrder: 1
+  m_Father: {fileID: 1118839828625857796}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1118839828153729741
 MeshFilter:
@@ -128,7 +128,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1118839828625857796}
-  - {fileID: 1118839828153729746}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -190,11 +189,35 @@ MonoBehaviour:
     m_ActionId: 5651c2f7-1daf-48fe-9dd9-2307a62479db
     m_ActionName: Player/Look[/Mouse/delta]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2104885480262047604}
+        m_TargetAssemblyTypeName: Player.NetworkStudentController, Assembly-CSharp
+        m_MethodName: OnDig
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: cb613a32-a0dc-471c-b820-cb4c1e960965
     m_ActionName: Player/Dig[/Mouse/rightButton,/XInputControllerWindows/rightShoulder]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2104885480262047604}
+        m_TargetAssemblyTypeName: Player.NetworkStudentController, Assembly-CSharp
+        m_MethodName: OnThrow
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: f52ce73c-3a69-4b49-b331-caf3dfe296f8
     m_ActionName: Player/Throw[/Mouse/leftButton,/XInputControllerWindows/leftShoulder]
   m_NeverAutoSwitchControlSchemes: 0
@@ -236,9 +259,11 @@ MonoBehaviour:
   _characterController: {fileID: 1118839828255377481}
   _playerInput: {fileID: 1118839828255377482}
   _movementSpeed: 10
-  _snowballPrefab: {fileID: 9027766068581955839, guid: 307af400da2c72f4f9ef1bbacdf9dae4, type: 3}
-  _playerHand: {fileID: 1118839828625857796}
-  _digSnowballMaxTime: 0
+  _playerGravity: 2
+  _snowballPrefab: {fileID: 1660130140806720925, guid: c69d7e02ed59a1847ac2f91b4edb99b9, type: 3}
+  _playerHand: {fileID: 4083570823518770258}
+  _digSnowballMaxTime: 1.5
+  _throwForce: 2.5
 --- !u!114 &4226020307260982628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -306,7 +331,9 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1118839828153729746}
+  - {fileID: 4083570823518770258}
   m_Father: {fileID: 1118839828255377483}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -359,3 +386,33 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &7783840833984272832
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4083570823518770258}
+  m_Layer: 0
+  m_Name: Hand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4083570823518770258
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7783840833984272832}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.628, y: 0.165, z: 0.563}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1118839828625857796}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

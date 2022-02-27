@@ -5,16 +5,18 @@ using Photon.Pun;
 
 namespace Player
 {
-    public class NetworkStudentController : MonoBehaviourPunCallbacks
+    public class NetworkStudentController : MonoBehaviourPunCallbacks, IPunObservable
     {
         [Header("Components")]
         [SerializeField] private Transform _playerModel;
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
         private Camera _playerCamera;
+        private CinemachineVirtualCamera _playerVirtualCamera;
 
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
+        [SerializeField] [Range(0f, 3f)] private float _playerGravity;
         private Vector3 _currentPosition;
         private Quaternion _currentRotation;
 
@@ -23,8 +25,9 @@ namespace Player
         [SerializeField] private GameObject _snowballPrefab;
         [SerializeField] private Transform _playerHand;
         [SerializeField] [Min(0)] private float _digSnowballMaxTime;
-        // ReSharper disable once NotAccessedField.Local
-        private GameObject _playerSnowball;
+        [SerializeField, Range(0f, 5f)] private float _throwForce;
+        private GameObject _snowballObject;
+        private NetworkSnowball _playerSnowball;
         private float _digSnowballTimer;
         private bool _isDigging;
         private bool _hasSnowball;
@@ -55,7 +58,7 @@ namespace Player
             Debug.Log(PhotonNetwork.NickName);
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             if (!_view.IsMine) return;
 
@@ -75,11 +78,12 @@ namespace Player
         {
             if (!_view.IsMine) return;
 
-            if (_playerCamera != null)
+            if (playerCamera != null)
             {
                 //TODO: object pooling
-                _playerCamera = playerCamera.transform.GetChild(0).GetComponent<Camera>();
-                playerCamera.GetComponent<CinemachineVirtualCamera>().Follow = gameObject.transform;
+                _playerCamera = playerCamera.GetComponentInChildren<Camera>();
+                _playerVirtualCamera = playerCamera.GetComponent<CinemachineVirtualCamera>();
+                _playerVirtualCamera.Follow = gameObject.transform;
             }
         }
 
@@ -94,8 +98,13 @@ namespace Player
             _playerModel.rotation = _currentRotation;
         }
 
+        /// <summary>
+        /// Activates Digging Stopwatch and creates snowball on hand once digging complete
+        /// </summary>
         private void DigSnowball()
         {
+            if (!_view.IsMine) return;
+
             if (_isDigging && !_hasSnowball)
             {
                 _digSnowballTimer += Time.deltaTime;
@@ -103,10 +112,26 @@ namespace Player
 
             if (_digSnowballTimer < _digSnowballMaxTime) return;
 
-            _playerSnowball = Instantiate(_snowballPrefab, _playerHand.position, _playerHand.rotation, _playerHand);
+            _snowballObject = Instantiate(_snowballPrefab, _playerHand.position, _playerHand.rotation, _playerHand);
+            // TODO: Object pooling to avoid using GetComponent at Instantiation
+            _playerSnowball = _snowballObject.GetComponent<NetworkSnowball>();
+            _playerSnowball.SetSnowballThrower(this);
             _hasSnowball = true;
             _isDigging = false;
             _digSnowballTimer = 0.0f;
+        }
+
+        /// <summary>
+        /// Throws snowball once activated
+        /// </summary>
+        private void ThrowSnowball()
+        {
+            if (_playerSnowball == null) return;
+
+            _playerSnowball.ThrowSnowball(_throwForce);
+            _hasSnowball = false;
+            _snowballObject = null;
+            _playerSnowball = null;
         }
 
         #endregion
@@ -121,14 +146,16 @@ namespace Player
         public void OnMove(InputAction.CallbackContext context)
         {
             var inputMovement = context.ReadValue<Vector2>();
+            var gravity = _playerGravity * Time.deltaTime * 100f;
             _currentPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
+            _currentPosition.y -= gravity;
         }
 
         /// <summary>
         /// DO NOT CHANGE NAME: Translate mouse 2D Vector input action into angular rotation
         /// </summary>
         // ReSharper disable once UnusedMember.Global
-        public void OnLook(InputAction.CallbackContext arg)
+        public void OnLook(InputAction.CallbackContext context)
         {
             var mousePosition = Mouse.current.position.ReadValue();
             var rotation = MousePosToRotationInput(mousePosition);
@@ -142,7 +169,7 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnDig(InputAction.CallbackContext context)
         {
-            if (_hasSnowball) return;
+            if (_hasSnowball || !_characterController.isGrounded) return;
 
             // If action is being performed, start digging
             if (context.performed)
@@ -154,6 +181,21 @@ namespace Player
             {
                 _isDigging = false;
                 _digSnowballTimer = 0.0f;
+            }
+        }
+
+        /// <summary>
+        /// DO NOT CHANGE NAME: Activates the throwing of the snowball
+        /// </summary>
+        /// <param name="context"></param>
+        // ReSharper disable once UnusedMember.Global
+        public void OnThrow(InputAction.CallbackContext context)
+        {
+            if (!_hasSnowball) return;
+
+            if (context.performed)
+            {
+                ThrowSnowball();
             }
         }
 
@@ -178,6 +220,27 @@ namespace Player
 
             var angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
             return 90 - angle;
+        }
+
+        /// <summary>
+        /// This is a very important method, it basically is entirely responsible for syncing the object on the network.
+        /// If (stream.IsWriting) == true, it means that we own the player, so transmit data to everyone else on the network (hence, write)
+        /// Else, we read information based on the current position and rotation.
+        /// Note, that position and rotation are already transmitted because of the network transform.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+              //  stream.SendNext(_currentPosition);
+              //  stream.SendNext(_currentRotation);
+            }
+            else {
+              //  this._currentPosition = (Vector3)stream.ReceiveNext();
+              //  this._currentRotation = (Quaternion)stream.ReceiveNext();
+            }
         }
     }
 }
