@@ -57,6 +57,8 @@ namespace Player
 
         private void Update()
         {
+            SetStandingGround();
+            
             if (!_isDigging)
             {
                 MoveStudent();
@@ -76,7 +78,10 @@ namespace Player
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
-            _currentStandingGround = hit.gameObject.layer;
+            if (hit.collider.gameObject.TryGetComponent<GiantRollball>(out var giantRollball))
+            {
+                giantRollball.PushGiantRollball(transform);
+            }
         }
 
         #endregion
@@ -150,6 +155,18 @@ namespace Player
             }
         }
 
+        /// <summary>
+        /// Track the layer of the object the player is standing on
+        /// </summary>
+        public void SetStandingGround()
+        {
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out var hit, 1.0f))
+            {
+                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
+                _currentStandingGround = hit.collider.gameObject.layer;
+            }
+        }
+
         #endregion
         
 
@@ -180,7 +197,7 @@ namespace Player
         }
 
         /// <summary>
-        /// DO NOT CHANGE NAME: Enables for digging process to occur
+        /// DO NOT CHANGE NAME: Activates the Right Mouse Button
         /// </summary>
         /// <param name="context"></param>
         // ReSharper disable once UnusedMember.Global
@@ -205,17 +222,18 @@ namespace Player
         }
 
         /// <summary>
-        /// DO NOT CHANGE NAME: Activates the throwing of the snowball
+        /// DO NOT CHANGE NAME: Activates the Left Mouse Button
         /// </summary>
         /// <param name="context"></param>
         // ReSharper disable once UnusedMember.Global
         public void OnThrow(InputAction.CallbackContext context)
         {
-            if (!_hasSnowball) return;
-
             if (context.performed)
             {
-                _isAiming = true;
+                if (_hasSnowball)
+                {
+                    _isAiming = true;
+                }
             }
 
             if (context.canceled)
@@ -223,6 +241,18 @@ namespace Player
                 _isAiming = false;
                 _throwForce = _minForce;
                 ThrowSnowball();
+            }
+        }
+
+        /// <summary>
+        /// DO NOT CHANGE NAME: Activates the Interaction key, currently E
+        /// </summary>
+        /// <param name="context"></param>
+        public void OnInteract(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                
             }
         }
 
