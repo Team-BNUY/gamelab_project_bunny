@@ -1,5 +1,3 @@
-using System;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,6 +19,10 @@ namespace Player
         private Vector3 _currentPosition;
         private Quaternion _currentRotation;
 
+        [Header("Properties")]
+        [SerializeField] private float _studentHealth;
+        private GameObject _currentObjectInHand;
+
         [Header("Snowball")]
         // TODO: Dynamically instantiate and attach prefab from a Manager
         [SerializeField] private GameObject _snowballPrefab;
@@ -30,7 +32,6 @@ namespace Player
         [SerializeField] private float _minForce;
         [SerializeField] private float _maxForce;
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
-        private GameObject _snowballObject;
         private Snowball _playerSnowball;
         private int _currentStandingGround;
         private float _throwForce;
@@ -38,7 +39,6 @@ namespace Player
         private bool _isDigging;
         private bool _hasSnowball;
         private bool _isAiming;
-
 
         #region Callbacks
         
@@ -106,9 +106,9 @@ namespace Player
             if (_digSnowballTimer < _digSnowballMaxTime) return;
 
             var prefabToSpawn = _currentStandingGround == LayerMask.NameToLayer("Ground") ? _snowballPrefab : _iceballPrefab;
-            _snowballObject = Instantiate(prefabToSpawn, _playerHand.position, _playerHand.rotation, _playerHand);
+            _currentObjectInHand = Instantiate(prefabToSpawn, _playerHand.position, _playerHand.rotation, _playerHand);
             // TODO: Object pooling to avoid using GetComponent at Instantiation
-            _playerSnowball = _snowballObject.GetComponent<Snowball>();
+            _playerSnowball = _currentObjectInHand.GetComponent<Snowball>();
             _playerSnowball.SetSnowballThrower(this);
             _hasSnowball = true;
             _isDigging = false;
@@ -130,8 +130,24 @@ namespace Player
             
             _playerSnowball.ThrowSnowball();
             _hasSnowball = false;
-            _snowballObject = null;
+            _currentObjectInHand = null;
             _playerSnowball = null;
+        }
+
+        /// <summary>
+        /// Student gets damaged when snowball or combat item is thrown at them successfully
+        /// </summary>
+        /// <param name="damage"></param>
+        public void GetDamaged(float damage)
+        {
+            if (damage >= _studentHealth)
+            {
+                _studentHealth = 0.0f;
+            }
+            else
+            {
+                _studentHealth -= damage;
+            }
         }
 
         #endregion

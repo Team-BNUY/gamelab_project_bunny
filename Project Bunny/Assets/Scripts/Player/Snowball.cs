@@ -10,7 +10,9 @@ namespace Player
         [SerializeField] private Transform _snowballTransform;
         [SerializeField] private LineRenderer _lineRenderer;
         [SerializeField] private ParticleSystem _snowballBurst;
-        [SerializeField] private SnowballType _snowballType;
+        // ReSharper disable once NotAccessedField.Local
+        // TODO: Implement damage system once game loop is complete
+        [SerializeField] private float _damage;
 
         private float _throwForce;
         private float _mass;
@@ -128,7 +130,14 @@ namespace Player
 
         private void OnCollisionEnter(Collision other)
         {
-            GameObject go = Instantiate(_snowballBurst.gameObject, transform.position, Quaternion.identity);
+            // TODO: Network this properly?
+            // Damage only students (for now?) and make sure the thrower is not damaged
+            if (other.gameObject.TryGetComponent<StudentController>(out var otherStudent) && otherStudent != _studentThrower)
+            {
+                otherStudent.GetDamaged(_damage);
+            }
+            
+            var go = Instantiate(_snowballBurst.gameObject, transform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
             Destroy(gameObject);
