@@ -133,6 +133,8 @@ namespace Player
         {
             if (_playerSnowball == null) return;
             
+            _isAiming = false;
+            _throwForce = _minForce;
             _playerSnowball.ThrowSnowball();
             _hasSnowball = false;
             _currentObjectInHand = null;
@@ -243,8 +245,6 @@ namespace Player
             {
                 if (_hasSnowball)
                 {
-                    _isAiming = false;
-                    _throwForce = _minForce;
                     ThrowSnowball();
                 }
             }
