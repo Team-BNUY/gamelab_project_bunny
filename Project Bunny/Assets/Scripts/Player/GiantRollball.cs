@@ -82,6 +82,9 @@ namespace Player
             _snowballTransform.localScale += Vector3.one * (_growthFactor * _snowballRigidbody.velocity.magnitude * Time.fixedDeltaTime);
         }
 
+        /// <summary>
+        /// Track the Giant Snowball's properties
+        /// </summary>
         private void TrackGiantRollballStates()
         {
             var currentSpeed= _snowballRigidbody.velocity.magnitude;

@@ -210,7 +210,7 @@ Rigidbody:
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 1
-  m_Interpolate: 0
+  m_Interpolate: 2
   m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &3252739054877349092
@@ -227,7 +227,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _snowballRigidbody: {fileID: -152660347859332919}
   _snowballTransform: {fileID: 5548079061548076500}
-  _lineRenderer: {fileID: -5339425659748857153}
+  _trajectoryLineRenderer: {fileID: 0}
   _snowballBurst: {fileID: 4654743796071091423, guid: 18bc448f19b13194286123decf19c22f, type: 3}
   _damage: 1
 --- !u!1001 &7540967051680277230
