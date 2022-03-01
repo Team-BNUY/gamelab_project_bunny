@@ -158,7 +158,7 @@ namespace Player
         /// <summary>
         /// Track the layer of the object the player is standing on
         /// </summary>
-        public void SetStandingGround()
+        private void SetStandingGround()
         {
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out var hit, 1.0f))
             {
@@ -203,8 +203,11 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnDig(InputAction.CallbackContext context)
         {
+            // If player has snowball on hand or character is in the air, don't dig
+            // TODO: Make it also so it can't dig when hand is occupied in general
             if (_hasSnowball || !_characterController.isGrounded) return;
             
+            //  Can't dig at surface with no ice or snow
             if (_currentStandingGround != LayerMask.NameToLayer("Ground") &&
                 _currentStandingGround != LayerMask.NameToLayer("Ice")) return;
             
@@ -238,9 +241,12 @@ namespace Player
 
             if (context.canceled)
             {
-                _isAiming = false;
-                _throwForce = _minForce;
-                ThrowSnowball();
+                if (_hasSnowball)
+                {
+                    _isAiming = false;
+                    _throwForce = _minForce;
+                    ThrowSnowball();
+                }
             }
         }
 
@@ -252,7 +258,7 @@ namespace Player
         {
             if (context.performed)
             {
-                
+                // TODO: Interact with other items here
             }
         }
 
