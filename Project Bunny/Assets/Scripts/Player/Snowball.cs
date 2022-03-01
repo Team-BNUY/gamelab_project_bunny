@@ -14,6 +14,7 @@ namespace Player
         // TODO: Implement damage system once game loop is complete
         [SerializeField] private float _damage;
 
+        private bool _isDestroyable;
         private float _throwForce;
         private float _mass;
         private float _initialVelocity;
@@ -35,6 +36,24 @@ namespace Player
         
             _mass = _snowballRigidbody.mass;
             _trajectoryLineRenderer.enabled = false;
+        }
+        
+        private void OnCollisionEnter(Collision other)
+        {
+            // TODO: Network this properly?
+            // Damage only students (for now?) and make sure the thrower is not damaged
+            
+            if (!_isDestroyable) return;
+            
+            if (other.gameObject.TryGetComponent<StudentController>(out var otherStudent) && otherStudent != _studentThrower)
+            {
+                otherStudent.GetDamaged(_damage);
+            }
+            
+            var go = Instantiate(_snowballBurst.gameObject, transform.position, Quaternion.identity);
+            go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
+            go.GetComponent<ParticleSystem>().Play();
+            Destroy(gameObject);
         }
 
         /// <summary>
@@ -109,6 +128,7 @@ namespace Player
         /// </summary>
         public void ThrowSnowball()
         {
+            _isDestroyable = true;
             transform.parent = null;
             _snowballRigidbody.isKinematic = false;
             // TODO: Direction will be handled via hand release on Animation
@@ -126,21 +146,6 @@ namespace Player
         public void SetSnowballThrower(StudentController student)
         {
             _studentThrower = student;
-        }
-
-        private void OnCollisionEnter(Collision other)
-        {
-            // TODO: Network this properly?
-            // Damage only students (for now?) and make sure the thrower is not damaged
-            if (other.gameObject.TryGetComponent<StudentController>(out var otherStudent) && otherStudent != _studentThrower)
-            {
-                otherStudent.GetDamaged(_damage);
-            }
-            
-            var go = Instantiate(_snowballBurst.gameObject, transform.position, Quaternion.identity);
-            go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
-            go.GetComponent<ParticleSystem>().Play();
-            Destroy(gameObject);
         }
     }
 }
