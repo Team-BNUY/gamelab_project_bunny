@@ -1,3 +1,5 @@
+using System;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -22,7 +24,7 @@ namespace Player
         [Header("Snowball")]
         // TODO: Dynamically instantiate and attach prefab from a Manager
         [SerializeField] private GameObject _snowballPrefab;
-        [SerializeField] private LayerMask _layerMask;
+        [SerializeField] private GameObject _iceballPrefab;
         [SerializeField] private Transform _playerHand;
         [SerializeField] [Min(0)] private float _digSnowballMaxTime;
         [SerializeField] private float _minForce;
@@ -30,8 +32,7 @@ namespace Player
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
         private GameObject _snowballObject;
         private Snowball _playerSnowball;
-        // ReSharper disable once NotAccessedField.Local
-        private LayerMask _currentLayerStanding;
+        private int _currentStandingGround;
         private float _throwForce;
         private float _digSnowballTimer;
         private bool _isDigging;
@@ -39,6 +40,8 @@ namespace Player
         private bool _isAiming;
 
 
+        #region Callbacks
+        
         private void Awake()
         {
             if (_characterController == null)
@@ -54,8 +57,6 @@ namespace Player
 
         private void Update()
         {
-            GetStandingGround();
-            
             if (!_isDigging)
             {
                 MoveStudent();
@@ -73,17 +74,14 @@ namespace Player
             DigSnowball();
         }
 
-        /// <summary>
-        /// Attach unique instantiated camera with player
-        /// </summary>
-        /// <param name="cam"></param>
-        // ReSharper disable once UnusedMember.Global
-        public void SetCamera(Camera cam)
+        private void OnControllerColliderHit(ControllerColliderHit hit)
         {
-            _playerCamera = cam;
+            _currentStandingGround = hit.gameObject.layer;
         }
 
+        #endregion
 
+        
         #region Actions
 
         /// <summary>
@@ -107,7 +105,8 @@ namespace Player
 
             if (_digSnowballTimer < _digSnowballMaxTime) return;
 
-            _snowballObject = Instantiate(_snowballPrefab, _playerHand.position, _playerHand.rotation, _playerHand);
+            var prefabToSpawn = _currentStandingGround == LayerMask.NameToLayer("Ground") ? _snowballPrefab : _iceballPrefab;
+            _snowballObject = Instantiate(prefabToSpawn, _playerHand.position, _playerHand.rotation, _playerHand);
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _snowballObject.GetComponent<Snowball>();
             _playerSnowball.SetSnowballThrower(this);
@@ -137,7 +136,7 @@ namespace Player
 
         #endregion
         
-        
+
         #region InputSystem
 
         /// <summary>
@@ -172,6 +171,9 @@ namespace Player
         public void OnDig(InputAction.CallbackContext context)
         {
             if (_hasSnowball || !_characterController.isGrounded) return;
+            
+            if (_currentStandingGround != LayerMask.NameToLayer("Ground") &&
+                _currentStandingGround != LayerMask.NameToLayer("Ice")) return;
             
             // If action is being performed, start digging
             if (context.performed)
@@ -210,22 +212,18 @@ namespace Player
 
         #endregion
 
+        
         #region Utilities
 
         /// <summary>
-        /// Track the current layer of the ground object is standing on
+        /// Attach unique instantiated camera with player
         /// </summary>
-        private void GetStandingGround()
+        /// <param name="cam"></param>
+        // ReSharper disable once UnusedMember.Global
+        public void SetCamera(Camera cam)
         {
-            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out var hit, 1.0f, _layerMask)) 
-            {
-                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
-                _currentLayerStanding = hit.collider.gameObject.layer;
-            } 
+            _playerCamera = cam;
         }
-        
-
-        #endregion
         
         /// <summary>
         /// Utility function that uses mouse position to return angle between player and on-screen mouse pointer
@@ -247,5 +245,7 @@ namespace Player
             var angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
             return 90 - angle;
         }
+        
+        #endregion
     }
 }

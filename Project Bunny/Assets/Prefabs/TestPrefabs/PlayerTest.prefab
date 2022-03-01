@@ -154,6 +154,10 @@ MonoBehaviour:
         m_CallState: 1
     m_ActionId: f52ce73c-3a69-4b49-b331-caf3dfe296f8
     m_ActionName: Player/Throw
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a7b3d584-2208-4fb9-a6ed-2ea48a8a04f8
+    m_ActionName: Player/Interact[/Keyboard/e]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -217,13 +221,11 @@ MonoBehaviour:
   _playerInput: {fileID: 4197368334970314121}
   _movementSpeed: 10
   _snowballPrefab: {fileID: 9027766068581955839, guid: 307af400da2c72f4f9ef1bbacdf9dae4, type: 3}
-  _layerMask:
-    serializedVersion: 2
-    m_Bits: 8
+  _iceballPrefab: {fileID: 9027766068581955839, guid: 3a7b1c2fb15f2b44b8a32840d4ab0109, type: 3}
   _playerHand: {fileID: 7425404115485554744}
   _digSnowballMaxTime: 2
-  _minForce: 0
-  _maxForce: 0
+  _minForce: 0.2
+  _maxForce: 1.7
   _forceIncreaseTimeRate: 1
 --- !u!1 &4197368335467973758
 GameObject:
@@ -319,7 +321,6 @@ GameObject:
   - component: {fileID: 4197368336170203949}
   - component: {fileID: 4197368336170203938}
   - component: {fileID: 4197368336170203939}
-  - component: {fileID: 4197368336170203948}
   m_Layer: 0
   m_Name: Eyes
   m_TagString: Untagged
@@ -390,16 +391,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4197368336170203948
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4197368336170203950}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
