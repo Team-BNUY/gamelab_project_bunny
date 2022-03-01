@@ -8,7 +8,7 @@ namespace Player
     {
         [SerializeField] private Rigidbody _snowballRigidbody;
         [SerializeField] private Transform _snowballTransform;
-        [SerializeField] private LineRenderer _lineRenderer;
+        [SerializeField] private LineRenderer _trajectoryLineRenderer;
         [SerializeField] private ParticleSystem _snowballBurst;
         // ReSharper disable once NotAccessedField.Local
         // TODO: Implement damage system once game loop is complete
@@ -17,7 +17,7 @@ namespace Player
         private float _throwForce;
         private float _mass;
         private float _initialVelocity;
-        private readonly float _collisionCheckRadius = 0.05f;
+        private readonly float _collisionCheckRadius = 0.03f;
 
         // ReSharper disable once NotAccessedField.Local
         private StudentController _studentThrower;
@@ -28,13 +28,13 @@ namespace Player
             {
                 _snowballRigidbody = gameObject.GetComponent<Rigidbody>();
             }
-            if (_lineRenderer == null)
+            if (_trajectoryLineRenderer == null)
             {
-                _lineRenderer = GetComponent<LineRenderer>();
+                _trajectoryLineRenderer = GetComponent<LineRenderer>();
             }
         
             _mass = _snowballRigidbody.mass;
-            _lineRenderer.enabled = false;
+            _trajectoryLineRenderer.enabled = false;
         }
 
         /// <summary>
@@ -51,11 +51,11 @@ namespace Player
         /// </summary>
         public void DrawTrajectory()
         {
-            _lineRenderer.enabled = true;
-            _lineRenderer.positionCount = SimulateArc().Count;
-            for (var index = 0; index < _lineRenderer.positionCount; index++)
+            _trajectoryLineRenderer.enabled = true;
+            _trajectoryLineRenderer.positionCount = SimulateArc().Count;
+            for (var index = 0; index < _trajectoryLineRenderer.positionCount; index++)
             {
-                _lineRenderer.SetPosition(index, SimulateArc()[index]);
+                _trajectoryLineRenderer.SetPosition(index, SimulateArc()[index]);
             }
         }
         
@@ -93,7 +93,7 @@ namespace Player
         }
         
         /// <summary>
-        /// Check if current position in the world is within another object with a collider
+        /// Check if current position of the trajectory arc is within another object with a collider
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
@@ -115,7 +115,7 @@ namespace Player
             var direction = new Vector3(0f, 0.2f, 0.0f);
             direction += _snowballTransform.forward;
             _snowballRigidbody.AddForce(direction.normalized * _throwForce);
-            _lineRenderer.enabled = false;
+            _trajectoryLineRenderer.enabled = false;
         }
 
         /// <summary>
