@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Interfaces;
 
 namespace Player
 {
@@ -18,10 +19,12 @@ namespace Player
         [SerializeField] [Min(0)] private float _movementSpeed;
         private Vector3 _currentPosition;
         private Quaternion _currentRotation;
+        
 
         [Header("Properties")]
         [SerializeField] private float _studentHealth;
         private GameObject _currentObjectInHand;
+        private IInteractable _currentInteractable;
 
         [Header("Snowball")]
         // TODO: Dynamically instantiate and attach prefab from a Manager
@@ -94,7 +97,12 @@ namespace Player
         /// </summary>
         private void MoveStudent()
         {
-            _characterController.Move(_currentPosition * (_movementSpeed * Time.deltaTime));
+            // If the player's character controller is disabled, then don't move them. Otherwise, move them. 
+            if (_characterController.enabled)
+            {
+                _characterController.Move(_currentPosition * (_movementSpeed * Time.deltaTime));
+                
+            }
             _playerModel.rotation = _currentRotation;
         }
 
@@ -205,6 +213,9 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnDig(InputAction.CallbackContext context)
         {
+            //If the player is currently interacting with an interactable, don't dig
+            if (_currentInteractable != null) return;
+            
             // If player has snowball on hand or character is in the air, don't dig
             // TODO: Make it also so it can't dig when hand is occupied in general
             if (_hasSnowball || !_characterController.isGrounded) return;
@@ -233,19 +244,31 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnThrow(InputAction.CallbackContext context)
         {
+            // If the action is performed, do something
             if (context.performed)
             {
+                //If player has a snowball, then start aiming it. Otherwise call the Interactable's Click method.
                 if (_hasSnowball)
                 {
                     _isAiming = true;
                 }
+                else
+                {
+                    _currentInteractable?.Click();
+                }
             }
 
+            // If the action is cancelled, do something
             if (context.canceled)
             {
+                //If player has a snowball, then throw it. Otherwise call the Interactable's Release method.
                 if (_hasSnowball)
                 {
                     ThrowSnowball();
+                }
+                else
+                {
+                    _currentInteractable?.Release();
                 }
             }
         }
@@ -259,6 +282,19 @@ namespace Player
             if (context.performed)
             {
                 // TODO: Interact with other items here
+                // When you press 'E', it checks to see if there is an
+                // interactable nearby and if there is, assume control of it. 
+                
+                if (_currentInteractable == null)
+                {
+                    _currentInteractable = ReturnNearestInteractable();
+                    _currentInteractable?.Enter();
+                }
+                else
+                {
+                    _currentInteractable.Exit();
+                    _currentInteractable = null;
+                }
             }
         }
 
@@ -275,6 +311,15 @@ namespace Player
         public void SetCamera(Camera cam)
         {
             _playerCamera = cam;
+        }
+
+        /// <summary>
+        /// Utility function that returns the player camera
+        /// </summary>
+        /// <returns></returns>
+        public Camera GetPlayerCamera()
+        {
+            return _playerCamera;
         }
         
         /// <summary>
@@ -296,6 +341,29 @@ namespace Player
 
             var angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
             return 90 - angle;
+        }
+
+        /// <summary>
+        /// Utility function that returns the nearest interactable to the player
+        /// </summary>
+        /// <returns></returns>
+        private IInteractable ReturnNearestInteractable() 
+        {
+            IInteractable interactable = null;
+            var maxColliders = 3; //maximum number of objects near to the player that can be looped through
+            var hitColliders = new Collider[maxColliders];
+            var numColliders = Physics.OverlapSphereNonAlloc(transform.position, 1f, hitColliders);
+
+            //Loop through 3 nearest objects and check if any of them are interactables that implement IInteractable
+            for (var i = 0; i < maxColliders; i++)
+            {
+                if (hitColliders[i].transform.gameObject.GetComponent<IInteractable>() != null)
+                {
+                    interactable = hitColliders[i].transform.gameObject.GetComponent<IInteractable>();
+                }
+            }
+            
+            return interactable;
         }
         
         #endregion
