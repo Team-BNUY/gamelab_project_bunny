@@ -19,6 +19,7 @@ namespace AI.Agents
         [SerializeField] private Transform _head; 
         [SerializeField] [Range(0f, 180f)] private float _fieldOfView;
         [SerializeField] [Min(0f)] private float _viewDistance;
+        [SerializeField] [Min(0f)] private float _headRotationSpeed = 10f;
         private bool _lookingForward;
 
         [Header("Waypoints")] 
@@ -179,8 +180,10 @@ namespace AI.Agents
                 _viewDirection = transform.forward;
             }
             
-            var lookDirection = Quaternion.LookRotation(_viewDirection, Vector3.up);
-            _head.rotation = lookDirection;
+            var lookRotation = Quaternion.LookRotation(_viewDirection, Vector3.up);
+            var lerpRotation = Quaternion.Lerp(_head.rotation, lookRotation, _headRotationSpeed * Time.deltaTime);
+            
+            _head.rotation = lerpRotation;
         }
         
         /// <summary>

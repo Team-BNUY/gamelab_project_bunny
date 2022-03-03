@@ -11,16 +11,18 @@ namespace AI.Actions.TeacherActions
         
         private StudentController _targetStudent;
         private float _investigationTime;
-        private float _fieldOfView;
+        private float _walkingFieldOfView;
+        private float _investigationFieldOfView;
 
         private float _timer;
         
-        public Investigate(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher agent, bool hasTarget, float investigationTime, float fieldOfView)
+        public Investigate(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher agent, bool hasTarget, float investigationTime, float walkingFieldOfView, float investigationFieldOfView)
              : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
         {
             _teacher = agent;
             _investigationTime = investigationTime;
-            _fieldOfView = fieldOfView;
+            _walkingFieldOfView = walkingFieldOfView;
+            _investigationFieldOfView = investigationFieldOfView;
         }
         
         /// <summary>
@@ -42,16 +44,17 @@ namespace AI.Actions.TeacherActions
             invoked = false;
             _timer = _investigationTime;
             
+            // View parameters
+            _teacher.FieldOfView = _walkingFieldOfView;
+            _teacher.LookForward();
+            
             // To make sure the Teacher goes first to the last remembered position of the student they were chasing
             if (_teacher.LastTargetStudent)
             {
                 _targetStudent = _teacher.LastTargetStudent;
                 target = _teacher.BadStudents[_targetStudent];
                 _teacher.LastTargetStudent = null;
-                
-                // View parameters
-                _teacher.LookForward();
-                
+
                 return true;
             }
             
@@ -59,10 +62,7 @@ namespace AI.Actions.TeacherActions
             var orderedBadStudents = _teacher.BadStudents.OrderBy(x => Vector3.Distance(x.Value, _teacher.transform.position)).First();
             _targetStudent = orderedBadStudents.Key;
             target = orderedBadStudents.Value;
-            
-            // View parameters
-            _teacher.LookForward();
-            
+
             return true;
         }
         
@@ -72,7 +72,7 @@ namespace AI.Actions.TeacherActions
         public override void Perform()
         {
             // View parameters
-            _teacher.FieldOfView = _fieldOfView;
+            _teacher.FieldOfView = _investigationFieldOfView;
             
             //_teacher.SetAnimatorParameter("Investigate", true);
             _timer -= Time.deltaTime;
