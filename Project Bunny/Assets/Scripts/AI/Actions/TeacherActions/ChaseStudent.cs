@@ -48,7 +48,7 @@ namespace AI.Actions.TeacherActions
             var targetPosition = _target.position;
             var teacherPosition = _teacher.transform.position;
             var onYPlaneTargetPosition = new Vector3(targetPosition.x, teacherPosition.y, targetPosition.z);
-            _teacher.ViewDirection = onYPlaneTargetPosition - teacherPosition;
+            _teacher.LookAtDirection(onYPlaneTargetPosition - teacherPosition);
             _teacher.FieldOfView = _fieldfOfView;
             
             navMeshAgent.speed = _speed;

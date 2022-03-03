@@ -15,9 +15,14 @@ namespace AI.Agents
         public static event StudentInteraction OnLostBadStudent;
         
         // View parameters
+        [Header("View parameters")]
         [SerializeField] private Transform _head; 
         [SerializeField] [Range(0f, 180f)] private float _fieldOfView;
         [SerializeField] [Min(0f)] private float _viewDistance;
+        private bool _lookingForward;
+
+        [Header("Waypoints")] 
+        [SerializeField] private Transform[] _waypoints;
 
         private Vector3 _viewDirection;
         
@@ -96,6 +101,24 @@ namespace AI.Agents
             OnFoundBadStudent -= FindStudent;
             OnLostBadStudent -= LoseStudent;
         }
+
+        /// <summary>
+        /// Forces the Teacher to look forward
+        /// </summary>
+        public void LookForward()
+        {
+            _lookingForward = true;
+        }
+    
+        /// <summary>
+        /// Forces the Teacher to look at a <paramref name="direction"/>
+        /// </summary>
+        /// <param name="direction">Direction to look at</param>
+        public void LookAtDirection(Vector3 direction)
+        {
+            _lookingForward = false;
+            _viewDirection = direction;
+        }
         
         /// <summary>
         /// Remembers every student seen performing a bad action, updates their last seen position and determines which bad student is the closest
@@ -151,6 +174,11 @@ namespace AI.Agents
 
         private void LookAtViewDirection()
         {
+            if (_lookingForward)
+            {
+                _viewDirection = transform.forward;
+            }
+            
             var lookDirection = Quaternion.LookRotation(_viewDirection, Vector3.up);
             _head.rotation = lookDirection;
         }
@@ -179,7 +207,7 @@ namespace AI.Agents
             beliefStates.AddState("seesBadStudent", 1);
             RememberStudent(student);
             
-            if (currentAction is {Name: "Investigate"})
+            if (currentAction is {Name: "Investigate"} || currentAction is {Name: "Surveil"})
             {
                 currentAction.PostPerform();
                 InterruptGoal();
@@ -236,6 +264,11 @@ namespace AI.Agents
         public Dictionary<StudentController, Vector3> BadStudents
         {
             get => _badStudents;
+        }
+
+        public Transform[] Waypoints
+        {
+            get => _waypoints;
         }
     }
 }

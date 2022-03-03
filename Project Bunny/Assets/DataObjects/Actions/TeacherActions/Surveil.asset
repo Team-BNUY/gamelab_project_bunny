@@ -9,17 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cbc52fcb898696469dacedf19da6a77, type: 3}
-  m_Name: ChaseStudent
+  m_Script: {fileID: 11500000, guid: b90e0d036a750a944993aebbe274d650, type: 3}
+  m_Name: Surveil
   m_EditorClassIdentifier: 
-  name: Chase Student
-  cost: 1
-  hasTarget: 0
-  preconditionStates:
-  - _key: seesBadStudent
-    _value: 1
+  name: Surveil
+  cost: 2
+  hasTarget: 1
+  preconditionStates: []
   afterEffectStates:
-  - _key: caughtBadStudent
+  - _key: searchedForBadStudent
     _value: 1
-  _speed: 4
-  _fieldOfView: 75
+  _speed: 2.5
+  _walkingFieldOfView: 90
+  _surveilFieldOfView: 135

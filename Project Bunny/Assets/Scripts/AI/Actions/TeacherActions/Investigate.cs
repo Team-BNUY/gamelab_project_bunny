@@ -49,6 +49,9 @@ namespace AI.Actions.TeacherActions
                 target = _teacher.BadStudents[_targetStudent];
                 _teacher.LastTargetStudent = null;
                 
+                // View parameters
+                _teacher.LookForward();
+                
                 return true;
             }
             
@@ -56,7 +59,10 @@ namespace AI.Actions.TeacherActions
             var orderedBadStudents = _teacher.BadStudents.OrderBy(x => Vector3.Distance(x.Value, _teacher.transform.position)).First();
             _targetStudent = orderedBadStudents.Key;
             target = orderedBadStudents.Value;
-
+            
+            // View parameters
+            _teacher.LookForward();
+            
             return true;
         }
         
@@ -65,8 +71,8 @@ namespace AI.Actions.TeacherActions
         /// </summary>
         public override void Perform()
         {
+            // View parameters
             _teacher.FieldOfView = _fieldOfView;
-            _teacher.ViewDirection = _teacher.transform.forward;
             
             //_teacher.SetAnimatorParameter("Investigate", true);
             _timer -= Time.deltaTime;
