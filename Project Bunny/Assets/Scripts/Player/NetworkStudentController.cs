@@ -112,7 +112,9 @@ namespace Player
 
             if (_digSnowballTimer < _digSnowballMaxTime) return;
 
-            _snowballObject = Instantiate(_snowballPrefab, _playerHand.position, _playerHand.rotation, _playerHand);
+            _snowballObject = PhotonNetwork.Instantiate("NetworkSnowball", _playerHand.position, _playerHand.rotation);
+            _snowballObject.transform.parent = _playerHand;
+
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _snowballObject.GetComponent<NetworkSnowball>();
             _playerSnowball.SetSnowballThrower(this);
@@ -234,12 +236,12 @@ namespace Player
         {
             if (stream.IsWriting)
             {
-              //  stream.SendNext(_currentPosition);
-              //  stream.SendNext(_currentRotation);
+                stream.SendNext(_hasSnowball);
+                stream.SendNext(_isDigging);
             }
             else {
-              //  this._currentPosition = (Vector3)stream.ReceiveNext();
-              //  this._currentRotation = (Quaternion)stream.ReceiveNext();
+                this._hasSnowball = (bool)stream.ReceiveNext();
+                this._isDigging = (bool)stream.ReceiveNext();
             }
         }
     }

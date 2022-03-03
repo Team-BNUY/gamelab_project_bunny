@@ -220,6 +220,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: f52ce73c-3a69-4b49-b331-caf3dfe296f8
     m_ActionName: Player/Throw[/Mouse/leftButton,/XInputControllerWindows/leftShoulder]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a7b3d584-2208-4fb9-a6ed-2ea48a8a04f8
+    m_ActionName: Player/Interact[/Keyboard/e,/XInputControllerWindows/buttonSouth]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -283,7 +287,9 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
+  - {fileID: 2104885480262047604}
   - {fileID: -2418218621845064218}
+  - {fileID: 262291179981323339}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -300,7 +306,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
+  m_SynchronizeRotation: 0
   m_SynchronizeScale: 0
   m_UseLocal: 1
 --- !u!1 &1118839828625857803
@@ -314,6 +320,7 @@ GameObject:
   - component: {fileID: 1118839828625857796}
   - component: {fileID: 1118839828625857798}
   - component: {fileID: 1118839828625857797}
+  - component: {fileID: 262291179981323339}
   m_Layer: 0
   m_Name: PlayerTest
   m_TagString: Untagged
@@ -386,6 +393,22 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &262291179981323339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1118839828625857803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 0
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &7783840833984272832
 GameObject:
   m_ObjectHideFlags: 0

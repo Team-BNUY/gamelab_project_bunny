@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 2922449167949472895}
   - component: {fileID: 1702715532028691883}
   - component: {fileID: 2320781370041929812}
+  - component: {fileID: 7502066005260383212}
+  - component: {fileID: 251632973669729256}
   m_Layer: 0
   m_Name: NetworkSnowball
   m_TagString: Untagged
@@ -127,3 +129,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _snowballRigidbody: {fileID: 1702715532028691883}
   _snowballTransform: {fileID: 2791768304615282870}
+--- !u!114 &7502066005260383212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1660130140806720925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 0
+  m_SynchronizeScale: 0
+  m_UseLocal: 0
+--- !u!114 &251632973669729256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1660130140806720925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 7502066005260383212}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
