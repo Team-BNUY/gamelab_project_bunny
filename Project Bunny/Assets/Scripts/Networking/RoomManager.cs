@@ -1,74 +1,176 @@
 using UnityEngine;
-using UnityEngine.UI;
 using Photon.Pun;
+using Player;
+using UnityEngine.UI;
+using System;
+using System.Collections.Generic;
 using TMPro;
+using ExitGames.Client.Photon;
+using Photon.Pun.UtilityScripts;
+using System.Linq;
 
 namespace Networking
 {
     public class RoomManager : MonoBehaviourPunCallbacks
     {
-        public const string GAME_SCENE_NAME = "NetworkPlayground";
-        private const string DEFAULT_PLAYER_NAME = "Joe";
-        private const string PLAYER_PREF_NAME_KEY = "PlayerName";
+        private const string ARENA_SCENE_NAME = "4-Arena";
 
-        [SerializeField] private TMP_InputField createInput;
-        [SerializeField] private TMP_InputField joinInput;
-        [SerializeField] private TMP_InputField nameInput;
+        [Header("Player Instantiation")]
+        [SerializeField] private GameObject _playerPrefab;
+        [SerializeField] private GameObject _playerCamera;
+        private Hashtable _customProperties;
 
-        private Button createButton;
-        private Button joinButton;
-        private string defaultName;
+        [Space(10)]
+        [Header("UI")]
+        [SerializeField] private Canvas _hostCanvas;
+        [SerializeField] private Canvas _nonHostCanvas;
+        [SerializeField] private Button _startGameBtn;
+        [SerializeField] private Button _readyUpBtn;
+        [SerializeField] private Button _redJerseyBtn;
+        [SerializeField] private Button _blueJerseyBtn;
+        [SerializeField] private GameObject playerTile;
+        [SerializeField] private Transform playerTileParent;
+        private List<PlayerTile> tiles;
 
         void Start()
         {
-            createButton = createInput.GetComponentInChildren<Button>();
-            joinButton = joinInput.GetComponentInChildren<Button>();
-            createButton.onClick.AddListener(CreateRoom);
-            joinButton.onClick.AddListener(JoinRoom);
-            nameInput.onValueChanged.AddListener(SetName);
-            SetUpNameInput();
-        }
+            PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
+            tiles = new List<PlayerTile>();
+            _customProperties = new Hashtable();
 
-        public void CreateRoom()
-        {
-            PhotonNetwork.NickName = defaultName;
-            PhotonNetwork.CreateRoom(createInput.text);
-        }
+            SpawnPlayer();
+            InitialiseUI();
 
-        public void JoinRoom()
-        {
-            PhotonNetwork.JoinRoom(joinInput.text);
-        }
+            if (PhotonTeamsManager.Instance.GetTeamMembersCount(1) <= PhotonTeamsManager.Instance.GetTeamMembersCount(2))
+                PhotonNetwork.LocalPlayer.JoinTeam(1);
+            else
+                PhotonNetwork.LocalPlayer.JoinTeam(2);
 
-        public override void OnJoinedRoom()
-        {
-            PhotonNetwork.LoadLevel(GAME_SCENE_NAME);
-        }
+            _startGameBtn.interactable = false;
+            
 
-        private void SetUpNameInput()
-        {
-            if (PlayerPrefs.HasKey(PLAYER_PREF_NAME_KEY))
+            foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
             {
-                defaultName = PlayerPrefs.GetString(PLAYER_PREF_NAME_KEY);
+                if (tiles.Any(x => x.player == player.Value)) continue;
+                AddPlayerTile(player.Value);
+            }
+        }
+
+        private void AddPlayerTile(Photon.Realtime.Player player)
+        {
+            PlayerTile tile = GameObject.Instantiate(playerTile, playerTileParent).GetComponent<PlayerTile>();
+            tile.SetPlayer(player);
+            tiles.Add(tile);
+            playerTileParent.GetComponentsInChildren<PlayerTile>().OrderBy(x => x.player.IsMasterClient).ThenBy(x => x.player.NickName);
+        }
+
+        private void RemovePlayerTile(Photon.Realtime.Player player)
+        {
+            PlayerTile tile = tiles.FirstOrDefault(x => x.player == player);
+            tiles.Remove(tile);
+            if (player.TagObject != null)
+                GameObject.Destroy(((NetworkStudentController)player.TagObject).gameObject);
+            GameObject.Destroy(tile.gameObject);
+        }
+
+        private void InitialiseUI()
+        {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                _customProperties.Add("ready", true);
+                _nonHostCanvas.gameObject.SetActive(false);
+                _hostCanvas.gameObject.SetActive(true);
             }
             else
             {
-                defaultName = DEFAULT_PLAYER_NAME;
+                _customProperties.Add("ready", false);
+                _nonHostCanvas.gameObject.SetActive(true);
+                _hostCanvas.gameObject.SetActive(false);
             }
-            nameInput.text = defaultName;
-            PhotonNetwork.NickName = defaultName;
+
+            _startGameBtn.onClick.AddListener(StartGame);
+            _readyUpBtn.onClick.AddListener(ReadyUp);
+
+            _blueJerseyBtn.onClick.AddListener(() => SwapTeams(1));
+            _redJerseyBtn.onClick.AddListener(() => SwapTeams(2));
+
+            PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
         }
 
-        /// <summary>
-        /// Sets player name and saves to player prefs.
-        /// Called by UI text input events.
-        /// </summary>
-        /// <param name="newName">new player name</param>
-        public void SetName(string newName) {
-            if (string.IsNullOrEmpty(newName)) return;
+        private void SwapTeams(byte teamCode)
+        {
+            PhotonTeamExtensions.SwitchTeam(PhotonNetwork.LocalPlayer, teamCode);
+        }
 
-            PhotonNetwork.NickName = newName;
-            PlayerPrefs.SetString(PLAYER_PREF_NAME_KEY, newName);
+        private void ReadyUp()
+        {
+            if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("ready"))
+            {
+                _customProperties["ready"] = !((bool)PhotonNetwork.LocalPlayer.CustomProperties["ready"]);
+            }
+            else {
+                _customProperties["ready"] = true;
+            }
+
+            PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
+        }
+
+        private void StartGame()
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.CurrentRoom.IsVisible = false;
+            PhotonNetwork.LoadLevel(ARENA_SCENE_NAME);
+        }
+
+        private void SpawnPlayer()
+        {
+            NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
+            PhotonNetwork.LocalPlayer.TagObject = player;
+            player.SetCamera(GameObject.Instantiate(_playerCamera));
+        }
+
+        public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
+        {
+            base.OnPlayerEnteredRoom(newPlayer);
+
+            if (!tiles.Any(x => x.player == newPlayer))
+            {
+                AddPlayerTile(newPlayer);
+            }
+
+            _startGameBtn.interactable = (PhotonNetwork.LocalPlayer.IsMasterClient && PhotonNetwork.PlayerList.Length >= 2);
+        }
+
+        public override void OnPlayerLeftRoom(Photon.Realtime.Player newPlayer)
+        {
+            base.OnPlayerLeftRoom(newPlayer);
+            if (tiles.Any(x => x.player == newPlayer))
+            {
+                RemovePlayerTile(newPlayer);
+            }
+
+            _startGameBtn.interactable = (PhotonNetwork.LocalPlayer.IsMasterClient
+                && PhotonNetwork.PlayerList.Length >= 2);
+        }
+
+        private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
+        {
+            PlayerTile tile = tiles.FirstOrDefault(x => x.player == player);
+
+            if (tile != null)
+            {
+                tile.SetTeamIndicator(team.Code);
+            }
+        }
+
+        public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
+        {
+            base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
+
+            if (targetPlayer != null)
+            {
+                tiles.FirstOrDefault(x => x.player == targetPlayer).UpdateView(changedProps);
+            }
         }
     }
 }

@@ -6,8 +6,11 @@ namespace Networking
 {
     public class ConnectToServer : MonoBehaviourPunCallbacks
     {
+        private const string LOBBY_SCENE_NAME = "2-Lobby";
+
         void Start()
         {
+            PhotonNetwork.AutomaticallySyncScene = true;
             PhotonNetwork.ConnectUsingSettings();
         }
 
@@ -18,7 +21,7 @@ namespace Networking
 
         public override void OnJoinedLobby()
         {
-            SceneManager.LoadScene("Lobby");
+            SceneManager.LoadScene(LOBBY_SCENE_NAME);
         }
     }
 }
