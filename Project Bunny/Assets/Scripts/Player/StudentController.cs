@@ -401,5 +401,7 @@ namespace Player
         }
 
         #endregion
+
+        public bool HasSnowball => _hasSnowball;
     }
 }
