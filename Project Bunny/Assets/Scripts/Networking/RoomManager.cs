@@ -69,7 +69,9 @@ namespace Networking
             PlayerTile tile = tiles.FirstOrDefault(x => x.player == player);
             tiles.Remove(tile);
             if (player.TagObject != null)
+            {
                 GameObject.Destroy(((NetworkStudentController)player.TagObject).gameObject);
+            }
             GameObject.Destroy(tile.gameObject);
         }
 
@@ -108,7 +110,8 @@ namespace Networking
             {
                 _customProperties["ready"] = !((bool)PhotonNetwork.LocalPlayer.CustomProperties["ready"]);
             }
-            else {
+            else
+            {
                 _customProperties["ready"] = true;
             }
 

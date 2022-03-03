@@ -1,18 +1,24 @@
+using Photon.Pun;
+using Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ArenaManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [Header("Player Instantiation")]
+    [SerializeField] private GameObject _playerPrefab;
+    [SerializeField] private GameObject _playerCamera;
+
     void Start()
     {
-        
+        SpawnPlayer();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void SpawnPlayer()
     {
-        
+        NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
+        PhotonNetwork.LocalPlayer.TagObject = player;
+        player.SetCamera(GameObject.Instantiate(_playerCamera));
     }
 }

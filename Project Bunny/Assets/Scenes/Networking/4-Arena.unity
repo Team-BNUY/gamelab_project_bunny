@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 31316840}
   - component: {fileID: 31316839}
   m_Layer: 0
-  m_Name: Network Manager
+  m_Name: Arena Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,6 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f2024893ee1cb3449fb264b1dbd2da3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerPrefab: {fileID: 1118839828255377487, guid: 9282971f55575e044b9cc3eaadd89e3f, type: 3}
+  _playerCamera: {fileID: 9038817464343477781, guid: b61fdec5a46e1f04fbff59da54a9c10d, type: 3}
 --- !u!4 &31316840
 Transform:
   m_ObjectHideFlags: 0

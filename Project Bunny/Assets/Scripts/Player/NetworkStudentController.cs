@@ -112,7 +112,7 @@ namespace Player
 
             if (_digSnowballTimer < _digSnowballMaxTime) return;
 
-            _snowballObject = PhotonNetwork.Instantiate("NetworkSnowball", _playerHand.position, _playerHand.rotation);
+            _snowballObject = PhotonNetwork.Instantiate(_snowballPrefab.name, _playerHand.position, _playerHand.rotation);
             _snowballObject.transform.parent = _playerHand;
 
             // TODO: Object pooling to avoid using GetComponent at Instantiation
