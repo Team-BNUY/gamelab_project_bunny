@@ -1,4 +1,6 @@
-﻿namespace Interfaces
+﻿using Player;
+
+namespace Interfaces
 {
     public interface IInteractable
     {
@@ -20,6 +22,6 @@
         /// <summary>
         /// Method that runs when you take control of an interactable
         /// </summary>
-        void Enter();
+        void Enter(StudentController currentStudentController);
     }
 }

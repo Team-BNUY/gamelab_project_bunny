@@ -1,3 +1,4 @@
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Interfaces;
@@ -12,14 +13,15 @@ namespace Player
         [Header("Components")]
         [SerializeField] private Transform _playerModel;
         [SerializeField] private Camera _playerCamera;
+        [SerializeField] private CinemachineVirtualCamera _playerVCam;
+        [SerializeField] private CinemachineComponentBase _playerVCamComponentBase;
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
         
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
         private Vector3 _currentPosition;
-        private Quaternion _currentRotation;
-        
+        public Quaternion playerRotation;
 
         [Header("Properties")]
         [SerializeField] private float _studentHealth;
@@ -55,7 +57,12 @@ namespace Player
             {
                 _playerInput = gameObject.GetComponent<PlayerInput>();
             }
+
+            _playerVCamComponentBase = _playerVCam.GetCinemachineComponent(CinemachineCore.Stage.Body);
+
             _throwForce = _minForce;
+            
+            
         }
 
         private void Update()
@@ -103,7 +110,7 @@ namespace Player
                 _characterController.Move(_currentPosition * (_movementSpeed * Time.deltaTime));
                 
             }
-            _playerModel.rotation = _currentRotation;
+            _playerModel.rotation = playerRotation;
         }
 
         /// <summary>
@@ -201,9 +208,8 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnLook()
         {
-            var mousePosition = Mouse.current.position.ReadValue();
-            var rotation = MousePosToRotationInput(mousePosition);
-            _currentRotation = Quaternion.Euler(0f, rotation, 0f);
+            var mousePosAngle = Utilities.MousePosToRotationInput(this.transform, _playerCamera);
+            playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
         }
 
         /// <summary>
@@ -281,6 +287,8 @@ namespace Player
         {
             if (context.performed)
             {
+                if (_hasSnowball) return; //Don't interact with interactables if the player already has a snowball. 
+                
                 // TODO: Interact with other items here
                 // When you press 'E', it checks to see if there is an
                 // interactable nearby and if there is, assume control of it. 
@@ -288,7 +296,7 @@ namespace Player
                 if (_currentInteractable == null)
                 {
                     _currentInteractable = ReturnNearestInteractable();
-                    _currentInteractable?.Enter();
+                    _currentInteractable?.Enter(this);
                 }
                 else
                 {
@@ -321,26 +329,23 @@ namespace Player
         {
             return _playerCamera;
         }
+
+        /// <summary>
+        /// Getter function to get the player's Virtual Camera
+        /// </summary>
+        /// <returns></returns>
+        public CinemachineVirtualCamera GetVirtualCamera()
+        {
+            return _playerVCam;
+        }
         
         /// <summary>
-        /// Utility function that uses mouse position to return angle between player and on-screen mouse pointer
-        /// TODO: Put in Utilities script
+        /// Getter function to get the CinemachineComponentBase of the player's Virtual Camera
         /// </summary>
-        /// <param name="mousePos"></param>
         /// <returns></returns>
-        private float MousePosToRotationInput(Vector2 mousePos)
+        public CinemachineComponentBase GetVirtualCameraComponentBase()
         {
-            var target = _playerModel.transform;
-            if (_playerCamera is { })
-            {
-                var objectPos =  _playerCamera.WorldToScreenPoint(target.position);
-
-                mousePos.x -= objectPos.x;
-                mousePos.y -= objectPos.y;
-            }
-
-            var angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
-            return 90 - angle;
+            return _playerVCamComponentBase;
         }
 
         /// <summary>
@@ -365,6 +370,8 @@ namespace Player
             
             return interactable;
         }
+        
+        
         
         #endregion
     }
