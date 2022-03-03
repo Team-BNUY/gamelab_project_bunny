@@ -16,9 +16,10 @@ namespace Player
         private GameObject _currentCannonBall;
         private bool _isActive;
         private GameObject _player;
-        private StudentController _playerScript;
+        private StudentController _studentController;
         private Camera _playerCam;
-        private CinemachineVirtualCamera _cameraSettings;
+        private CinemachineVirtualCamera _playerVirtualCamera;
+        private CinemachineComponentBase _playerVCamSettings;
         private CharacterController _playerCharController;
         [SerializeField] [Min(0)] private float _rotationSpeed;
 
@@ -64,20 +65,20 @@ namespace Player
         /// <summary>
         /// Slingshot's implementation of the Enter() method. Initializes key variables.
         /// </summary>
-        public void Enter()
+        public void Enter(StudentController currentStudentController)
         {
             //Initialize key variables
             _isActive = true;
-            _player = GameObject.FindWithTag("Player");
-            _playerScript = _player.GetComponent<StudentController>();
-            _playerCam = _playerScript.GetPlayerCamera();
-            _cameraSettings = _playerCam.GetComponentInParent<CinemachineVirtualCamera>();
+            _studentController = currentStudentController;
+            _player = _studentController.transform.gameObject;
             
-            //Get the Body component of the player's CinemachineVirtualCamera.
-            var componentBase = _cameraSettings.GetCinemachineComponent(CinemachineCore.Stage.Body);
+            //Get all necessary Camera components of the player
+            _playerCam = _studentController.GetPlayerCamera();
+            _playerVirtualCamera = _studentController.GetVirtualCamera();
+            _playerVCamSettings = _studentController.GetVirtualCameraComponentBase();
             
-            //Setting the new distance of the player camera when assuming control of the Slingshot.
-            if (componentBase is CinemachineFramingTransposer transposer)
+            //Setting the new distance of the player camera when assuming control of the Slingshot
+            if (_playerVCamSettings is CinemachineFramingTransposer transposer)
             {
                 transposer.m_CameraDistance = _newCameraDistance; 
             }
@@ -101,19 +102,17 @@ namespace Player
             //Restore key variables to null/default value
             _isActive = false;
             _player = null;
-            _playerScript = null;
-            
-            //Get the Body component of the player's CinemachineVirtualCamera.
-            var componentBase = _cameraSettings.GetCinemachineComponent(CinemachineCore.Stage.Body);
-            
+            _studentController = null;
+
             //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
-            if (componentBase is CinemachineFramingTransposer)
+            if (_playerVCamSettings is CinemachineFramingTransposer transposer && _playerVCamSettings != null)
             {
-                (componentBase as CinemachineFramingTransposer).m_CameraDistance = 25; // your value
+                transposer.m_CameraDistance = 25; // your value
             }
 
             //Restore key variables to null/default value
-            _cameraSettings = null;
+            _playerVirtualCamera = null;
+            _playerVCamSettings = null;
             _playerCam = null;
             _playerCharController.enabled = true;
             _playerCharController = null;
@@ -177,8 +176,8 @@ namespace Player
         /// </summary>
         private void RotateSlingShot()
         {
-            var mousePosAngle = MousePosToRotationInput(Mouse.current.position.ReadValue());
-            var finalRotation = Quaternion.Euler(0f, mousePosAngle + 90f, 0f);
+            //var mousePosAngle = Utilities.MousePosToRotationInput(this.transform, _playerCam);
+            var finalRotation = _studentController.playerRotation * Quaternion.Euler(0f, 90f, 0f);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation , Time.deltaTime * _rotationSpeed);
             _player.transform.position = _playerSeat.transform.position;
         }
@@ -192,7 +191,7 @@ namespace Player
             _currentCannonBall = Instantiate(prefabToSpawn, _cannonBallSeat.position, _cannonBallSeat.rotation, _cannonBallSeat);
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _currentCannonBall.GetComponent<Snowball>();
-            _playerSnowball.SetSnowballThrower(_playerScript);
+            _playerSnowball.SetSnowballThrower(_studentController);
             _hasSnowball = true;
             _coolDownTimer = 0f;
         }
@@ -224,26 +223,6 @@ namespace Player
         #endregion
 
         #region Utilities
-        
-        /// <summary>
-        /// Utility method to return the yaw angle required to rotate towards the mouse cursor.
-        /// </summary>
-        /// <param name="mousePos"></param>
-        /// <returns></returns>
-        private float MousePosToRotationInput(Vector2 mousePos)
-        {
-            var target = transform;
-            if (_playerCam is { })
-            {
-                var objectPos =  _playerCam.WorldToScreenPoint(target.position);
-
-                mousePos.x -= objectPos.x;
-                mousePos.y -= objectPos.y;
-            }
-
-            var angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
-            return 90 - angle;
-        }
 
         #endregion
         
