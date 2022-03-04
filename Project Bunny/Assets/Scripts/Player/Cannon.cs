@@ -24,13 +24,11 @@ namespace Player
         // TODO: Dynamically instantiate and attach prefab from a Manager
         [SerializeField] private GameObject _cannonBallPrefab;
         [SerializeField] [Min(0)] private float _coolDownTime;
-        [SerializeField] private float _minForce;
-        [SerializeField] private float _maxForce;
+        [SerializeField] private float _minForce, _maxForce;
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
         private Snowball _playerSnowball;
         private float _throwForce;
-        private bool _hasSnowball;
-        private bool _isAiming;
+        private bool _hasSnowball, _isAiming;
         private float _coolDownTimer;
 
         #region Callbacks
