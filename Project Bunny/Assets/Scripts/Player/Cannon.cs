@@ -170,7 +170,7 @@ namespace Player
         private void RotateSlingShot()
         {
             //var mousePosAngle = Utilities.MousePosToRotationInput(this.transform, _playerCam);
-            var finalRotation = _studentController.playerRotation * Quaternion.Euler(0f, 90f, 0f);
+            var finalRotation = _studentController._playerRotation * Quaternion.Euler(0f, 90f, 0f);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation , Time.deltaTime * _rotationSpeed);
             _player.transform.position = _playerSeat.transform.position;
         }
