@@ -20,8 +20,9 @@ namespace Player
         
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
-        private Vector3 _currentPosition;
-        public Quaternion _playerRotation;
+        private Vector3 _playerPosition;
+        private Quaternion _playerRotation;
+        public Quaternion PlayerRotation => _playerRotation;
 
         [Header("Properties")]
         [SerializeField] private float _studentHealth;
@@ -107,7 +108,7 @@ namespace Player
             // If the player's character controller is disabled, then don't move them. Otherwise, move them. 
             if (_characterController.enabled)
             {
-                _characterController.Move(_currentPosition * (_movementSpeed * Time.deltaTime));
+                _characterController.Move(_playerPosition * (_movementSpeed * Time.deltaTime));
                 
             }
             _playerModel.rotation = _playerRotation;
@@ -198,8 +199,8 @@ namespace Player
         {
             var inputMovement = context.ReadValue<Vector2>();
             var gravity = Physics.gravity.y * Time.deltaTime * 100f;
-            _currentPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
-            _currentPosition.y += gravity;
+            _playerPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
+            _playerPosition.y += gravity;
         }
 
         /// <summary>

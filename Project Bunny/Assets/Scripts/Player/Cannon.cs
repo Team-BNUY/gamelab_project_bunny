@@ -15,7 +15,7 @@ namespace Player
         private GameObject _currentCannonBall;
         private bool _isActive;
         private GameObject _player;
-        private StudentController _studentController;
+        private StudentController _currentStudentController;
         private CinemachineComponentBase _playerVCamSettings;
         private CharacterController _playerCharController;
         [SerializeField] [Min(0)] private float _rotationSpeed;
@@ -66,11 +66,11 @@ namespace Player
         {
             //Initialize key variables
             _isActive = true;
-            _studentController = currentStudentController;
-            _player = _studentController.transform.gameObject;
+            _currentStudentController = currentStudentController;
+            _player = _currentStudentController.transform.gameObject;
             
             //Get the Cinemachine camera component of the player's Virtual Camera.
-            _playerVCamSettings = _studentController.GetVirtualCameraComponentBase();
+            _playerVCamSettings = _currentStudentController.GetVirtualCameraComponentBase();
             
             //Setting the new distance of the player camera when assuming control of the Slingshot
             if (_playerVCamSettings is CinemachineFramingTransposer transposer)
@@ -79,11 +79,11 @@ namespace Player
             }
             
             //Disable player controller in order to set the player's position manually
-            _playerCharController = _studentController.GetPlayerCharacterController();
+            _playerCharController = _currentStudentController.GetPlayerCharacterController();
             _playerCharController.enabled = false;
 
             //If there is no cannonball already on the slingshot, then spawn one. 
-            if (_currentCannonBall == null && _coolDownTimer<=0.0f)
+            if (_currentCannonBall == null && _coolDownTimer >= _coolDownTime)
             {
                 SpawnCannonBall();
             }
@@ -94,10 +94,18 @@ namespace Player
         /// </summary>
         public void Exit()
         {
+            // If already aiming while exiting, then just throw the current snowball and restore everything
+            if (_isAiming)
+            {
+                StartCannonBallThrow();
+                ThrowSnowball();
+                _coolDownTimer = 0.0f;
+            }
+            
             //Restore key variables to null/default value
             _isActive = false;
             _player = null;
-            _studentController = null;
+            _currentStudentController = null;
 
             //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
             if (_playerVCamSettings is CinemachineFramingTransposer transposer && _playerVCamSettings != null)
@@ -170,7 +178,7 @@ namespace Player
         private void RotateSlingShot()
         {
             //var mousePosAngle = Utilities.MousePosToRotationInput(this.transform, _playerCam);
-            var finalRotation = _studentController._playerRotation * Quaternion.Euler(0f, 90f, 0f);
+            var finalRotation = _currentStudentController.PlayerRotation * Quaternion.Euler(0f, 90f, 0f);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation , Time.deltaTime * _rotationSpeed);
             _player.transform.position = _playerSeat.transform.position;
         }
@@ -184,7 +192,7 @@ namespace Player
             _currentCannonBall = Instantiate(prefabToSpawn, _cannonBallSeat.position, _cannonBallSeat.rotation, _cannonBallSeat);
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _currentCannonBall.GetComponent<Snowball>();
-            _playerSnowball.SetSnowballThrower(_studentController);
+            _playerSnowball.SetSnowballThrower(_currentStudentController);
             _hasSnowball = true;
             _coolDownTimer = 0f;
         }
@@ -214,13 +222,6 @@ namespace Player
         }
         
         #endregion
-
-        #region Utilities
-
-        #endregion
-        
-        
-
     }
 }
 
