@@ -14,14 +14,14 @@ namespace Player
         [SerializeField] private Transform _playerModel;
         [SerializeField] private Camera _playerCamera;
         [SerializeField] private CinemachineVirtualCamera _playerVCam;
-        [SerializeField] private CinemachineComponentBase _playerVCamComponentBase;
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
+        private CinemachineComponentBase _playerVCamComponentBase;
         
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
         private Vector3 _currentPosition;
-        public Quaternion playerRotation;
+        public Quaternion _playerRotation;
 
         [Header("Properties")]
         [SerializeField] private float _studentHealth;
@@ -110,7 +110,7 @@ namespace Player
                 _characterController.Move(_currentPosition * (_movementSpeed * Time.deltaTime));
                 
             }
-            _playerModel.rotation = playerRotation;
+            _playerModel.rotation = _playerRotation;
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace Player
         public void OnLook()
         {
             var mousePosAngle = Utilities.MousePosToRotationInput(this.transform, _playerCamera);
-            playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
+            _playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
         }
 
         /// <summary>
