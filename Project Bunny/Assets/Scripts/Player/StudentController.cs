@@ -301,7 +301,7 @@ namespace Player
                 }
                 else
                 {
-                    _currentInteractable.Exit();
+                    _currentInteractable?.Exit();
                     _currentInteractable = null;
                 }
             }
@@ -365,15 +365,17 @@ namespace Player
             var hitColliders = new Collider[maxColliders];
             var numColliders = Physics.OverlapSphereNonAlloc(transform.position, 1f, hitColliders);
 
+            if (numColliders < 1) return null;
+            
             //Loop through 3 nearest objects and check if any of them are interactables that implement IInteractable
-            for (var i = 0; i < maxColliders; i++)
+            for (var i = 0; i < numColliders; i++)
             {
-                if (hitColliders[i].transform.gameObject.GetComponent<IInteractable>() != null)
+                if (hitColliders[i].gameObject.TryGetComponent<IInteractable>(out var interactableObject))
                 {
-                    interactable = hitColliders[i].transform.gameObject.GetComponent<IInteractable>();
+                    interactable = interactableObject;
                 }
             }
-            
+
             return interactable;
         }
         
