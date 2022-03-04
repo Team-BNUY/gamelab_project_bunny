@@ -1617,33 +1617,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 19505682024707139, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
-      propertyPath: _maxForce
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 19505682024707139, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
-      propertyPath: _minForce
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 19505682024707139, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
-      propertyPath: _coolDownTime
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 19505682024707139, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
-      propertyPath: _rotationSpeed
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 19505682024707139, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
       propertyPath: _cannonballPrefab
       value: 
       objectReference: {fileID: 9027766068581955839, guid: 61b8f483c204b98468fdd10af208e5d9, type: 3}
-    - target: {fileID: 19505682024707139, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
-      propertyPath: _newCameraDistance
-      value: 35
-      objectReference: {fileID: 0}
-    - target: {fileID: 19505682024707139, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
-      propertyPath: _forceIncreaseTimeRate
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3808900633230351856, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
       propertyPath: m_Name
       value: Cannon
@@ -2297,11 +2273,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 375071288671061455, guid: b61fdec5a46e1f04fbff59da54a9c10d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 30.310888
+      value: 21.650635
       objectReference: {fileID: 0}
     - target: {fileID: 375071288671061455, guid: b61fdec5a46e1f04fbff59da54a9c10d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -17.5
+      value: -12.5
       objectReference: {fileID: 0}
     - target: {fileID: 375071288671061455, guid: b61fdec5a46e1f04fbff59da54a9c10d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2335,10 +2311,6 @@ PrefabInstance:
       propertyPath: m_Follow
       value: 
       objectReference: {fileID: 1588333906}
-    - target: {fileID: 4115381412358059046, guid: b61fdec5a46e1f04fbff59da54a9c10d, type: 3}
-      propertyPath: m_CameraDistance
-      value: 35
-      objectReference: {fileID: 0}
     - target: {fileID: 7571949051163469869, guid: b61fdec5a46e1f04fbff59da54a9c10d, type: 3}
       propertyPath: m_TagString
       value: MainCamera

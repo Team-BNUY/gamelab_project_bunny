@@ -286,14 +286,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerSeat: {fileID: 7357920669383351604}
-  _studentHealth: 0
-  _rotationSpeed: 0
-  _cannonBallPrefab: {fileID: 9027766068581955839, guid: 61b8f483c204b98468fdd10af208e5d9, type: 3}
   _cannonBallSeat: {fileID: 4686431279264014348}
-  _coolDownTime: 0
-  _minForce: 0
-  _maxForce: 0
-  _forceIncreaseTimeRate: 0
+  _newCameraDistance: 35
+  _rotationSpeed: 100
+  _cannonBallPrefab: {fileID: 9027766068581955839, guid: 61b8f483c204b98468fdd10af208e5d9, type: 3}
+  _coolDownTime: 3
+  _minForce: 0.7
+  _maxForce: 2
+  _forceIncreaseTimeRate: 1
 --- !u!1 &4693336006073981796
 GameObject:
   m_ObjectHideFlags: 0
