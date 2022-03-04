@@ -348,6 +348,11 @@ namespace Player
             return _playerVCamComponentBase;
         }
 
+        public CharacterController GetPlayerCharacterController()
+        {
+            return _characterController;
+        }
+
         /// <summary>
         /// Utility function that returns the nearest interactable to the player
         /// </summary>

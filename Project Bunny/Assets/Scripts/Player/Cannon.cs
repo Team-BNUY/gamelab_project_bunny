@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Interfaces;
 using Cinemachine;
 
@@ -17,8 +16,6 @@ namespace Player
         private bool _isActive;
         private GameObject _player;
         private StudentController _studentController;
-        private Camera _playerCam;
-        private CinemachineVirtualCamera _playerVirtualCamera;
         private CinemachineComponentBase _playerVCamSettings;
         private CharacterController _playerCharController;
         [SerializeField] [Min(0)] private float _rotationSpeed;
@@ -72,9 +69,7 @@ namespace Player
             _studentController = currentStudentController;
             _player = _studentController.transform.gameObject;
             
-            //Get all necessary Camera components of the player
-            _playerCam = _studentController.GetPlayerCamera();
-            _playerVirtualCamera = _studentController.GetVirtualCamera();
+            //Get the Cinemachine camera component of the player's Virtual Camera.
             _playerVCamSettings = _studentController.GetVirtualCameraComponentBase();
             
             //Setting the new distance of the player camera when assuming control of the Slingshot
@@ -84,7 +79,7 @@ namespace Player
             }
             
             //Disable player controller in order to set the player's position manually
-            _playerCharController = _player.GetComponent<CharacterController>();
+            _playerCharController = _studentController.GetPlayerCharacterController();
             _playerCharController.enabled = false;
 
             //If there is no cannonball already on the slingshot, then spawn one. 
@@ -111,9 +106,7 @@ namespace Player
             }
 
             //Restore key variables to null/default value
-            _playerVirtualCamera = null;
             _playerVCamSettings = null;
-            _playerCam = null;
             _playerCharController.enabled = true;
             _playerCharController = null;
         }
