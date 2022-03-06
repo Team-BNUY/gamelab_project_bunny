@@ -1,3 +1,4 @@
+using System;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,10 +17,13 @@ namespace Player
         [SerializeField] private CinemachineVirtualCamera _playerVCam;
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
+        [SerializeField] private CapsuleCollider _capsuleCollider;
         private CinemachineComponentBase _playerVCamComponentBase;
+        private Rigidbody _rigidbody;
         
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
+        private InputAction.CallbackContext _inputContext;
         private Vector3 _playerPosition;
         private Quaternion _playerRotation;
         public Quaternion PlayerRotation => _playerRotation;
@@ -28,6 +32,7 @@ namespace Player
         [SerializeField] private float _studentHealth;
         private GameObject _currentObjectInHand;
         private IInteractable _currentInteractable;
+        private bool _isSliding;
 
         [Header("Snowball")]
         // TODO: Dynamically instantiate and attach prefab from a Manager
@@ -87,11 +92,40 @@ namespace Player
             DigSnowball();
         }
 
+        private void FixedUpdate()
+        {
+            if (!_isDigging)
+            {
+                MoveStudentOnIce();
+            }
+        }
+
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
             if (hit.collider.gameObject.TryGetComponent<GiantRollball>(out var giantRollball))
             {
                 giantRollball.PushGiantRollball(transform);
+            }
+
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ice") && _rigidbody == null)
+            {
+                SwitchMovementPhysics(true);
+            }
+        }
+
+        private void OnCollisionEnter(Collision other)
+        {
+            if (other.gameObject.layer == LayerMask.NameToLayer("Ground") && _rigidbody != null)
+            {
+                SwitchMovementPhysics(false);
+            }
+        }
+
+        private void OnCollisionExit(Collision other)
+        {
+            if (other.gameObject.layer == LayerMask.NameToLayer("Ice") && _rigidbody != null)
+            {
+                _rigidbody.constraints = RigidbodyConstraints.None;
             }
         }
 
@@ -109,9 +143,18 @@ namespace Player
             if (_characterController.enabled)
             {
                 _characterController.Move(_playerPosition * (_movementSpeed * Time.deltaTime));
-                
             }
             _playerModel.rotation = _playerRotation;
+        }
+        
+        private void MoveStudentOnIce()
+        {
+            if (_rigidbody != null)
+            {
+                var inputMovement = _inputContext.ReadValue<Vector2>();
+                //rb.velocity = _characterController.velocity;
+                _rigidbody.AddForce(inputMovement.x * 5f, 0f , inputMovement.y * 5f);
+            }
         }
 
         /// <summary>
@@ -197,6 +240,7 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnMove(InputAction.CallbackContext context)
         {
+            _inputContext = context;
             var inputMovement = context.ReadValue<Vector2>();
             var gravity = Physics.gravity.y * Time.deltaTime * 100f;
             _playerPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
@@ -322,13 +366,25 @@ namespace Player
             _playerCamera = cam;
         }
 
-        /// <summary>
-        /// Utility function that returns the player camera
-        /// </summary>
-        /// <returns></returns>
-        public Camera GetPlayerCamera()
+        private void SwitchMovementPhysics(bool isRigid)
         {
-            return _playerCamera;
+            if (isRigid)
+            {
+                _characterController.enabled = false;
+                _rigidbody = gameObject.AddComponent<Rigidbody>();
+                _rigidbody.interpolation = RigidbodyInterpolation.Extrapolate;
+                _rigidbody.constraints = RigidbodyConstraints.FreezePositionY;
+                _rigidbody.velocity = _characterController.velocity;
+                _capsuleCollider.enabled = true;
+            }
+            else
+            {
+                _rigidbody.constraints = RigidbodyConstraints.None;
+                Destroy(_rigidbody);
+                _rigidbody = null;
+                _capsuleCollider.enabled = false;
+                _characterController.enabled = true;
+            }
         }
 
         /// <summary>
@@ -378,9 +434,7 @@ namespace Player
 
             return interactable;
         }
-        
-        
-        
+
         #endregion
     }
 }
