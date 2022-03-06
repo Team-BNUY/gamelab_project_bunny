@@ -119,7 +119,8 @@ namespace Player
         private bool CheckForCollision(Vector3 position)
         {
             // TODO: Use OverlapSphereNoAlloc()
-            var hits = Physics.OverlapSphere(position, _collisionCheckRadius); //Measure collision via a small circle at the latest position, dont continue simulating Arc if hit
+            //Measure collision via a small circle at the latest position, dont continue simulating Arc if hit
+            var hits = Physics.OverlapSphere(position, _collisionCheckRadius);
             return hits.Length > 0;
         }
 
