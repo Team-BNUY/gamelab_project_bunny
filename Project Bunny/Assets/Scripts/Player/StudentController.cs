@@ -1,4 +1,3 @@
-using System;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,14 +16,12 @@ namespace Player
         [SerializeField] private CinemachineVirtualCamera _playerVCam;
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
-        [SerializeField] private CapsuleCollider _capsuleCollider;
         private CinemachineComponentBase _playerVCamComponentBase;
-        private Rigidbody _rigidbody;
-        
+
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
-        [SerializeField] [Range(0f, 10f)] private float _slideForce;
-        private InputAction.CallbackContext _inputContext;
+        [SerializeField] [Range(0f, 1f)] private float _friction;
+        private Vector3 _playerCurrentVelocity;
         private Vector3 _playerPosition;
         private Quaternion _playerRotation;
         public Quaternion PlayerRotation => _playerRotation;
@@ -68,8 +65,6 @@ namespace Player
             _playerVCamComponentBase = _playerVCam.GetCinemachineComponent(CinemachineCore.Stage.Body);
 
             _throwForce = _minForce;
-            
-            
         }
 
         private void Update()
@@ -93,40 +88,11 @@ namespace Player
             DigSnowball();
         }
 
-        private void FixedUpdate()
-        {
-            if (!_isDigging)
-            {
-                MoveStudentOnIce();
-            }
-        }
-
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
             if (hit.collider.gameObject.TryGetComponent<GiantRollball>(out var giantRollball))
             {
                 giantRollball.PushGiantRollball(transform);
-            }
-
-            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ice") && _rigidbody == null)
-            {
-                SwitchMovementPhysics(true);
-            }
-        }
-
-        private void OnCollisionEnter(Collision other)
-        {
-            if (other.gameObject.layer == LayerMask.NameToLayer("Ground") && _rigidbody != null)
-            {
-                SwitchMovementPhysics(false);
-            }
-        }
-
-        private void OnCollisionExit(Collision other)
-        {
-            if (other.gameObject.layer == LayerMask.NameToLayer("Ice") && _rigidbody != null)
-            {
-                _rigidbody.constraints = RigidbodyConstraints.None;
             }
         }
 
@@ -143,22 +109,18 @@ namespace Player
             // If the player's character controller is disabled, then don't move them. Otherwise, move them. 
             if (_characterController.enabled)
             {
-                _characterController.Move(_playerPosition * (_movementSpeed * Time.deltaTime));
+                if (_isSliding)
+                {
+                    var desiredVelocity = _playerPosition * _movementSpeed;
+                    _playerCurrentVelocity = Vector3.Lerp(_characterController.velocity, desiredVelocity, _friction * Time.deltaTime * 0.5f);
+                    _characterController.Move(_playerCurrentVelocity * Time.deltaTime);
+                }
+                else
+                {
+                    _characterController.Move(_playerPosition * (_movementSpeed * Time.deltaTime));
+                }
             }
             _playerModel.rotation = _playerRotation;
-        }
-        
-        /// <summary>
-        /// Use Rigidbody Component to add force and slide character on ice rink
-        /// </summary>
-        private void MoveStudentOnIce()
-        {
-            if (_rigidbody != null)
-            {
-                var inputMovement = _inputContext.ReadValue<Vector2>();
-                //rb.velocity = _characterController.velocity;
-                _rigidbody.AddForce(inputMovement.x * _slideForce, 0f , inputMovement.y * _slideForce);
-            }
         }
 
         /// <summary>
@@ -174,9 +136,8 @@ namespace Player
             if (_digSnowballTimer < _digSnowballMaxTime) return;
 
             var prefabToSpawn = _snowballPrefab;
-            if (_currentStandingGround == LayerMask.NameToLayer("Ice") && _rigidbody != null)
+            if (_currentStandingGround == LayerMask.NameToLayer("Ice"))
             {
-                _rigidbody.isKinematic = false;
                 prefabToSpawn = _iceballPrefab;
             }
             _currentObjectInHand = Instantiate(prefabToSpawn, _playerHand.position, _playerHand.rotation, _playerHand);
@@ -237,6 +198,7 @@ namespace Player
             {
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
                 _currentStandingGround = hit.collider.gameObject.layer;
+                _isSliding = _currentStandingGround == LayerMask.NameToLayer("Ice");
             }
         }
 
@@ -252,7 +214,6 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnMove(InputAction.CallbackContext context)
         {
-            _inputContext = context;
             var inputMovement = context.ReadValue<Vector2>();
             var gravity = Physics.gravity.y * Time.deltaTime * 100f;
             _playerPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
@@ -287,12 +248,6 @@ namespace Player
             if (_currentStandingGround != LayerMask.NameToLayer("Ground") &&
                 _currentStandingGround != LayerMask.NameToLayer("Ice")) return;
 
-            if (_rigidbody != null && _rigidbody.velocity.magnitude <= 2f)
-            {
-                _rigidbody.velocity = Vector3.zero;
-                _rigidbody.isKinematic = true;
-            }
-            
             // If action is being performed, start digging
             if (context.performed)
             {
@@ -382,27 +337,6 @@ namespace Player
         public void SetCamera(Camera cam)
         {
             _playerCamera = cam;
-        }
-
-        private void SwitchMovementPhysics(bool isRigid)
-        {
-            if (isRigid)
-            {
-                _characterController.enabled = false;
-                _rigidbody = gameObject.AddComponent<Rigidbody>();
-                _rigidbody.interpolation = RigidbodyInterpolation.Extrapolate;
-                _rigidbody.constraints = RigidbodyConstraints.FreezePositionY;
-                _rigidbody.velocity = _characterController.velocity;
-                _capsuleCollider.enabled = true;
-            }
-            else
-            {
-                _rigidbody.constraints = RigidbodyConstraints.None;
-                Destroy(_rigidbody);
-                _rigidbody = null;
-                _capsuleCollider.enabled = false;
-                _characterController.enabled = true;
-            }
         }
 
         /// <summary>
