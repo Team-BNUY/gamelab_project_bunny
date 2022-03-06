@@ -250,8 +250,12 @@ namespace Player
             // If player has snowball on hand or character is in the air, don't dig
             // TODO: Make it also so it can't dig when hand is occupied in general
             if (_hasSnowball || !_characterController.isGrounded) return;
-            
-            //  Can't dig at surface with no ice or snow
+
+            // Don't allow player to dig while on ice and sliding fast
+            if (_currentStandingGround == LayerMask.NameToLayer("Ice") &&
+                _characterController.velocity.magnitude >= 2.0f) return;
+
+                //  Can't dig at surface with no ice or snow
             if (_currentStandingGround != LayerMask.NameToLayer("Ground") &&
                 _currentStandingGround != LayerMask.NameToLayer("Ice")) return;
 
@@ -266,6 +270,8 @@ namespace Player
                 _isDigging = false;
                 _digSnowballTimer = 0.0f;
             }
+
+            _playerCurrentVelocity = Vector3.zero;
         }
 
         /// <summary>

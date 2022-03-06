@@ -18,6 +18,7 @@ namespace Player
         [SerializeField] private float _damage;
         [SerializeField] private float _growthFactor;
 
+        private bool _isGrowing;
         private bool _isDestroyable;
         private bool _canDamage;
 
@@ -42,7 +43,9 @@ namespace Player
 
         private void OnCollisionEnter(Collision other)
         {
-            if (IsInLayerMask(other.gameObject)  && _isDestroyable)
+            _isGrowing = other.gameObject.layer == LayerMask.NameToLayer("Ground");
+            
+            if (IsInLayerMask(other.gameObject) && _isDestroyable)
             {
                 // Damage student 
                 if (other.gameObject.TryGetComponent<StudentController>(out var otherStudent) && _canDamage)
@@ -79,7 +82,10 @@ namespace Player
         /// </summary>
         private void GrowSize()
         {
-            _snowballTransform.localScale += Vector3.one * (_growthFactor * _snowballRigidbody.velocity.magnitude * Time.fixedDeltaTime);
+            if (_isGrowing)
+            {
+                _snowballTransform.localScale += Vector3.one * (_growthFactor * _snowballRigidbody.velocity.magnitude * Time.fixedDeltaTime);
+            }
         }
 
         /// <summary>
