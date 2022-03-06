@@ -23,6 +23,7 @@ namespace Player
         
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
+        [SerializeField] [Range(0f, 10f)] private float _slideForce;
         private InputAction.CallbackContext _inputContext;
         private Vector3 _playerPosition;
         private Quaternion _playerRotation;
@@ -135,7 +136,7 @@ namespace Player
         #region Actions
 
         /// <summary>
-        /// Change player's position and orientation in global axes
+        /// Change player's position and orientation in global axes using Character Controller
         /// </summary>
         private void MoveStudent()
         {
@@ -147,13 +148,16 @@ namespace Player
             _playerModel.rotation = _playerRotation;
         }
         
+        /// <summary>
+        /// Use Rigidbody Component to add force and slide character on ice rink
+        /// </summary>
         private void MoveStudentOnIce()
         {
             if (_rigidbody != null)
             {
                 var inputMovement = _inputContext.ReadValue<Vector2>();
                 //rb.velocity = _characterController.velocity;
-                _rigidbody.AddForce(inputMovement.x * 5f, 0f , inputMovement.y * 5f);
+                _rigidbody.AddForce(inputMovement.x * _slideForce, 0f , inputMovement.y * _slideForce);
             }
         }
 
@@ -169,7 +173,12 @@ namespace Player
 
             if (_digSnowballTimer < _digSnowballMaxTime) return;
 
-            var prefabToSpawn = _currentStandingGround == LayerMask.NameToLayer("Ground") ? _snowballPrefab : _iceballPrefab;
+            var prefabToSpawn = _snowballPrefab;
+            if (_currentStandingGround == LayerMask.NameToLayer("Ice") && _rigidbody != null)
+            {
+                _rigidbody.isKinematic = false;
+                prefabToSpawn = _iceballPrefab;
+            }
             _currentObjectInHand = Instantiate(prefabToSpawn, _playerHand.position, _playerHand.rotation, _playerHand);
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _currentObjectInHand.GetComponent<Snowball>();
@@ -179,6 +188,9 @@ namespace Player
             _digSnowballTimer = 0.0f;
         }
 
+        /// <summary>
+        /// Increase throw force every frame when aiming snowball
+        /// </summary>
         private void IncreaseThrowForce()
         {
             _throwForce += Time.deltaTime * _forceIncreaseTimeRate;
@@ -274,6 +286,12 @@ namespace Player
             //  Can't dig at surface with no ice or snow
             if (_currentStandingGround != LayerMask.NameToLayer("Ground") &&
                 _currentStandingGround != LayerMask.NameToLayer("Ice")) return;
+
+            if (_rigidbody != null && _rigidbody.velocity.magnitude <= 2f)
+            {
+                _rigidbody.velocity = Vector3.zero;
+                _rigidbody.isKinematic = true;
+            }
             
             // If action is being performed, start digging
             if (context.performed)
