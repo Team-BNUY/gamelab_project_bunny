@@ -20,7 +20,7 @@ namespace Player
 
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
-        [SerializeField] [Range(0f, 1f)] private float _friction;
+        [SerializeField] [Range(0f, 1f)] private float _movementFriction;
         private Vector3 _playerCurrentVelocity;
         private Vector3 _playerPosition;
         private Quaternion _playerRotation;
@@ -63,7 +63,10 @@ namespace Player
             }
 
             _playerVCamComponentBase = _playerVCam.GetCinemachineComponent(CinemachineCore.Stage.Body);
+        }
 
+        private void Start()
+        {
             _throwForce = _minForce;
         }
 
@@ -112,7 +115,7 @@ namespace Player
                 if (_isSliding)
                 {
                     var desiredVelocity = _playerPosition * _movementSpeed;
-                    _playerCurrentVelocity = Vector3.Lerp(_characterController.velocity, desiredVelocity, _friction * Time.deltaTime * 0.5f);
+                    _playerCurrentVelocity = Vector3.Lerp(_playerCurrentVelocity, desiredVelocity, _movementFriction * Time.deltaTime * 0.5f);
                     _characterController.Move(_playerCurrentVelocity * Time.deltaTime);
                 }
                 else
@@ -198,6 +201,10 @@ namespace Player
             {
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
                 _currentStandingGround = hit.collider.gameObject.layer;
+                if (!_isSliding)
+                {
+                    _playerCurrentVelocity = _characterController.velocity;
+                }
                 _isSliding = _currentStandingGround == LayerMask.NameToLayer("Ice");
             }
         }
