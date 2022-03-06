@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Player
@@ -121,6 +122,7 @@ namespace Player
             // TODO: Use OverlapSphereNoAlloc()
             //Measure collision via a small circle at the latest position, dont continue simulating Arc if hit
             var hits = Physics.OverlapSphere(position, _collisionCheckRadius);
+            hits = hits.ToList().FindAll(hit => hit.gameObject == _studentThrower.gameObject).ToArray();
             return hits.Length > 0;
         }
 
