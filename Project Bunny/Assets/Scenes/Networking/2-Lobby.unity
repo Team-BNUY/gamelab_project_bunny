@@ -1674,10 +1674,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e5dfc93f2e9d0499771ac35b120375, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  createInput: {fileID: 98142777}
-  joinInput: {fileID: 1256968124}
-  nameInput: {fileID: 955938996}
+  _createInput: {fileID: 98142777}
+  _joinInput: {fileID: 1256968124}
+  _nameInput: {fileID: 955938996}
   maxPlayersPerRoom: 4
+  _createButton: {fileID: 1623009930}
+  _joinButton: {fileID: 365108906}
 --- !u!4 &974217577
 Transform:
   m_ObjectHideFlags: 0

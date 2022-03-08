@@ -9,7 +9,7 @@ public class PlayerTile : MonoBehaviour
 {
     public Photon.Realtime.Player player;
 
-    [SerializeField] private TMP_Text text;
+    [SerializeField] private TMP_Text playerNameDisplay;
     [SerializeField] private Image readyIndicator;
     [SerializeField] private Image teamIndicator;
 
@@ -32,18 +32,23 @@ public class PlayerTile : MonoBehaviour
 
     public void SetTeamIndicator(byte team)
     {
-        if (team == 1)
-            teamIndicator.color = Color.blue;
-        else if (team == 2)
-            teamIndicator.color = Color.red;
-        else
-            Debug.LogError("Error: Invalid Team");
+        switch (team) {
+            case 1:
+                teamIndicator.color = Color.blue;
+                break;
+            case 2:
+                teamIndicator.color = Color.red;
+                break;
+            default:
+                Debug.LogError("Error: Invalid Team");
+                break;
+        }
     }
 
     public void SetPlayer(Photon.Realtime.Player player)
     {
         this.player = player;
-        SetText(player.NickName);
+        SetPlayerNameDisplay(player.NickName);
         if (player.CustomProperties.ContainsKey("ready"))
         {
             SetReadyIndicator((bool)player.CustomProperties["ready"]);
@@ -61,9 +66,9 @@ public class PlayerTile : MonoBehaviour
 
     }
 
-    public void SetText(string text)
+    public void SetPlayerNameDisplay(string name)
     {
-        this.text.text = text;
+        this.playerNameDisplay.text = name;
     }
 
     public void UpdateView(Hashtable changedProps)
@@ -72,6 +77,6 @@ public class PlayerTile : MonoBehaviour
         {
             SetReadyIndicator((bool)changedProps["ready"]);
         }
-        SetText(player.NickName);
+        SetPlayerNameDisplay(player.NickName);
     }
 }
