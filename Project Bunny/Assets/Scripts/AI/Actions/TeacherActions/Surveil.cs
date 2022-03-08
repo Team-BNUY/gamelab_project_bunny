@@ -19,14 +19,23 @@ public class Surveil : Action
         _surveilFieldOfView = surveilFieldOfView;
         _teacher = agent;
     }
-
+    
+    /// <summary>
+    /// Determines if the Teacher knows at least one waypoint
+    /// </summary>
+    /// <returns>True if the Teacher knows at least one waypoint</returns>
     public override bool IsAchievable()
     {
         return _teacher.Waypoints.Length != 0;
     }
-
+    
+    /// <summary>
+    /// Sets the Teacher's target and adjusts their view parameters
+    /// </summary>
+    /// <returns>Always true, no possible failing condition here</returns>
     public override bool PrePerform()
     {
+        // Sets the target
         var random = Random.Range(0, _teacher.Waypoints.Length);
         _waypoint = _teacher.Waypoints[random];
         target = _waypoint.position;
@@ -39,13 +48,20 @@ public class Surveil : Action
         return true;
     }
 
+    /// <summary>
+    /// Adjusts the Teacher's field of view when arriving at a waypoint
+    /// </summary>
     public override void Perform()
     {
         _teacher.FieldOfView = _surveilFieldOfView;
         
         agent.CompleteAction(); // TODO Play surveil/investigate animation and complete action from animation completion
     }
-
+    
+    /// <summary>
+    /// Returns true
+    /// </summary>
+    /// <returns>True</returns>
     public override bool PostPerform()
     {
         return success;

@@ -20,6 +20,7 @@ namespace AI.Agents
         [SerializeField] [Range(0f, 180f)] private float _fieldOfView;
         [SerializeField] [Min(0f)] private float _viewDistance;
         [SerializeField] [Min(0f)] private float _headRotationSpeed = 10f;
+        [SerializeField] private LayerMask _viewBlockingLayer;
         private bool _lookingForward;
 
         [Header("Waypoints")] 
@@ -139,14 +140,15 @@ namespace AI.Agents
                 // If the student holds a tool or if it is already in the list of bad students
                 var myPosition = transform.position;
                 var studentPosition = student.transform.position;
-                
                 if(Vector3.Distance(myPosition, studentPosition) > _viewDistance) continue;
                 
                 // If the student is within view distance
                 var angle = Vector3.Angle(_viewDirection, studentPosition - myPosition);
-
                 if (2f * angle > _fieldOfView) continue;
-                
+
+                var direction = student.transform.position - _head.transform.position;
+                if (Physics.Raycast(_head.transform.position, direction, _viewDistance, _viewBlockingLayer)) continue; // TODO Adjust to the student's height if applicable and adjust distance to be projected to the Y plane for it to be precise
+                    
                 // If the student is within field of view
                 // Updates the bad student's last seen position if already in the list of bad students
                 if (_badStudents.ContainsKey(student))
