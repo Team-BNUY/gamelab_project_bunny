@@ -12,6 +12,8 @@ namespace Player
         [SerializeField] private LayerMask _hitLayers;
         [SerializeField, Min(0.0f)] private float _destroySpeedThreshold;
         [SerializeField, Min(0.0f)] private float _damageThreshold;
+        [SerializeField, Min(0.0f)] private float _sizeThreshold;
+        [SerializeField, Min(0.0f)] private float _pushForce;
 
         // ReSharper disable once NotAccessedField.Local
         // TODO: Implement damage system once game loop is complete
@@ -52,9 +54,7 @@ namespace Player
                 {
                     otherStudent.GetDamaged(_damage);
                 }
-                var go = Instantiate(_snowballBurst.gameObject, transform.position, Quaternion.identity);
-                go.GetComponent<ParticleSystem>().Play();
-                Destroy(gameObject);
+                BreakRollball();
             }
         }
 
@@ -66,7 +66,7 @@ namespace Player
         {
             var distance = _snowballTransform.position - student.position;
             distance = distance.normalized;
-            _snowballRigidbody.AddForce(distance * 20f);
+            _snowballRigidbody.AddForce(distance * _pushForce);
         }
 
         /// <summary>
@@ -82,6 +82,11 @@ namespace Player
         /// </summary>
         private void GrowSize()
         {
+            if (_snowballTransform.localScale.x >= _sizeThreshold)
+            {
+                BreakRollball();
+            }
+            
             if (_isGrowing)
             {
                 _snowballTransform.localScale += Vector3.one * (_growthFactor * _snowballRigidbody.velocity.magnitude * Time.fixedDeltaTime);
@@ -94,6 +99,7 @@ namespace Player
         private void TrackGiantRollballStates()
         {
             var currentSpeed= _snowballRigidbody.velocity.magnitude;
+            var currentSize = _snowballTransform.localScale;
             _isDestroyable = currentSpeed >= _destroySpeedThreshold;
             _canDamage = currentSpeed >= _damageThreshold;
         }
@@ -106,6 +112,13 @@ namespace Player
         private bool IsInLayerMask(GameObject obj)
         {
             return (_hitLayers.value & (1 << obj.layer)) > 0;
+        }
+
+        private void BreakRollball()
+        {
+            var go = Instantiate(_snowballBurst.gameObject, transform.position, Quaternion.identity);
+            go.GetComponent<ParticleSystem>().Play();
+            Destroy(gameObject);
         }
     }
 }
