@@ -12,41 +12,39 @@ namespace Networking
         private const string DEFAULT_PLAYER_NAME = "Joe";
         private const string PLAYER_PREF_NAME_KEY = "PlayerName";
 
-        [SerializeField] private TMP_InputField createInput;
-        [SerializeField] private TMP_InputField joinInput;
-        [SerializeField] private TMP_InputField nameInput;
+        [SerializeField] private TMP_InputField _createInput;
+        [SerializeField] private TMP_InputField _joinInput;
+        [SerializeField] private TMP_InputField _nameInput;
 
         [SerializeField] private byte maxPlayersPerRoom = 4;
 
-        private Button createButton;
-        private Button joinButton;
-        private string defaultName;
+        [SerializeField] private Button _createButton;
+        [SerializeField] private Button _joinButton;
+        private string _defaultName;
 
         void Start()
         {
-            createButton = createInput.GetComponentInChildren<Button>();
-            joinButton = joinInput.GetComponentInChildren<Button>();
-            createButton.onClick.AddListener(CreateRoom);
-            joinButton.onClick.AddListener(JoinRoom);
-            nameInput.onValueChanged.AddListener(SetName);
+            _createButton.onClick.AddListener(CreateRoom);
+            _joinButton.onClick.AddListener(JoinRoom);
+            _nameInput.onValueChanged.AddListener(SetName);
             SetUpNameInput();
         }
 
         public void CreateRoom()
         {
-            PhotonNetwork.NickName = defaultName;
+            PhotonNetwork.NickName = _defaultName;
 
             RoomOptions options = new RoomOptions();
             options.MaxPlayers = maxPlayersPerRoom;
             options.PublishUserId = true;
             options.BroadcastPropsChangeToAll = true;
 
-            PhotonNetwork.CreateRoom(createInput.text, options, TypedLobby.Default);
+            PhotonNetwork.CreateRoom(_createInput.text, options, TypedLobby.Default);
         }
 
         public void JoinRoom()
         {
-            PhotonNetwork.JoinRoom(joinInput.text);
+            PhotonNetwork.JoinRoom(_joinInput.text);
         }
 
         public override void OnJoinedRoom()
@@ -58,14 +56,14 @@ namespace Networking
         {
             if (PlayerPrefs.HasKey(PLAYER_PREF_NAME_KEY))
             {
-                defaultName = PlayerPrefs.GetString(PLAYER_PREF_NAME_KEY);
+                _defaultName = PlayerPrefs.GetString(PLAYER_PREF_NAME_KEY);
             }
             else
             {
-                defaultName = DEFAULT_PLAYER_NAME;
+                _defaultName = DEFAULT_PLAYER_NAME;
             }
-            nameInput.text = defaultName;
-            PhotonNetwork.NickName = defaultName;
+            _nameInput.text = _defaultName;
+            PhotonNetwork.NickName = _defaultName;
         }
 
         /// <summary>

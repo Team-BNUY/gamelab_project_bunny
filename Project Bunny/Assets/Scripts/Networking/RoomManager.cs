@@ -13,6 +13,7 @@ namespace Networking
 {
     public class RoomManager : MonoBehaviourPunCallbacks
     {
+        private const string LOBBY_SCENE_NAME = "2-Lobby";
         private const string ARENA_SCENE_NAME = "4-Arena";
 
         [Header("Player Instantiation")]
@@ -28,6 +29,7 @@ namespace Networking
         [SerializeField] private Button _readyUpBtn;
         [SerializeField] private Button _redJerseyBtn;
         [SerializeField] private Button _blueJerseyBtn;
+        [SerializeField] private Button _leaveRoomBtn;
         [SerializeField] private GameObject playerTile;
         [SerializeField] private Transform playerTileParent;
         private List<PlayerTile> tiles;
@@ -42,12 +44,15 @@ namespace Networking
             InitialiseUI();
 
             if (PhotonTeamsManager.Instance.GetTeamMembersCount(1) <= PhotonTeamsManager.Instance.GetTeamMembersCount(2))
+            {
                 PhotonNetwork.LocalPlayer.JoinTeam(1);
+            }
             else
+            {
                 PhotonNetwork.LocalPlayer.JoinTeam(2);
+            }
 
             _startGameBtn.interactable = false;
-            
 
             foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
             {
@@ -95,8 +100,14 @@ namespace Networking
 
             _blueJerseyBtn.onClick.AddListener(() => SwapTeams(1));
             _redJerseyBtn.onClick.AddListener(() => SwapTeams(2));
+            _leaveRoomBtn.onClick.AddListener(() => PhotonNetwork.LeaveRoom());
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
+        }
+
+        public override void OnLeftRoom()
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(LOBBY_SCENE_NAME);
         }
 
         private void SwapTeams(byte teamCode)
