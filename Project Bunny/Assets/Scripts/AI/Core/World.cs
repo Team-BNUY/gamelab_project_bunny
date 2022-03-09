@@ -1,4 +1,4 @@
-namespace AI
+namespace AI.Core
 {
     public sealed class World
     {

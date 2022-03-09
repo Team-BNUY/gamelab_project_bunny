@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace AI
+namespace AI.Core
 {
     [Serializable]
     public class State

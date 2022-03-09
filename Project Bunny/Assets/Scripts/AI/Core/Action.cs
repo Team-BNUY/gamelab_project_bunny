@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace AI
+namespace AI.Core
 {
     public abstract class Action
     {

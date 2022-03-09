@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using AI.Core;
 using ExitGames.Client.Photon.StructWrapping;
 using Player;
 using UnityEngine;
@@ -29,7 +30,7 @@ namespace AI.Agents
         private Vector3 _viewDirection;
         
         // Students references
-        private StudentController[] _allStudents;
+        private StudentController[] _allPlayers;
         private StudentController _targetStudent;
         private StudentController _lastTargetStudent;
         private Dictionary<StudentController, Vector3> _badStudents = new Dictionary<StudentController, Vector3>();
@@ -40,7 +41,7 @@ namespace AI.Agents
         protected override void Start()
         {
             // Fetching all students
-            _allStudents = FindObjectsOfType<StudentController>(); // TODO Take from an eventual future GameManager
+            _allPlayers = FindObjectsOfType<StudentController>(); // TODO Take from an eventual future GameManager
             
             // Goals
             var state = new State("searchedForBadStudent", 1);
@@ -133,7 +134,7 @@ namespace AI.Agents
             badStudent = null;
             
             // Ordering the students by distance and iterating through all of them
-            foreach (var student in _allStudents.OrderBy(s => Vector3.Distance(transform.position, s.transform.position)))
+            foreach (var student in _allPlayers.OrderBy(s => Vector3.Distance(transform.position, s.transform.position)))
             {   
                 //if(!student.HasSnowball && !_badStudents.ContainsKey(student)) continue;
                 
@@ -267,7 +268,7 @@ namespace AI.Agents
             get => _lastTargetStudent;
             set => _lastTargetStudent = value;
         }
-
+        
         public Dictionary<StudentController, Vector3> BadStudents
         {
             get => _badStudents;

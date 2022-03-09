@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace AI
+namespace AI.Core
 {
     public class Agent : MonoBehaviour
     {

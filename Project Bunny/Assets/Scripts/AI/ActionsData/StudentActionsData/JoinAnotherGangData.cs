@@ -1,16 +1,20 @@
 using AI.Actions.StudentActions;
 using AI.Agents;
+using AI.Core;
 using UnityEngine;
 
 namespace AI.ActionsData.StudentActionsData
 {
-    public class JoinAnotherStudentData : ActionData
+    [CreateAssetMenu(fileName = "Join Another Student", menuName = "AI/Action/Student/Join Another Student")]
+    public class JoinAnotherGangData : ActionData
     {
+        [SerializeField] private float _rotationSpeed = 10f;
+        
         public override void Create(Agent agent)
         {
             if (agent is Student student)
             {
-                var action = new JoinAnotherStudent(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), student, hasTarget);
+                var action = new JoinAnotherGang(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), student, hasTarget, _rotationSpeed);
                 student.Actions.Add(action);
             }
             else

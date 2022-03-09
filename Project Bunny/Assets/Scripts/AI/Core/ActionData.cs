@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AI
+namespace AI.Core
 {
     public abstract class ActionData : ScriptableObject
     {

@@ -1,5 +1,6 @@
 using AI;
 using AI.Agents;
+using AI.Core;
 using UnityEngine;
 
 public class Surveil : Action
@@ -35,6 +36,9 @@ public class Surveil : Action
     /// <returns>Always true, no possible failing condition here</returns>
     public override bool PrePerform()
     {
+        // Resets parameters
+        invoked = false;
+        
         // Sets the target
         var random = Random.Range(0, _teacher.Waypoints.Length);
         _waypoint = _teacher.Waypoints[random];
@@ -55,7 +59,7 @@ public class Surveil : Action
     {
         _teacher.FieldOfView = _surveilFieldOfView;
         
-        agent.CompleteAction(); // TODO Play surveil/investigate animation and complete action from animation completion
+        agent.CompleteAction(); // TODO Play surveil/investigate animation and complete action from animation completion (don't forget to check for invoked)
     }
     
     /// <summary>
