@@ -174,7 +174,10 @@ namespace AI.Agents
 
             return badStudentFound;
         }
-
+        
+        /// <summary>
+        /// Rotates the Teacher's head to face the view direction
+        /// </summary>
         private void LookAtViewDirection()
         {
             if (_lookingForward)
@@ -246,7 +249,6 @@ namespace AI.Agents
 
         public float FieldOfView
         {
-            get => _fieldOfView;
             set => _fieldOfView = value;
         }
 
