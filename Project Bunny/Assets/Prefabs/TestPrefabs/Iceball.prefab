@@ -193,7 +193,7 @@ SphereCollider:
   m_GameObject: {fileID: 9027766068581955839}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -226,8 +226,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _snowballRigidbody: {fileID: -152660347859332919}
+  _sphereCollider: {fileID: 4813863054407201053}
   _snowballTransform: {fileID: 5548079061548076500}
-  _lineRenderer: {fileID: -5339425659748857153}
+  _trajectoryLineRenderer: {fileID: -5339425659748857153}
   _snowballBurst: {fileID: 4654743796071091423, guid: 18bc448f19b13194286123decf19c22f, type: 3}
   _damage: 3
 --- !u!1001 &7540967051680277230
