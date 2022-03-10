@@ -42,6 +42,7 @@ namespace Player
         [SerializeField] private float _minForce;
         [SerializeField] private float _maxForce;
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
+        public Transform PlayerHand => _playerHand;
         private Snowball _playerSnowball;
         private int _currentStandingGround;
         private float _throwForce;
@@ -151,7 +152,7 @@ namespace Player
                 prefabToSpawn = _iceballPrefab;
             }
             _currentObjectInHand = Instantiate(prefabToSpawn, _playerHand.position, _playerHand.rotation * Quaternion.Euler(0f, -90f, 0f));
-            _currentObjectInHand.transform.parent = _playerHand;
+            //_currentObjectInHand.transform.parent = _playerHand;
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _currentObjectInHand.GetComponent<Snowball>();
             _playerSnowball.SetSnowballThrower(this);

@@ -8,13 +8,14 @@ namespace Player
     public class Snowball : MonoBehaviour
     {
         [SerializeField] private Rigidbody _snowballRigidbody;
+        [SerializeField] private SphereCollider _sphereCollider;
         [SerializeField] private Transform _snowballTransform;
         [SerializeField] private LineRenderer _trajectoryLineRenderer;
         [SerializeField] private ParticleSystem _snowballBurst;
         // ReSharper disable once NotAccessedField.Local
         // TODO: Implement damage system once game loop is complete
         [SerializeField] private float _damage;
-
+        
         private bool _isDestroyable;
         private float _throwForce;
         private float _mass;
@@ -38,7 +39,12 @@ namespace Player
             _mass = _snowballRigidbody.mass;
             _trajectoryLineRenderer.enabled = false;
         }
-        
+
+        private void Update()
+        {
+            SetSnowballAtHand();
+        }
+
         private void OnCollisionEnter(Collision other)
         {
             // TODO: Network this properly?
@@ -55,6 +61,15 @@ namespace Player
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
             Destroy(gameObject);
+        }
+
+        private void SetSnowballAtHand()
+        {
+            if (!_isDestroyable)
+            {
+                _snowballTransform.position = _studentThrower.PlayerHand.position;
+                _snowballTransform.rotation = _studentThrower.PlayerRotation;
+            }
         }
 
         /// <summary>
@@ -111,7 +126,7 @@ namespace Player
             }
             return lineRendererPoints;
         }
-        
+
         /// <summary>
         /// Check if current position of the trajectory arc is within another object with a collider
         /// </summary>
@@ -132,7 +147,7 @@ namespace Player
         public void ThrowSnowball()
         {
             _isDestroyable = true;
-            transform.parent = null;
+            _sphereCollider.enabled = true;
             _snowballRigidbody.isKinematic = false;
             // TODO: Direction will be handled via hand release on Animation
             var direction = new Vector3(0f, 0.2f, 0.0f);
