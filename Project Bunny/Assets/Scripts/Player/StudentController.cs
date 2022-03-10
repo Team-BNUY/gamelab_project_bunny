@@ -16,6 +16,7 @@ namespace Player
         [SerializeField] private CinemachineVirtualCamera _playerVCam;
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
+        [SerializeField] private Animator _animator;
         private CinemachineComponentBase _playerVCamComponentBase;
 
         [Header("Movement")]
@@ -45,9 +46,15 @@ namespace Player
         private int _currentStandingGround;
         private float _throwForce;
         private float _digSnowballTimer;
-        private bool _isDigging;
-        private bool _hasSnowball;
         private bool _isAiming;
+
+        [Header("Booleans")]
+        private bool _isWalking;
+        private static readonly int _isWalkingHash = Animator.StringToHash("isWalking");
+        private bool _isDigging;
+        private static readonly int _isDiggingHash = Animator.StringToHash("isDigging");
+        private bool _hasSnowball;
+        private static readonly int _hasSnowballHash = Animator.StringToHash("hasSnowball");
 
         #region Callbacks
         
@@ -143,13 +150,16 @@ namespace Player
             {
                 prefabToSpawn = _iceballPrefab;
             }
-            _currentObjectInHand = Instantiate(prefabToSpawn, _playerHand.position, _playerHand.rotation, _playerHand);
+            _currentObjectInHand = Instantiate(prefabToSpawn, _playerHand.position, _playerHand.rotation * Quaternion.Euler(0f, -90f, 0f));
+            _currentObjectInHand.transform.parent = _playerHand;
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _currentObjectInHand.GetComponent<Snowball>();
             _playerSnowball.SetSnowballThrower(this);
             _hasSnowball = true;
             _isDigging = false;
             _digSnowballTimer = 0.0f;
+            _animator.SetBool(_isDiggingHash, false);
+            _animator.SetBool(_hasSnowballHash, true);
         }
 
         /// <summary>
@@ -174,6 +184,7 @@ namespace Player
             _hasSnowball = false;
             _currentObjectInHand = null;
             _playerSnowball = null;
+            _animator.SetBool(_hasSnowballHash, false);
         }
 
         /// <summary>
@@ -225,6 +236,17 @@ namespace Player
             var gravity = Physics.gravity.y * Time.deltaTime * 100f;
             _playerPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
             _playerPosition.y += gravity;
+            _isWalking = _animator.GetBool(_isWalkingHash);
+            
+            //_animator.SetBool(_hasSnowballHash, _hasSnowball);
+            if (_isWalking && inputMovement.magnitude == 0.0f)
+            {
+                _animator.SetBool(_isWalkingHash, false);
+            }
+            else if (!_isWalking && inputMovement.magnitude > 0.0f)
+            {
+                _animator.SetBool(_isWalkingHash, true);
+            }
         }
 
         /// <summary>
@@ -263,12 +285,15 @@ namespace Player
             if (context.performed)
             {
                 _isDigging = true;
+                _animator.SetBool(_isWalkingHash, false);
+                _animator.SetBool(_isDiggingHash, true);
             }
             // If digging is abruptly cancelled, cancel action and reset timer
             if (context.canceled)
             {
                 _isDigging = false;
                 _digSnowballTimer = 0.0f;
+                _animator.SetBool(_isDiggingHash, false);
             }
 
             _playerCurrentVelocity = Vector3.zero;
