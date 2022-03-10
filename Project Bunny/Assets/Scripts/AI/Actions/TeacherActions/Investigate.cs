@@ -84,7 +84,6 @@ namespace AI.Actions.TeacherActions
             invoked = true;
             
             agent.CompleteAction();
-            Debug.Log("Investigation completed!");
         }
         
         /// <summary>

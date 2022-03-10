@@ -167,12 +167,11 @@ namespace AI.Core
         /// <summary>
         /// Interrupts the current goal to allow computation of a new one
         /// </summary>
-        public void InterruptGoal()
+        protected void InterruptGoal()
         {
-            Debug.Log(currentAction + " interrupted!");
-            
             _actionQueue = null;
             currentAction.Running = false;
+            currentAction.OnInterrupt();
             currentAction = null;
         }
         

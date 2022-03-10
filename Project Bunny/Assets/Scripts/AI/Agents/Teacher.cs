@@ -69,8 +69,6 @@ namespace AI.Agents
                 _viewDirection = transform.forward;
             }
             
-            Debug.Log(currentAction);
-            
             if (WitnessedBadAction(out var badStudent))
             {
                 _targetStudent = badStudent;

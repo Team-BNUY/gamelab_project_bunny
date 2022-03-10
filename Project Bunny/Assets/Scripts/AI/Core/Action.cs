@@ -65,6 +65,8 @@ namespace AI.Core
 
         public abstract bool PostPerform();
 
+        public virtual void OnInterrupt() {}
+
         /// <summary>
         /// Calculates the length of a nav mesh <paramref name="path"/>
         /// </summary>

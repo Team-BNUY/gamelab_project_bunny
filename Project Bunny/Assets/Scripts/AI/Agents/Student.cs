@@ -8,32 +8,46 @@ namespace AI.Agents
     {
         public static List<Gang> Gangs;
 
-        [SerializeField] private LayerMask _groundLayer;
+        [SerializeField] private LayerMask _studentLayer; // TODO Take from an eventual GameManager
+        [SerializeField] private LayerMask _groundLayer; // TODO Take from an eventual GameManager
         private Gang _gang;
+        private bool _occupied;
         
         protected override void Start()
         {
             // References
             Gangs ??= new List<Gang>(); // TODO Take from an eventual GameManager
-            _gang ??= new Gang(this);
-            if (!Gangs.Contains(_gang))
-            {
-                Gangs.Add(_gang);
-            }
+            Gang.Found(this);
+
+            // Goals
+            var state = new State("joinedAnotherGang", 1);
+            var states = new StateSet(state);
+            var goal = new Goal(states, false);
+            goals.Add(goal, 1);
             
             // Creating actions
             base.Start();
         }
 
+        public LayerMask StudentLayer
+        {
+            get => _studentLayer;
+        }
+        
         public LayerMask GroundLayer
         {
             get => _groundLayer;
         }
-        
+
         public Gang Gang
         {
             get => _gang;
             set => _gang = value;
+        }
+
+        public bool Occupied
+        {
+            get => _gang.Occupied;
         }
     }
 }

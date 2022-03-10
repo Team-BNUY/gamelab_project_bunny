@@ -8,39 +8,81 @@ namespace AI
     public class Gang
     {
         private List<Student> _members;
+        private int _occupied;
 
-        public Gang(Student student)
+        private Gang(Student student)
         {
             _members = new List<Student> { student };
+            if (!Student.Gangs.Contains(this))
+            {
+                Student.Gangs.Add(this);
+            }
         }
 
+        public static void Found(Student student)
+        {
+            student.Gang?.Leave(student);
+            student.Gang = new Gang(student);
+        }
+        
         public void Join(Student student)
         {
             var previousGang = Student.Gangs.Find(g => student.Gang == g);
-            previousGang?.RemoveStudent(student);
+            previousGang?.Leave(student);
 
             student.Gang = this;
             _members.Add(student);
         }
-
-        private void RemoveStudent(Student student)
+        
+        public void InteractWith()
         {
-            if (_members.Contains(student))
-            {
-                _members.Remove(student);
-            }
+            _occupied++;
         }
         
+        public void SetFree()
+        {
+            if (_occupied > 0)
+            {
+                _occupied--;
+            }
+        }
+
+        private void Leave(Student student)
+        {
+            if (!_members.Contains(student)) return;
+            
+            _members.Remove(student);
+            if (_members.Count == 0)
+            {
+                Student.Gangs.Remove(this);
+            }
+        }
+
         // Properties
+
+        public bool Occupied
+        {
+            get => _occupied != 0;
+        }
         
         public bool Full
         {
-            get => _members.Count <= 4;
+            get => _members.Count > 4;
         }
 
         public float Radius
         {
-            get => _members.Count / 1.5f;
+            get
+            {
+                return _members.Count switch
+                {
+                    1 => 2,
+                    2 => 3,
+                    3 => 4,
+                    4 => 4,
+                    _ => 2
+                };
+            }
         }
 
         public Vector3 Center
