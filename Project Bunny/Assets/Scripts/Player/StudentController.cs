@@ -17,6 +17,7 @@ namespace Player
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
         [SerializeField] private Animator _animator;
+        public Animator AnimatorController => _animator;
         private CinemachineComponentBase _playerVCamComponentBase;
 
         [Header("Movement")]
@@ -51,11 +52,12 @@ namespace Player
 
         [Header("Booleans")]
         private bool _isWalking;
-        private static readonly int _isWalkingHash = Animator.StringToHash("isWalking");
         private bool _isDigging;
-        private static readonly int _isDiggingHash = Animator.StringToHash("isDigging");
         private bool _hasSnowball;
-        private static readonly int _hasSnowballHash = Animator.StringToHash("hasSnowball");
+        // List of readonly files. No need for them to have a _ prefix
+        private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
+        private static readonly int IsDiggingHash = Animator.StringToHash("isDigging");
+        private static readonly int HasSnowballHash = Animator.StringToHash("hasSnowball");
 
         #region Callbacks
         
@@ -159,8 +161,8 @@ namespace Player
             _hasSnowball = true;
             _isDigging = false;
             _digSnowballTimer = 0.0f;
-            _animator.SetBool(_isDiggingHash, false);
-            _animator.SetBool(_hasSnowballHash, true);
+            _animator.SetBool(IsDiggingHash, false);
+            _animator.SetBool(HasSnowballHash, true);
         }
 
         /// <summary>
@@ -175,7 +177,8 @@ namespace Player
         /// <summary>
         /// Throws snowball once activated
         /// </summary>
-        private void ThrowSnowball()
+        // ReSharper disable once UnusedMember.Global
+        public void ThrowStudentSnowball()
         {
             if (_playerSnowball == null) return;
             
@@ -185,7 +188,7 @@ namespace Player
             _hasSnowball = false;
             _currentObjectInHand = null;
             _playerSnowball = null;
-            _animator.SetBool(_hasSnowballHash, false);
+            _animator.SetBool(HasSnowballHash, false);
         }
 
         /// <summary>
@@ -237,16 +240,16 @@ namespace Player
             var gravity = Physics.gravity.y * Time.deltaTime * 100f;
             _playerPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
             _playerPosition.y += gravity;
-            _isWalking = _animator.GetBool(_isWalkingHash);
+            _isWalking = _animator.GetBool(IsWalkingHash);
             
             //_animator.SetBool(_hasSnowballHash, _hasSnowball);
             if (_isWalking && inputMovement.magnitude == 0.0f)
             {
-                _animator.SetBool(_isWalkingHash, false);
+                _animator.SetBool(IsWalkingHash, false);
             }
             else if (!_isWalking && inputMovement.magnitude > 0.0f)
             {
-                _animator.SetBool(_isWalkingHash, true);
+                _animator.SetBool(IsWalkingHash, true);
             }
         }
 
@@ -286,15 +289,15 @@ namespace Player
             if (context.performed)
             {
                 _isDigging = true;
-                _animator.SetBool(_isWalkingHash, false);
-                _animator.SetBool(_isDiggingHash, true);
+                _animator.SetBool(IsWalkingHash, false);
+                _animator.SetBool(IsDiggingHash, true);
             }
             // If digging is abruptly cancelled, cancel action and reset timer
             if (context.canceled)
             {
                 _isDigging = false;
                 _digSnowballTimer = 0.0f;
-                _animator.SetBool(_isDiggingHash, false);
+                _animator.SetBool(IsDiggingHash, false);
             }
 
             _playerCurrentVelocity = Vector3.zero;
@@ -327,7 +330,7 @@ namespace Player
                 //If player has a snowball, then throw it. Otherwise call the Interactable's Release method.
                 if (_hasSnowball)
                 {
-                    ThrowSnowball();
+                    _animator.Play($"Base Layer.Snowball Throw");
                 }
                 else
                 {
@@ -426,8 +429,11 @@ namespace Player
             return interactable;
         }
 
+        public void SetWalkingAnimator()
+        {
+            _animator.SetBool(IsWalkingHash, _isWalking);
+        }
+        
         #endregion
-
-        public bool HasSnowball => _hasSnowball;
     }
 }
