@@ -99,7 +99,6 @@ namespace Player
         private void TrackGiantRollballStates()
         {
             var currentSpeed= _snowballRigidbody.velocity.magnitude;
-            var currentSize = _snowballTransform.localScale;
             _isDestroyable = currentSpeed >= _destroySpeedThreshold;
             _canDamage = currentSpeed >= _damageThreshold;
         }

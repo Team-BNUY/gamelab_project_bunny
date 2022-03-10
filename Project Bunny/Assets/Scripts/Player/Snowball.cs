@@ -63,6 +63,10 @@ namespace Player
             Destroy(gameObject);
         }
 
+        /// <summary>
+        /// Instead of parenting snowball at hand,
+        /// track position of student's hand and rotation of root of player
+        /// </summary>
         private void SetSnowballAtHand()
         {
             if (!_isDestroyable)
@@ -153,7 +157,6 @@ namespace Player
             var direction = new Vector3(0f, 0.2f, 0.0f);
             direction += _snowballTransform.forward;
             _snowballRigidbody.AddForce(direction.normalized * _throwForce);
-            _trajectoryLineRenderer.enabled = false;
         }
 
         /// <summary>
@@ -164,6 +167,14 @@ namespace Player
         public void SetSnowballThrower(StudentController student)
         {
             _studentThrower = student;
+        }
+
+        /// <summary>
+        /// Disable Line renderer when the aim key is released before the animation event for throwing starts
+        /// </summary>
+        public void DisableLineRenderer()
+        {
+            _trajectoryLineRenderer.enabled = false;
         }
     }
 }

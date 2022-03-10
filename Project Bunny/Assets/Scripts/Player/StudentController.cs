@@ -182,7 +182,6 @@ namespace Player
         {
             if (_playerSnowball == null) return;
             
-            _isAiming = false;
             _throwForce = _minForce;
             _playerSnowball.ThrowSnowball();
             _hasSnowball = false;
@@ -330,6 +329,8 @@ namespace Player
                 //If player has a snowball, then throw it. Otherwise call the Interactable's Release method.
                 if (_hasSnowball)
                 {
+                    _playerSnowball.DisableLineRenderer();
+                    _isAiming = false;
                     _animator.Play($"Base Layer.Snowball Throw");
                 }
                 else
@@ -429,6 +430,10 @@ namespace Player
             return interactable;
         }
 
+        /// <summary>
+        /// Accessed through animation event. Disables Walking animation when necessary
+        /// </summary>
+        // ReSharper disable once UnusedMember.Global
         public void SetWalkingAnimator()
         {
             _animator.SetBool(IsWalkingHash, _isWalking);
