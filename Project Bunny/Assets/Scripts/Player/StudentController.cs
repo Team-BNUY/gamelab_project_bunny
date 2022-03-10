@@ -17,7 +17,6 @@ namespace Player
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
         [SerializeField] private Animator _animator;
-        public Animator AnimatorController => _animator;
         private CinemachineComponentBase _playerVCamComponentBase;
 
         [Header("Movement")]
@@ -26,7 +25,6 @@ namespace Player
         private Vector3 _playerCurrentVelocity;
         private Vector3 _playerPosition;
         private Quaternion _playerRotation;
-        public Quaternion PlayerRotation => _playerRotation;
 
         [Header("Properties")]
         [SerializeField] private float _studentHealth;
@@ -43,7 +41,6 @@ namespace Player
         [SerializeField] private float _minForce;
         [SerializeField] private float _maxForce;
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
-        public Transform PlayerHand => _playerHand;
         private Snowball _playerSnowball;
         private int _currentStandingGround;
         private float _throwForce;
@@ -58,6 +55,9 @@ namespace Player
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
         private static readonly int IsDiggingHash = Animator.StringToHash("isDigging");
         private static readonly int HasSnowballHash = Animator.StringToHash("hasSnowball");
+        
+        public Quaternion PlayerRotation => _playerRotation;
+        public Transform PlayerHand => _playerHand;
 
         #region Callbacks
         
@@ -158,6 +158,7 @@ namespace Player
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _currentObjectInHand.GetComponent<Snowball>();
             _playerSnowball.SetSnowballThrower(this);
+            _playerSnowball.SetHoldingPlace(transform);
             _hasSnowball = true;
             _isDigging = false;
             _digSnowballTimer = 0.0f;

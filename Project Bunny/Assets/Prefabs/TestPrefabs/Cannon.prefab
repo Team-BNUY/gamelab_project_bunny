@@ -128,6 +128,36 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!1 &2484193517065269642
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7716638691280290407}
+  m_Layer: 0
+  m_Name: SnowballPlace
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7716638691280290407
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2484193517065269642}
+  m_LocalRotation: {x: -0, y: -0.7202377, z: 0, w: 0.69372743}
+  m_LocalPosition: {x: -0.813, y: 1.236, z: -0.03}
+  m_LocalScale: {x: 0.9999999, y: 1, z: 0.9999999}
+  m_Children: []
+  m_Father: {fileID: 7758723951493826449}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2534009542348149125
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,6 +287,7 @@ Transform:
   - {fileID: 7700284315647672861}
   - {fileID: 561285582946295888}
   - {fileID: 7572681625148511401}
+  - {fileID: 7716638691280290407}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 92.148, z: 0}
@@ -287,6 +318,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerSeat: {fileID: 7357920669383351604}
   _cannonBallSeat: {fileID: 4686431279264014348}
+  _snowballPlacement: {fileID: 7716638691280290407}
   _newCameraDistance: 35
   _rotationSpeed: 100
   _cannonBallPrefab: {fileID: 9027766068581955839, guid: 61b8f483c204b98468fdd10af208e5d9, type: 3}
