@@ -43,7 +43,7 @@ namespace AI.Actions.StudentActions
             var x = Random.Range(-1f, 1f);
             var z = Random.Range(-1f, 1f);
             var direction = new Vector3(x, 0f, z).normalized;
-            var length = Random.Range(0f, _gang.Radius);
+            var length = Random.Range(_gang.Radius - 0.5f, _gang.Radius); // TODO Make first parameter a "gang's circle's thickness" variable
             var prePosition = _gang.Center + direction * length;
             var yCheck = Physics.Raycast(prePosition, Vector3.up, out var groundInfo, float.PositiveInfinity, _student.GroundLayer);
             if (!yCheck)
@@ -101,7 +101,7 @@ namespace AI.Actions.StudentActions
 
                 yield return null;
             } 
-            while (Vector3.Angle(targetLookRotation, _student.transform.forward) > 1f);
+            while (Vector3.Angle(targetLookRotation, _student.transform.forward) > 5f);
             
             _student.CompleteAction();
         }

@@ -67,7 +67,7 @@ namespace AI
         
         public bool Full
         {
-            get => _members.Count > 4;
+            get => _members.Count >= 4;
         }
 
         public float Radius
@@ -76,11 +76,11 @@ namespace AI
             {
                 return _members.Count switch
                 {
-                    1 => 2,
-                    2 => 3,
-                    3 => 4,
-                    4 => 4,
-                    _ => 2
+                    1 => 3,
+                    2 => 4,
+                    3 => 5,
+                    4 => 5,
+                    _ => 3
                 };
             }
         }
