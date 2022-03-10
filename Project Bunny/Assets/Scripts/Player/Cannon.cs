@@ -9,6 +9,8 @@ namespace Player
         [Header("Components")] 
         [SerializeField] private GameObject _playerSeat;
         [SerializeField] private Transform _cannonBallSeat;
+        [SerializeField] private Transform _snowballPlacement;
+        public Transform SnowballPlacement => _snowballPlacement;
 
         [Header("Properties")]
         [SerializeField] private float _newCameraDistance;
@@ -191,6 +193,7 @@ namespace Player
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _currentCannonBall.GetComponent<Snowball>();
             _playerSnowball.SetSnowballThrower(_currentStudentController);
+            _playerSnowball.SetHoldingPlace(transform);
             _hasSnowball = true;
             _coolDownTimer = 0f;
         }

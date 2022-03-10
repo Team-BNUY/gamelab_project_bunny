@@ -21,9 +21,9 @@ namespace Player
         private float _mass;
         private float _initialVelocity;
         private readonly float _collisionCheckRadius = 0.03f;
-
-        // ReSharper disable once NotAccessedField.Local
+        
         private StudentController _studentThrower;
+        private Transform _holdingPlace;
 
         private void Awake()
         {
@@ -42,7 +42,7 @@ namespace Player
 
         private void Update()
         {
-            SetSnowballAtHand();
+            SetSnowballAtPlace();
         }
 
         private void OnCollisionEnter(Collision other)
@@ -67,12 +67,24 @@ namespace Player
         /// Instead of parenting snowball at hand,
         /// track position of student's hand and rotation of root of player
         /// </summary>
-        private void SetSnowballAtHand()
+        private void SetSnowballAtPlace()
         {
-            if (!_isDestroyable)
+            if (_isDestroyable) return;
+            
+            if (_holdingPlace.gameObject.TryGetComponent<StudentController>(out var student))
             {
-                _snowballTransform.position = _studentThrower.PlayerHand.position;
-                _snowballTransform.rotation = _studentThrower.PlayerRotation;
+                _snowballTransform.position = student.PlayerHand.position;
+                _snowballTransform.rotation = student.PlayerRotation;
+            }
+            else if (_holdingPlace.gameObject.TryGetComponent<Cannon>(out var cannon))
+            {
+                _snowballTransform.position = cannon.SnowballPlacement.position;
+                _snowballTransform.rotation = cannon.SnowballPlacement.rotation;
+            }
+            else
+            {
+                _snowballTransform.position = _holdingPlace.position;
+                _snowballTransform.rotation = _holdingPlace.rotation;
             }
         }
 
@@ -167,6 +179,16 @@ namespace Player
         public void SetSnowballThrower(StudentController student)
         {
             _studentThrower = student;
+        }
+
+        /// <summary>
+        /// Set the holding place of the snowball that will be placed at until it's thrown
+        /// So far, it's either the player's hand or the cannon's slingshot placement
+        /// </summary>
+        /// <param name="place"></param>
+        public void SetHoldingPlace(Transform place)
+        {
+            _holdingPlace = place;
         }
 
         /// <summary>
