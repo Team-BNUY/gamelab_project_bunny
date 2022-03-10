@@ -12,12 +12,14 @@ namespace AI.Actions.StudentActions
         private Student _student;
 
         private Gang _gang;
+        private float _speed;
         private float _rotationSpeed;
         
-        public JoinAnotherGang(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float rotationSpeed)
+        public JoinAnotherGang(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float speed, float rotationSpeed)
              : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
         {
             _student = agent;
+            _speed = speed;
             _rotationSpeed = rotationSpeed;
         }
 
@@ -43,7 +45,7 @@ namespace AI.Actions.StudentActions
             var x = Random.Range(-1f, 1f);
             var z = Random.Range(-1f, 1f);
             var direction = new Vector3(x, 0f, z).normalized;
-            var length = Random.Range(_gang.Radius - 0.5f, _gang.Radius); // TODO Make first parameter a "gang's circle's thickness" variable
+            var length = Random.Range(_gang.Radius - 1f, _gang.Radius); // TODO Make first parameter a "gang's circle's thickness" variable
             var prePosition = _gang.Center + direction * length;
             var yCheck = Physics.Raycast(prePosition, Vector3.up, out var groundInfo, float.PositiveInfinity, _student.GroundLayer);
             if (!yCheck)
@@ -61,7 +63,10 @@ namespace AI.Actions.StudentActions
             _student.Gang.InteractWith();
             _gang.InteractWith();
             
+            // Nav mesh agent parameters
             target = position;
+            navMeshAgent.speed = _speed;
+            
             return true;
         }
 
@@ -103,7 +108,7 @@ namespace AI.Actions.StudentActions
             } 
             while (Vector3.Angle(targetLookRotation, _student.transform.forward) > 5f);
             
-            _student.CompleteAction();
+            _student.CompleteAction(); // TODO Change with waving animation and complete action after the animation
         }
     }
 }

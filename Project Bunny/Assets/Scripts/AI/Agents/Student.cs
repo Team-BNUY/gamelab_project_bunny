@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using AI.Core;
 using UnityEngine;
+using Action = AI.Core.Action;
 
 namespace AI.Agents
 {
@@ -24,6 +27,11 @@ namespace AI.Agents
             var states = new StateSet(state);
             var goal = new Goal(states, false);
             goals.Add(goal, 1);
+            
+            state = new State("welcomedNewbie", 1);
+            states = new StateSet(state);
+            goal = new Goal(states, false);
+            goals.Add(goal, 2);
             
             // Creating actions
             base.Start();

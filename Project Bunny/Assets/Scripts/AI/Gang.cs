@@ -7,9 +7,14 @@ namespace AI
 {
     public class Gang
     {
-        private List<Student> _members;
-        private int _occupied;
+        // Events
+        private delegate void StudentInteraction(Student student);
+        private event StudentInteraction OnNewStudentJoined;
 
+        private readonly List<Student> _members;
+        private Student _newbie;
+        private int _occupied;
+        
         private Gang(Student student)
         {
             _members = new List<Student> { student };
@@ -17,6 +22,8 @@ namespace AI
             {
                 Student.Gangs.Add(this);
             }
+            
+            OnNewStudentJoined += WelcomeNewStudent;
         }
 
         public static void Found(Student student)
@@ -32,6 +39,8 @@ namespace AI
 
             student.Gang = this;
             _members.Add(student);
+            
+            OnNewStudentJoined?.Invoke(student);
         }
         
         public void InteractWith()
@@ -52,14 +61,29 @@ namespace AI
             if (!_members.Contains(student)) return;
             
             _members.Remove(student);
-            if (_members.Count == 0)
+            
+            if (_members.Count != 0) return;
+            
+            Student.Gangs.Remove(this);
+            OnNewStudentJoined -= WelcomeNewStudent;
+        }
+
+        private void WelcomeNewStudent(Student newStudent)
+        {
+            _newbie = newStudent;
+            foreach (var member in _members.Where(m => m != newStudent))  
             {
-                Student.Gangs.Remove(this);
+                member.BeliefStates.AddState("newStudentJoinedGang", 1);
             }
         }
 
         // Properties
 
+        public Student Newbie
+        {
+            get => _newbie;
+        }
+        
         public bool Occupied
         {
             get => _occupied != 0;

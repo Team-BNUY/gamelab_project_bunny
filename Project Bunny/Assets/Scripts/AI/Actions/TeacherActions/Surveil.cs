@@ -1,4 +1,3 @@
-using AI;
 using AI.Agents;
 using AI.Core;
 using UnityEngine;
@@ -69,5 +68,10 @@ public class Surveil : Action
     public override bool PostPerform()
     {
         return success;
+    }
+
+    public override void OnInterrupt()
+    {
+        return;
     }
 }

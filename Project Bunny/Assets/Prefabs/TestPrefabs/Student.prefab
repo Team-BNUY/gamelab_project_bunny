@@ -94,7 +94,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9147417232824428815}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
   m_Height: 2
@@ -152,6 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _actionsData:
   - {fileID: 11400000, guid: 3ebf143787e858041826effe26e8d499, type: 2}
+  - {fileID: 11400000, guid: 1da747ebeabf23544910ddc855373109, type: 2}
   _studentLayer:
     serializedVersion: 2
     m_Bits: 512

@@ -7,13 +7,13 @@ using UnityEngine;
 
 namespace AI.Agents
 {
-    public class Teacher : Agent // TODO Add an action to go to an investigation point to be able to update the fov and the view direction or find another way to do so (particularly for view direction)
+    public class Teacher : Agent
     {
         // Events
-        public delegate void StudentInteraction(StudentController student);
-        public static event StudentInteraction OnSeeNewBadStudent;
-        public static event StudentInteraction OnFoundBadStudent;
-        public static event StudentInteraction OnLostBadStudent;
+        public delegate void PlayerInteraction(StudentController player);
+        public static event PlayerInteraction OnSeeNewBadStudent;
+        public static event PlayerInteraction OnFoundBadStudent;
+        public static event PlayerInteraction OnLostBadStudent;
         
         // View parameters
         [Header("View parameters")]

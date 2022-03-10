@@ -97,5 +97,10 @@ namespace AI.Actions.TeacherActions
             
             return true;
         }
+
+        public override void OnInterrupt()
+        {
+            return;
+        }
     }
 }
