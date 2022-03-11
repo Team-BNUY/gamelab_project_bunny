@@ -71,6 +71,10 @@ namespace Player
             {
                 _playerInput = gameObject.GetComponent<PlayerInput>();
             }
+            if (_animator == null)
+            {
+                _animator = gameObject.GetComponent<Animator>();
+            }
 
             _playerVCamComponentBase = _playerVCam.GetCinemachineComponent(CinemachineCore.Stage.Body);
         }
