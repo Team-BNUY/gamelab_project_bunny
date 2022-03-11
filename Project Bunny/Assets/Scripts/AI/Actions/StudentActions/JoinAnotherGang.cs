@@ -54,7 +54,8 @@ namespace AI.Actions.StudentActions
             }
             var y = yCheck ? groundInfo.point.y : _gang.Center.y;
             var position = new Vector3(prePosition.x, y, prePosition.z);
-
+            
+            // Checks if the position is free
             var path = new NavMeshPath();
             if (!navMeshAgent.CalculatePath(position, path) || Physics.CheckSphere(position, navMeshAgent.radius, _student.StudentLayer)) return false;
             
@@ -80,8 +81,8 @@ namespace AI.Actions.StudentActions
 
         public override bool PostPerform()
         {
-            _gang.Join(_student);
             _student.Gang.SetFree();
+            _gang.Join(_student);
             _gang.SetFree();
 
             return true;

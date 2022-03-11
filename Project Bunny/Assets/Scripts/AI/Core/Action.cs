@@ -143,6 +143,7 @@ namespace AI.Core
         public bool HasTarget
         {
             get => _hasTarget;
+            set => _hasTarget = value;
         }
 
         public bool Running

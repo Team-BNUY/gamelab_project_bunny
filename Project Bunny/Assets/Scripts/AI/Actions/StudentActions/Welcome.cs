@@ -51,6 +51,8 @@ namespace AI.Actions.StudentActions
         {
             _student.Gang.SetFree();
             _student.BeliefStates.ModifyState("newStudentJoinedGang", -1);
+            _student.BeliefStates.ModifyState("likesNewMember", -1);
+            _student.BeliefStates.ModifyState("dislikesNewMember", -1);
 
             return true;
         }
@@ -59,6 +61,8 @@ namespace AI.Actions.StudentActions
         {
             _student.Gang.SetFree();
             _student.BeliefStates.ModifyState("newStudentJoinedGang", -1);
+            _student.BeliefStates.ModifyState("likesNewMember", -1);
+            _student.BeliefStates.ModifyState("dislikesNewMember", -1);
         }
         
         private IEnumerator RotateTowardsNewbie()

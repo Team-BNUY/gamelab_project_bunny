@@ -15,8 +15,8 @@ namespace AI
         /// <param name="temporary">Whether or not the goals is temporary (removed after completion)</param>
         public Goal(StateSet stateSet, bool temporary)
         {
-            this._stateSet = stateSet;
-            this._temporary = temporary;
+            _stateSet = stateSet;
+            _temporary = temporary;
         }
         
         // Properties

@@ -42,6 +42,14 @@ namespace AI
             
             OnNewStudentJoined?.Invoke(student);
         }
+
+        public Student GetRandomMemberExcept(Student student)
+        {
+            var otherMembers = _members.Where(m => m != student).ToArray();
+            var random = Random.Range(0, otherMembers.Length);
+
+            return otherMembers[random];
+        }
         
         public void InteractWith()
         {
@@ -76,6 +84,12 @@ namespace AI
                 var random = Random.Range(0, 3); // TODO Makes chances a variable
                 member.BeliefStates.AddState(random == 0 ? "dislikesNewMember" : "likesNewMember", 1);
                 member.BeliefStates.AddState("newStudentJoinedGang", 1);
+
+                random = Random.Range(0, 1); // TODO Inject from a GameManager or a similar class
+                if (random == 0)
+                {
+                    member.BeliefStates.ModifyState("suddenNeedToIntimidate", 1);
+                }
             }
         }
 
@@ -94,6 +108,11 @@ namespace AI
         public bool Full
         {
             get => _members.Count >= 4; // TODO Make this a variable
+        }
+
+        public int Size
+        {
+            get => _members.Count;
         }
 
         public float Radius
