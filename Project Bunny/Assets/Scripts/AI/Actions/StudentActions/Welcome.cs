@@ -10,12 +10,16 @@ namespace AI.Actions.StudentActions
         private Student _student;
 
         private Student _newbie;
+        private bool _faceAway;
+        private string _animationTrigger;
         private float _rotationSpeed;
         
-        public Welcome(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float rotationSpeed)
+        public Welcome(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, bool faceAway, string animationTrigger, float rotationSpeed)
             : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
         {
             _student = agent;
+            _faceAway = faceAway;
+            _animationTrigger = animationTrigger;
             _rotationSpeed = rotationSpeed;
         }
 
@@ -61,7 +65,7 @@ namespace AI.Actions.StudentActions
         {
             var transform = _student.transform;
             var position = transform.position;
-            var targetLookRotation = _newbie.transform.position - position;
+            var targetLookRotation = _faceAway ? position - _newbie.transform.position : _newbie.transform.position - position;
             do
             {
                 var lookRotation = Quaternion.LookRotation(targetLookRotation, Vector3.up);
@@ -72,7 +76,7 @@ namespace AI.Actions.StudentActions
             } 
             while (Vector3.Angle(targetLookRotation, _student.transform.forward) > 2f);
             
-            _student.CompleteAction(); // TODO Change with waving animation and complete action after the animation
+            _student.CompleteAction(); // TODO Change with animation and complete action after the animation
         }
     }
 }

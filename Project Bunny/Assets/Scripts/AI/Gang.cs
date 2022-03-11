@@ -73,6 +73,8 @@ namespace AI
             _newbie = newStudent;
             foreach (var member in _members.Where(m => m != newStudent))  
             {
+                var random = Random.Range(0, 3); // TODO Makes chances a variable
+                member.BeliefStates.AddState(random == 0 ? "dislikesNewMember" : "likesNewMember", 1);
                 member.BeliefStates.AddState("newStudentJoinedGang", 1);
             }
         }
@@ -91,7 +93,7 @@ namespace AI
         
         public bool Full
         {
-            get => _members.Count >= 4;
+            get => _members.Count >= 4; // TODO Make this a variable
         }
 
         public float Radius

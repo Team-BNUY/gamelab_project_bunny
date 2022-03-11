@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68c370939fa645544b925e781745ff48, type: 3}
-  m_Name: Welcome
+  m_Name: Sulk
   m_EditorClassIdentifier: 
-  name: Welcome
+  name: Sulk
   cost: 1
   hasTarget: 0
   preconditionStates:
   - _key: newStudentJoinedGang
     _value: 1
-  - _key: likesNewMember
+  - _key: dislikesNewMember
     _value: 1
   afterEffectStates:
   - _key: welcomedNewbie
     _value: 1
-  _faceAway: 0
+  _faceAway: 1
   _animationTrigger: 
   _rotationSpeed: 10

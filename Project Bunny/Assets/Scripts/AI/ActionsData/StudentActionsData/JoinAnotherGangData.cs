@@ -8,6 +8,7 @@ namespace AI.ActionsData.StudentActionsData
     [CreateAssetMenu(fileName = "Join Another Student", menuName = "AI/Action/Student/Join Another Student")]
     public class JoinAnotherGangData : ActionData
     {
+        [Header("Join Another Gang")]
         [SerializeField] [Min(0f)] private float _rotationSpeed = 10f;
         [SerializeField] [Min(0f)] private float _speed = 2.5f;
         
