@@ -227,25 +227,7 @@ namespace Player
                 _studentHealth -= damage;
             }
         }
-        
-        /// <summary>
-        /// Track the layer of the object the player is standing on
-        /// </summary>
-        private void SetStandingGround()
-        {
-            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out var hit, 1.0f))
-            {
-                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
-                _currentStandingGround = hit.collider.gameObject.layer;
-                if (!_isSliding)
-                {
-                    _playerCurrentVelocity = _characterController.velocity;
-                }
-                _isSliding = _currentStandingGround == LayerMask.NameToLayer("Ice");
-            }
-        }
-        
-        
+
         #endregion
 
         #region InputSystem
@@ -264,11 +246,11 @@ namespace Player
             _isWalking = _animator.GetBool(IsWalkingHash);
             
             //_animator.SetBool(_hasSnowballHash, _hasSnowball);
-            if (_isWalking && inputMovement.magnitude == 0.0f)
+            if (_view.IsMine && _isWalking && inputMovement.magnitude == 0.0f)
             {
                 _animator.SetBool(IsWalkingHash, false);
             }
-            else if (!_isWalking && inputMovement.magnitude > 0.0f)
+            else if (_view.IsMine && !_isWalking && inputMovement.magnitude > 0.0f)
             {
                 _animator.SetBool(IsWalkingHash, true);
             }
@@ -280,7 +262,9 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnLook(InputAction.CallbackContext context)
         {
-            var mousePosAngle = Utilities.MousePosToRotationInput(this.transform, _playerCamera);
+            if (_playerCamera == null) return;
+            
+            var mousePosAngle = Utilities.MousePosToRotationInput(transform, _playerCamera);
             _playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
         }
 
@@ -310,15 +294,21 @@ namespace Player
             if (context.performed)
             {
                 _isDigging = true;
-                _animator.SetBool(IsWalkingHash, false);
-                _animator.SetBool(IsDiggingHash, true);
+                if (_view.IsMine)
+                {
+                    _animator.SetBool(IsWalkingHash, false);
+                    _animator.SetBool(IsDiggingHash, true);
+                }
             }
             // If digging is abruptly cancelled, cancel action and reset timer
             if (context.canceled)
             {
                 _isDigging = false;
                 _digSnowballTimer = 0.0f;
-                _animator.SetBool(IsDiggingHash, false);
+                if (_view.IsMine)
+                {
+                    _animator.SetBool(IsDiggingHash, false);
+                }
             }
 
             _playerCurrentVelocity = Vector3.zero;
@@ -395,6 +385,23 @@ namespace Player
         #region Utilities
         
         /// <summary>
+        /// Track the layer of the object the player is standing on
+        /// </summary>
+        private void SetStandingGround()
+        {
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out var hit, 1.0f))
+            {
+                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
+                _currentStandingGround = hit.collider.gameObject.layer;
+                if (!_isSliding)
+                {
+                    _playerCurrentVelocity = _characterController.velocity;
+                }
+                _isSliding = _currentStandingGround == LayerMask.NameToLayer("Ice");
+            }
+        }
+        
+        /// <summary>
         /// Attach unique instantiated camera with player
         /// </summary>
         /// <param name="cam"></param>
@@ -406,7 +413,7 @@ namespace Player
             _playerVCamComponentBase = _playerVCam.GetCinemachineComponent(CinemachineCore.Stage.Body);
             _playerVCam.Follow = transform;
         }
-        
+
         /// <summary>
         /// Getter function to get the player's Virtual Camera
         /// </summary>
@@ -461,7 +468,10 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void SetWalkingAnimator()
         {
-            _animator.SetBool(IsWalkingHash, _isWalking);
+            if (_view.IsMine)
+            {
+                _animator.SetBool(IsWalkingHash, _isWalking);
+            }
         }
 
         /// <summary>
@@ -479,10 +489,15 @@ namespace Player
             {
                 stream.SendNext(_hasSnowball);
                 stream.SendNext(_isDigging);
+                stream.SendNext(_isWalking);
+                stream.SendNext(_isAiming);
             }
-            else {
-                _hasSnowball = (bool)stream.ReceiveNext();
-                _isDigging = (bool)stream.ReceiveNext();
+            else
+            {
+                _hasSnowball = (bool) stream.ReceiveNext();
+                _isDigging = (bool) stream.ReceiveNext();
+                _isWalking = (bool) stream.ReceiveNext();
+                _isAiming = (bool) stream.ReceiveNext();
             }
         }
         
