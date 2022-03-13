@@ -39,7 +39,7 @@ public class ArenaManager : MonoBehaviour
     {
         NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
         PhotonNetwork.LocalPlayer.TagObject = player;
-        player.SetCamera(Instantiate(_playerCamera, player.transform.position, Quaternion.identity));
+        player.SetCamera(Instantiate(_playerCamera));
     }
     
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Networking
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class NetworkSnowball : MonoBehaviour
+    public class NetworkSnowball : MonoBehaviourPunCallbacks, IPunObservable
     {
         [SerializeField] private Rigidbody _snowballRigidbody;
         [SerializeField] private SphereCollider _sphereCollider;
@@ -53,15 +53,15 @@ namespace Networking
             
             if (!_isDestroyable) return;
             
-            if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent) && otherStudent != _studentThrower)
+            /*if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent) && otherStudent != _studentThrower)
             {
                 otherStudent.GetDamaged(_damage);
-            }
+            }*/
             
             var go = PhotonNetwork.Instantiate(ArenaManager.Instance.SnowballBurst.name, transform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
-            Destroy(gameObject);
+            PhotonNetwork.Destroy(gameObject);
         }
 
         /// <summary>
@@ -71,17 +71,19 @@ namespace Networking
         private void SetSnowballAtPlace()
         {
             if (_isDestroyable) return;
+            if (_holdingPlace == null) return;
             
             if (_holdingPlace.gameObject.TryGetComponent<NetworkStudentController>(out var student))
             {
                 _snowballTransform.position = student.PlayerHand.position;
                 _snowballTransform.rotation = student.PlayerRotation;
             }
-            else if (_holdingPlace.gameObject.TryGetComponent<Cannon>(out var cannon))
+            // Need Networked Cannon
+            /*else if (_holdingPlace.gameObject.TryGetComponent<Cannon>(out var cannon))
             {
                 _snowballTransform.position = cannon.SnowballPlacement.position;
                 _snowballTransform.rotation = cannon.SnowballPlacement.rotation;
-            }
+            }*/
             else
             {
                 _snowballTransform.position = _holdingPlace.position;
@@ -197,7 +199,22 @@ namespace Networking
         /// </summary>
         public void DisableLineRenderer()
         {
-            _trajectoryLineRenderer.enabled = false;
+            if (_trajectoryLineRenderer.enabled)
+            {
+                _trajectoryLineRenderer.enabled = false;
+            }
+        }
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(_isDestroyable);
+            }
+            else
+            {
+                _isDestroyable = (bool)stream.ReceiveNext();
+            }
         }
     }
 }

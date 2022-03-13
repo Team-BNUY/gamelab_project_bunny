@@ -263,7 +263,7 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnLook()
         {
-            var mousePosAngle = Utilities.MousePosToRotationInput(this.transform, _playerCamera);
+            var mousePosAngle = Utilities.MousePosToRotationInput(transform, _playerCamera);
             _playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
         }
 
