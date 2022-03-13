@@ -343,13 +343,18 @@ namespace Player
                 {
                     _playerSnowball.DisableLineRenderer();
                     _isAiming = false;
-                    _animator.Play($"Base Layer.Snowball Throw");
+                    _view.RPC("PlaySnowballThrowAnimation", RpcTarget.All, null);
                 }
                 else
                 {
                     _currentInteractable?.Release();
                 }
             }
+        }
+
+        [PunRPC]
+        private void PlaySnowballThrowAnimation() {
+            _animator.Play($"Base Layer.Snowball Throw");
         }
 
         /// <summary>
