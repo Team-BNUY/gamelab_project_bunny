@@ -1,0 +1,244 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Snow Ground Pro
+  m_Shader: {fileID: 4800000, guid: 36802c553feb7344580bb892fea75455, type: 3}
+  m_ShaderKeywords: _ACTIVEOLD_ON _BLENDINGMODECRYSTALS_LIGHTEN _BLENDMAINNORMAL_ON
+    _INVERTABASECOLOR_ON _INVERTMASK_ON _INVERTREFLECTIONBLEND1_ON _KEYWORD0_NB _KEYWORD0_NG
+    _KEYWORD0_OBJECTTOCLIP _KEYWORD0_SCREENPOS _SOURCEEDGEBLENDTOP_NONE _SOURCEMASK_DETAILMASK
+    _SOURCE_METALLICALPHA _SPACEPROJECTION_VERTEXPOSITION _SPARKLESOURCE_SMOOTHNESSSPARKLES
+    _USEMASKTBLENDREFLECTION_ON _VISUALIZEMASK1_ON _VISUALIZESPARKLE1_NONE _VISUALIZESPARKLE2_SPARKLEMAP
+    _VISUALIZESPARKLE_NONE
+  m_LightmapFlags: 2
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BCTest:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BaseColor:
+        m_Texture: {fileID: 2800000, guid: 2d35a6f170429704f9f899775d7d9329, type: 3}
+        m_Scale: {x: 2, y: 2}
+        m_Offset: {x: 0, y: 0}
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: 5565bfbdb14e9ff41a8a502941c2c7cd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: 8c86c78d193e2a443b5cefc18b9a6f5d, type: 3}
+        m_Scale: {x: 2, y: 2}
+        m_Offset: {x: 0, y: 0}
+    - _Crystalsmap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CrystalsmapSP:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Cubemap:
+        m_Texture: {fileID: 8900000, guid: 9e190624982442b459701b8952839876, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 2800000, guid: f412161c0f3afa147911ed61b4050e6b, type: 3}
+        m_Scale: {x: 10, y: 10}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMAoHSMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 2800000, guid: 8c38d2e72ca280f4783343ec9c4418f7, type: 3}
+        m_Scale: {x: 100, y: 100}
+        m_Offset: {x: 0, y: 0.18}
+    - _DetailMask1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 2800000, guid: aef691558c58e8949b2d636e3286f5ab, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Dot:
+        m_Texture: {fileID: 2800000, guid: 94c8bd82af600bb44a1bfb3aa53b4aca, type: 3}
+        m_Scale: {x: 5, y: 5}
+        m_Offset: {x: 0, y: 0}
+    - _DotMask:
+        m_Texture: {fileID: 2800000, guid: 14fd448bd28885341843dbd49c2cdc66, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DotMaskSP:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 5565bfbdb14e9ff41a8a502941c2c7cd, type: 3}
+        m_Scale: {x: 2, y: 2}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMapMAHS:
+        m_Texture: {fileID: 2800000, guid: 7d98a5292f76e584a814f179a6a26a50, type: 3}
+        m_Scale: {x: 2, y: 5}
+        m_Offset: {x: 0, y: 0}
+    - _SparkleMap:
+        m_Texture: {fileID: 2800000, guid: cd6fc442aca6c594eb9a9b20be7138ca, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SparkleMask:
+        m_Texture: {fileID: 2800000, guid: fc7cffc75d5499f47bdfaaaea634daa8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TexDebug:
+        m_Texture: {fileID: 2800000, guid: 94c8bd82af600bb44a1bfb3aa53b4aca, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureSample0:
+        m_Texture: {fileID: 2800000, guid: aef691558c58e8949b2d636e3286f5ab, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureTestProjection:
+        m_Texture: {fileID: 2800000, guid: 94c8bd82af600bb44a1bfb3aa53b4aca, type: 3}
+        m_Scale: {x: 1000, y: 10000}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _A: 1
+    - _AccumTop: 1
+    - _AccumTop1: 0.5
+    - _ActiveOld: 1
+    - _ActiveOldDotProjection: 0
+    - _ActiveOldDotProjection1: 0
+    - _Add: -1.1
+    - _AlphaCutoff: 0.5
+    - _AmountBottom: 0.3855584
+    - _AmountSparkle: 0.99
+    - _AmountTop: 0.532
+    - _AoIntensity: 0.407
+    - _AoIntensityDetail: 0.21
+    - _AoMask: 0
+    - _BlendNormal: 0
+    - _BlendingModeCrystals: 0
+    - _BlurReflection: 0.5
+    - _Brightness: 1
+    - _BumpScale: 1.44
+    - _ConstrastCrystals2: 1.35
+    - _ContrastDetailMap: 19.5
+    - _ContrastDotMask: 5.57
+    - _ContrastSparkles: 30
+    - _ContrastTopAccum: 2.9
+    - _CrystalsIntensity: 2
+    - _Desaturatecrystals: 1
+    - _DetailBrightness: 1
+    - _DetailNormalMapScale: 1
+    - _DetailSaturation: 0
+    - _EmissionIntensity: 0
+    - _EnableBottomAccum: 0
+    - _EnableTopAccum: 0
+    - _ExcludeMask: 0
+    - _Float0: 0.72
+    - _Float1: 0
+    - _Glossiness: 1
+    - _GlossinessDetail: 0
+    - _Gradient: 5
+    - _GradientBottom: 5
+    - _GradientTop: 5
+    - _IntensityDotMask: 1
+    - _IntensityMask: 1
+    - _InvertABaseColor: 1
+    - _InvertABaseColor1: 0
+    - _InvertMask: 1
+    - _Keyword0: 1
+    - _M: -0.2
+    - _MaskAmount: 0.672
+    - _MaskAmount1: 1
+    - _Metallic: 0.2
+    - _MetallicDetail: 0.2
+    - _Multiplier: 0
+    - _Noise: 39.7
+    - _NoiseScale: 10
+    - _OldSnowProjection: 0
+    - _Parallax: 0.0636
+    - _ParallaxDetail: 0
+    - _Power: 0
+    - _PoxerE: 2
+    - _ReflectionIntensity: 0.4
+    - _Saturation: 1
+    - _ShadowMask: 1
+    - _Sharp: 2
+    - _Sharp2: 5
+    - _SharpenEdge: 2.27826
+    - _SharpenTop: 1.56
+    - _Simplecontrast: 1
+    - _Simplecontrast1: 1
+    - _Smoothness: 1
+    - _Smoothnesstest: 0
+    - _SnowBottomIntensity: 1
+    - _SnowTopIntensity: 1
+    - _SourceEdgeBlendTop: 0
+    - _SourceMask: 0
+    - _SpaceProjection: 1
+    - _SparkleAmount: 1
+    - _SparklePower: 10
+    - _SparkleSource: 1
+    - _Sparklegrow: 0.54
+    - _SparklesContrast: 0
+    - _SpreadDetailMap: 0.542
+    - _SpreadDetailMap1: 1
+    - _SpreadDotMask: 0.892
+    - _SurfaceBlur: 0
+    - _SurfaceSpreadTop: 1
+    - _TextureScaleWorldProjection: -5.52
+    - _TilingCrystals: 0.7
+    - _TilingDotMask: 100
+    - _TilingInstance: 20
+    - _TilingMask: 1
+    - _ToggleSwitch0: 0
+    - _TopBlurEdge: 0
+    - _TopBlurSource: 0
+    - _TopCoverage: 0
+    - _TopCoverage2: 0
+    - _TopCoverageMask: 0
+    - _Typelight: 1
+    - _UseEmissionFromMain: 0
+    - _UseEmissionFromMainProperties: 0
+    - _UseEmissionFromMainProperties1: 1
+    - _UseMainNormalMap: 0
+    - _UseMasktBlendReflection: 1
+    - _VisualizeMask: 0
+    - _VisualizeSparkle: 0
+    - _VisualizeSparkle1: 0
+    - _VisualizeSparkle2: 2
+    - __dirty: 1
+    - _test: 1
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.7128426, g: 0.7830188, b: 0.76547486, a: 0.92156863}
+    - _Color0: {r: 0, g: 0, b: 0, a: 0}
+    - _ColorCubemap1: {r: 1, g: 1, b: 1, a: 1}
+    - _DetailColor: {r: 0.9622642, g: 0.9622642, b: 0.9622642, a: 0}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _GlobalXYTilingXYZWOffsetXY: {r: 400, g: 400, b: 0, a: 0}
+    - _GlobalXYTilingXYZWOffsetXYSnow: {r: 100, g: 100, b: 0, a: 0}
