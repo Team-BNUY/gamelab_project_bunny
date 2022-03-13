@@ -1,7 +1,7 @@
 using Cinemachine;
+using Interfaces;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Interfaces;
 
 namespace Player
 {

@@ -1,8 +1,9 @@
-﻿using Player;
+﻿using Networking;
+using Player;
 
 namespace Interfaces
 {
-    public interface IInteractable
+    public interface INetworkInteractable
     {
         /// <summary>
         /// Method for doing something when you hit left click
@@ -22,6 +23,6 @@ namespace Interfaces
         /// <summary>
         /// Method that runs when you take control of an interactable
         /// </summary>
-        void Enter(StudentController currentStudentController);
+        void Enter(NetworkStudentController currentStudentController);
     }
 }
