@@ -152,7 +152,8 @@ namespace Networking
                 AddPlayerTile(newPlayer);
             }
 
-            _startGameBtn.interactable = (PhotonNetwork.LocalPlayer.IsMasterClient && PhotonNetwork.PlayerList.Length >= 2);
+            //_startGameBtn.interactable = (PhotonNetwork.LocalPlayer.IsMasterClient && PhotonNetwork.PlayerList.Length >= 2);
+            _startGameBtn.interactable = true;
         }
 
         public override void OnPlayerLeftRoom(Photon.Realtime.Player newPlayer)
