@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 7502066005260383212}
   - component: {fileID: 251632973669729256}
   m_Layer: 0
-  m_Name: NetworkSnowball
+  m_Name: NetworkIceball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 83a342a2f4f46834598e55f53da3543c, type: 2}
+  - {fileID: 2100000, guid: 7f264ea1670518c4d836be937a4c3d58, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -230,7 +230,7 @@ MonoBehaviour:
   _sphereCollider: {fileID: 2922449167949472895}
   _snowballTransform: {fileID: 2791768304615282870}
   _trajectoryLineRenderer: {fileID: 1257298224373330381}
-  _damage: 1
+  _damage: 3
 --- !u!114 &7502066005260383212
 MonoBehaviour:
   m_ObjectHideFlags: 0

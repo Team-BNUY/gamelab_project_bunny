@@ -1,13 +1,11 @@
 using UnityEngine;
 using Photon.Pun;
-using Player;
 using UnityEngine.UI;
-using System;
 using System.Collections.Generic;
-using TMPro;
 using ExitGames.Client.Photon;
 using Photon.Pun.UtilityScripts;
 using System.Linq;
+using Player;
 
 namespace Networking
 {
@@ -30,14 +28,14 @@ namespace Networking
         [SerializeField] private Button _redJerseyBtn;
         [SerializeField] private Button _blueJerseyBtn;
         [SerializeField] private Button _leaveRoomBtn;
-        [SerializeField] private GameObject playerTile;
-        [SerializeField] private Transform playerTileParent;
-        private List<PlayerTile> tiles;
+        [SerializeField] private GameObject _playerTile;
+        [SerializeField] private Transform _playerTileParent;
+        private List<PlayerTile> _tiles;
 
         void Start()
         {
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
-            tiles = new List<PlayerTile>();
+            _tiles = new List<PlayerTile>();
             _customProperties = new Hashtable();
 
             SpawnPlayer();
@@ -56,23 +54,23 @@ namespace Networking
 
             foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
             {
-                if (tiles.Any(x => x.player == player.Value)) continue;
+                if (_tiles.Any(x => x.player == player.Value)) continue;
                 AddPlayerTile(player.Value);
             }
         }
 
         private void AddPlayerTile(Photon.Realtime.Player player)
         {
-            PlayerTile tile = GameObject.Instantiate(playerTile, playerTileParent).GetComponent<PlayerTile>();
+            PlayerTile tile = Instantiate(_playerTile, _playerTileParent).GetComponent<PlayerTile>();
             tile.SetPlayer(player);
-            tiles.Add(tile);
-            playerTileParent.GetComponentsInChildren<PlayerTile>().OrderBy(x => x.player.IsMasterClient).ThenBy(x => x.player.NickName);
+            _tiles.Add(tile);
+            _playerTileParent.GetComponentsInChildren<PlayerTile>().OrderBy(x => x.player.IsMasterClient).ThenBy(x => x.player.NickName);
         }
 
         private void RemovePlayerTile(Photon.Realtime.Player player)
         {
-            PlayerTile tile = tiles.FirstOrDefault(x => x.player == player);
-            tiles.Remove(tile);
+            PlayerTile tile = _tiles.FirstOrDefault(x => x.player == player);
+            _tiles.Remove(tile);
             if (player.TagObject != null)
             {
                 GameObject.Destroy(((NetworkStudentController)player.TagObject).gameObject);
@@ -140,14 +138,14 @@ namespace Networking
         {
             NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
             PhotonNetwork.LocalPlayer.TagObject = player;
-            player.SetCamera(GameObject.Instantiate(_playerCamera));
+            player.SetCamera(Instantiate(_playerCamera));
         }
 
         public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
         {
             base.OnPlayerEnteredRoom(newPlayer);
 
-            if (!tiles.Any(x => x.player == newPlayer))
+            if (!_tiles.Any(x => x.player == newPlayer))
             {
                 AddPlayerTile(newPlayer);
             }
@@ -159,7 +157,7 @@ namespace Networking
         public override void OnPlayerLeftRoom(Photon.Realtime.Player newPlayer)
         {
             base.OnPlayerLeftRoom(newPlayer);
-            if (tiles.Any(x => x.player == newPlayer))
+            if (_tiles.Any(x => x.player == newPlayer))
             {
                 RemovePlayerTile(newPlayer);
             }
@@ -170,7 +168,7 @@ namespace Networking
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
         {
-            PlayerTile tile = tiles.FirstOrDefault(x => x.player == player);
+            PlayerTile tile = _tiles.FirstOrDefault(x => x.player == player);
 
             if (tile != null)
             {
@@ -184,7 +182,7 @@ namespace Networking
 
             if (targetPlayer != null)
             {
-                tiles.FirstOrDefault(x => x.player == targetPlayer).UpdateView(changedProps);
+                _tiles.FirstOrDefault(x => x.player == targetPlayer).UpdateView(changedProps);
             }
         }
     }

@@ -1,12 +1,12 @@
 using UnityEngine;
-using Interfaces;
 using Cinemachine;
+using Interfaces;
 
 namespace Player
 {
     public class Cannon : MonoBehaviour, IInteractable
     {
-        [Header("Components")] 
+        [Header("Components")]
         [SerializeField] private GameObject _playerSeat;
         [SerializeField] private Transform _cannonBallSeat;
         [SerializeField] private Transform _snowballPlacement;
