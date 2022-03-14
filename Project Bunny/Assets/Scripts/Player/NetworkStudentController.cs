@@ -2,6 +2,7 @@ using Cinemachine;
 using Interfaces;
 using Networking;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,6 +20,7 @@ namespace Player
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
         [SerializeField] private Animator _animator;
+        [SerializeField] private SkinnedMeshRenderer _jersey;
         private CinemachineComponentBase _playerVCamComponentBase;
 
         [Header("Movement")]
@@ -27,7 +29,7 @@ namespace Player
         private Vector3 _playerCurrentVelocity;
         private Vector3 _playerPosition;
         private Quaternion _playerRotation;
-        
+
         [Header("Properties")]
         [SerializeField] private float _studentHealth;
         private GameObject _currentObjectInHand;
@@ -55,15 +57,17 @@ namespace Player
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
         private static readonly int IsDiggingHash = Animator.StringToHash("isDigging");
         private static readonly int HasSnowballHash = Animator.StringToHash("hasSnowball");
-        
+
         public Quaternion PlayerRotation => _playerRotation;
         public Transform PlayerHand => _playerHand;
-        
+
         [Header("Network")]
+        public string playerID;
         private PhotonView _view;
+        [SerializeField] private TMPro.TMP_Text _nickNameText;
 
         #region Callbacks
-        
+
         private void Awake()
         {
             if (_characterController == null)
@@ -86,28 +90,27 @@ namespace Player
 
             _playerInput.actionEvents[0].AddListener(OnMove);
             _playerInput.actionEvents[1].AddListener(OnLook);
-
-            //Test Case
-            //TODO: Add whatever UI we'll have for player name, health, whatever
-            Debug.Log(PhotonNetwork.NickName);
         }
-        
+
         private void Start()
         {
             _throwForce = _minForce;
+            SetNameText();
+            UpdateTeamColorVisuals();
+            PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
         }
-        
+
         private void Update()
         {
             if (!_view.IsMine) return;
 
             SetStandingGround();
-            
+
             if (!_isDigging)
             {
                 MoveStudent();
             }
-            
+
             if (_isAiming && _hasSnowball)
             {
                 if (_throwForce <= _maxForce)
@@ -116,10 +119,10 @@ namespace Player
                 }
                 _playerSnowball.DrawTrajectory();
             }
-            
+
             DigSnowball();
         }
-        
+
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
             if (hit.collider.gameObject.TryGetComponent<GiantRollball>(out var giantRollball))
@@ -127,16 +130,21 @@ namespace Player
                 giantRollball.PushGiantRollball(transform);
             }
         }
-        
-        #endregion
 
-        #region Actions
-        
-        
-        /// <summary>
-        /// Change player's position and orientation in global axes using Character Controller
-        /// </summary>
-        private void MoveStudent()
+        private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
+        {
+            UpdateTeamColorVisuals();
+        }
+
+            #endregion
+
+            #region Actions
+
+
+            /// <summary>
+            /// Change player's position and orientation in global axes using Character Controller
+            /// </summary>
+            private void MoveStudent()
         {
             // If the player's character controller is disabled, then don't move them. Otherwise, move them. 
             if (_characterController.enabled)
@@ -186,7 +194,7 @@ namespace Player
             _animator.SetBool(IsDiggingHash, false);
             _animator.SetBool(HasSnowballHash, true);
         }
-        
+
         /// <summary>
         /// Increase throw force every frame when aiming snowball
         /// </summary>
@@ -203,7 +211,7 @@ namespace Player
         public void ThrowStudentSnowball()
         {
             if (_playerSnowball == null) return;
-            
+
             _throwForce = _minForce;
             _playerSnowball.ThrowSnowball();
             _hasSnowball = false;
@@ -244,7 +252,7 @@ namespace Player
             _playerPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
             _playerPosition.y += gravity;
             _isWalking = _animator.GetBool(IsWalkingHash);
-            
+
             //_animator.SetBool(_hasSnowballHash, _hasSnowball);
             if (_view.IsMine && _isWalking && inputMovement.magnitude == 0.0f)
             {
@@ -263,7 +271,7 @@ namespace Player
         public void OnLook(InputAction.CallbackContext context)
         {
             if (_playerCamera == null) return;
-            
+
             var mousePosAngle = Utilities.MousePosToRotationInput(transform, _playerCamera);
             _playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
         }
@@ -277,7 +285,7 @@ namespace Player
         {
             //If the player is currently interacting with an interactable, don't dig
             if (_currentInteractable != null) return;
-            
+
             // If player has snowball on hand or character is in the air, don't dig
             // TODO: Make it also so it can't dig when hand is occupied in general
             if (_hasSnowball || !_characterController.isGrounded) return;
@@ -352,11 +360,6 @@ namespace Player
             }
         }
 
-        [PunRPC]
-        private void PlaySnowballThrowAnimation() {
-            _animator.Play($"Base Layer.Snowball Throw");
-        }
-
         /// <summary>
         /// DO NOT CHANGE NAME: Activates the Interaction key, currently E
         /// </summary>
@@ -366,11 +369,11 @@ namespace Player
             if (context.performed)
             {
                 if (_hasSnowball) return; //Don't interact with interactables if the player already has a snowball. 
-                
+
                 // TODO: Interact with other items here
                 // When you press 'E', it checks to see if there is an
                 // interactable nearby and if there is, assume control of it. 
-                
+
                 if (_currentInteractable == null)
                 {
                     _currentInteractable = ReturnNearestInteractable();
@@ -383,12 +386,48 @@ namespace Player
                 }
             }
         }
-        
+
         #endregion
 
-        
+        #region RPC
+        [PunRPC]
+        private void PlaySnowballThrowAnimation()
+        {
+            _animator.Play($"Base Layer.Snowball Throw");
+        }
+
+        public void UpdateTeamColorVisuals()
+        {
+            if (_jersey == null) {
+                Debug.LogError("Missing reference to player jersey");
+                return;
+            }
+            object teamId;
+            PhotonTeam team;
+            if (_view.Owner.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) && PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team))
+            {
+                switch (team.Code)
+                {
+                    case 1:
+                        _jersey.material.color = Color.blue;
+                        _nickNameText.color = Color.blue;
+                        break;
+                    case 2:
+                        _jersey.material.color = Color.red;
+                        _nickNameText.color = Color.red;
+                        break;
+                }
+            }
+        }
+
+        public void SetNameText()
+        {
+            _nickNameText.text = _view.Owner.NickName;
+        }
+        #endregion
+
+
         #region Utilities
-        
         /// <summary>
         /// Track the layer of the object the player is standing on
         /// </summary>
@@ -405,7 +444,7 @@ namespace Player
                 _isSliding = _currentStandingGround == LayerMask.NameToLayer("Ice");
             }
         }
-        
+
         /// <summary>
         /// Attach unique instantiated camera with player
         /// </summary>
@@ -427,7 +466,7 @@ namespace Player
         {
             return _playerVCam;
         }
-        
+
         /// <summary>
         /// Getter function to get the CinemachineComponentBase of the player's Virtual Camera
         /// </summary>
@@ -446,7 +485,7 @@ namespace Player
         /// Utility function that returns the nearest interactable to the player
         /// </summary>
         /// <returns></returns>
-        private INetworkInteractable ReturnNearestInteractable() 
+        private INetworkInteractable ReturnNearestInteractable()
         {
             INetworkInteractable interactable = null;
             var maxColliders = 3; //maximum number of objects near to the player that can be looped through
@@ -454,7 +493,7 @@ namespace Player
             var numColliders = Physics.OverlapSphereNonAlloc(transform.position, 1f, hitColliders);
 
             if (numColliders < 1) return null;
-            
+
             //Loop through 3 nearest objects and check if any of them are interactables that implement IInteractable
             for (var i = 0; i < numColliders; i++)
             {
@@ -499,13 +538,13 @@ namespace Player
             }
             else
             {
-                _hasSnowball = (bool) stream.ReceiveNext();
-                _isDigging = (bool) stream.ReceiveNext();
-                _isWalking = (bool) stream.ReceiveNext();
-                _isAiming = (bool) stream.ReceiveNext();
+                _hasSnowball = (bool)stream.ReceiveNext();
+                _isDigging = (bool)stream.ReceiveNext();
+                _isWalking = (bool)stream.ReceiveNext();
+                _isAiming = (bool)stream.ReceiveNext();
             }
         }
-        
+
         #endregion
     }
 }
