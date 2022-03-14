@@ -34,13 +34,14 @@ namespace Networking
 
         void Start()
         {
-            PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
             _tiles = new List<PlayerTile>();
             _customProperties = new Hashtable();
 
             SpawnPlayer();
             InitialiseUI();
+            PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
 
+            PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
             if (PhotonTeamsManager.Instance.GetTeamMembersCount(1) <= PhotonTeamsManager.Instance.GetTeamMembersCount(2))
             {
                 PhotonNetwork.LocalPlayer.JoinTeam(1);
@@ -99,8 +100,6 @@ namespace Networking
             _blueJerseyBtn.onClick.AddListener(() => SwapTeams(1));
             _redJerseyBtn.onClick.AddListener(() => SwapTeams(2));
             _leaveRoomBtn.onClick.AddListener(() => PhotonNetwork.LeaveRoom());
-
-            PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
         }
 
         public override void OnLeftRoom()
@@ -137,6 +136,7 @@ namespace Networking
         private void SpawnPlayer()
         {
             NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
+            player.playerID = PhotonNetwork.LocalPlayer.UserId;
             PhotonNetwork.LocalPlayer.TagObject = player;
             player.SetCamera(Instantiate(_playerCamera));
         }
@@ -160,6 +160,12 @@ namespace Networking
             if (_tiles.Any(x => x.player == newPlayer))
             {
                 RemovePlayerTile(newPlayer);
+            }
+            if (newPlayer.TagObject != null)
+            {
+                GameObject.Destroy(((NetworkStudentController)newPlayer.TagObject).gameObject);
+                _customProperties.Clear();
+                newPlayer.SetCustomProperties(_customProperties);
             }
 
             _startGameBtn.interactable = (PhotonNetwork.LocalPlayer.IsMasterClient
