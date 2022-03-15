@@ -136,7 +136,7 @@ namespace Networking
         private void SpawnPlayer()
         {
             NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
-            player.playerID = PhotonNetwork.LocalPlayer.UserId;
+            player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
             PhotonNetwork.LocalPlayer.TagObject = player;
             player.SetCamera(Instantiate(_playerCamera));
         }
@@ -150,8 +150,8 @@ namespace Networking
                 AddPlayerTile(newPlayer);
             }
 
-            //_startGameBtn.interactable = (PhotonNetwork.LocalPlayer.IsMasterClient && PhotonNetwork.PlayerList.Length >= 2);
-            _startGameBtn.interactable = true;
+            _startGameBtn.interactable = (PhotonNetwork.LocalPlayer.IsMasterClient && PhotonNetwork.PlayerList.Length >= 2);
+            //_startGameBtn.interactable = true;
         }
 
         public override void OnPlayerLeftRoom(Photon.Realtime.Player newPlayer)

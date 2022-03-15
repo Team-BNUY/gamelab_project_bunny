@@ -62,9 +62,10 @@ namespace Player
         public Transform PlayerHand => _playerHand;
 
         [Header("Network")]
-        public string playerID;
-        private PhotonView _view;
         [SerializeField] private TMPro.TMP_Text _nickNameText;
+        public string PlayerID { get; set; }
+        private PhotonView _view;
+
 
         #region Callbacks
 
