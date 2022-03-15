@@ -7405,6 +7405,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 19505682024707139, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3808900633230351856, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
       propertyPath: m_Name
       value: Cannon
@@ -7455,6 +7459,48 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
+--- !u!1 &1277396321 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3808900633230351856, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
+  m_PrefabInstance: {fileID: 1277396320}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1277396322 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7716638691280290407, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
+  m_PrefabInstance: {fileID: 1277396320}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1277396323 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4686431279264014348, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
+  m_PrefabInstance: {fileID: 1277396320}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1277396324 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7357920669383351604, guid: 0497c7663f8ce97478fa6dd63258e95d, type: 3}
+  m_PrefabInstance: {fileID: 1277396320}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1277396325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1277396321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 225530d479356d04a957cdd609116799, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerSeat: {fileID: 1277396324}
+  _cannonBallSeat: {fileID: 1277396323}
+  _snowballPlacement: {fileID: 1277396322}
+  _newCameraDistance: 35
+  _rotationSpeed: 100
+  _cannonBallPrefab: {fileID: 4854422905516743973, guid: 5e62362fc854e2e4588b495334e45b9c, type: 3}
+  _coolDownTime: 3
+  _minForce: 0.7
+  _maxForce: 2
+  _forceIncreaseTimeRate: 1
 --- !u!43 &1313095684
 Mesh:
   m_ObjectHideFlags: 0
