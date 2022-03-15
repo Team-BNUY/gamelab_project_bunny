@@ -241,6 +241,9 @@ MonoBehaviour:
   _snowballBurst: {fileID: 6414252773208847546, guid: 22e2d8239a0c48647b932f0dff19fbea, type: 3}
   _giantRollballBurst: {fileID: 6414252773208847546, guid: 22e2d8239a0c48647b932f0dff19fbea, type: 3}
   _cannonBall: {fileID: 4854422905516743973, guid: 5e62362fc854e2e4588b495334e45b9c, type: 3}
+  _teamSpawns:
+  - {fileID: 1698580435}
+  - {fileID: 1431758008}
 --- !u!4 &31316840
 Transform:
   m_ObjectHideFlags: 0
@@ -7947,7 +7950,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1431758007}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 70.43, y: -5.41, z: -24.44}
+  m_LocalPosition: {x: 70, y: -4, z: -24}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 36248359}
@@ -9779,7 +9782,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1698580434}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.24, y: -4.59, z: 33.23}
+  m_LocalPosition: {x: 15, y: -4, z: 33}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 36248359}
