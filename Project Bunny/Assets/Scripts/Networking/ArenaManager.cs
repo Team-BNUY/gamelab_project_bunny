@@ -33,6 +33,8 @@ public class ArenaManager : MonoBehaviour
     public GameObject GiantRollballBurst => _giantRollballBurst;
     public GameObject CannonBall => _cannonBall;
 
+    [SerializeField] private Transform _teamSpawns;
+
     void Start()
     {
         SpawnPlayer();
