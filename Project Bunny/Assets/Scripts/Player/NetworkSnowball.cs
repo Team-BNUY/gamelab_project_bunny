@@ -78,12 +78,11 @@ namespace Networking
                 _snowballTransform.position = student.PlayerHand.position;
                 _snowballTransform.rotation = student.PlayerRotation;
             }
-            // Need Networked Cannon
-            /*else if (_holdingPlace.gameObject.TryGetComponent<Cannon>(out var cannon))
+            else if (_holdingPlace.gameObject.TryGetComponent<NetworkCannon>(out var cannon))
             {
-                _snowballTransform.position = cannon.SnowballPlacement.position;
-                _snowballTransform.rotation = cannon.SnowballPlacement.rotation;
-            }*/
+                _snowballTransform.position = cannon.CannonBallSeat.position;
+                _snowballTransform.rotation = cannon.CannonBallSeat.rotation;
+            }
             else
             {
                 _snowballTransform.position = _holdingPlace.position;

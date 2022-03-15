@@ -125,7 +125,7 @@ namespace Player
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
-            if (hit.collider.gameObject.TryGetComponent<GiantRollball>(out var giantRollball))
+            if (hit.collider.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball))
             {
                 giantRollball.PushGiantRollball(transform);
             }
