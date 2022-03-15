@@ -9,10 +9,9 @@ namespace Player
     public class NetworkCannon : MonoBehaviour, INetworkInteractable
     {
         [Header("Components")]
-        [SerializeField] private GameObject _playerSeat;
+        [SerializeField] private Transform _playerSeat;
         [SerializeField] private Transform _cannonBallSeat;
-        [SerializeField] private Transform _snowballPlacement;
-        public Transform SnowballPlacement => _snowballPlacement;
+        public Transform CannonBallSeat => _cannonBallSeat;
 
         [Header("Properties")]
         [SerializeField] private float _newCameraDistance;
@@ -50,11 +49,14 @@ namespace Player
 
             if (!_isAiming || !_hasSnowball) return;
 
-            if (_throwForce <= _maxForce)
+            if (_isAiming && _hasSnowball)
             {
-                IncreaseThrowForce();
+                if (_throwForce <= _maxForce)
+                {
+                    IncreaseThrowForce();
+                }
+                _playerSnowball.DrawTrajectory();
             }
-            _playerSnowball.DrawTrajectory();
         }
 
         #endregion
@@ -141,6 +143,7 @@ namespace Player
             //If a snowball is loaded and the player is not currently aiming, throw the cannonball.
             if (_hasSnowball && _currentCannonBall != null && _isAiming)
             {
+                _isAiming = false;
                 ThrowSnowball();
             }
         }
@@ -182,7 +185,7 @@ namespace Player
             //var mousePosAngle = Utilities.MousePosToRotationInput(this.transform, _playerCam);
             var finalRotation = _currentStudentController.PlayerRotation * Quaternion.Euler(0f, 90f, 0f);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, Time.deltaTime * _rotationSpeed);
-            _player.transform.position = _playerSeat.transform.position;
+            _player.transform.position = _playerSeat.position;
         }
 
         /// <summary>
@@ -190,9 +193,7 @@ namespace Player
         /// </summary>
         private void SpawnCannonBall()
         {
-            var prefabToSpawn = _cannonBallPrefab;
-            _currentCannonBall = PhotonNetwork.Instantiate(prefabToSpawn.name, _cannonBallSeat.position, _cannonBallSeat.rotation);
-            _currentCannonBall.transform.parent = _cannonBallSeat;
+            _currentCannonBall = PhotonNetwork.Instantiate(ArenaManager.Instance.CannonBall.name, _cannonBallSeat.position, _cannonBallSeat.rotation);
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _currentCannonBall.GetComponent<NetworkSnowball>();
             _playerSnowball.SetSnowballThrower(_currentStudentController);
@@ -219,8 +220,8 @@ namespace Player
 
             _isAiming = false;
             _throwForce = _minForce;
-            _playerSnowball.ThrowSnowball();
             _hasSnowball = false;
+            _playerSnowball.ThrowSnowball();
             _currentCannonBall = null;
             _playerSnowball = null;
         }

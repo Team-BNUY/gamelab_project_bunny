@@ -1,5 +1,4 @@
 using Photon.Pun;
-using Networking;
 using Player;
 using UnityEngine;
 
@@ -26,9 +25,13 @@ public class ArenaManager : MonoBehaviour
     [SerializeField] private GameObject _snowballPrefab;
     [SerializeField] private GameObject _iceballPrefab;
     [SerializeField] private GameObject _snowballBurst;
+    [SerializeField] private GameObject _giantRollballBurst;
+    [SerializeField] private GameObject _cannonBall;
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
     public GameObject SnowballBurst => _snowballBurst;
+    public GameObject GiantRollballBurst => _giantRollballBurst;
+    public GameObject CannonBall => _cannonBall;
 
     void Start()
     {
