@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 using Player;
 using UnityEngine;
 
@@ -33,7 +34,7 @@ public class ArenaManager : MonoBehaviour
     public GameObject GiantRollballBurst => _giantRollballBurst;
     public GameObject CannonBall => _cannonBall;
 
-    [SerializeField] private Transform _teamSpawns;
+    [SerializeField] private Transform[] _teamSpawns;
 
     void Start()
     {
@@ -43,8 +44,26 @@ public class ArenaManager : MonoBehaviour
     private void SpawnPlayer()
     {
         NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
+        player.transform.position = GetPlayerSpawnPoint(player);
+        player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
         PhotonNetwork.LocalPlayer.TagObject = player;
         player.SetCamera(Instantiate(_playerCamera));
     }
-    
+
+    private Vector3 GetPlayerSpawnPoint(NetworkStudentController player)
+    {
+        float spawnRadius = 1f;
+        float randx, randz;
+        randx = Random.Range(-spawnRadius, spawnRadius);
+        randz = Random.Range(-spawnRadius, spawnRadius);
+
+        object teamId;
+        PhotonTeam team;
+        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) && PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team))
+        {
+            return (_teamSpawns[team.Code - 1].position + new Vector3(randx, 0, randz));
+        }
+        return Vector3.zero;
+    }
+
 }
