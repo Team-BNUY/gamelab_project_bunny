@@ -36,23 +36,23 @@ namespace AI.Actions.StudentActions
 
             if (!_victim) return false;
 
-            if (_student.Gang.Size > 2)
-            {
-                var victimTransform = _victim.transform;
-                var victimPosition = victimTransform.position;
-                var distanceFromVictim = Vector3.Distance(_student.transform.position, victimPosition);
-                var targetPosition = victimPosition + victimTransform.forward * Mathf.Min(distanceFromVictim, 2f);
-                
-                // Checks if the position is free TODO Add a raycast to make sure there is no accidental wall between the student and their victim
-                var path = new NavMeshPath();
-                if (!navMeshAgent.CalculatePath(targetPosition, path)) return false;
-                
-                target = targetPosition;
-            }
-            else
-            {
-                HasTarget = false;
-            }
+            // if (_student.Gang.Size > 2)
+            // {
+            //     var victimTransform = _victim.transform;
+            //     var victimPosition = victimTransform.position;
+            //     var distanceFromVictim = Vector3.Distance(_student.transform.position, victimPosition);
+            //     var targetPosition = victimPosition + victimTransform.forward * Mathf.Min(distanceFromVictim, 2f);
+            //     
+            //     // Checks if the position is free TODO Add a raycast to make sure there is no accidental wall between the student and their victim
+            //     var path = new NavMeshPath();
+            //     if (!navMeshAgent.CalculatePath(targetPosition, path)) return false;
+            //     
+            //     target = targetPosition;
+            // }
+            // else
+            // {
+            //     HasTarget = false;
+            // }
 
             _student.Gang.InteractWith();
             

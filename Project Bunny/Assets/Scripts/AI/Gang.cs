@@ -81,7 +81,7 @@ namespace AI
             _newbie = newStudent;
             foreach (var member in _members.Where(m => m != newStudent))  
             {
-                var random = Random.Range(0, 3); // TODO Makes chances a variable
+                var random = Random.Range(0, 3); // TODO Make chances a variable
                 member.BeliefStates.AddState(random == 0 ? "dislikesNewMember" : "likesNewMember", 1);
                 member.BeliefStates.AddState("newStudentJoinedGang", 1);
 

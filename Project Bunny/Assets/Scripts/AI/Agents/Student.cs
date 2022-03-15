@@ -11,9 +11,10 @@ namespace AI.Agents
         [Header("Individual")] 
         [SerializeField] [Min(0f)] private float pushForce = 10f;
         
-        [Header("Layers")]
-        [SerializeField] private LayerMask _studentLayer; // TODO Take from an eventual GameManager
-        [SerializeField] private LayerMask _groundLayer; // TODO Take from an eventual GameManager
+        [Header("Layers")] // TODO Take everything below from an eventual GameManager
+        [SerializeField] private LayerMask _studentLayer;
+        [SerializeField] private LayerMask _groundLayer;
+        [SerializeField] private List<CryingSpot> _cryingSpots;
         
         private Gang _gang;
         private List<string> _movingActions = new List<string> {"Intimidate", "Join Another Gang"};
@@ -40,11 +41,16 @@ namespace AI.Agents
             goal = new Goal(states, false);
             goals.Add(goal, 3);
             
+            state = new State("cried", 1);
+            states = new StateSet(state);
+            goal = new Goal(states, false);
+            goals.Add(goal, 4);
+            
             // Creating actions
             base.Start();
         }
 
-        private void OnCollisionEnter(Collision collision)
+        private void OnCollisionStay(Collision collision)
         {
             var otherStudent = collision.gameObject.GetComponent<Student>();
             if (!otherStudent || otherStudent.currentAction != null && _movingActions.Contains(otherStudent.currentAction.Name)) return;
@@ -61,6 +67,11 @@ namespace AI.Agents
         public LayerMask GroundLayer
         {
             get => _groundLayer;
+        }
+
+        public List<CryingSpot> CryingSpots
+        {
+            get => _cryingSpots;
         }
 
         public Gang Gang
