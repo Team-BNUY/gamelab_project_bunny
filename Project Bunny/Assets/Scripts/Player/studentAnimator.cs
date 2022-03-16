@@ -16,6 +16,11 @@ namespace Player
         {
             _studentController.ThrowStudentSnowball();
         }
+
+        public void SetWalking()
+        {
+            _studentController.SetWalkingAnimator();
+        }
     }
 
 }
