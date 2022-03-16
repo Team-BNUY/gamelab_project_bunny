@@ -120,10 +120,10 @@ namespace Networking
         {
             var lineRendererPoints = new List<Vector3>();
             
-            const float maxDuration = 1f;
+            const float maxDuration = 1.5f;
             const float timeStepInterval = 0.1f;
             const int maxSteps = (int)(maxDuration / timeStepInterval);
-            var directionVector = transform.forward + new Vector3(0f, 0.2f, 0.0f);
+            var directionVector = transform.forward + new Vector3(0f, 0.0f, 0.0f);
             var launchPosition = _snowballTransform.position + _snowballTransform.forward;
             
             _initialVelocity = _throwForce / _mass * Time.fixedDeltaTime; //Velocity = Force / Mass * time
@@ -168,7 +168,7 @@ namespace Networking
             _sphereCollider.enabled = true;
             _snowballRigidbody.isKinematic = false;
             // TODO: Direction will be handled via hand release on Animation
-            var direction = new Vector3(0f, 0.2f, 0.0f);
+            var direction = new Vector3(0f, 0.0f, 0.0f);
             direction += _snowballTransform.forward;
             _snowballRigidbody.AddForce(direction.normalized * _throwForce);
         }

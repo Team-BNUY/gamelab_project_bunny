@@ -16,7 +16,7 @@ namespace Networking
         [SerializeField] private TMP_InputField _joinInput;
         [SerializeField] private TMP_InputField _nameInput;
 
-        [SerializeField] private byte maxPlayersPerRoom = 4;
+        [SerializeField] private byte maxPlayersPerRoom = 16;
 
         [SerializeField] private Button _createButton;
         [SerializeField] private Button _joinButton;
