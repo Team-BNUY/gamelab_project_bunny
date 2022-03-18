@@ -40,6 +40,8 @@ namespace AI.Actions.StudentActions
             invoked = false;
             
             // Finds a gang to join
+            if (!IsAchievable()) return false; 
+            
             var openGangs = Student.Gangs.Where(g => !g.Full && _student.Gang != g && !g.Occupied).ToArray();
             var random = Random.Range(0, openGangs.Length);
             _gang = openGangs[random];
@@ -97,6 +99,8 @@ namespace AI.Actions.StudentActions
 
         public override bool PostPerform()
         {
+            _student.BeliefStates.RemoveState("completedAnimationAction");
+
             _student.Gang.SetFree();
             _gang.Join(_student);
             _gang.SetFree();

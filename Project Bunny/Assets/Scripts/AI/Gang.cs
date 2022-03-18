@@ -70,7 +70,7 @@ namespace AI
             
             _members.Remove(student);
             
-            if (_members.Count != 0) return;
+            if (_members.Count > 0) return;
             
             Student.Gangs.Remove(this);
             OnNewStudentJoined -= WelcomeNewStudent;
@@ -85,10 +85,21 @@ namespace AI
                 member.BeliefStates.AddState(random == 0 ? "dislikesNewMember" : "likesNewMember", 1);
                 member.BeliefStates.AddState("newStudentJoinedGang", 1);
 
-                random = Random.Range(0, 1); // TODO Inject from a GameManager or a similar class
-                if (random == 0)
+                random = Random.Range(0, 6); // TODO Inject from a GameManager or a similar class
+                if (random == 0 || random == 1)
                 {
                     member.BeliefStates.ModifyState("suddenNeedToIntimidate", 1);
+                }
+                else if (random == 2)
+                {
+                    member.BeliefStates.ModifyState("wantsToPlayAlone", 1);
+                    random = Random.Range(0, 1);
+                    switch (random)
+                    {
+                        case 0:
+                            member.BeliefStates.AddState("poleSeemsAttracting", 1);
+                            break;
+                    }
                 }
             }
         }

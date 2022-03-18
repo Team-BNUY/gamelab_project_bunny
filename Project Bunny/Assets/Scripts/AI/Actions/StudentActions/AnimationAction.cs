@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using AI.Agents;
 using AI.Core;
@@ -5,25 +6,22 @@ using UnityEngine;
 
 namespace AI.Actions.StudentActions
 {
-    public class Cry : Action
+    public class AnimationAction : Action
     {
         private Student _student;
 
         private float _runningSpeed;
-        private float _duration;
-        private float _timer;
         private ActionSpot _actionSpot;
         private ActionSpotType _actionSpotType;
         
         private string _animationTrigger;
         private int _animationVariants;
         
-        public Cry(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float runningSpeed, float duration, ActionSpotType actionSpotType, string animationTrigger, int animationVariants)
+        public AnimationAction(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float runningSpeed, ActionSpotType actionSpotType, string animationTrigger, int animationVariants)
             : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
         {
             _student = agent;
             _runningSpeed = runningSpeed;
-            _duration = duration;
             _actionSpotType = actionSpotType;
             _animationTrigger = animationTrigger;
             _animationVariants = animationVariants;
@@ -38,7 +36,6 @@ namespace AI.Actions.StudentActions
         {
             // Resets parameters
             invoked = false;
-            _timer = _duration;
             
             _actionSpot = FindClosest(_student.ActionSpots.Where(s => s.Type == _actionSpotType && !s.Occupied && Vector3.Distance(s.transform.position, _student.transform.position) > 5f).ToList(), navMeshAgent);
 
@@ -58,29 +55,30 @@ namespace AI.Actions.StudentActions
 
         public override void Perform()
         {
-            if (!invoked)
-            {
-                // Animator parameters
-                _student.AnimationState = AnimationState.Idle;
-                
-                var random = Random.Range(0, _animationVariants);
-                _student.SetAnimatorParameter("Random", random);
-                _student.SetAnimatorParameter(_animationTrigger, true);
-            }
-
+            if (invoked) return;
             invoked = true;
-            _timer -= Time.deltaTime;
             
-            if (_timer > 0) return;
+            // Animator parameters
+            _student.AnimationState = AnimationState.Idle;
+
+            if (_actionSpot.InteractiveObject)
+            {
+                _student.StartCoroutine(RotateTowardsInteractive());
+                return;
+            }
             
-            _student.CompleteAction();
+            var random = Random.Range(0, _animationVariants);
+            _student.SetAnimatorParameter("Random", random);
+            _student.SetAnimatorParameter(_animationTrigger, true);
         }
 
         public override bool PostPerform()
         {
             _student.SetAnimatorParameter(_animationTrigger, false);
 
-            _student.BeliefStates.RemoveState("intimidated");
+            _student.BeliefStates.ModifyState("wantsToPlayAlone", -1);
+            _student.BeliefStates.ModifyState("poleSeemsAttracting", -1);
+            _student.BeliefStates.AddState("completedAnimationAction", 1);
             _student.Gang.SetFree();
             _actionSpot.Free();
             _actionSpot = null;
@@ -92,10 +90,33 @@ namespace AI.Actions.StudentActions
         {
             _student.SetAnimatorParameter(_animationTrigger, false);
 
-            _student.BeliefStates.RemoveState("intimidated");
+            _student.BeliefStates.ModifyState("wantsToPlayAlone", -1);
+            _student.BeliefStates.ModifyState("poleSeemsAttracting", -1);
             _student.Gang.SetFree();
             _actionSpot.Free();
             _actionSpot = null;
+        }
+        
+        private IEnumerator RotateTowardsInteractive()
+        {
+            var position = _student.transform.position;
+            var interactivePosition = _actionSpot.InteractiveObject.position;
+            var targetLookPosition = new Vector3(interactivePosition.x, position.y, interactivePosition.z);
+            var targetLookRotation = targetLookPosition - position;
+            do
+            {
+                var lookRotation = Quaternion.LookRotation(targetLookRotation, Vector3.up);
+                var lerpRotation = Quaternion.Lerp(_student.transform.rotation, lookRotation, 20f * Time.deltaTime);
+                _student.transform.rotation = lerpRotation;
+
+                yield return null;
+            } 
+            while (Vector3.Angle(targetLookRotation, _student.transform.forward) > 5f);
+            
+            // Animator parameters
+            var random = Random.Range(0, _animationVariants);
+            _student.SetAnimatorParameter("Random", random);
+            _student.SetAnimatorParameter(_animationTrigger);
         }
     }
 }

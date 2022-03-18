@@ -9,17 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b90e0d036a750a944993aebbe274d650, type: 3}
-  m_Name: Surveil
+  m_Script: {fileID: 11500000, guid: 2e68b2d9ff45d36459d56f72d22d81ec, type: 3}
+  m_Name: Join Another Gang
   m_EditorClassIdentifier: 
-  name: Surveil
-  cost: 2
+  name: Join Another Gang
+  cost: 1
   hasTarget: 1
   preconditionStates: []
   afterEffectStates:
-  - _key: searchedForBadStudent
+  - _key: joinedAnotherGang
     _value: 1
-  _speed: 3
-  _lookAroundTime: 4
-  _walkingFieldOfView: 90
-  _surveilFieldOfView: 135
+  _rotationSpeed: 10
+  _speed: 2.5
+  _animationTrigger: Wave
+  _animationVariants: 2

@@ -5,12 +5,11 @@ using UnityEngine;
 
 namespace AI.ActionsData.StudentActionsData
 {
-    [CreateAssetMenu(fileName = "Cry", menuName = "AI/Action/Student/Cry")]
-    public class CryData : ActionData
+    [CreateAssetMenu(fileName = "Animation Action", menuName = "AI/Action/Student/Animation Action")]
+    public class AnimationActionData : ActionData
     {
-        [Header("Cry")]
+        [Header("Animation Action")]
         [SerializeField] [Min(0f)] private float _runningSpeed = 4f;
-        [SerializeField] [Min(0f)] private float _duration = 5f;
         [SerializeField] private ActionSpotType _actionSpotType;
         
         [Header("Animator Parameter")]
@@ -21,7 +20,7 @@ namespace AI.ActionsData.StudentActionsData
         {
             if (agent is Student student)
             {
-                var action = new Cry(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), student, hasTarget, _runningSpeed, _duration, _actionSpotType, _animationTrigger, _animationVariants);
+                var action = new AnimationAction(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), student, hasTarget, _runningSpeed, _actionSpotType, _animationTrigger, _animationVariants);
                 student.Actions.Add(action);
             }
             else

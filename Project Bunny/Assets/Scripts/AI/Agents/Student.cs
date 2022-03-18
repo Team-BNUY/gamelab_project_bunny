@@ -15,10 +15,10 @@ namespace AI.Agents
         [SerializeField] private LayerMask _studentLayer;
         [SerializeField] private LayerMask _groundLayer;
         [SerializeField] private LayerMask _obstacleLayer;
-        [SerializeField] private List<CryingSpot> _cryingSpots;
+        [SerializeField] private List<ActionSpot> actionSpots;
         
         private Gang _gang;
-        private List<string> _movingActions = new List<string> {"Intimidate", "Join Another Gang"};
+        private List<string> _movingActions = new List<string> {"Intimidate", "Join Another Gang", "Cry", "AnimationAction"};
         
         protected override void Start()
         {
@@ -42,10 +42,15 @@ namespace AI.Agents
             goal = new Goal(states, false);
             goals.Add(goal, 3);
             
-            state = new State("cried", 1);
+            state = new State("performedAnimationAction", 1);
             states = new StateSet(state);
             goal = new Goal(states, false);
             goals.Add(goal, 4);
+            
+            state = new State("cried", 1);
+            states = new StateSet(state);
+            goal = new Goal(states, false);
+            goals.Add(goal, 5);
             
             // Creating actions
             base.Start();
@@ -75,9 +80,9 @@ namespace AI.Agents
             get => _obstacleLayer;
         }
 
-        public List<CryingSpot> CryingSpots
+        public List<ActionSpot> ActionSpots
         {
-            get => _cryingSpots;
+            get => actionSpots;
         }
 
         public Gang Gang

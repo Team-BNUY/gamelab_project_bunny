@@ -10,14 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e68b2d9ff45d36459d56f72d22d81ec, type: 3}
-  m_Name: Join Another Student
+  m_Name: Rejoin Another Gang
   m_EditorClassIdentifier: 
-  name: Join Another Student
+  name: Rejoin Another Gang
   cost: 1
   hasTarget: 1
-  preconditionStates: []
+  preconditionStates:
+  - _key: completedAnimationAction
+    _value: 1
   afterEffectStates:
-  - _key: joinedAnotherGang
+  - _key: performedAnimationAction
     _value: 1
   _rotationSpeed: 10
   _speed: 2.5
