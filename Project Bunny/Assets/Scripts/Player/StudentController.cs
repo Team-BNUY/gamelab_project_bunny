@@ -187,6 +187,7 @@ namespace Player
         {
             if (_playerSnowball == null) return;
             
+            _playerSnowball.DisableLineRenderer();
             _throwForce = _minForce;
             _playerSnowball.ThrowSnowball();
             _hasSnowball = false;
