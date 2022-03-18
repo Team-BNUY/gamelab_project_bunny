@@ -65,14 +65,12 @@ namespace AI.Actions.StudentActions
             if (!navMeshAgent.CalculatePath(position, path) || Physics.CheckSphere(position, navMeshAgent.radius, _student.StudentLayer)) return false;
             
             // Checks if there is an obstacle between the student and the gang in the hypothetical join position
-            foreach (var member in _student.Gang.Members)
+            foreach (var memberPosition in _gang.Members.Select(m => m.transform.position))
             {
-                var studentPosition = _student.transform.position;
-                var memberPosition = member.transform.position;
-                direction = memberPosition - studentPosition;
-                var distance = Vector3.Distance(memberPosition, studentPosition);
+                direction = memberPosition - position;
+                var distance = Vector3.Distance(memberPosition, position);
                 
-                if (Physics.Raycast(position, direction, distance, _student.ObstacleLayer)) return false;
+                if (Physics.Raycast(position + Vector3.up * 2.5f, direction, distance, _student.ObstacleLayer)) return false; // TODO Take student height somewhere else
             }            
             
             // Makes the student found a new gang and sets the target gang as occupied

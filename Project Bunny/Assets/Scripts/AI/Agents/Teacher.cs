@@ -139,7 +139,7 @@ namespace AI.Agents
                 var angle = Vector3.Angle(_viewDirection, studentPosition - myPosition);
                 if (2f * angle > _fieldOfView) continue;
 
-                var direction = student.transform.position - _head.transform.position + Vector3.up * 3f; // Student height
+                var direction = student.transform.position - _head.transform.position + Vector3.up * 2.5f; // TODO Take student height somewhere else
                 var distance = Vector3.Distance(studentPosition, transform.position);
                 if (Physics.Raycast(_head.transform.position, direction, distance, _viewBlockingLayer)) continue;
                     

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using AI.Agents;
 using UnityEngine;
 
@@ -5,27 +7,29 @@ namespace AI
 {
     public class CryingSpot : MonoBehaviour
     {
-        private bool _occupied;
+        private List<GameObject> occupyingObjects = new List<GameObject>();
 
         private void OnTriggerEnter(Collider other)
         {
-            var student = other.GetComponent<Student>();
-            if (student)
-                _occupied = true;
+            var o = other.gameObject;
+            if (occupyingObjects.Contains(o)) return;
+            
+            occupyingObjects.Add(o);
         }
         
         private void OnTriggerExit(Collider other)
         {
-            var student = other.GetComponent<Student>();
-            if (student)
-                _occupied = false;
+            var o = other.gameObject;
+            if (!occupyingObjects.Contains(o)) return;
+            
+            occupyingObjects.Remove(o);
         }
 
         // Properties
 
         public bool Occupied
         {
-            get => _occupied;
+            get => occupyingObjects.Any(o => o.GetComponent<Student>());
         }
     }
 }
