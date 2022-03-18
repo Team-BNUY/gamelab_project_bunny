@@ -14,13 +14,18 @@ namespace AI.Actions.StudentActions
         private Gang _gang;
         private float _speed;
         private float _rotationSpeed;
+
+        private string _animationTrigger;
+        private int _animationVariants;
         
-        public JoinAnotherGang(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float speed, float rotationSpeed)
+        public JoinAnotherGang(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float speed, float rotationSpeed, string animationTrigger, int animationVariants)
              : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
         {
             _student = agent;
             _speed = speed;
             _rotationSpeed = rotationSpeed;
+            _animationTrigger = animationTrigger;
+            _animationVariants = animationVariants;
         }
 
         public override bool IsAchievable()
@@ -67,6 +72,7 @@ namespace AI.Actions.StudentActions
             // Nav mesh agent parameters
             target = position;
             navMeshAgent.speed = _speed;
+            _student.SetAnimatorParameter("Walking", true);
             
             return true;
         }
@@ -75,7 +81,8 @@ namespace AI.Actions.StudentActions
         {
             if (invoked) return;
             invoked = true;
-
+            
+            _student.SetAnimatorParameter("Walking", false);
             _student.StartCoroutine(RotateTowardsGangCenter());
         }
 
@@ -90,6 +97,7 @@ namespace AI.Actions.StudentActions
 
         public override void OnInterrupt()
         {
+            _student.SetAnimatorParameter("Walking", false);
             _student.Gang.SetFree();
             _gang.SetFree();
         }
@@ -109,7 +117,10 @@ namespace AI.Actions.StudentActions
             } 
             while (Vector3.Angle(targetLookRotation, _student.transform.forward) > 5f);
             
-            _student.CompleteAction(); // TODO Change with waving animation and complete action after the animation
+            // Animator parameters
+            var random = Random.Range(0, _animationVariants);
+            _student.SetAnimatorParameter("Random", random);
+            _student.SetAnimatorParameter(_animationTrigger);
         }
     }
 }

@@ -11,16 +11,19 @@ namespace AI.Actions.StudentActions
 
         private Student _newbie;
         private bool _faceAway;
-        private string _animationTrigger;
         private float _rotationSpeed;
         
-        public Welcome(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, bool faceAway, string animationTrigger, float rotationSpeed)
+        private string _animationTrigger;
+        private int _animationVariants;
+        
+        public Welcome(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, bool faceAway, float rotationSpeed, string animationTrigger, int animationVariants)
             : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
         {
             _student = agent;
             _faceAway = faceAway;
-            _animationTrigger = animationTrigger;
             _rotationSpeed = rotationSpeed;
+            _animationTrigger = animationTrigger;
+            _animationVariants = animationVariants;
         }
 
         public override bool IsAchievable()
@@ -80,7 +83,10 @@ namespace AI.Actions.StudentActions
             } 
             while (Vector3.Angle(targetLookRotation, _student.transform.forward) > 2f);
             
-            _student.CompleteAction(); // TODO Change with animation and complete action after the animation
+            // Animator parameters
+            var random = Random.Range(0, _animationVariants);
+            _student.SetAnimatorParameter("Random", random);
+            _student.SetAnimatorParameter(_animationTrigger);
         }
     }
 }

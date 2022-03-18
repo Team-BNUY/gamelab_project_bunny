@@ -9,14 +9,17 @@ namespace AI.ActionsData.StudentActionsData
     public class IntimidateData : ActionData
     {
         [Header("Intimidate")]
-        [SerializeField] private string _animationTrigger;
         [SerializeField] [Min(0f)] private float _rotationSpeed = 10f;
+        
+        [Header("Animator Parameter")]
+        [SerializeField] private string _animationTrigger;
+        [SerializeField] [Min(1)] private int _animationVariants;
         
         public override void Create(Agent agent)
         {
             if (agent is Student student)
             {
-                var action = new Intimidate(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), student, hasTarget, _animationTrigger, _rotationSpeed);
+                var action = new Intimidate(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), student, hasTarget, _rotationSpeed, _animationTrigger, _animationVariants);
                 student.Actions.Add(action);
             }
             else

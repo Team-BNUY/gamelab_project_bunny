@@ -2,7 +2,6 @@ using System.Collections;
 using AI.Agents;
 using AI.Core;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace AI.Actions.StudentActions
 {
@@ -11,15 +10,18 @@ namespace AI.Actions.StudentActions
         private Student _student;
 
         private Student _victim;
-        private string _animationTrigger;
         private float _rotationSpeed;
         
-        public Intimidate(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, string animationTrigger, float rotationSpeed)
+        private string _animationTrigger;
+        private int _animationVariants;
+        
+        public Intimidate(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float rotationSpeed, string animationTrigger, int animationVariants)
              : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
         {
             _student = agent;
             _animationTrigger = animationTrigger;
             _rotationSpeed = rotationSpeed;
+            _animationVariants = animationVariants;
         }
 
         public override bool IsAchievable()
@@ -96,7 +98,10 @@ namespace AI.Actions.StudentActions
             } 
             while (Vector3.Angle(targetLookRotation, _student.transform.forward) > 2f);
             
-            _student.CompleteAction(); // TODO Change with animation and complete action after the animation
+            // Animator parameters
+            var random = Random.Range(0, _animationVariants);
+            _student.SetAnimatorParameter("Random", random);
+            _student.SetAnimatorParameter(_animationTrigger);
         }
     }
 }

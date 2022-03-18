@@ -13,16 +13,21 @@ namespace AI.Actions.StudentActions
         private float _timer;
         private CryingSpot _cryingSpot;
         
-        public Cry(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float duration)
+        private string _animationTrigger;
+        private int _animationVariants;
+        
+        public Cry(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float duration, string animationTrigger, int animationVariants)
             : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
         {
             _student = agent;
             _duration = duration;
+            _animationTrigger = animationTrigger;
+            _animationVariants = animationVariants;
         }
 
         public override bool IsAchievable()
         {
-            return _student.CryingSpots.Count != 0 && _student.CryingSpots.Any(cs => !cs.Occupied);
+            return _student.CryingSpots.Count != 0 && _student.CryingSpots.Any(cs => !cs.Occupied && Vector3.Distance(cs.transform.position, _student.transform.position) > 5f);
         }
 
         public override bool PrePerform()
@@ -31,12 +36,13 @@ namespace AI.Actions.StudentActions
             invoked = false;
             _timer = _duration;
             
-            _cryingSpot = FindClosest(_student.CryingSpots.Where(cs => !cs.Occupied).ToList(), navMeshAgent);
+            _cryingSpot = FindClosest(_student.CryingSpots.Where(cs => !cs.Occupied && Vector3.Distance(cs.transform.position, _student.transform.position) > 5f).ToList(), navMeshAgent);
 
             if (!_cryingSpot) return false;
             
             _cryingSpot.Occupied = true;
             target = _cryingSpot.transform.position;
+            _student.SetAnimatorParameter("Walking", true);
             
             Gang.Found(_student);
             _student.Gang.InteractWith();
@@ -48,7 +54,12 @@ namespace AI.Actions.StudentActions
         {
             if (!invoked)
             {
-                // _student.SetAnimatorParameter("Crying", true); TODO Uncomment when animator controller is set up
+                // Animator parameters
+                _student.SetAnimatorParameter("Walking", false);
+                
+                var random = Random.Range(0, _animationVariants);
+                _student.SetAnimatorParameter("Random", random);
+                _student.SetAnimatorParameter(_animationTrigger, true);
             }
 
             invoked = true;
@@ -61,8 +72,10 @@ namespace AI.Actions.StudentActions
 
         public override bool PostPerform()
         {
+            _student.SetAnimatorParameter("Walking", false);
+            _student.SetAnimatorParameter(_animationTrigger, false);
+
             _student.BeliefStates.RemoveState("intimidated");
-            // _student.SetAnimatorParameter("Crying", false); TODO Uncomment when animator controller is set up
             _student.Gang.SetFree();
             _cryingSpot.Occupied = false;
             _cryingSpot = null;
@@ -72,8 +85,9 @@ namespace AI.Actions.StudentActions
 
         public override void OnInterrupt()
         {
+            _student.SetAnimatorParameter(_animationTrigger, false);
+
             _student.BeliefStates.RemoveState("intimidated");
-            // _student.SetAnimatorParameter("Crying", false); TODO Uncomment when animator controller is set up
             _student.Gang.SetFree();
             _cryingSpot.Occupied = false;
             _cryingSpot = null;

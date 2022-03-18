@@ -10,14 +10,18 @@ namespace AI.ActionsData.StudentActionsData
     {
         [Header("Welcome")]
         [SerializeField] private bool _faceAway;
-        [SerializeField] private string _animationTrigger;
         [SerializeField] [Min(0f)] private float _rotationSpeed = 10f;
+        
+        [Header("Animator Parameters")]
+        [SerializeField] private string _animationTrigger;
+        [SerializeField] [Min(1)] private int _animationVariants;
+
         
         public override void Create(Agent agent)
         {
             if (agent is Student student)
             {
-                var action = new Welcome(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), student, hasTarget, _faceAway, _animationTrigger, _rotationSpeed);
+                var action = new Welcome(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), student, hasTarget, _faceAway, _rotationSpeed, _animationTrigger, _animationVariants);
                 student.Actions.Add(action);
             }
             else

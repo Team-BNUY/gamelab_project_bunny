@@ -10,6 +10,8 @@ namespace AI.Core
     {
         [SerializeField] private List<ActionData> _actionsData;
 
+        public string action;
+        
         protected Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
         protected StateSet beliefStates = new StateSet();
         protected Action currentAction;
@@ -21,10 +23,11 @@ namespace AI.Core
         private AnimationState _animationState;
         private Animator _animator;
         
-        private static readonly int Idle = Animator.StringToHash("Idle");
-        private static readonly int Locomotion = Animator.StringToHash("Locomotion");
-        private static readonly int Speed = Animator.StringToHash("Speed");
-        
+        private void Update()
+        {
+            action = currentAction?.Name;
+        }
+
         /// <summary>
         /// Finds the references
         /// </summary>
@@ -56,7 +59,6 @@ namespace AI.Core
                 if (currentAction.HasTarget && distanceToTarget > 0.2f) return;
                 
                 currentAction.Perform();
-                //SetAnimatorParameters();
 
                 return;
             }
@@ -108,7 +110,6 @@ namespace AI.Core
                 if(!currentAction.HasTarget)
                 {
                     currentAction.Running = true;
-                    //SetAnimatorParameters();
 
                     return;
                 }
@@ -121,7 +122,6 @@ namespace AI.Core
                 // If the current action's destination location is not the zero vector, makes the agent go towards its target location
                 currentAction.Running = true;
                 currentAction.NavMeshAgent.SetDestination(currentAction.Target);
-                //SetAnimatorParameters();
             }
             // Resets the planner to allow for a new plan for a new goal to be calculated
             else
@@ -144,9 +144,19 @@ namespace AI.Core
         /// </summary>
         /// <param name="animatorParameter">The animator parameter's name</param>
         /// <param name="value">The boolean value to set the animator parameter</param>
-        public void SetAnimatorParameter(string animatorParameter, bool value) // TODO Uncomment calls as soon as the agent has the appropriate animator parameters
+        public void SetAnimatorParameter(string animatorParameter, bool value)
         {
             _animator.SetBool(animatorParameter, value);
+        }
+        
+        /// <summary>
+        /// Sets the integer <paramref name="animatorParameter"/> to <paramref name="value"/>
+        /// </summary>
+        /// <param name="animatorParameter">The animator parameter's name</param>
+        /// <param name="value">The integer value to set the animator parameter</param>
+        public void SetAnimatorParameter(string animatorParameter, int value)
+        {
+            _animator.SetInteger(animatorParameter, value);
         }
 
         /// <summary>
@@ -154,14 +164,14 @@ namespace AI.Core
         /// </summary>
         public void CompleteAction()
         {
-            currentAction.Running = false;
-            if(currentAction.PostPerform() == false)
-            {
-                _planner = null;
-                _actionQueue = null;    
-            }
+            if (currentAction == null) return;
             
-            //SetAnimatorParameters();
+            currentAction.Running = false;
+            
+            if (currentAction.PostPerform()) return;
+            
+            _planner = null;
+            _actionQueue = null;
         }
 
         /// <summary>
@@ -188,27 +198,6 @@ namespace AI.Core
             foreach(var data in _actionsData)
             {
                 data.Create(this);
-            }
-        }
-
-        /// <summary>
-        /// Sets the agent's animator parameters
-        /// </summary>
-        private void SetAnimatorParameters() // TODO Uncomment calls as soon as the agent has an animator controller
-        {
-            _animator.SetFloat(Speed, GetComponent<NavMeshAgent>().speed);
-            switch(_animationState)
-            {
-                case AnimationState.Idle:
-                    _animator.SetBool(Idle, true);
-                    _animator.SetBool(Locomotion, false);
-                    break;
-                case AnimationState.Locomotion:
-                    _animator.SetBool(Idle, false);
-                    _animator.SetBool(Locomotion, true);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
         
