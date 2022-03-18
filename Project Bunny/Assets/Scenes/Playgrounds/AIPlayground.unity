@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 10761888}
   - component: {fileID: 10761887}
   - component: {fileID: 10761890}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 97336314}
   - component: {fileID: 97336313}
   - component: {fileID: 97336316}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: Wall (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -572,6 +572,7 @@ GameObject:
   m_Component:
   - component: {fileID: 237610751}
   - component: {fileID: 237610752}
+  - component: {fileID: 237610753}
   m_Layer: 0
   m_Name: CryingSpot
   m_TagString: Untagged
@@ -605,6 +606,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7a44af09ff94b4c9bd16dcabbb9f0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &237610753
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 237610750}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &357549178
 GameObject:
   m_ObjectHideFlags: 0
@@ -656,7 +670,7 @@ GameObject:
   - component: {fileID: 379095382}
   - component: {fileID: 379095381}
   - component: {fileID: 379095384}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: Wall (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -765,6 +779,7 @@ GameObject:
   m_Component:
   - component: {fileID: 393018530}
   - component: {fileID: 393018531}
+  - component: {fileID: 393018532}
   m_Layer: 0
   m_Name: CryingSpot
   m_TagString: Untagged
@@ -798,6 +813,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7a44af09ff94b4c9bd16dcabbb9f0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &393018532
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393018529}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &483882197
 GameObject:
   m_ObjectHideFlags: 0
@@ -811,7 +839,7 @@ GameObject:
   - component: {fileID: 483882200}
   - component: {fileID: 483882199}
   - component: {fileID: 483882202}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: Wall (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1556,6 +1584,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1275833928}
   - component: {fileID: 1275833929}
+  - component: {fileID: 1275833930}
   m_Layer: 0
   m_Name: CryingSpot
   m_TagString: Untagged
@@ -1589,6 +1618,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7a44af09ff94b4c9bd16dcabbb9f0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &1275833930
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275833927}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1321783124
 GameObject:
   m_ObjectHideFlags: 0
@@ -1639,6 +1681,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1338238079}
   - component: {fileID: 1338238080}
+  - component: {fileID: 1338238081}
   m_Layer: 0
   m_Name: CryingSpot
   m_TagString: Untagged
@@ -1672,6 +1715,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7a44af09ff94b4c9bd16dcabbb9f0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &1338238081
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1338238078}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1407298601
 GameObject:
   m_ObjectHideFlags: 0
@@ -1685,7 +1741,7 @@ GameObject:
   - component: {fileID: 1407298604}
   - component: {fileID: 1407298603}
   - component: {fileID: 1407298606}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: Wall (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2272,6 +2328,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1719516544}
   - component: {fileID: 1719516545}
+  - component: {fileID: 1719516546}
   m_Layer: 0
   m_Name: CryingSpot
   m_TagString: Untagged
@@ -2305,6 +2362,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7a44af09ff94b4c9bd16dcabbb9f0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &1719516546
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1719516543}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1737747286
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2445,7 +2515,7 @@ GameObject:
   - component: {fileID: 2102842163}
   - component: {fileID: 2102842162}
   - component: {fileID: 2102842165}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: Wall (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2677,6 +2747,10 @@ PrefabInstance:
       propertyPath: _waypoints.Array.data[9]
       value: 
       objectReference: {fileID: 1268314777}
+    - target: {fileID: -4508867623582885317, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
+      propertyPath: _viewBlockingLayer.m_Bits
+      value: 1032
+      objectReference: {fileID: 0}
     - target: {fileID: -4508867623582885317, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
       propertyPath: _waypoints.Array.data[10]
       value: 

@@ -95,6 +95,11 @@ namespace AI
 
         // Properties
 
+        public List<Student> Members
+        {
+            get => _members;
+        }
+        
         public Student Newbie
         {
             get => _newbie;

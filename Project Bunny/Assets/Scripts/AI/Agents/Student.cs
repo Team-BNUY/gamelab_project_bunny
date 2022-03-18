@@ -14,6 +14,7 @@ namespace AI.Agents
         [Header("Layers")] // TODO Take everything below from an eventual GameManager
         [SerializeField] private LayerMask _studentLayer;
         [SerializeField] private LayerMask _groundLayer;
+        [SerializeField] private LayerMask _obstacleLayer;
         [SerializeField] private List<CryingSpot> _cryingSpots;
         
         private Gang _gang;
@@ -67,6 +68,11 @@ namespace AI.Agents
         public LayerMask GroundLayer
         {
             get => _groundLayer;
+        }
+
+        public LayerMask ObstacleLayer
+        {
+            get => _obstacleLayer;
         }
 
         public List<CryingSpot> CryingSpots

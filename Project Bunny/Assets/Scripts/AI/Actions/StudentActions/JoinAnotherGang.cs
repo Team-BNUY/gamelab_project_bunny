@@ -64,6 +64,17 @@ namespace AI.Actions.StudentActions
             var path = new NavMeshPath();
             if (!navMeshAgent.CalculatePath(position, path) || Physics.CheckSphere(position, navMeshAgent.radius, _student.StudentLayer)) return false;
             
+            // Checks if there is an obstacle between the student and the gang in the hypothetical join position
+            foreach (var member in _student.Gang.Members)
+            {
+                var studentPosition = _student.transform.position;
+                var memberPosition = member.transform.position;
+                direction = memberPosition - studentPosition;
+                var distance = Vector3.Distance(memberPosition, studentPosition);
+                
+                if (Physics.Raycast(position, direction, distance, _student.ObstacleLayer)) return false;
+            }            
+            
             // Makes the student found a new gang and sets the target gang as occupied
             Gang.Found(_student);
             _student.Gang.InteractWith();

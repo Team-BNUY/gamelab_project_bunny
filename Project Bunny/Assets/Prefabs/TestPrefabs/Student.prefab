@@ -2050,6 +2050,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ac9c36291bbb08f459dcc3d06398438e, type: 2}
   - {fileID: 11400000, guid: 75e2d0783928c494a8a1d4e1c8b5408f, type: 2}
   - {fileID: 11400000, guid: 0b5affab3264d3d41ace96d7b826531a, type: 2}
+  action: 
   pushForce: 40
   _studentLayer:
     serializedVersion: 2
@@ -2057,6 +2058,9 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  _obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 1024
   _cryingSpots:
   - {fileID: 0}
   - {fileID: 0}

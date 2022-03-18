@@ -9,6 +9,7 @@ namespace AI.Actions.StudentActions
     {
         private Student _student;
 
+        private float _runningSpeed;
         private float _duration;
         private float _timer;
         private CryingSpot _cryingSpot;
@@ -16,10 +17,11 @@ namespace AI.Actions.StudentActions
         private string _animationTrigger;
         private int _animationVariants;
         
-        public Cry(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float duration, string animationTrigger, int animationVariants)
+        public Cry(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float runningSpeed, float duration, string animationTrigger, int animationVariants)
             : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
         {
             _student = agent;
+            _runningSpeed = runningSpeed;
             _duration = duration;
             _animationTrigger = animationTrigger;
             _animationVariants = animationVariants;
@@ -40,9 +42,9 @@ namespace AI.Actions.StudentActions
 
             if (!_cryingSpot) return false;
             
-            _cryingSpot.Occupied = true;
+            navMeshAgent.speed = _runningSpeed;
             target = _cryingSpot.transform.position;
-            _student.SetAnimatorParameter("Walking", true);
+            _student.SetAnimatorParameter("Running", true);
             
             Gang.Found(_student);
             _student.Gang.InteractWith();
@@ -55,7 +57,7 @@ namespace AI.Actions.StudentActions
             if (!invoked)
             {
                 // Animator parameters
-                _student.SetAnimatorParameter("Walking", false);
+                _student.SetAnimatorParameter("Running", false);
                 
                 var random = Random.Range(0, _animationVariants);
                 _student.SetAnimatorParameter("Random", random);
@@ -72,12 +74,11 @@ namespace AI.Actions.StudentActions
 
         public override bool PostPerform()
         {
-            _student.SetAnimatorParameter("Walking", false);
+            _student.SetAnimatorParameter("Running", false);
             _student.SetAnimatorParameter(_animationTrigger, false);
 
             _student.BeliefStates.RemoveState("intimidated");
             _student.Gang.SetFree();
-            _cryingSpot.Occupied = false;
             _cryingSpot = null;
 
             return true;
@@ -89,7 +90,6 @@ namespace AI.Actions.StudentActions
 
             _student.BeliefStates.RemoveState("intimidated");
             _student.Gang.SetFree();
-            _cryingSpot.Occupied = false;
             _cryingSpot = null;
         }
     }
