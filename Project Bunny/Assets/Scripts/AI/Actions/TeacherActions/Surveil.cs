@@ -8,13 +8,16 @@ public class Surveil : Action
 
     private Transform _waypoint;
     private float _speed;
+    private float _lookAroundTime;
     private float _walkingFieldOfView;
     private float _surveilFieldOfView;
+    private float _timer;
     
-    public Surveil(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher agent, bool hasTarget, float speed, float walkingFieldOfView, float surveilFieldOfView)
+    public Surveil(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher agent, bool hasTarget, float speed, float lookAroundTime, float walkingFieldOfView, float surveilFieldOfView)
          : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
     {
         _speed = speed;
+        _lookAroundTime = lookAroundTime;
         _walkingFieldOfView = walkingFieldOfView;
         _surveilFieldOfView = surveilFieldOfView;
         _teacher = agent;
@@ -37,11 +40,15 @@ public class Surveil : Action
     {
         // Resets parameters
         invoked = false;
+        _timer = _lookAroundTime;
         
         // Sets the target
         var random = Random.Range(0, _teacher.Waypoints.Length);
         _waypoint = _teacher.Waypoints[random];
         target = _waypoint.position;
+        
+        // Animator parameters
+        _teacher.AnimationState = AnimationState.Walk;
         
         // View parameters
         _teacher.LookForward();
@@ -58,7 +65,19 @@ public class Surveil : Action
     {
         _teacher.FieldOfView = _surveilFieldOfView;
         
-        agent.CompleteAction(); // TODO Play surveil/investigate animation and complete action from animation completion (don't forget to check for invoked)
+        if (!invoked)
+        {
+            // Animator parameters
+            _teacher.AnimationState = AnimationState.Idle;
+            _teacher.SetAnimatorParameter("LookingAround", true);
+        }
+
+        invoked = true;
+        _timer -= Time.deltaTime;
+            
+        if (_timer > 0) return;
+            
+        agent.CompleteAction();
     }
     
     /// <summary>
@@ -67,11 +86,13 @@ public class Surveil : Action
     /// <returns>True</returns>
     public override bool PostPerform()
     {
+        _teacher.SetAnimatorParameter("LookingAround", false);
+        
         return success;
     }
 
     public override void OnInterrupt()
     {
-        return;
+        _teacher.SetAnimatorParameter("LookingAround", false);
     }
 }

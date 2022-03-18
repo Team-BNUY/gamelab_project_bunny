@@ -78,10 +78,10 @@ namespace AI.Actions.StudentActions
             _student.Gang.InteractWith();
             _gang.InteractWith();
             
-            // Nav mesh agent parameters
+            // General parameters
             target = position;
             navMeshAgent.speed = _speed;
-            _student.SetAnimatorParameter("Walking", true);
+            _student.AnimationState = AnimationState.Walk;
             
             return true;
         }
@@ -91,7 +91,7 @@ namespace AI.Actions.StudentActions
             if (invoked) return;
             invoked = true;
             
-            _student.SetAnimatorParameter("Walking", false);
+            _student.AnimationState = AnimationState.Idle;
             _student.StartCoroutine(RotateTowardsGangCenter());
         }
 
@@ -106,7 +106,6 @@ namespace AI.Actions.StudentActions
 
         public override void OnInterrupt()
         {
-            _student.SetAnimatorParameter("Walking", false);
             _student.Gang.SetFree();
             _gang.SetFree();
         }

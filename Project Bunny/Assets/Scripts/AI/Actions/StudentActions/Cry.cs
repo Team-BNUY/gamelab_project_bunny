@@ -42,9 +42,10 @@ namespace AI.Actions.StudentActions
 
             if (!_cryingSpot) return false;
             
+            // General parameters
             navMeshAgent.speed = _runningSpeed;
             target = _cryingSpot.transform.position;
-            _student.SetAnimatorParameter("Running", true);
+            _student.AnimationState = AnimationState.Run;
             
             Gang.Found(_student);
             _student.Gang.InteractWith();
@@ -57,7 +58,7 @@ namespace AI.Actions.StudentActions
             if (!invoked)
             {
                 // Animator parameters
-                _student.SetAnimatorParameter("Running", false);
+                _student.AnimationState = AnimationState.Idle;
                 
                 var random = Random.Range(0, _animationVariants);
                 _student.SetAnimatorParameter("Random", random);
@@ -74,7 +75,6 @@ namespace AI.Actions.StudentActions
 
         public override bool PostPerform()
         {
-            _student.SetAnimatorParameter("Running", false);
             _student.SetAnimatorParameter(_animationTrigger, false);
 
             _student.BeliefStates.RemoveState("intimidated");

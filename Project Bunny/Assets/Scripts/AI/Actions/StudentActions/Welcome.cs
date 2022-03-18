@@ -36,6 +36,9 @@ namespace AI.Actions.StudentActions
             // Resets parameters
             invoked = false;
             
+            // Animator parameters
+            _student.AnimationState = AnimationState.Idle;
+            
             _newbie = _student.Gang.Newbie;
             _student.Gang.InteractWith();
 

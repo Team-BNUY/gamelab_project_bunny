@@ -10,8 +10,6 @@ namespace AI.Core
     {
         [SerializeField] private List<ActionData> _actionsData;
 
-        public string action;
-        
         protected Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
         protected StateSet beliefStates = new StateSet();
         protected Action currentAction;
@@ -22,11 +20,6 @@ namespace AI.Core
         private Goal _currentGoal;
         private AnimationState _animationState;
         private Animator _animator;
-        
-        private void Update()
-        {
-            action = currentAction?.Name;
-        }
 
         /// <summary>
         /// Finds the references
@@ -59,6 +52,7 @@ namespace AI.Core
                 if (currentAction.HasTarget && distanceToTarget > 0.2f) return;
                 
                 currentAction.Perform();
+                SetAnimatorParameters();
 
                 return;
             }
@@ -122,6 +116,7 @@ namespace AI.Core
                 // If the current action's destination location is not the zero vector, makes the agent go towards its target location
                 currentAction.Running = true;
                 currentAction.NavMeshAgent.SetDestination(currentAction.Target);
+                SetAnimatorParameters();
             }
             // Resets the planner to allow for a new plan for a new goal to be calculated
             else
@@ -158,6 +153,29 @@ namespace AI.Core
         {
             _animator.SetInteger(animatorParameter, value);
         }
+        
+        private void SetAnimatorParameters()
+        {
+            switch(_animationState)
+            {
+                case AnimationState.Idle:
+                    _animator.SetBool("Walking", false);
+                    _animator.SetBool("Running", false);
+                    break;
+                case AnimationState.Walk:
+                    _animator.SetBool("Walking", true);
+                    _animator.SetBool("Running", false);
+                    break;
+                case AnimationState.Run:
+                    _animator.SetBool("Running", true);
+                    _animator.SetBool("Walking", false);
+                    break;
+                default:
+                    _animator.SetBool("Walking", false);
+                    _animator.SetBool("Running", false);
+                    break;
+            }
+        }
 
         /// <summary>
         /// Completes the current action, leaving place to the next one
@@ -167,6 +185,7 @@ namespace AI.Core
             if (currentAction == null) return;
             
             currentAction.Running = false;
+            SetAnimatorParameters();
             
             if (currentAction.PostPerform()) return;
             
@@ -215,7 +234,6 @@ namespace AI.Core
 
         public AnimationState AnimationState
         {
-            get => _animationState;
             set => _animationState = value;
         }
     }
@@ -224,4 +242,4 @@ namespace AI.Core
 /// <summary>
 /// The possible animation states
 /// </summary>
-public enum AnimationState { Idle, Locomotion }
+public enum AnimationState { Idle, Walk, Run }

@@ -9,6 +9,8 @@ namespace AI.ActionsData.TeacherActionsData
     {
         [Header("Surveil")] 
         [SerializeField] [Min(0f)] private float _speed;
+
+        [SerializeField] [Min(0f)] private float _lookAroundTime;
         [SerializeField] [Range(0f, 180f)] private float _walkingFieldOfView;
         [SerializeField] [Range(0f, 180f)] private float _surveilFieldOfView;
 
@@ -16,7 +18,7 @@ namespace AI.ActionsData.TeacherActionsData
         {
             if (agent is Teacher teacher)
             {
-                var action = new Surveil(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), teacher, hasTarget, _speed, _walkingFieldOfView, _surveilFieldOfView);
+                var action = new Surveil(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), teacher, hasTarget, _speed, _lookAroundTime, _walkingFieldOfView, _surveilFieldOfView);
                 teacher.Actions.Add(action);
             }
             else

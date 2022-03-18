@@ -1980,6 +1980,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7050418277899936339}
+  - component: {fileID: 823820511843556976}
   - component: {fileID: 3710166420798845036}
   - component: {fileID: -206109306832829746}
   - component: {fileID: -4508867623582885317}
@@ -2014,6 +2015,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &823820511843556976
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7679709101656766697}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 1ae9e64513c18b045bfdf89d5a40c202, type: 3}
+  m_Controller: {fileID: 9100000, guid: 2c6c71e69860039449dd7e262eca74ff, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!136 &3710166420798845036
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2066,13 +2086,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5ca84a531b74e704bbd31aa6231d472c, type: 2}
   - {fileID: 11400000, guid: f9dd4dd768aa6794285e64c481cb3302, type: 2}
   - {fileID: 11400000, guid: 243694962ba81454dae29a9db92dfb07, type: 2}
+  action: 
   _head: {fileID: 8105841243174306549}
   _fieldOfView: 90
   _viewDistance: 20
   _headRotationSpeed: 10
   _viewBlockingLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 1032
   _waypoints:
   - {fileID: 0}
   - {fileID: 0}

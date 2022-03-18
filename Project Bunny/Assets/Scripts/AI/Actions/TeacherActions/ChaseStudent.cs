@@ -36,7 +36,7 @@ namespace AI.Actions.TeacherActions
             
             if (!_target) return false;
             
-            agent.AnimationState = AnimationState.Locomotion;
+            agent.AnimationState = AnimationState.Run;
 
             return true;
         }
@@ -59,15 +59,10 @@ namespace AI.Actions.TeacherActions
         /// <summary>
         /// Resets the Action's target
         /// </summary>
-        /// <returns>Always true, no possible fail for this post-processing</returns>
+        /// <returns>Always true, no possible failure for this post-processing</returns>
         public override bool PostPerform()
         {
             return success;
-        }
-
-        public override void OnInterrupt()
-        {
-            return;
         }
     }
 }

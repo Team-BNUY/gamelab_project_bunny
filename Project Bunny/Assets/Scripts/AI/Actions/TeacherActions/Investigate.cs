@@ -12,16 +12,18 @@ namespace AI.Actions.TeacherActions
         
         private StudentController _targetStudent;
         private float _investigationTime;
+        private float _speed;
         private float _walkingFieldOfView;
         private float _investigationFieldOfView;
 
         private float _timer;
         
-        public Investigate(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher agent, bool hasTarget, float investigationTime, float walkingFieldOfView, float investigationFieldOfView)
+        public Investigate(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher agent, bool hasTarget, float investigationTime, float speed, float walkingFieldOfView, float investigationFieldOfView)
              : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
         {
             _teacher = agent;
             _investigationTime = investigationTime;
+            _speed = speed;
             _walkingFieldOfView = walkingFieldOfView;
             _investigationFieldOfView = investigationFieldOfView;
         }
@@ -45,17 +47,21 @@ namespace AI.Actions.TeacherActions
             invoked = false;
             _timer = _investigationTime;
             
+            // General parameters
+            navMeshAgent.speed = _speed;
+            _teacher.AnimationState = AnimationState.Run;
+            
             // View parameters
             _teacher.FieldOfView = _walkingFieldOfView;
             _teacher.LookForward();
-            
+
             // To make sure the Teacher goes first to the last remembered position of the student they were chasing
             if (_teacher.LastTargetStudent)
             {
                 _targetStudent = _teacher.LastTargetStudent;
                 target = _teacher.BadStudents[_targetStudent];
                 _teacher.LastTargetStudent = null;
-
+                
                 return true;
             }
             
@@ -75,14 +81,18 @@ namespace AI.Actions.TeacherActions
             // View parameters
             _teacher.FieldOfView = _investigationFieldOfView;
             
-            //_teacher.SetAnimatorParameter("Investigate", true);
+            if (!invoked)
+            {
+                // Animator parameters
+                _teacher.AnimationState = AnimationState.Idle;
+                _teacher.SetAnimatorParameter("LookingAround", true);
+            }
+
+            invoked = true;
             _timer -= Time.deltaTime;
             
             if (_timer > 0f) return;
-            
-            if (invoked) return;
-            invoked = true;
-            
+
             agent.CompleteAction();
         }
         
@@ -94,13 +104,15 @@ namespace AI.Actions.TeacherActions
         {
             _teacher.BadStudents.Remove(_targetStudent);
             _teacher.BeliefStates.ModifyState("remembersBadStudent", -1);
+ 
+            _teacher.SetAnimatorParameter("LookingAround", false);
             
             return true;
         }
 
         public override void OnInterrupt()
         {
-            return;
+            _teacher.SetAnimatorParameter("LookingAround", false);
         }
     }
 }

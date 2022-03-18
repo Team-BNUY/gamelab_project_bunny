@@ -2772,10 +2772,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -4508867623582885317, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
-      propertyPath: _waypoints.Array.size
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: -4508867623582885317, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
       propertyPath: _waypoints.Array.data[0]
       value: 
       objectReference: {fileID: 502751439}
@@ -2799,34 +2795,10 @@ PrefabInstance:
       propertyPath: _waypoints.Array.data[5]
       value: 
       objectReference: {fileID: 1201361589}
-    - target: {fileID: -4508867623582885317, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
-      propertyPath: _waypoints.Array.data[6]
-      value: 
-      objectReference: {fileID: 502751439}
-    - target: {fileID: -4508867623582885317, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
-      propertyPath: _waypoints.Array.data[7]
-      value: 
-      objectReference: {fileID: 1663537282}
-    - target: {fileID: -4508867623582885317, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
-      propertyPath: _waypoints.Array.data[8]
-      value: 
-      objectReference: {fileID: 1627551885}
-    - target: {fileID: -4508867623582885317, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
-      propertyPath: _waypoints.Array.data[9]
-      value: 
-      objectReference: {fileID: 1268314777}
-    - target: {fileID: -4508867623582885317, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
-      propertyPath: _viewBlockingLayer.m_Bits
-      value: 1032
+    - target: {fileID: -206109306832829746, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 360
       objectReference: {fileID: 0}
-    - target: {fileID: -4508867623582885317, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
-      propertyPath: _waypoints.Array.data[10]
-      value: 
-      objectReference: {fileID: 1911781130}
-    - target: {fileID: -4508867623582885317, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
-      propertyPath: _waypoints.Array.data[11]
-      value: 
-      objectReference: {fileID: 1201361589}
     - target: {fileID: 7050418277899936339, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
       propertyPath: m_RootOrder
       value: 5
