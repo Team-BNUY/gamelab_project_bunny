@@ -65,6 +65,7 @@ namespace Player
         [SerializeField] private TMPro.TMP_Text _nickNameText;
         public string PlayerID { get; set; }
         private PhotonView _view;
+        private bool _isJerseyNull;
 
 
         #region Callbacks
@@ -95,6 +96,7 @@ namespace Player
 
         private void Start()
         {
+            _isJerseyNull = _jersey == null;
             _throwForce = _minForce;
             SetNameText();
             UpdateTeamColorVisuals();
@@ -391,21 +393,29 @@ namespace Player
         #endregion
 
         #region RPC
+        
         [PunRPC]
+        // ReSharper disable once UnusedMember.Local
         private void PlaySnowballThrowAnimation()
         {
             _animator.Play($"Base Layer.Snowball Throw");
         }
 
+        /// <summary>
+        /// Temporary functionality for updating visuals like mesh object and name text colors
+        /// Functionality will still be kept for later, but more refined
+        /// </summary>
         public void UpdateTeamColorVisuals()
         {
-            if (_jersey == null) {
+            if (_isJerseyNull)
+            {
                 Debug.LogError("Missing reference to player jersey");
                 return;
             }
             object teamId;
             PhotonTeam team;
-            if (_view.Owner.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) && PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team))
+            if (_view.Owner.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) && 
+                PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team))
             {
                 switch (team.Code)
                 {

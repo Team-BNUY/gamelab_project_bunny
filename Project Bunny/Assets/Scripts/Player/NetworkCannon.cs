@@ -24,8 +24,6 @@ namespace Player
         [SerializeField] [Min(0)] private float _rotationSpeed;
 
         [Header("Snowball")]
-        // TODO: Dynamically instantiate and attach prefab from a Manager
-        [SerializeField] private GameObject _cannonBallPrefab;
         [SerializeField] [Min(0)] private float _coolDownTime;
         [SerializeField] private float _minForce, _maxForce;
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
