@@ -63,12 +63,6 @@ namespace AI.Agents
         /// </summary>
         private void Update()
         {
-            // TODO Remove when the Teacher has a default action
-            if (currentAction == null)
-            {
-                _viewDirection = transform.forward;
-            }
-            
             if (WitnessedBadAction(out var badStudent))
             {
                 _targetStudent = badStudent;
@@ -145,8 +139,9 @@ namespace AI.Agents
                 var angle = Vector3.Angle(_viewDirection, studentPosition - myPosition);
                 if (2f * angle > _fieldOfView) continue;
 
-                var direction = student.transform.position - _head.transform.position;
-                if (Physics.Raycast(_head.transform.position, direction, _viewDistance, _viewBlockingLayer)) continue; // TODO Adjust to the student's height if applicable and adjust distance to be projected to the Y plane for it to be precise
+                var direction = student.transform.position - _head.transform.position + Vector3.up * 3f; // Student height
+                var distance = Vector3.Distance(studentPosition, transform.position);
+                if (Physics.Raycast(_head.transform.position, direction, distance, _viewBlockingLayer)) continue;
                     
                 // If the student is within field of view
                 // Updates the bad student's last seen position if already in the list of bad students

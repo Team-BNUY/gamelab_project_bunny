@@ -126,10 +126,10 @@ namespace AI
             {
                 return _members.Count switch
                 {
-                    1 => 4,
-                    2 => 6,
-                    3 => 8,
-                    4 => 8,
+                    1 => 4, // Makes these variables in an eventual GameManager
+                    2 => 5,
+                    3 => 6,
+                    4 => 6,
                     _ => 4
                 };
             }
