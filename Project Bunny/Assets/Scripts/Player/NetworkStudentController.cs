@@ -474,6 +474,8 @@ namespace Player
                     _currentInteractable?.Exit();
                     _currentInteractable = null;
                 }
+                
+                
             }
         }
 
