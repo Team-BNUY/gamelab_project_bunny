@@ -11,12 +11,11 @@ namespace Networking
         private const string ROOM_SCENE_NAME = "3-Room";
         private const string DEFAULT_PLAYER_NAME = "Joe";
         private const string PLAYER_PREF_NAME_KEY = "PlayerName";
+        private const byte maxPlayersPerRoom = 9;
 
         [SerializeField] private TMP_InputField _createInput;
         [SerializeField] private TMP_InputField _joinInput;
         [SerializeField] private TMP_InputField _nameInput;
-
-        [SerializeField] private byte maxPlayersPerRoom = 16;
 
         [SerializeField] private Button _createButton;
         [SerializeField] private Button _joinButton;
