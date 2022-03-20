@@ -10,7 +10,7 @@ namespace AI.Actions.TeacherActions
     {
         private Teacher _teacher;
         
-        private StudentController _targetStudent;
+        private NetworkStudentController _targetStudent;
         private float _investigationTime;
         private float _speed;
         private float _walkingFieldOfView;

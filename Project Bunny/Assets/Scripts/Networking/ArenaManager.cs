@@ -1,7 +1,9 @@
+using System;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using Player;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ArenaManager : MonoBehaviour
 {
@@ -28,16 +30,26 @@ public class ArenaManager : MonoBehaviour
     [SerializeField] private GameObject _snowballBurst;
     [SerializeField] private GameObject _giantRollballBurst;
     [SerializeField] private GameObject _cannonBall;
+
+    private NetworkStudentController[] _allPlayers;
+    
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
     public GameObject SnowballBurst => _snowballBurst;
     public GameObject GiantRollballBurst => _giantRollballBurst;
     public GameObject CannonBall => _cannonBall;
+    public NetworkStudentController[] AllPlayers => _allPlayers;
 
     [SerializeField] private Transform[] _teamSpawns;
 
     void Start()
     {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            _allPlayers = Array.Empty<NetworkStudentController>();
+            Invoke(nameof(GetAllPlayers), 1f);
+        }
+        
         SpawnPlayer();
     }
 
@@ -65,5 +77,9 @@ public class ArenaManager : MonoBehaviour
         }
         return Vector3.zero;
     }
-
+    
+    private void GetAllPlayers()
+    {
+        _allPlayers = FindObjectsOfType<NetworkStudentController>();
+    }
 }

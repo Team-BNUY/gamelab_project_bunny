@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,6 +9,9 @@ namespace AI.Core
 {
     public class Agent : MonoBehaviour
     {
+        [Header("Testing")]
+        public string action;
+        
         [SerializeField] private List<ActionData> _actionsData;
 
         protected Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
@@ -34,6 +38,8 @@ namespace AI.Core
         /// </summary>
         protected virtual void Start()
         {
+            if (!PhotonNetwork.IsMasterClient) return;
+
             CreateActions();
         }
         
@@ -42,6 +48,10 @@ namespace AI.Core
         /// </summary>
         private void LateUpdate()
         {
+            if (!PhotonNetwork.LocalPlayer.IsMasterClient) return;
+
+            action = currentAction?.Name;
+            
             // If an action is running
             if(currentAction is {Running: true})
             {
