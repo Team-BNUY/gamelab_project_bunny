@@ -1,3 +1,4 @@
+using System;
 using Cinemachine;
 using Interfaces;
 using Networking;
@@ -34,6 +35,7 @@ namespace Player
         [SerializeField] private float _studentHealth;
         private GameObject _currentObjectInHand;
         private INetworkInteractable _currentInteractable;
+        private INetworkTriggerable _currentTriggerable;
         private bool _isSliding;
 
         [Header("Snowball")]
@@ -139,7 +141,29 @@ namespace Player
             UpdateTeamColorVisuals();
         }
 
-            #endregion
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.TryGetComponent(out INetworkTriggerable triggerable))
+            {
+                if (_currentTriggerable == null)
+                {
+                    _currentTriggerable = triggerable;
+                }
+            }
+        }
+        
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.TryGetComponent(out INetworkTriggerable triggerable))
+            {
+                if (_currentTriggerable == triggerable)
+                {
+                    _currentTriggerable = null;  
+                }
+            }
+        }
+
+        #endregion
 
         #region Actions
 
@@ -371,7 +395,6 @@ namespace Player
         {
             if (context.performed)
             {
-                INetworkTriggerable _currentTriggerable = ReturnNearestTriggerable();
                 _currentTriggerable?.Trigger(this);
                 
                 if (_hasSnowball) return; //Don't interact with interactables if the player already has a snowball. 
