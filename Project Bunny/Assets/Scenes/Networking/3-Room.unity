@@ -817,6 +817,7 @@ GameObject:
   - component: {fileID: 207850443}
   - component: {fileID: 207850442}
   - component: {fileID: 207850446}
+  - component: {fileID: 207850447}
   m_Layer: 0
   m_Name: ClothesCustomization
   m_TagString: Untagged
@@ -912,6 +913,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9604ec298b5282499199564107fae81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &207850447
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 207850441}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 2.505085}
+  m_Center: {x: 0.00000040568074, y: 0, z: -0.7525425}
 --- !u!1 &237638473
 GameObject:
   m_ObjectHideFlags: 0
@@ -1122,6 +1136,7 @@ GameObject:
   - component: {fileID: 262996795}
   - component: {fileID: 262996794}
   - component: {fileID: 262996797}
+  - component: {fileID: 262996798}
   m_Layer: 0
   m_Name: CreditsBoard
   m_TagString: Untagged
@@ -1218,6 +1233,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3878febd81321c847a1c72e1dc7864bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &262996798
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 262996792}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.9999999, y: 1.963579, z: 6.835395}
+  m_Center: {x: 0, y: -0.48178813, z: -2.9176972}
 --- !u!1 &321918740
 GameObject:
   m_ObjectHideFlags: 0
@@ -2019,6 +2047,7 @@ GameObject:
   - component: {fileID: 837879034}
   - component: {fileID: 837879033}
   - component: {fileID: 837879036}
+  - component: {fileID: 837879037}
   m_Layer: 0
   m_Name: Blackboard
   m_TagString: Untagged
@@ -2114,6 +2143,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0215007013c0e64ba06669d829d4e93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &837879037
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837879031}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.99999994, y: 1.3934704, z: 3.0313456}
+  m_Center: {x: 0.00000007162822, y: -0.19673635, z: -1.0156724}
 --- !u!1 &869908704
 GameObject:
   m_ObjectHideFlags: 0
