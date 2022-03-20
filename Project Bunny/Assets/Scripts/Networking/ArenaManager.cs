@@ -30,6 +30,7 @@ public class ArenaManager : MonoBehaviour
     [SerializeField] private GameObject _snowballBurst;
     [SerializeField] private GameObject _giantRollballBurst;
     [SerializeField] private GameObject _cannonBall;
+    [SerializeField] private GameObject _snowmanPrefab;
 
     private NetworkStudentController[] _allPlayers;
     
@@ -38,6 +39,7 @@ public class ArenaManager : MonoBehaviour
     public GameObject SnowballBurst => _snowballBurst;
     public GameObject GiantRollballBurst => _giantRollballBurst;
     public GameObject CannonBall => _cannonBall;
+    public GameObject SnowmanPrefab => _snowmanPrefab;
     public NetworkStudentController[] AllPlayers => _allPlayers;
 
     [SerializeField] private Transform[] _teamSpawns;
@@ -62,7 +64,7 @@ public class ArenaManager : MonoBehaviour
         player.SetCamera(Instantiate(_playerCamera));
     }
 
-    private Vector3 GetPlayerSpawnPoint(NetworkStudentController player)
+    public Vector3 GetPlayerSpawnPoint(NetworkStudentController player = null)
     {
         float spawnRadius = 1f;
         float randx, randz;
@@ -71,9 +73,10 @@ public class ArenaManager : MonoBehaviour
 
         object teamId;
         PhotonTeam team;
-        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) && PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team))
+        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) 
+            && PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team))
         {
-            return (_teamSpawns[team.Code - 1].position + new Vector3(randx, 0, randz));
+            return _teamSpawns[team.Code - 1].position + new Vector3(randx, 0, randz);
         }
         return Vector3.zero;
     }

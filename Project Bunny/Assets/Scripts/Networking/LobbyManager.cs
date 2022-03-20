@@ -33,10 +33,12 @@ namespace Networking
         {
             PhotonNetwork.NickName = _defaultName;
 
-            RoomOptions options = new RoomOptions();
-            options.MaxPlayers = maxPlayersPerRoom;
-            options.PublishUserId = true;
-            options.BroadcastPropsChangeToAll = true;
+            var options = new RoomOptions
+            {
+                MaxPlayers = maxPlayersPerRoom, 
+                PublishUserId = true, 
+                BroadcastPropsChangeToAll = true
+            };
 
             PhotonNetwork.CreateRoom(_createInput.text, options, TypedLobby.Default);
         }

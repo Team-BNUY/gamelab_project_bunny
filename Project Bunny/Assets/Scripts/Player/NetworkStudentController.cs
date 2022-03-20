@@ -1,3 +1,4 @@
+using System.Collections;
 using Cinemachine;
 using Interfaces;
 using Networking;
@@ -55,6 +56,7 @@ namespace Player
         private bool _isWalking;
         private bool _isDigging;
         private bool _hasSnowball;
+        private bool _isDead;
         // List of readonly files. No need for them to have a _ prefix
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
         private static readonly int IsDiggingHash = Animator.StringToHash("isDigging");
@@ -66,6 +68,7 @@ namespace Player
         [Header("Network")]
         [SerializeField] private TMPro.TMP_Text _nickNameText;
         public string PlayerID { get; set; }
+        public string TeamID { get; set; }
         private PhotonView _view;
         private bool _isJerseyNull;
 
@@ -112,7 +115,7 @@ namespace Player
 
             SetStandingGround();
 
-            if (!_isDigging)
+            if (!_isDigging || !_isDead)
             {
                 MoveStudent();
             }
@@ -233,6 +236,7 @@ namespace Player
         /// </summary>
         /// <param name="damage"></param>
         [PunRPC]
+        // ReSharper disable once UnusedMember.Global
         public void GetDamaged(float damage)
         {
             if (damage >= _studentHealth)
@@ -245,6 +249,24 @@ namespace Player
             }
 
             _healthBar.value = _studentHealth;
+
+            if (_studentHealth <= 0)
+            {
+                StartCoroutine(KillStudent());
+            }
+        }
+
+        private IEnumerator KillStudent()
+        {
+            _isDead = true;
+            _characterController.enabled = false;
+            PhotonNetwork.Instantiate(ArenaManager.Instance.SnowmanPrefab.name, transform.position, transform.rotation);
+            yield return new WaitForSeconds(3f);
+            _studentHealth = 3f;
+            _healthBar.value = _studentHealth;
+            transform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this);
+            _characterController.enabled = enabled;
+            _isDead = true;
         }
 
         #endregion
@@ -442,7 +464,6 @@ namespace Player
             _nickNameText.text = _view.Owner.NickName;
         }
         #endregion
-
 
         #region Utilities
         /// <summary>
