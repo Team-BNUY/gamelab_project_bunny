@@ -13,6 +13,7 @@ namespace Networking
         [SerializeField] private SphereCollider _sphereCollider;
         [SerializeField] private Transform _snowballTransform;
         [SerializeField] private LineRenderer _trajectoryLineRenderer;
+        [SerializeField, Min(0)] private float _initialDirection;
         // ReSharper disable once NotAccessedField.Local
         // TODO: Implement damage system once game loop is complete
         [SerializeField] private float _damage;
@@ -45,7 +46,7 @@ namespace Networking
         {
             SetSnowballAtPlace();
         }
-
+        
         private void OnCollisionEnter(Collision other)
         {
             // TODO: Network this properly?
@@ -53,10 +54,11 @@ namespace Networking
             
             if (!_isDestroyable) return;
             
-            /*if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent) && otherStudent != _studentThrower)
+            if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent) && otherStudent != _studentThrower)
             {
-                otherStudent.GetDamaged(_damage);
-            }*/
+                var studentPhotonView = otherStudent.photonView;
+                studentPhotonView.RPC("GetDamaged", RpcTarget.All, _damage);
+            }
             
             var go = PhotonNetwork.Instantiate(ArenaManager.Instance.SnowballBurst.name, transform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
@@ -120,10 +122,10 @@ namespace Networking
         {
             var lineRendererPoints = new List<Vector3>();
             
-            const float maxDuration = 1.5f;
+            const float maxDuration = 1.3f;
             const float timeStepInterval = 0.1f;
             const int maxSteps = (int)(maxDuration / timeStepInterval);
-            var directionVector = transform.forward + new Vector3(0f, 0.0f, 0.0f);
+            var directionVector = transform.forward + new Vector3(0f, _initialDirection, 0.0f);
             var launchPosition = _snowballTransform.position + _snowballTransform.forward;
             
             _initialVelocity = _throwForce / _mass * Time.fixedDeltaTime; //Velocity = Force / Mass * time
@@ -168,7 +170,7 @@ namespace Networking
             _sphereCollider.enabled = true;
             _snowballRigidbody.isKinematic = false;
             // TODO: Direction will be handled via hand release on Animation
-            var direction = new Vector3(0f, 0.0f, 0.0f);
+            var direction = new Vector3(0f, _initialDirection, 0.0f);
             direction += _snowballTransform.forward;
             _snowballRigidbody.AddForce(direction.normalized * _throwForce);
         }

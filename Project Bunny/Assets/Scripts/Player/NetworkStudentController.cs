@@ -5,6 +5,7 @@ using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Slider = UnityEngine.UI.Slider;
 
 namespace Player
 {
@@ -30,7 +31,8 @@ namespace Player
         private Vector3 _playerPosition;
         private Quaternion _playerRotation;
 
-        [Header("Properties")]
+        [Header("Player Properties")]
+        [SerializeField] private Slider _healthBar;
         [SerializeField] private float _studentHealth;
         private GameObject _currentObjectInHand;
         private INetworkInteractable _currentInteractable;
@@ -98,6 +100,7 @@ namespace Player
         {
             _isJerseyNull = _jersey == null;
             _throwForce = _minForce;
+            _healthBar.value = _studentHealth;
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
@@ -229,6 +232,7 @@ namespace Player
         /// Student gets damaged when snowball or combat item is thrown at them successfully
         /// </summary>
         /// <param name="damage"></param>
+        [PunRPC]
         public void GetDamaged(float damage)
         {
             if (damage >= _studentHealth)
@@ -239,6 +243,8 @@ namespace Player
             {
                 _studentHealth -= damage;
             }
+
+            _healthBar.value = _studentHealth;
         }
 
         #endregion
@@ -546,13 +552,17 @@ namespace Player
                 stream.SendNext(_isDigging);
                 stream.SendNext(_isWalking);
                 stream.SendNext(_isAiming);
+                stream.SendNext(_studentHealth);
+                stream.SendNext(_healthBar.value);
             }
             else
             {
-                _hasSnowball = (bool)stream.ReceiveNext();
-                _isDigging = (bool)stream.ReceiveNext();
-                _isWalking = (bool)stream.ReceiveNext();
-                _isAiming = (bool)stream.ReceiveNext();
+                _hasSnowball = (bool) stream.ReceiveNext();
+                _isDigging = (bool) stream.ReceiveNext();
+                _isWalking = (bool) stream.ReceiveNext();
+                _isAiming = (bool) stream.ReceiveNext();
+                _studentHealth = (float) stream.ReceiveNext();
+                _healthBar.value = (float) stream.ReceiveNext();
             }
         }
 
