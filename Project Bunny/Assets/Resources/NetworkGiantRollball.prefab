@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: -152660347859332919}
   - component: {fileID: -1507739266704330185}
   - component: {fileID: 593892945959538631}
-  - component: {fileID: 7225044370842534590}
   - component: {fileID: -3006674947755084028}
   m_Layer: 0
   m_Name: NetworkGiantRollball
@@ -160,27 +159,11 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 7225044370842534590}
+  - {fileID: 0}
   - {fileID: -3006674947755084028}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &7225044370842534590
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9027766068581955839}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 1
-  m_UseLocal: 0
 --- !u!114 &-3006674947755084028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,7 +178,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SynchronizeVelocity: 1
   m_SynchronizeAngularVelocity: 1
-  m_TeleportEnabled: 0
+  m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
 --- !u!1001 &1655725015718180260
 PrefabInstance:
