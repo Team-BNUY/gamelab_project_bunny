@@ -51,10 +51,10 @@ namespace Player
             if (IsInLayerMask(other.gameObject) && _isDestroyable)
             {
                 // Damage student 
-                if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent) && _canDamage)
+                /*if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent) && _canDamage)
                 {
                     otherStudent.GetDamaged(_damage);
-                }
+                }*/
                 BreakRollball();
             }
         }
