@@ -11,6 +11,7 @@ public class CustomizeCharacter : MonoBehaviour
     public Color[] teamColor;
 
     public Material teamMat;
+    public GameObject teamShirt;
 
     public GameObject[] model;
     public int currentIndex;
@@ -72,10 +73,12 @@ public class CustomizeCharacter : MonoBehaviour
         playerName.transform.GetChild(0).GetComponent<TextMesh>().text = name;
     }
 
-    public void ChangeTeamColor(int index)
+    public void ChangeTeamColor(int index) //0:blue;1:red
     {
         teamMat.color = teamColor[index];
-        playerName.transform.GetChild(0).GetComponent<TextMesh>().color = teamColor[index];
+        //playerName.transform.GetChild(0).GetComponent<TextMesh>().color = teamColor[index];
+        teamShirt.SetActive(true);
+
     }
 
 
@@ -85,6 +88,9 @@ public class CustomizeCharacter : MonoBehaviour
         //ChangeHair();
         //ChangeHat();
         //ChangePants();
+        
+        if(teamShirt)
+            teamShirt.SetActive(false);//starts with no team assigned
     }
 
     private void Update()
