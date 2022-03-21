@@ -51,7 +51,7 @@ namespace Networking
                 PhotonNetwork.LocalPlayer.JoinTeam(2);
             }
 
-            _startGameBtn.interactable = false;
+            // _startGameBtn.interactable = false;
 
             foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
             {

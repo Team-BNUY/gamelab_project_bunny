@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AI.Core;
 using ExitGames.Client.Photon.StructWrapping;
+using Photon.Pun;
 using Player;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace AI.Agents
     public class Teacher : Agent
     {
         // Events
-        public delegate void PlayerInteraction(StudentController player);
+        public delegate void PlayerInteraction(NetworkStudentController player);
         public static event PlayerInteraction OnSeeNewBadStudent;
         public static event PlayerInteraction OnFoundBadStudent;
         public static event PlayerInteraction OnLostBadStudent;
@@ -30,19 +31,17 @@ namespace AI.Agents
         private Vector3 _viewDirection;
         
         // Students references
-        private StudentController[] _allPlayers;
-        private StudentController _targetStudent;
-        private StudentController _lastTargetStudent;
-        private Dictionary<StudentController, Vector3> _badStudents = new Dictionary<StudentController, Vector3>();
+        private NetworkStudentController _targetStudent;
+        private NetworkStudentController _lastTargetStudent;
+        private Dictionary<NetworkStudentController, Vector3> _badStudents = new Dictionary<NetworkStudentController, Vector3>();
         
         /// <summary>
         /// References all the students, add the goals and create the actions
         /// </summary>
         protected override void Start()
         {
-            // Fetching all students
-            _allPlayers = FindObjectsOfType<StudentController>(); // TODO Take from an eventual future GameManager
-            
+            if (!PhotonNetwork.IsMasterClient) return;
+        
             // Goals
             var state = new State("searchedForBadStudent", 1);
             var states = new StateSet(state);
@@ -63,6 +62,8 @@ namespace AI.Agents
         /// </summary>
         private void Update()
         {
+            if (!PhotonNetwork.LocalPlayer.IsMasterClient) return;
+
             if (WitnessedBadAction(out var badStudent))
             {
                 _targetStudent = badStudent;
@@ -120,13 +121,13 @@ namespace AI.Agents
         /// </summary>
         /// <param name="badStudent">The closest bad student seen</param>
         /// <returns>True if at least one bad student has been seen during the frame</returns>
-        private bool WitnessedBadAction(out StudentController badStudent)
+        private bool WitnessedBadAction(out NetworkStudentController badStudent)
         {
             var badStudentFound = false;
             badStudent = null;
             
             // Ordering the students by distance and iterating through all of them
-            foreach (var student in _allPlayers.OrderBy(s => Vector3.Distance(transform.position, s.transform.position)))
+            foreach (var student in ArenaManager.Instance.AllPlayers.OrderBy(s => Vector3.Distance(transform.position, s.transform.position)))
             {   
                 //if(!student.HasSnowball && !_badStudents.ContainsKey(student)) continue;
                 
@@ -189,7 +190,7 @@ namespace AI.Agents
         /// Adds the "seesBadStudent" state to the Teacher's beliefs states if not already present
         /// </summary>
         /// <param name="student">The student found</param>
-        private void FindStudent(StudentController student)
+        private void FindStudent(NetworkStudentController student)
         {
             beliefStates.AddState("seesBadStudent", 1);
             
@@ -204,7 +205,7 @@ namespace AI.Agents
         /// Adds the "seesBadStudent" state to the Teacher's beliefs states if not already present and remembers the student's position
         /// </summary>
         /// <param name="student">The new bad student that has been seen</param>
-        private void SeeNewStudent(StudentController student)
+        private void SeeNewStudent(NetworkStudentController student)
         {
             beliefStates.AddState("seesBadStudent", 1);
             RememberStudent(student);
@@ -220,7 +221,7 @@ namespace AI.Agents
         /// Adds the "remembersStudent" state to the Teacher's beliefs states or increases this state by one if already present
         /// </summary>
         /// <param name="student">The bad student to remember</param>
-        private void RememberStudent(StudentController student)
+        private void RememberStudent(NetworkStudentController student)
         {
             beliefStates.ModifyState("remembersBadStudent", 1);
         }
@@ -229,7 +230,7 @@ namespace AI.Agents
         /// Removes the "seesBadStudent" state from the Teacher's beliefs states
         /// </summary>
         /// <param name="student">The student that has just been lost</param>
-        private void LoseStudent(StudentController student)
+        private void LoseStudent(NetworkStudentController student)
         {
             beliefStates.RemoveState("seesBadStudent");
 
@@ -251,18 +252,18 @@ namespace AI.Agents
             set => _viewDirection = value;
         }
 
-        public StudentController TargetStudent
+        public NetworkStudentController TargetStudent
         {
             get => _targetStudent;
         }
 
-        public StudentController LastTargetStudent
+        public NetworkStudentController LastTargetStudent
         {
             get => _lastTargetStudent;
             set => _lastTargetStudent = value;
         }
         
-        public Dictionary<StudentController, Vector3> BadStudents
+        public Dictionary<NetworkStudentController, Vector3> BadStudents
         {
             get => _badStudents;
         }

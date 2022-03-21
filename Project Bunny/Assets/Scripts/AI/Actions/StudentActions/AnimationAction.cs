@@ -111,7 +111,7 @@ namespace AI.Actions.StudentActions
 
                 yield return null;
             } 
-            while (Vector3.Angle(targetLookRotation, _student.transform.forward) > 5f);
+            while (Vector3.Angle(targetLookRotation, _student.transform.forward) > 2f);
             
             // Animator parameters
             var random = Random.Range(0, _animationVariants);

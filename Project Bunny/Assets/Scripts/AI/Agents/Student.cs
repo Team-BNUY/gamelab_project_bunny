@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using AI.Core;
+using Photon.Pun;
 using UnityEngine;
 
 namespace AI.Agents
@@ -22,6 +23,8 @@ namespace AI.Agents
         
         protected override void Start()
         {
+            if (!PhotonNetwork.IsMasterClient) return;
+            
             // References
             Gangs ??= new List<Gang>(); // TODO Take from an eventual GameManager
             Gang.Found(this);
@@ -36,18 +39,18 @@ namespace AI.Agents
             states = new StateSet(state);
             goal = new Goal(states, false);
             goals.Add(goal, 2);
-            
-            state = new State("welcomedNewbie", 1);
+
+            state = new State("performedAnimationAction", 1);
             states = new StateSet(state);
             goal = new Goal(states, false);
             goals.Add(goal, 3);
             
-            state = new State("performedAnimationAction", 1);
+            state = new State("cried", 1);
             states = new StateSet(state);
             goal = new Goal(states, false);
             goals.Add(goal, 4);
             
-            state = new State("cried", 1);
+            state = new State("welcomedNewbie", 1);
             states = new StateSet(state);
             goal = new Goal(states, false);
             goals.Add(goal, 5);
