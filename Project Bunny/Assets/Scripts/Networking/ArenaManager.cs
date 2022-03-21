@@ -2,17 +2,16 @@ using System;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using Player;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class ArenaManager : MonoBehaviour
+public class ArenaManager : MonoBehaviourPunCallbacks
 {
     private static ArenaManager _instance;
 
-    public static ArenaManager Instance
-    {
-        get
-        {
+    public static ArenaManager Instance {
+        get {
             if (_instance == null)
             {
                 _instance = FindObjectOfType<ArenaManager>();
@@ -34,6 +33,18 @@ public class ArenaManager : MonoBehaviour
 
     private NetworkStudentController[] _allPlayers;
     
+
+    [Header("Timer")]
+    [SerializeField] private TMP_Text timerDisplay;
+    [SerializeField] private bool hasTimerStarted = false;
+    private int timeElapsed = 0;
+    private int oldTimeElapsed = 0;
+    private double startTime;
+    private bool returnToLobbyHasRun = false;
+    private const int TIMER_DURATION = 60 * 5;
+    private const string START_TIME_KEY = "StartTime";
+    private const string ROOM_SCENE_NAME = "3-Room";
+
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
     public GameObject SnowballBurst => _snowballBurst;
@@ -53,6 +64,67 @@ public class ArenaManager : MonoBehaviour
         }
         
         SpawnPlayer();
+        StartTimer();
+    }
+
+    private void Update()
+    {
+        UpdateTimer();
+    }
+
+    private void UpdateTimer()
+    {
+        if (!hasTimerStarted) return;
+        oldTimeElapsed = timeElapsed;
+        this.timeElapsed = (int)(PhotonNetwork.Time - startTime);
+
+        if (timeElapsed > oldTimeElapsed)
+        {
+            int timeLeft = TIMER_DURATION - timeElapsed;
+
+            //Integer increment, update UI
+            if (timeLeft > 60)
+            {
+                this.timerDisplay.text = $"{timeLeft / 60}:{(timeLeft % 60).ToString("00")}";
+            }
+            else
+            {
+                this.timerDisplay.text = timeLeft.ToString();
+            }
+        }
+
+        if (timeElapsed >= TIMER_DURATION)
+        {
+            Debug.Log("Timer completed.");
+            //Timer has completed countdown.
+            ReturnToLobby();
+        }
+    }
+
+    private void ReturnToLobby() {
+        if (returnToLobbyHasRun) return;
+        returnToLobbyHasRun = true;
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = true;
+            PhotonNetwork.CurrentRoom.IsVisible = true;
+            PhotonNetwork.LoadLevel(ROOM_SCENE_NAME);
+        }
+    }
+
+    private void StartTimer()
+    {
+        this.timerDisplay.text = $"{(TIMER_DURATION - timeElapsed) / 60}:{((TIMER_DURATION - timeElapsed) % 60).ToString("00")}";
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            var myHashTable = new ExitGames.Client.Photon.Hashtable();
+            startTime = PhotonNetwork.Time;
+            hasTimerStarted = true;
+            myHashTable.Add(START_TIME_KEY, startTime);
+            PhotonNetwork.CurrentRoom.SetCustomProperties(myHashTable);
+        }
     }
 
     private void SpawnPlayer()
@@ -86,4 +158,15 @@ public class ArenaManager : MonoBehaviour
     {
         _allPlayers = FindObjectsOfType<NetworkStudentController>();
     }
+
+    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+    {
+        base.OnRoomPropertiesUpdate(propertiesThatChanged);
+        if (propertiesThatChanged.ContainsKey(START_TIME_KEY) && !PhotonNetwork.IsMasterClient)
+        {
+            startTime = double.Parse(PhotonNetwork.CurrentRoom.CustomProperties[START_TIME_KEY].ToString());
+            hasTimerStarted = true;
+        }
+    }
+
 }
