@@ -49,12 +49,11 @@ namespace Networking
         
         private void OnCollisionEnter(Collision other)
         {
-            // TODO: Network this properly?
-            // Damage only students (for now?) and make sure the thrower is not damaged
-            
             if (!_isDestroyable) return;
-            
-            if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent) && otherStudent != _studentThrower)
+
+            if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent)
+                && otherStudent != _studentThrower
+                && !otherStudent.TeamID.Equals(_studentThrower.TeamID))
             {
                 var studentPhotonView = otherStudent.photonView;
                 studentPhotonView.RPC("GetDamaged", RpcTarget.All, _damage);

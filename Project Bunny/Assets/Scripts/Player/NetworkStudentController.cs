@@ -68,7 +68,7 @@ namespace Player
         [Header("Network")]
         [SerializeField] private TMPro.TMP_Text _nickNameText;
         public string PlayerID { get; set; }
-        public string TeamID { get; set; }
+        public byte TeamID { get; set; }
         private PhotonView _view;
         private bool _isJerseyNull;
 
