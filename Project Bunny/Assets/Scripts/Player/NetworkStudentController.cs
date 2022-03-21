@@ -17,12 +17,12 @@ namespace Player
     {
         [Header("Components")]
         [SerializeField] private Transform _playerModel;
-        [SerializeField] private Camera _playerCamera;
-        [SerializeField] private CinemachineVirtualCamera _playerVCam;
-        [SerializeField] private CharacterController _characterController;
         [SerializeField] private PlayerInput _playerInput;
         [SerializeField] private Animator _animator;
         [SerializeField] private SkinnedMeshRenderer _jersey;
+        private Camera _playerCamera;
+        private CinemachineVirtualCamera _playerVCam;
+        private CharacterController _characterController;
         private CinemachineComponentBase _playerVCamComponentBase;
 
         [Header("Movement")]
@@ -111,11 +111,11 @@ namespace Player
 
         private void Update()
         {
-            if (!_view.IsMine) return;
+            if (!_view.IsMine || _isDead) return;
 
             SetStandingGround();
 
-            if (!_isDigging || !_isDead)
+            if (!_isDigging)
             {
                 MoveStudent();
             }
@@ -150,10 +150,10 @@ namespace Player
         #region Actions
 
 
-            /// <summary>
-            /// Change player's position and orientation in global axes using Character Controller
-            /// </summary>
-            private void MoveStudent()
+        /// <summary>
+        /// Change player's position and orientation in global axes using Character Controller
+        /// </summary>
+        private void MoveStudent()
         {
             // If the player's character controller is disabled, then don't move them. Otherwise, move them. 
             if (_characterController.enabled)
@@ -320,7 +320,6 @@ namespace Player
             if (_currentInteractable != null) return;
 
             // If player has snowball on hand or character is in the air, don't dig
-            // TODO: Make it also so it can't dig when hand is occupied in general
             if (_hasSnowball || !_characterController.isGrounded) return;
 
             // Don't allow player to dig while on ice and sliding fast
