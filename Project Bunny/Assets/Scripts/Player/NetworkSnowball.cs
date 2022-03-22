@@ -27,14 +27,10 @@ namespace Networking
 
         private void Awake()
         {
-            if (_snowballRigidbody == null)
-            {
-                _snowballRigidbody = gameObject.GetComponent<Rigidbody>();
-            }
-            if (_trajectoryLineRenderer == null)
-            {
-                _trajectoryLineRenderer = GetComponent<LineRenderer>();
-            }
+            _snowballTransform ??= transform;
+            _snowballRigidbody ??= gameObject.GetComponent<Rigidbody>();
+            _trajectoryLineRenderer ??= GetComponent<LineRenderer>();
+            _sphereCollider ??= GetComponent<SphereCollider>();
         
             _mass = _snowballRigidbody.mass;
             _trajectoryLineRenderer.enabled = false;

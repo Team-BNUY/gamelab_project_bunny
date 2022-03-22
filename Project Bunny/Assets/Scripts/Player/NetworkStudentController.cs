@@ -80,35 +80,12 @@ namespace Player
 
         private void Awake()
         {
-            if (_studentTransform == null)
-            {
-                _studentTransform = transform;
-            }
-            
-            if (_characterController == null)
-            {
-                _characterController = GetComponent<CharacterController>();
-            }
-            
-            if (_view == null)
-            {
-                _view = GetComponent<PhotonView>();
-            }
-            
-            if (_animator == null)
-            {
-                _animator = gameObject.GetComponent<Animator>();
-            }
-
-            if (_playerInput == null)
-            {
-                _playerInput = GetComponent<PlayerInput>();
-            }
-
-            if (_healthBar == null)
-            {
-                _healthBar = GetComponentInChildren<Slider>();
-            }
+            _studentTransform ??= transform;
+            _characterController ??= GetComponent<CharacterController>();
+            _view ??= GetComponent<PhotonView>();
+            _animator ??= gameObject.GetComponent<Animator>();
+            _playerInput ??= GetComponent<PlayerInput>();
+            _healthBar ??= GetComponentInChildren<Slider>();
 
             _playerInput.actionEvents[0].AddListener(OnMove);
             _playerInput.actionEvents[1].AddListener(OnLook);
@@ -160,7 +137,7 @@ namespace Player
             UpdateTeamColorVisuals();
         }
 
-            #endregion
+        #endregion
 
         #region Actions
 

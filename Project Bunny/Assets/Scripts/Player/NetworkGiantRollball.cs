@@ -8,8 +8,6 @@ namespace Player
     {
         [SerializeField] private Rigidbody _snowballRigidbody;
         [SerializeField] private Transform _snowballTransform;
-        // ReSharper disable once NotAccessedField.Local
-        [SerializeField] private ParticleSystem _snowballBurst;
         [SerializeField] private LayerMask _hitLayers;
         [SerializeField, Min(0.0f)] private float _destroySpeedThreshold;
         [SerializeField, Min(0.0f)] private float _damageThreshold;
@@ -27,10 +25,8 @@ namespace Player
 
         private void Awake()
         {
-            if (_snowballRigidbody == null)
-            {
-                _snowballRigidbody = gameObject.GetComponent<Rigidbody>();
-            }
+            _snowballRigidbody ??= gameObject.GetComponent<Rigidbody>();
+            _snowballTransform ??= transform;
         }
 
         private void Update()
@@ -48,13 +44,13 @@ namespace Player
         {
             _isGrowing = other.gameObject.layer == LayerMask.NameToLayer("Ground");
             
-            if (IsInLayerMask(other.gameObject) && _isDestroyable)
+            if (IsInLayerMask(other.gameObject) && _isDestroyable && _canDamage)
             {
-                // Damage student 
-                /*if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent) && _canDamage)
+                if (other.gameObject.TryGetComponent<NetworkStudentController>(out var studentStudent))
                 {
-                    otherStudent.GetDamaged(_damage);
-                }*/
+                    var studentPhotonView = studentStudent.photonView;
+                    studentPhotonView.RPC("GetDamaged", RpcTarget.All, _damage);
+                }
                 BreakRollball();
             }
         }
