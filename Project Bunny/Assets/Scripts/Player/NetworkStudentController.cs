@@ -15,7 +15,10 @@ namespace Player
     [RequireComponent(typeof(PlayerInput))]
     public class NetworkStudentController : MonoBehaviourPunCallbacks, IPunObservable
     {
+        private const float DEATH_TIME_DELAY = 3f;
+        
         [Header("Components")]
+        [SerializeField] private Transform _studentTransform;
         [SerializeField] private Transform _playerModel;
         [SerializeField] private PlayerInput _playerInput;
         [SerializeField] private Animator _animator;
@@ -34,7 +37,6 @@ namespace Player
 
         [Header("Player Properties")]
         [SerializeField] private Slider _healthBar;
-        [SerializeField] private float _studentHealth;
         private GameObject _currentObjectInHand;
         private INetworkInteractable _currentInteractable;
         private bool _isSliding;
@@ -67,6 +69,7 @@ namespace Player
 
         [Header("Network")]
         [SerializeField] private TMPro.TMP_Text _nickNameText;
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string PlayerID { get; set; }
         public byte TeamID { get; set; }
         private PhotonView _view;
@@ -77,14 +80,21 @@ namespace Player
 
         private void Awake()
         {
+            if (_studentTransform == null)
+            {
+                _studentTransform = transform;
+            }
+            
             if (_characterController == null)
             {
                 _characterController = GetComponent<CharacterController>();
             }
+            
             if (_view == null)
             {
                 _view = GetComponent<PhotonView>();
             }
+            
             if (_animator == null)
             {
                 _animator = gameObject.GetComponent<Animator>();
@@ -95,6 +105,11 @@ namespace Player
                 _playerInput = GetComponent<PlayerInput>();
             }
 
+            if (_healthBar == null)
+            {
+                _healthBar = GetComponentInChildren<Slider>();
+            }
+
             _playerInput.actionEvents[0].AddListener(OnMove);
             _playerInput.actionEvents[1].AddListener(OnLook);
         }
@@ -103,7 +118,7 @@ namespace Player
         {
             _isJerseyNull = _jersey == null;
             _throwForce = _minForce;
-            _healthBar.value = _studentHealth;
+            _healthBar.value = _healthBar.maxValue;
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
@@ -239,18 +254,18 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void GetDamaged(float damage)
         {
-            if (damage >= _studentHealth)
+            if (damage >= _healthBar.value)
             {
-                _studentHealth = 0.0f;
+                _healthBar.value = 0.0f;
             }
             else
             {
-                _studentHealth -= damage;
+                _healthBar.value -= damage;
             }
 
-            _healthBar.value = _studentHealth;
+            _healthBar.value = _healthBar.value;
 
-            if (_studentHealth <= 0)
+            if (_healthBar.value <= 0)
             {
                 StartCoroutine(KillStudent());
             }
@@ -260,13 +275,12 @@ namespace Player
         {
             _isDead = true;
             _characterController.enabled = false;
-            PhotonNetwork.Instantiate(ArenaManager.Instance.SnowmanPrefab.name, transform.position, transform.rotation);
-            yield return new WaitForSeconds(3f);
-            _studentHealth = 3f;
-            _healthBar.value = _studentHealth;
-            transform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this);
-            _characterController.enabled = enabled;
-            _isDead = true;
+            PhotonNetwork.Instantiate(ArenaManager.Instance.SnowmanPrefab.name, _studentTransform.position, _studentTransform.rotation);
+            yield return new WaitForSeconds(DEATH_TIME_DELAY);
+            _healthBar.value = _healthBar.maxValue;
+            _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this);
+            _characterController.enabled = true;
+            _isDead = false;
         }
 
         #endregion
@@ -305,7 +319,7 @@ namespace Player
         {
             if (_playerCamera == null) return;
 
-            var mousePosAngle = Utilities.MousePosToRotationInput(transform, _playerCamera);
+            var mousePosAngle = Utilities.MousePosToRotationInput(_studentTransform, _playerCamera);
             _playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
         }
 
@@ -470,9 +484,9 @@ namespace Player
         /// </summary>
         private void SetStandingGround()
         {
-            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out var hit, 1.0f))
+            if (Physics.Raycast(_studentTransform.position, _studentTransform.TransformDirection(Vector3.down), out var hit, 1.0f))
             {
-                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
+                Debug.DrawRay(_studentTransform.position, _studentTransform.TransformDirection(Vector3.down) * hit.distance, Color.red);
                 _currentStandingGround = hit.collider.gameObject.layer;
                 if (!_isSliding)
                 {
@@ -492,7 +506,7 @@ namespace Player
             _playerVCam = cam.GetComponent<CinemachineVirtualCamera>();
             _playerCamera = cam.GetComponentInChildren<Camera>();
             _playerVCamComponentBase = _playerVCam.GetCinemachineComponent(CinemachineCore.Stage.Body);
-            _playerVCam.Follow = transform;
+            _playerVCam.Follow = _studentTransform;
         }
 
         /// <summary>
@@ -527,7 +541,7 @@ namespace Player
             INetworkInteractable interactable = null;
             var maxColliders = 3; //maximum number of objects near to the player that can be looped through
             var hitColliders = new Collider[maxColliders];
-            var numColliders = Physics.OverlapSphereNonAlloc(transform.position, 1f, hitColliders);
+            var numColliders = Physics.OverlapSphereNonAlloc(_studentTransform.position, 1f, hitColliders);
 
             if (numColliders < 1) return null;
 
@@ -572,7 +586,6 @@ namespace Player
                 stream.SendNext(_isDigging);
                 stream.SendNext(_isWalking);
                 stream.SendNext(_isAiming);
-                stream.SendNext(_studentHealth);
                 stream.SendNext(_healthBar.value);
             }
             else
@@ -581,7 +594,6 @@ namespace Player
                 _isDigging = (bool) stream.ReceiveNext();
                 _isWalking = (bool) stream.ReceiveNext();
                 _isAiming = (bool) stream.ReceiveNext();
-                _studentHealth = (float) stream.ReceiveNext();
                 _healthBar.value = (float) stream.ReceiveNext();
             }
         }
