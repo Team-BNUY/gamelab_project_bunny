@@ -14,8 +14,6 @@ namespace Networking
         [SerializeField] private Transform _snowballTransform;
         [SerializeField] private LineRenderer _trajectoryLineRenderer;
         [SerializeField, Min(0)] private float _initialDirection;
-        // ReSharper disable once NotAccessedField.Local
-        // TODO: Implement damage system once game loop is complete
         [SerializeField] private float _damage;
     
         private bool _isDestroyable;
@@ -59,7 +57,7 @@ namespace Networking
                 studentPhotonView.RPC("GetDamaged", RpcTarget.All, _damage);
             }
             
-            var go = PhotonNetwork.Instantiate(ArenaManager.Instance.SnowballBurst.name, transform.position, Quaternion.identity);
+            var go = PhotonNetwork.Instantiate(ArenaManager.Instance.SnowballBurst.name, _snowballTransform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
             PhotonNetwork.Destroy(gameObject);

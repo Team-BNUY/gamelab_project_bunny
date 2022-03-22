@@ -361,17 +361,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0282620ef80cc1846aec2ff794700baa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _studentTransform: {fileID: 1118839828255377483}
   _playerModel: {fileID: 915986518499220109}
-  _playerCamera: {fileID: 0}
-  _playerVCam: {fileID: 0}
-  _characterController: {fileID: 1118839828255377481}
   _playerInput: {fileID: 1118839828255377482}
   _animator: {fileID: 4536801384135124396}
   _jersey: {fileID: 2459841992004395630}
   _movementSpeed: 10
   _movementFriction: 1
   _healthBar: {fileID: 5913797404773037093}
-  _studentHealth: 3
+  _maxStudentHealth: 3
   _playerHand: {fileID: 1230110385023221629}
   _digSnowballMaxTime: 2
   _minForce: 0.7
