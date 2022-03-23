@@ -211,7 +211,6 @@ namespace AI.Agents
             
             if (currentAction is {Name: "Investigate"})
             {
-                currentAction.PostPerform();
                 InterruptGoal();
             }
         }
@@ -227,7 +226,6 @@ namespace AI.Agents
             
             if (currentAction is {Name: "Investigate"} || currentAction is {Name: "Surveil"})
             {
-                currentAction.PostPerform();
                 InterruptGoal();
             }
         }
