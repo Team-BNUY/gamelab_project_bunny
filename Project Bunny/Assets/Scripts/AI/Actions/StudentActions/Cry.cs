@@ -31,7 +31,7 @@ namespace AI.Actions.StudentActions
 
         public override bool IsAchievable()
         {
-            return _student.ActionSpots.Count != 0 && _student.ActionSpots.Any(s => s.Type == _actionSpotType && !s.Occupied && Vector3.Distance(s.transform.position, _student.transform.position) > 5f);
+            return !hasTarget || _student.ActionSpots.Count != 0 && _student.ActionSpots.Any(s => s.Type == _actionSpotType && !s.Occupied && Vector3.Distance(s.transform.position, _student.transform.position) > 5f);
         }
 
         public override bool PrePerform()
@@ -39,6 +39,8 @@ namespace AI.Actions.StudentActions
             // Resets parameters
             invoked = false;
             _timer = _duration;
+
+            if (!hasTarget) return true;
             
             _actionSpot = FindClosest(_student.ActionSpots.Where(s => s.Type == _actionSpotType && !s.Occupied && Vector3.Distance(s.transform.position, _student.transform.position) > 5f).ToList(), navMeshAgent);
 
@@ -80,6 +82,12 @@ namespace AI.Actions.StudentActions
         {
             _student.SetAnimatorParameter(_animationTrigger, false);
 
+            if (!hasTarget)
+            {
+                _student.BeliefStates.RemoveState("hitByProjectile");
+                return true;
+            }
+            
             _student.BeliefStates.RemoveState("intimidated");
             _student.Gang.SetFree();
             _actionSpot.Free();
@@ -92,6 +100,13 @@ namespace AI.Actions.StudentActions
         {
             _student.SetAnimatorParameter(_animationTrigger, false);
 
+            if (!hasTarget)
+            {
+                _student.BeliefStates.RemoveState("hitByProjectile");
+                return;
+            }
+
+            navMeshAgent.SetDestination(_student.transform.position);
             _student.BeliefStates.RemoveState("intimidated");
             _student.Gang.SetFree();
             _actionSpot.Free();

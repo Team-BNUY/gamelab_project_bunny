@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0480b00d5a391314c97bda16f5bed954, type: 3}
-  m_Name: Cry
+  m_Name: Cry Alone
   m_EditorClassIdentifier: 
-  name: Cry
+  name: Cry Alone
   cost: 1
-  hasTarget: 0
+  hasTarget: 1
   preconditionStates:
-  - _key: hitByProjectile
+  - _key: intimidated
     _value: 1
   afterEffectStates:
   - _key: cried
     _value: 1
-  _runningSpeed: 0
+  _runningSpeed: 4
   _duration: 5
   _actionSpotType: 0
   _animationTrigger: Crying

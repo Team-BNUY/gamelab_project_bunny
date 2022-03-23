@@ -110,15 +110,16 @@ namespace AI.Actions.StudentActions
 
         public override void OnInterrupt()
         {
+            navMeshAgent.SetDestination(_student.transform.position);
             _student.Gang.SetFree();
             _gang.SetFree();
         }
 
         private IEnumerator RotateTowardsGangCenter()
         {
-            var transform = _student.transform;
-            var position = transform.position;
-            var targetLookRotation = _gang.Center - position;
+            var studentPosition = _student.transform.position;
+            var adjustedGangPosition = new Vector3(_gang.Center.x, studentPosition.y, _gang.Center.z);
+            var targetLookRotation = adjustedGangPosition - studentPosition;
             do
             {
                 var lookRotation = Quaternion.LookRotation(targetLookRotation, Vector3.up);

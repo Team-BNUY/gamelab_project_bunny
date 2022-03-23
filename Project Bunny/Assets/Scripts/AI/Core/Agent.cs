@@ -14,16 +14,19 @@ namespace AI.Core
         
         [SerializeField] private List<ActionData> _actionsData;
 
-        protected Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
-        protected StateSet beliefStates = new StateSet();
+        protected readonly Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
+        protected readonly StateSet beliefStates = new StateSet();
         protected Action currentAction;
         
-        private List<Action> _actions = new List<Action>();
+        private readonly List<Action> _actions = new List<Action>();
         private Planner _planner;
         private Queue<Action> _actionQueue;
         private Goal _currentGoal;
         private AnimationState _animationState;
         private Animator _animator;
+        
+        private static readonly int Walking = Animator.StringToHash("Walking");
+        private static readonly int Running = Animator.StringToHash("Running");
 
         /// <summary>
         /// Finds the references
@@ -51,7 +54,13 @@ namespace AI.Core
             if (!PhotonNetwork.LocalPlayer.IsMasterClient) return;
 
             action = currentAction?.Name;
-            
+
+            if (_currentGoal == null && currentAction == null)
+            {
+                _animationState = AnimationState.Idle;
+                SetAnimatorParameters();
+            }
+
             // If an action is running
             if(currentAction is {Running: true})
             {
@@ -163,29 +172,6 @@ namespace AI.Core
         {
             _animator.SetInteger(animatorParameter, value);
         }
-        
-        private void SetAnimatorParameters()
-        {
-            switch(_animationState)
-            {
-                case AnimationState.Idle:
-                    _animator.SetBool("Walking", false);
-                    _animator.SetBool("Running", false);
-                    break;
-                case AnimationState.Walk:
-                    _animator.SetBool("Walking", true);
-                    _animator.SetBool("Running", false);
-                    break;
-                case AnimationState.Run:
-                    _animator.SetBool("Running", true);
-                    _animator.SetBool("Walking", false);
-                    break;
-                default:
-                    _animator.SetBool("Walking", false);
-                    _animator.SetBool("Running", false);
-                    break;
-            }
-        }
 
         /// <summary>
         /// Completes the current action, leaving place to the next one
@@ -206,7 +192,7 @@ namespace AI.Core
         /// <summary>
         /// Interrupts the current goal to allow computation of a new one
         /// </summary>
-        public void InterruptGoal()
+        protected void InterruptGoal()
         {
             _actionQueue = null;
 
@@ -217,6 +203,29 @@ namespace AI.Core
             }
            
             currentAction = null;
+        }
+        
+        private void SetAnimatorParameters()
+        {
+            switch(_animationState)
+            {
+                case AnimationState.Idle:
+                    _animator.SetBool(Walking, false);
+                    _animator.SetBool(Running, false);
+                    break;
+                case AnimationState.Walk:
+                    _animator.SetBool(Walking, true);
+                    _animator.SetBool(Running, false);
+                    break;
+                case AnimationState.Run:
+                    _animator.SetBool(Running, true);
+                    _animator.SetBool(Walking, false);
+                    break;
+                default:
+                    _animator.SetBool(Walking, false);
+                    _animator.SetBool(Running, false);
+                    break;
+            }
         }
         
         /// <summary>
@@ -232,6 +241,11 @@ namespace AI.Core
         
         // Properties
 
+        public Action CurrentAction
+        {
+            get => currentAction;
+        }
+        
         public List<Action> Actions
         {
             get => _actions;

@@ -10,12 +10,12 @@ namespace AI.Core
         private string _name;
         private int _cost;
         private StateSet _preconditionStates, _afterEffectStates;
-        private bool _hasTarget;
         private bool _running;
 
         protected NavMeshAgent navMeshAgent;
         protected Agent agent;
         protected Vector3 target;
+        protected bool hasTarget;
         protected bool invoked;
         protected bool success = true;
 
@@ -35,7 +35,7 @@ namespace AI.Core
             _cost = cost;
             _preconditionStates = preconditionStates;
             _afterEffectStates = afterEffectStates;
-            _hasTarget = hasTarget;
+            this.hasTarget = hasTarget;
             this.agent = agent;
             navMeshAgent = agent.GetComponent<NavMeshAgent>();
         }
@@ -142,8 +142,8 @@ namespace AI.Core
 
         public bool HasTarget
         {
-            get => _hasTarget;
-            set => _hasTarget = value;
+            get => hasTarget;
+            set => hasTarget = value;
         }
 
         public bool Running
