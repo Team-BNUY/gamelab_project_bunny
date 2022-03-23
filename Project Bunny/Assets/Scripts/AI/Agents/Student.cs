@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AI.Core;
 using Photon.Pun;
@@ -57,6 +58,15 @@ namespace AI.Agents
             
             // Creating actions
             base.Start();
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            var projectile = other.CompareTag("Projectile");
+            if (!projectile) return;
+            
+            beliefStates.AddState("hitByProjectile", 1);
+            InterruptGoal();
         }
 
         private void OnCollisionStay(Collision collision)

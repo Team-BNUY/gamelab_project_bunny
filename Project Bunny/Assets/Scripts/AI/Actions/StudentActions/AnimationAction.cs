@@ -79,6 +79,7 @@ namespace AI.Actions.StudentActions
             _student.BeliefStates.ModifyState("wantsToPlayAlone", -1);
             _student.BeliefStates.ModifyState("poleSeemsAttracting", -1);
             _student.BeliefStates.AddState("completedAnimationAction", 1);
+
             _student.Gang.SetFree();
             _actionSpot.Free();
             _actionSpot = null;
@@ -92,6 +93,8 @@ namespace AI.Actions.StudentActions
 
             _student.BeliefStates.ModifyState("wantsToPlayAlone", -1);
             _student.BeliefStates.ModifyState("poleSeemsAttracting", -1);
+            
+            navMeshAgent.SetDestination(_student.transform.position);
             _student.Gang.SetFree();
             _actionSpot.Free();
             _actionSpot = null;
@@ -99,10 +102,10 @@ namespace AI.Actions.StudentActions
         
         private IEnumerator RotateTowardsInteractive()
         {
-            var position = _student.transform.position;
+            var studentPosition = _student.transform.position;
             var interactivePosition = _actionSpot.InteractiveObject.position;
-            var targetLookPosition = new Vector3(interactivePosition.x, position.y, interactivePosition.z);
-            var targetLookRotation = targetLookPosition - position;
+            var adjustedInteractivePosition = new Vector3(interactivePosition.x, studentPosition.y, interactivePosition.z);
+            var targetLookRotation = adjustedInteractivePosition - studentPosition;
             do
             {
                 var lookRotation = Quaternion.LookRotation(targetLookRotation, Vector3.up);

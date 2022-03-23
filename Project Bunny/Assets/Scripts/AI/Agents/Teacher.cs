@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using AI.Core;
-using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using Player;
 using UnityEngine;
@@ -70,6 +69,12 @@ namespace AI.Agents
             }
             else if(_targetStudent)
             {
+                if (_targetStudent.IsDead)
+                {
+                    _badStudents.Remove(_targetStudent);
+                    _targetStudent = null;
+                }
+                
                 _lastTargetStudent = _targetStudent;
                 OnLostBadStudent?.Invoke(_targetStudent);
                 _targetStudent = null;
@@ -77,7 +82,17 @@ namespace AI.Agents
 
             LookAtViewDirection();
         }
-        
+
+        private void OnTriggerEnter(Collider other)
+        {
+            var player = other.GetComponent<NetworkStudentController>();
+            if (!player) return;
+            
+            player.GetDamaged(3f);
+            _badStudents.Remove(player);
+            OnLostBadStudent?.Invoke(player);
+        }
+
         /// <summary>
         /// Subscribes to events
         /// </summary>
@@ -129,7 +144,7 @@ namespace AI.Agents
             // Ordering the students by distance and iterating through all of them
             foreach (var student in ArenaManager.Instance.AllPlayers.OrderBy(s => Vector3.Distance(transform.position, s.transform.position)))
             {   
-                //if(!student.HasSnowball && !_badStudents.ContainsKey(student)) continue;
+                if(!student.HasSnowball && !student.IsDigging && !_badStudents.ContainsKey(student)) continue;
                 
                 // If the student holds a tool or if it is already in the list of bad students
                 var myPosition = transform.position;

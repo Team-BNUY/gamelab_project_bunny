@@ -65,14 +65,16 @@ namespace AI.Actions.StudentActions
 
         public override void OnInterrupt()
         {
+            navMeshAgent.SetDestination(_student.transform.position);
             _student.Gang.SetFree();
         }
         
         private IEnumerator RotateTowardsVictim()
         {
-            var transform = _student.transform;
-            var position = transform.position;
-            var targetLookRotation = _victim.transform.position - position;
+            var studentPosition = _student.transform.position;
+            var victimPosition = _victim.transform.position;
+            var adjustedStudentPosition = new Vector3(victimPosition.x, studentPosition.y, victimPosition.z);
+            var targetLookRotation = adjustedStudentPosition - studentPosition;
             do
             {
                 var lookRotation = Quaternion.LookRotation(targetLookRotation, Vector3.up);

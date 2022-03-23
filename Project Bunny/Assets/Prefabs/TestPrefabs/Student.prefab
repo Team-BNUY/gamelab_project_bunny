@@ -1923,6 +1923,7 @@ GameObject:
   - component: {fileID: 7136958064522834525}
   - component: {fileID: 3065402032978827314}
   - component: {fileID: 3425488218445472296}
+  - component: {fileID: 3148429827098242142}
   - component: {fileID: 1251144648703592017}
   - component: {fileID: 168912239179175796}
   - component: {fileID: -2404579990627092170}
@@ -1993,6 +1994,20 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
+  m_Radius: 0.6
+  m_Height: 3.4612947
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.7013471, z: 0}
+--- !u!136 &3148429827098242142
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7512075816328390887}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
   m_Radius: 0.5
   m_Height: 3.4612947
   m_Direction: 1
@@ -2047,6 +2062,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5cc67ff504e65046a83753f65e58ed9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  action: 
   _actionsData:
   - {fileID: 11400000, guid: 3ebf143787e858041826effe26e8d499, type: 2}
   - {fileID: 11400000, guid: 1da747ebeabf23544910ddc855373109, type: 2}
@@ -2055,6 +2071,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0b5affab3264d3d41ace96d7b826531a, type: 2}
   - {fileID: 11400000, guid: f75db9cf2b8088447b9e4ce30dd87d09, type: 2}
   - {fileID: 11400000, guid: 031ab291b0fe0c9459ce7e39c318eb3f, type: 2}
+  - {fileID: 11400000, guid: 6dc492a092cdb404eb8fb758091c45b5, type: 2}
   pushForce: 40
   _studentLayer:
     serializedVersion: 2

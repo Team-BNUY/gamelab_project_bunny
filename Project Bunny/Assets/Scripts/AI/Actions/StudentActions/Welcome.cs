@@ -73,9 +73,10 @@ namespace AI.Actions.StudentActions
         
         private IEnumerator RotateTowardsNewbie()
         {
-            var transform = _student.transform;
-            var position = transform.position;
-            var targetLookRotation = _faceAway ? position - _newbie.transform.position : _newbie.transform.position - position;
+            var studentPosition = _student.transform.position;
+            var newbiePosition = _newbie.transform.position;
+            var adjustedNewbiePosition = new Vector3(newbiePosition.x, studentPosition.y, newbiePosition.z);
+            var targetLookRotation = _faceAway ? studentPosition - adjustedNewbiePosition : adjustedNewbiePosition - studentPosition;
             do
             {
                 var lookRotation = Quaternion.LookRotation(targetLookRotation, Vector3.up);

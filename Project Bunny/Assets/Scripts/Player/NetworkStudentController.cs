@@ -66,6 +66,9 @@ namespace Player
 
         public Quaternion PlayerRotation => _playerRotation;
         public Transform PlayerHand => _playerHand;
+        public bool HasSnowball => _hasSnowball;
+        public bool IsDigging => _isDigging;
+        public bool IsDead => _isDead;
 
         [Header("Network")]
         [SerializeField] private TMPro.TMP_Text _nickNameText;
