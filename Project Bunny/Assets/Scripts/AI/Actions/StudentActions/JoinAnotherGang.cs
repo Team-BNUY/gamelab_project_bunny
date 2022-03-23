@@ -54,17 +54,13 @@ namespace AI.Actions.StudentActions
             var direction = new Vector3(x, 0f, z).normalized;
             var length = Random.Range(_gang.Radius - 1f, _gang.Radius); // TODO Make first parameter a "gang's circle's thickness" variable
             var prePosition = _gang.Center + direction * length;
-            var yCheck = Physics.Raycast(prePosition, Vector3.up, out var groundInfo, float.PositiveInfinity, _student.GroundLayer);
-            if (!yCheck)
-            {
-                yCheck = Physics.Raycast(prePosition, Vector3.down, out groundInfo, float.PositiveInfinity, _student.GroundLayer);
-            }
-            var y = yCheck ? groundInfo.point.y : _gang.Center.y;
+            Physics.Raycast(prePosition + Vector3.up * 100f, Vector3.down, out var groundInfo, float.PositiveInfinity, _student.GroundLayer);
+            var y = groundInfo.point.y;
             var position = new Vector3(prePosition.x, y, prePosition.z);
             
             // Checks if the position is free
             var path = new NavMeshPath();
-            if (!navMeshAgent.CalculatePath(position, path) || Physics.CheckSphere(position, navMeshAgent.radius, _student.StudentLayer)) return false;
+            if (!navMeshAgent.CalculatePath(position, path) || path.status == NavMeshPathStatus.PathInvalid || path.status == NavMeshPathStatus.PathPartial || Physics.CheckSphere(position, navMeshAgent.radius, _student.StudentLayer)) return false;
             
             // Checks if there is an obstacle between the student and the gang in the hypothetical join position
             foreach (var memberPosition in _gang.Members.Select(m => m.transform.position))
