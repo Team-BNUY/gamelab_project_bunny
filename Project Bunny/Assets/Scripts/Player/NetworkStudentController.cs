@@ -63,6 +63,7 @@ namespace Player
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
         private static readonly int IsDiggingHash = Animator.StringToHash("isDigging");
         private static readonly int HasSnowballHash = Animator.StringToHash("hasSnowball");
+        private static readonly int ThrowSnowball = Animator.StringToHash("ThrowSnowball");
 
         public Quaternion PlayerRotation => _playerRotation;
         public Transform PlayerHand => _playerHand;
@@ -419,7 +420,7 @@ namespace Player
         // ReSharper disable once UnusedMember.Local
         private void PlaySnowballThrowAnimation()
         {
-            _animator.Play($"Base Layer.Snowball Throw");
+            _animator.SetTrigger(ThrowSnowball);
         }
 
         /// <summary>
