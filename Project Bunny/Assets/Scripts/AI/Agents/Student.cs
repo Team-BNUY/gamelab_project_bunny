@@ -65,6 +65,8 @@ namespace AI.Agents
             var projectile = other.CompareTag("Projectile");
             if (!projectile) return;
             
+            Debug.Log("YO");
+            
             beliefStates.AddState("hitByProjectile", 1);
             InterruptGoal();
         }
