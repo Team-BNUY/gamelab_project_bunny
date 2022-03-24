@@ -248,21 +248,35 @@ namespace Player
 
             if (_healthBar.value <= 0)
             {
-                StartCoroutine(KillStudent());
+                // StartCoroutine(KillStudent());
+                
+                _isDead = true;
+                _characterController.enabled = false;
+                PhotonNetwork.Instantiate(ArenaManager.Instance.SnowmanPrefab.name, _studentTransform.position, _studentTransform.rotation);
+                
+                Invoke("Respawn", DEATH_TIME_DELAY);
             }
         }
 
-        private IEnumerator KillStudent()
+        private void Respawn()
         {
-            _isDead = true;
-            _characterController.enabled = false;
-            PhotonNetwork.Instantiate(ArenaManager.Instance.SnowmanPrefab.name, _studentTransform.position, _studentTransform.rotation);
-            yield return new WaitForSeconds(DEATH_TIME_DELAY);
             _healthBar.value = _healthBar.maxValue;
             _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this);
             _characterController.enabled = true;
             _isDead = false;
         }
+
+        // private IEnumerator KillStudent()
+        // {
+        //     _isDead = true;
+        //     _characterController.enabled = false;
+        //     PhotonNetwork.Instantiate(ArenaManager.Instance.SnowmanPrefab.name, _studentTransform.position, _studentTransform.rotation);
+        //     yield return new WaitForSeconds(DEATH_TIME_DELAY);
+        //     _healthBar.value = _healthBar.maxValue;
+        //     _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this);
+        //     _characterController.enabled = true;
+        //     _isDead = false;
+        // }
 
         #endregion
 
