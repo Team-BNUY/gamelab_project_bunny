@@ -83,16 +83,6 @@ namespace AI.Agents
             LookAtViewDirection();
         }
 
-        private void OnTriggerEnter(Collider other)
-        {
-            var player = other.GetComponent<NetworkStudentController>();
-            if (!player || player.IsDead) return;
-            
-            player.GetDamaged(3f);
-            _badStudents.Remove(player);
-            OnLostBadStudent?.Invoke(player);
-        }
-
         /// <summary>
         /// Subscribes to events
         /// </summary>
