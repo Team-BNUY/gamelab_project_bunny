@@ -57,7 +57,7 @@ namespace AI.Actions.TeacherActions
             navMeshAgent.speed = _speed;
             navMeshAgent.SetDestination(targetPosition);
 
-            if (!(Vector3.Distance(_target.transform.position, _teacher.transform.position) < 2f)) return;
+            if (!(Vector3.Distance(_target.transform.position, _teacher.transform.position) < 2f) || _target.IsDead) return;
             
             _target.photonView.RPC("GetDamaged", RpcTarget.All, 3f);
             _teacher.BadStudents.Remove(_target);
