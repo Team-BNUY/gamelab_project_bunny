@@ -1,5 +1,6 @@
 using AI.Agents;
 using AI.Core;
+using Photon.Pun;
 using Player;
 using UnityEngine;
 
@@ -58,7 +59,7 @@ namespace AI.Actions.TeacherActions
 
             if (!(Vector3.Distance(_target.transform.position, _teacher.transform.position) < 2f)) return;
             
-            _target.GetDamaged(3f);
+            _teacher.photonView.RPC("GetDamaged", RpcTarget.All, 3f);
             _teacher.BadStudents.Remove(_target);
             Teacher.LoseDeadPlayer(_target);
         }
