@@ -1,5 +1,6 @@
 using AI.Agents;
 using AI.Core;
+using Player;
 using UnityEngine;
 
 namespace AI.Actions.TeacherActions
@@ -10,7 +11,7 @@ namespace AI.Actions.TeacherActions
         private float _speed;
         private float _fieldfOfView;
         
-        private Transform _target;
+        private NetworkStudentController _target;
         
         public ChaseStudent(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher teacher, bool hasTarget, float speed, float fieldfOfView)
              : base(name, cost, preconditionStates, afterEffectStates, teacher, hasTarget)
@@ -31,7 +32,7 @@ namespace AI.Actions.TeacherActions
             
             if (_teacher.TargetStudent)
             {
-                _target = _teacher.TargetStudent.transform;
+                _target = _teacher.TargetStudent;
             }
             
             if (!_target) return false;
@@ -46,7 +47,7 @@ namespace AI.Actions.TeacherActions
         /// </summary>
         public override void Perform()
         {
-            var targetPosition = _target.position;
+            var targetPosition = _target.transform.position;
             var teacherPosition = _teacher.transform.position;
             var onYPlaneTargetPosition = new Vector3(targetPosition.x, teacherPosition.y, targetPosition.z);
             _teacher.LookAtDirection(onYPlaneTargetPosition - teacherPosition);
@@ -54,6 +55,12 @@ namespace AI.Actions.TeacherActions
             
             navMeshAgent.speed = _speed;
             navMeshAgent.SetDestination(targetPosition);
+
+            if (!(Vector3.Distance(_target.transform.position, _teacher.transform.position) < 2f)) return;
+            
+            _target.GetDamaged(3f);
+            _teacher.BadStudents.Remove(_target);
+            Teacher.LoseDeadPlayer(_target);
         }
         
         /// <summary>

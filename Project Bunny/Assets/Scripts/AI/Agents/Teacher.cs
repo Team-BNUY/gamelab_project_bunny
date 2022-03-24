@@ -130,6 +130,11 @@ namespace AI.Agents
             _lookingForward = false;
             _viewDirection = direction;
         }
+
+        public static void LoseDeadPlayer(NetworkStudentController player)
+        {
+            OnLostBadStudent?.Invoke(player);
+        }
         
         /// <summary>
         /// Remembers every student seen performing a bad action, updates their last seen position and determines which bad student is the closest
@@ -144,7 +149,7 @@ namespace AI.Agents
             // Ordering the students by distance and iterating through all of them
             foreach (var student in ArenaManager.Instance.AllPlayers.OrderBy(s => Vector3.Distance(transform.position, s.transform.position)))
             {   
-                if(!student.HasSnowball && !student.IsDigging && !_badStudents.ContainsKey(student)) continue;
+                if(!student.HasSnowball && !_badStudents.ContainsKey(student)) continue;
                 
                 // If the student holds a tool or if it is already in the list of bad students
                 var myPosition = transform.position;
@@ -258,11 +263,6 @@ namespace AI.Agents
         public float FieldOfView
         {
             set => _fieldOfView = value;
-        }
-
-        public Vector3 ViewDirection
-        {
-            set => _viewDirection = value;
         }
 
         public NetworkStudentController TargetStudent
