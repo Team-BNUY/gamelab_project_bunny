@@ -375,7 +375,7 @@ namespace Player
                 //If player has a snowball, then throw it. Otherwise call the Interactable's Release method.
                 if (_hasSnowball)
                 {
-                    _view.RPC("PlaySnowballThrowAnimation", RpcTarget.All, null);
+                    PlaySnowballThrowAnimation();
                 }
                 else
                 {
@@ -415,7 +415,7 @@ namespace Player
 
         #region RPC
         
-        [PunRPC]
+        //[PunRPC]
         // ReSharper disable once UnusedMember.Local
         private void PlaySnowballThrowAnimation()
         {
