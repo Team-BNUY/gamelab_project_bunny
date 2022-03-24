@@ -7,7 +7,7 @@ using UnityEngine.AI;
 
 namespace AI.Core
 {
-    public class Agent : MonoBehaviour
+    public class Agent : MonoBehaviourPunCallbacks
     {
         [Header("Testing")]
         public string action;

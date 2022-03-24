@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using AI.Core;
 using Photon.Pun;
@@ -65,10 +64,7 @@ namespace AI.Agents
             var projectile = other.CompareTag("Projectile");
             if (!projectile) return;
             
-            Debug.Log("YO");
-            
-            beliefStates.AddState("hitByProjectile", 1);
-            InterruptGoal();
+            photonView.RPC("GetHitByProjectile", RpcTarget.All);
         }
 
         private void OnCollisionStay(Collision collision)
@@ -78,6 +74,13 @@ namespace AI.Agents
             
             var pushVector = -collision.GetContact(0).normal;
             collision.rigidbody.AddForce(pushVector * pushForce, ForceMode.Impulse);
+        }
+
+        [PunRPC]
+        private void GetHitByProjectile()
+        {
+            beliefStates.AddState("hitByProjectile", 1);
+            InterruptGoal();
         }
 
         public LayerMask StudentLayer
