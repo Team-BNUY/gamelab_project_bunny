@@ -12,17 +12,19 @@ namespace AI.Actions.StudentActions
         private Student _student;
 
         private Gang _gang;
-        private float _speed;
+        private float _walkSpeed;
+        private float _runSpeed;
         private float _rotationSpeed;
 
         private string _animationTrigger;
         private int _animationVariants;
         
-        public JoinAnotherGang(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float speed, float rotationSpeed, string animationTrigger, int animationVariants)
+        public JoinAnotherGang(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float walkSpeed, float runSpeed, float rotationSpeed, string animationTrigger, int animationVariants)
              : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)
         {
             _student = agent;
-            _speed = speed;
+            _walkSpeed = walkSpeed;
+            _runSpeed = runSpeed;
             _rotationSpeed = rotationSpeed;
             _animationTrigger = animationTrigger;
             _animationVariants = animationVariants;
@@ -78,8 +80,17 @@ namespace AI.Actions.StudentActions
             
             // General parameters
             target = position;
-            navMeshAgent.speed = _speed;
-            _student.AnimationState = AnimationState.Walk;
+            random = Random.Range(0, 3);
+            if (random == 0)
+            {
+                navMeshAgent.speed = _walkSpeed;
+                _student.AnimationState = AnimationState.Walk;
+            }
+            else
+            {
+                navMeshAgent.speed = _runSpeed;
+                _student.AnimationState = AnimationState.Run;
+            }
             
             return true;
         }

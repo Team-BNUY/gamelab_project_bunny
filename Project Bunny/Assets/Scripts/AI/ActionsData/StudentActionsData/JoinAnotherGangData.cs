@@ -10,7 +10,8 @@ namespace AI.ActionsData.StudentActionsData
     {
         [Header("Join Another Gang")]
         [SerializeField] [Min(0f)] private float _rotationSpeed = 10f;
-        [SerializeField] [Min(0f)] private float _speed = 2.5f;
+        [SerializeField] [Min(0f)] private float _walkSpeed = 2.5f;
+        [SerializeField] [Min(0f)] private float _runSpeed = 2.5f;
         
         [Header("Animator Parameter")]
         [SerializeField] private string _animationTrigger;
@@ -20,7 +21,7 @@ namespace AI.ActionsData.StudentActionsData
         {
             if (agent is Student student)
             {
-                var action = new JoinAnotherGang(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), student, hasTarget, _speed, _rotationSpeed, _animationTrigger, _animationVariants);
+                var action = new JoinAnotherGang(name, cost, new StateSet(preconditionStates), new StateSet(afterEffectStates), student, hasTarget, _walkSpeed, _runSpeed, _rotationSpeed, _animationTrigger, _animationVariants);
                 student.Actions.Add(action);
             }
             else
