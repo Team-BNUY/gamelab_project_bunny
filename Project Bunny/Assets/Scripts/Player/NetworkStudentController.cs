@@ -214,7 +214,7 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void ThrowStudentSnowball()
         {
-            if (_playerSnowball == null) return;
+            if (!_view.IsMine || _playerSnowball == null) return;
 
             _playerSnowball.DisableLineRenderer();
             _isAiming = false;
