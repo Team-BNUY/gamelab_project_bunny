@@ -588,6 +588,7 @@ namespace Player
                 stream.SendNext(_isWalking);
                 stream.SendNext(_isAiming);
                 stream.SendNext(_healthBar.value);
+                stream.SendNext(_isDead);
             }
             else
             {
@@ -596,6 +597,7 @@ namespace Player
                 _isWalking = (bool) stream.ReceiveNext();
                 _isAiming = (bool) stream.ReceiveNext();
                 _healthBar.value = (float) stream.ReceiveNext();
+                _isDead = (bool) stream.ReceiveNext();
             }
         }
 
