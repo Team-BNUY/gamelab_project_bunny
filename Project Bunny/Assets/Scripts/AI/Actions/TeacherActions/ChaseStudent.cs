@@ -21,7 +21,12 @@ namespace AI.Actions.TeacherActions
             _speed = speed;
             _fieldfOfView = fieldfOfView;
         }
-        
+
+        public override bool IsAchievable()
+        {
+            return !_teacher.Stunned;
+        }
+
         /// <summary>
         /// Sets Action's target as the Teacher's current student target
         /// </summary>
@@ -71,6 +76,11 @@ namespace AI.Actions.TeacherActions
         public override bool PostPerform()
         {
             return success;
+        }
+
+        public override void OnInterrupt()
+        {
+            navMeshAgent.SetDestination(_teacher.transform.position);
         }
     }
 }

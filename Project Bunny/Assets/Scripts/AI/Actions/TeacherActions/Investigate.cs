@@ -34,7 +34,7 @@ namespace AI.Actions.TeacherActions
         /// <returns>True if there is at least one bad student in the bad students list</returns>
         public override bool IsAchievable()
         {
-            return _teacher.BadStudents.Count != 0;
+            return !_teacher.Stunned && _teacher.BadStudents.Count != 0;
         }
         
         /// <summary>
@@ -113,6 +113,7 @@ namespace AI.Actions.TeacherActions
         public override void OnInterrupt()
         {
             _teacher.SetAnimatorParameter("LookingAround", false);
+            navMeshAgent.SetDestination(_teacher.transform.position);
         }
     }
 }

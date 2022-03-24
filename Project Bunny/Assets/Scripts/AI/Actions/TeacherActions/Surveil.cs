@@ -29,7 +29,7 @@ public class Surveil : Action
     /// <returns>True if the Teacher knows at least one waypoint</returns>
     public override bool IsAchievable()
     {
-        return _teacher.Waypoints.Length != 0;
+        return !_teacher.Stunned && _teacher.Waypoints.Length != 0;
     }
     
     /// <summary>
@@ -94,5 +94,6 @@ public class Surveil : Action
     public override void OnInterrupt()
     {
         _teacher.SetAnimatorParameter("LookingAround", false);
+        navMeshAgent.SetDestination(_teacher.transform.position);
     }
 }
