@@ -47,7 +47,8 @@ namespace Networking
 
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent)
                 && otherStudent != _studentThrower
-                && !otherStudent.TeamID.Equals(_studentThrower.TeamID))
+                && !otherStudent.TeamID.Equals(_studentThrower.TeamID)
+                && !otherStudent.IsDead)
             {
                 var studentPhotonView = otherStudent.photonView;
                 studentPhotonView.RPC("GetDamaged", RpcTarget.All, _damage);
