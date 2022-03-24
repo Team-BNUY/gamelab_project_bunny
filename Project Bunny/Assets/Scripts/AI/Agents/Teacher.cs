@@ -96,7 +96,7 @@ namespace AI.Agents
         /// <summary>
         /// Subscribes to events
         /// </summary>
-        private void OnEnable()
+        protected override void OnEnable()
         {
             OnSeeNewBadStudent += SeeNewStudent;
             OnFoundBadStudent += FindStudent;
@@ -106,7 +106,7 @@ namespace AI.Agents
         /// <summary>
         /// Unsubscribes to events
         /// </summary>
-        private void OnDisable()
+        protected override void OnDisable()
         {
             OnSeeNewBadStudent -= SeeNewStudent;
             OnFoundBadStudent -= FindStudent;
