@@ -22,18 +22,22 @@ namespace AI.Agents
         [SerializeField] [Min(0f)] private float _viewDistance;
         [SerializeField] [Min(0f)] private float _headRotationSpeed = 10f;
         [SerializeField] private LayerMask _viewBlockingLayer;
+        private Vector3 _viewDirection;
         private bool _lookingForward;
-
+        
+        // Stun parameters
+        [SerializeField] private float _stunDuration = 2f;
+        private bool _stunned;
+        
         [Header("Waypoints")] 
         [SerializeField] private Transform[] _waypoints;
-
-        private Vector3 _viewDirection;
-        
+                
         // Students references
         private NetworkStudentController _targetStudent;
         private NetworkStudentController _lastTargetStudent;
         private Dictionary<NetworkStudentController, Vector3> _badStudents = new Dictionary<NetworkStudentController, Vector3>();
-        
+        private static readonly int StunnedAnim = Animator.StringToHash("Stunned");
+
         /// <summary>
         /// References all the students, add the goals and create the actions
         /// </summary>
@@ -61,7 +65,7 @@ namespace AI.Agents
         /// </summary>
         private void Update()
         {
-            if (!PhotonNetwork.LocalPlayer.IsMasterClient) return;
+            if (!PhotonNetwork.LocalPlayer.IsMasterClient || _stunned) return;
 
             if (WitnessedBadAction(out var badStudent))
             {
@@ -81,6 +85,21 @@ namespace AI.Agents
             }
 
             LookAtViewDirection();
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (_stunned) return;
+            
+            var projectile = other.CompareTag("Projectile");
+            if (!projectile) return;
+
+            _stunned = true;
+            InterruptGoal();
+            animationState = AnimationState.Idle;
+            SetAnimatorParameters();
+            animator.SetBool(StunnedAnim, true);
+            Invoke(nameof(WakeUp), _stunDuration);
         }
 
         /// <summary>
@@ -248,6 +267,12 @@ namespace AI.Agents
             }
         }
 
+        private void WakeUp()
+        {
+            _stunned = false;
+            animator.SetBool(StunnedAnim, false);
+        }
+
         // Properties
 
         public float FieldOfView
@@ -274,6 +299,11 @@ namespace AI.Agents
         public Transform[] Waypoints
         {
             get => _waypoints;
+        }
+
+        public bool Stunned
+        {
+            get => _stunned;
         }
     }
 }

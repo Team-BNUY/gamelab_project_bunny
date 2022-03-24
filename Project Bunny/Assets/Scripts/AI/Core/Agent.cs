@@ -17,13 +17,13 @@ namespace AI.Core
         protected readonly Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
         protected readonly StateSet beliefStates = new StateSet();
         protected Action currentAction;
-        
+        protected Animator animator;
+        protected AnimationState animationState;
+
         private readonly List<Action> _actions = new List<Action>();
         private Planner _planner;
         private Queue<Action> _actionQueue;
         private Goal _currentGoal;
-        private AnimationState _animationState;
-        private Animator _animator;
         
         private static readonly int Walking = Animator.StringToHash("Walking");
         private static readonly int Running = Animator.StringToHash("Running");
@@ -33,7 +33,7 @@ namespace AI.Core
         /// </summary>
         private void Awake()
         {
-            _animator = GetComponent<Animator>();
+            animator = GetComponent<Animator>();
         }
         
         /// <summary>
@@ -57,7 +57,7 @@ namespace AI.Core
 
             if (_currentGoal == null && currentAction == null)
             {
-                _animationState = AnimationState.Idle;
+                animationState = AnimationState.Idle;
                 SetAnimatorParameters();
             }
 
@@ -150,7 +150,7 @@ namespace AI.Core
         /// <param name="animatorParameter">The animator parameter's name</param>
         public void SetAnimatorParameter(string animatorParameter)
         {
-            _animator.SetTrigger(animatorParameter);
+            animator.SetTrigger(animatorParameter);
         }
         
         /// <summary>
@@ -160,7 +160,7 @@ namespace AI.Core
         /// <param name="value">The boolean value to set the animator parameter</param>
         public void SetAnimatorParameter(string animatorParameter, bool value)
         {
-            _animator.SetBool(animatorParameter, value);
+            animator.SetBool(animatorParameter, value);
         }
         
         /// <summary>
@@ -170,7 +170,7 @@ namespace AI.Core
         /// <param name="value">The integer value to set the animator parameter</param>
         public void SetAnimatorParameter(string animatorParameter, int value)
         {
-            _animator.SetInteger(animatorParameter, value);
+            animator.SetInteger(animatorParameter, value);
         }
 
         /// <summary>
@@ -204,26 +204,26 @@ namespace AI.Core
            
             currentAction = null;
         }
-        
-        private void SetAnimatorParameters()
+
+        protected void SetAnimatorParameters()
         {
-            switch(_animationState)
+            switch(animationState)
             {
                 case AnimationState.Idle:
-                    _animator.SetBool(Walking, false);
-                    _animator.SetBool(Running, false);
+                    animator.SetBool(Walking, false);
+                    animator.SetBool(Running, false);
                     break;
                 case AnimationState.Walk:
-                    _animator.SetBool(Walking, true);
-                    _animator.SetBool(Running, false);
+                    animator.SetBool(Walking, true);
+                    animator.SetBool(Running, false);
                     break;
                 case AnimationState.Run:
-                    _animator.SetBool(Running, true);
-                    _animator.SetBool(Walking, false);
+                    animator.SetBool(Running, true);
+                    animator.SetBool(Walking, false);
                     break;
                 default:
-                    _animator.SetBool(Walking, false);
-                    _animator.SetBool(Running, false);
+                    animator.SetBool(Walking, false);
+                    animator.SetBool(Running, false);
                     break;
             }
         }
@@ -258,7 +258,7 @@ namespace AI.Core
 
         public AnimationState AnimationState
         {
-            set => _animationState = value;
+            set => animationState = value;
         }
     }
 }
