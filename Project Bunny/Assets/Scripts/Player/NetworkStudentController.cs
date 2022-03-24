@@ -252,9 +252,15 @@ namespace Player
                 
                 _isDead = true;
                 _characterController.enabled = false;
-                PhotonNetwork.Instantiate(ArenaManager.Instance.SnowmanPrefab.name, _studentTransform.position, _studentTransform.rotation);
-                
-                Invoke("Respawn", DEATH_TIME_DELAY);
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    PhotonNetwork.Instantiate(ArenaManager.Instance.SnowmanPrefab.name, _studentTransform.position, _studentTransform.rotation);
+                }
+
+                if (_view.IsMine)
+                {
+                    Invoke(nameof(Respawn), DEATH_TIME_DELAY);
+                }
             }
         }
 
