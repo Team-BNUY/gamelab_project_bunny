@@ -86,7 +86,7 @@ namespace AI.Agents
         private void OnTriggerEnter(Collider other)
         {
             var player = other.GetComponent<NetworkStudentController>();
-            if (!player) return;
+            if (!player || player.IsDead) return;
             
             player.GetDamaged(3f);
             _badStudents.Remove(player);
