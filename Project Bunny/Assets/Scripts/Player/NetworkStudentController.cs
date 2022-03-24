@@ -374,7 +374,7 @@ namespace Player
             if (context.canceled)
             {
                 //If player has a snowball, then throw it. Otherwise call the Interactable's Release method.
-                if (_hasSnowball)
+                if (!_view.IsMine && _hasSnowball)
                 {
                     PlaySnowballThrowAnimation();
                 }
