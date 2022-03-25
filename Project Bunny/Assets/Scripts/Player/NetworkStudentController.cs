@@ -1,5 +1,9 @@
 using System;
+<<<<<<< refs/remotes/origin/main
 using System.Collections;
+=======
+using System.Runtime.CompilerServices;
+>>>>>>> [Code][Gameplay] Lobby system progress (some minor bugs remain)
 using Cinemachine;
 using Interfaces;
 using Networking;
@@ -105,6 +109,7 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
+            PhotonTeamsManager.PlayerLeftTeam += OnPlayerLeaveTeam;
         }
 
         private void Update()
@@ -154,9 +159,25 @@ namespace Player
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
         {
-            UpdateTeamColorVisuals();
+            if (_view.IsMine)
+            {
+                _view.RPC("UpdateTeamColorVisuals", RpcTarget.AllBuffered);   
+            }
+        }
+<<<<<<< refs/remotes/origin/main
+        
+=======
+
+        private void OnPlayerLeaveTeam(Photon.Realtime.Player player, PhotonTeam team)
+        {
+            if (_view.IsMine)
+            {
+                _view.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered); 
+            }
         }
         
+
+>>>>>>> [Code][Gameplay] Lobby system progress (some minor bugs remain)
         private void OnTriggerEnter(Collider other)
         {
             if (other.TryGetComponent(out INetworkTriggerable triggerable))
@@ -450,8 +471,12 @@ namespace Player
         {
             if (context.performed)
             {
-                _currentTriggerable?.Trigger(this);
+                if (!_view.IsMine) return;
                 
+                
+                _currentTriggerable?.Trigger(this);
+
+
                 if (_hasSnowball) return; //Don't interact with interactables if the player already has a snowball. 
 
                 // TODO: Interact with other items here
@@ -468,8 +493,6 @@ namespace Player
                     _currentInteractable?.Exit();
                     _currentInteractable = null;
                 }
-                
-                
             }
         }
 
@@ -488,6 +511,7 @@ namespace Player
         /// Temporary functionality for updating visuals like mesh object and name text colors
         /// Functionality will still be kept for later, but more refined
         /// </summary>
+        [PunRPC]
         public void UpdateTeamColorVisuals()
         {
             if (_isJerseyNull)
@@ -512,6 +536,16 @@ namespace Player
                         break;
                 }
             }
+        }
+
+        
+        /// <summary>
+        /// Tmeporary function for restoring a player's colors to all white to show they are teamless
+        /// </summary>
+        [PunRPC]
+        public void RestoreTeamlessColors()
+        {
+            _nickNameText.color = Color.white;
         }
 
         public void SetNameText()
