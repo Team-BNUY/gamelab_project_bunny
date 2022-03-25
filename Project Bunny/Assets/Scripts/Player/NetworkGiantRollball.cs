@@ -124,14 +124,12 @@ namespace Player
                 stream.SendNext(_canDamage);
                 stream.SendNext(_isDestroyable);
                 stream.SendNext(_isGrowing);
-                stream.SendNext(_snowballRigidbody.velocity);
             }
             else
             {
                 _canDamage = (bool) stream.ReceiveNext();
                 _isDestroyable = (bool) stream.ReceiveNext();
                 _isGrowing = (bool) stream.ReceiveNext();
-                _snowballRigidbody.velocity = (Vector3) stream.ReceiveNext();
             }
         }
     }
