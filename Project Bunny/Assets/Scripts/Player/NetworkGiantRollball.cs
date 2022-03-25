@@ -93,8 +93,7 @@ namespace Player
         private void TrackGiantRollballStates()
         {
             var velocity = _snowballRigidbody.velocity;
-            var currentSpeed = new Vector3(velocity.x, 0f, velocity.z);
-            if (!_isDestroyable && (Mathf.Abs(currentSpeed.x) >= _destroySpeedThreshold || Mathf.Abs(currentSpeed.z) >= _destroySpeedThreshold))
+            if (!_isDestroyable && velocity.magnitude >= _destroySpeedThreshold)
             {
                 _isDestroyable = true;
             }
