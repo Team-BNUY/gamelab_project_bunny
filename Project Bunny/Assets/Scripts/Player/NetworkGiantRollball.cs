@@ -44,9 +44,9 @@ namespace Player
         {
             _isGrowing = other.gameObject.layer == LayerMask.NameToLayer("Ground");
             
-            if (IsInLayerMask(other.gameObject) && _isDestroyable && _canDamage)
+            if (IsInLayerMask(other.gameObject) && _isDestroyable)
             {
-                if (other.gameObject.TryGetComponent<NetworkStudentController>(out var studentStudent))
+                if (other.gameObject.TryGetComponent<NetworkStudentController>(out var studentStudent) && _canDamage)
                 {
                     var studentPhotonView = studentStudent.photonView;
                     studentPhotonView.RPC("GetDamaged", RpcTarget.All, _damage);
