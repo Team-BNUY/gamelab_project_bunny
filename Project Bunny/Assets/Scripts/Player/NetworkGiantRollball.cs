@@ -33,7 +33,7 @@ namespace Player
 
         private void Update()
         {
-            TrackGiantRollballStates();
+            photonView.RPC(nameof(TrackGiantRollballStates), RpcTarget.All);
         }
 
         private void FixedUpdate()
@@ -86,10 +86,11 @@ namespace Player
                 _snowballTransform.localScale += Vector3.one * (_growthFactor * _snowballRigidbody.velocity.magnitude * Time.fixedDeltaTime);
             }
         }
-
+        
         /// <summary>
         /// Track the Giant Snowball's properties
         /// </summary>
+        [PunRPC]
         private void TrackGiantRollballStates()
         {
             var velocity = _snowballRigidbody.velocity;
