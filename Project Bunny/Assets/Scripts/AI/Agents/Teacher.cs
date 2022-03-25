@@ -93,13 +93,8 @@ namespace AI.Agents
             
             var projectile = other.CompareTag("Projectile");
             if (!projectile) return;
-
-            _stunned = true;
-            InterruptGoal();
-            animationState = AnimationState.Idle;
-            SetAnimatorParameters();
-            animator.SetBool(StunnedAnim, true);
-            Invoke(nameof(WakeUp), _stunDuration);
+            
+            photonView.RPC("Stun", RpcTarget.All);
         }
 
         /// <summary>
@@ -277,6 +272,17 @@ namespace AI.Agents
             {
                 InterruptGoal();
             }
+        }
+        
+        [PunRPC]
+        private void Stun()
+        {
+            _stunned = true;
+            InterruptGoal();
+            animationState = AnimationState.Idle;
+            SetAnimatorParameters();
+            animator.SetBool(StunnedAnim, true);
+            Invoke(nameof(WakeUp), _stunDuration);
         }
 
         private void WakeUp()
