@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Cinemachine;
 using Interfaces;
@@ -128,14 +129,21 @@ namespace Player
             DigSnowball();
         }
 
-        private void OnControllerColliderHit(ControllerColliderHit hit)
+        private void OnCollisionEnter(Collision collision)
         {
-            if (hit.collider.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball))
+            if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball))
             {
                 if (giantRollball.CanDamage)
                 {
                     _view.RPC("GetDamaged", RpcTarget.All, giantRollball.Damage);
                 }
+            }
+        }
+
+        private void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            if (hit.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball))
+            {
                 if (!_hasSnowball && !giantRollball.CanDamage)
                 {
                     giantRollball.PushGiantRollball(transform);
