@@ -57,5 +57,5 @@ namespace AI
         }
     }
     
-    public enum ActionSpotType { Cry, Pole }
+    public enum ActionSpotType { Cry, Pole, Sit }
 }

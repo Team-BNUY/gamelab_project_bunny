@@ -2072,6 +2072,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f75db9cf2b8088447b9e4ce30dd87d09, type: 2}
   - {fileID: 11400000, guid: 031ab291b0fe0c9459ce7e39c318eb3f, type: 2}
   - {fileID: 11400000, guid: 6dc492a092cdb404eb8fb758091c45b5, type: 2}
+  - {fileID: 11400000, guid: 1ee39a59ff0f33e438673d662fb87462, type: 2}
   pushForce: 40
   _studentLayer:
     serializedVersion: 2
@@ -2083,6 +2084,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   actionSpots:
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -2170,6 +2172,12 @@ MonoBehaviour:
   - Type: 3
     SynchronizeType: 2
     Name: Random
+  - Type: 3
+    SynchronizeType: 0
+    Name: Random Idle
+  - Type: 9
+    SynchronizeType: 0
+    Name: Sit
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0

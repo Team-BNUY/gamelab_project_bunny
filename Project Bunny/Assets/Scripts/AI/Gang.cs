@@ -93,11 +93,14 @@ namespace AI
                 else if (random == 2)
                 {
                     member.BeliefStates.ModifyState("wantsToPlayAlone", 1);
-                    random = Random.Range(0, 1);
+                    random = Random.Range(0, 2);
                     switch (random)
                     {
                         case 0:
                             member.BeliefStates.AddState("poleSeemsAttracting", 1);
+                            break;
+                        case 1:
+                            member.BeliefStates.AddState("wantsToSit", 1);
                             break;
                     }
                 }

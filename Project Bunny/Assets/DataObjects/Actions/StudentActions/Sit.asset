@@ -9,20 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0480b00d5a391314c97bda16f5bed954, type: 3}
-  m_Name: Cry Alone
+  m_Script: {fileID: 11500000, guid: 8edd936c22142e749a024c104ae1a725, type: 3}
+  m_Name: Sit
   m_EditorClassIdentifier: 
-  name: Cry Alone
+  name: Sit
   cost: 1
   hasTarget: 1
   preconditionStates:
-  - _key: intimidated
+  - _key: wantsToPlayAlone
+    _value: 1
+  - _key: wantsToSit
     _value: 1
   afterEffectStates:
-  - _key: cried
+  - _key: completedAnimationAction
     _value: 1
   _runningSpeed: 6
-  _duration: 5
-  _actionSpotType: 0
-  _animationTrigger: Crying
+  _actionSpotType: 2
+  _animationTrigger: Sit
   _animationVariants: 1
