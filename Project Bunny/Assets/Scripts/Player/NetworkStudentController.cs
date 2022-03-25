@@ -133,6 +133,10 @@ namespace Player
             if (hit.collider.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !_hasSnowball)
             {
                 giantRollball.PushGiantRollball(transform);
+                if (giantRollball.CanDamage)
+                {
+                    _view.RPC("GetDamaged", RpcTarget.All, giantRollball.Damage);
+                }
             }
         }
 
