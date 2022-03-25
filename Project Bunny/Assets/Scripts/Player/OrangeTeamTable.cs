@@ -50,6 +50,7 @@ namespace Player
                 {
                     PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
                     _view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
+                    currentPlayer.RestoreTeamlessColors_RPC();
                 }
                 else
                 {

@@ -109,7 +109,6 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
-            PhotonTeamsManager.PlayerLeftTeam += OnPlayerLeaveTeam;
         }
 
         private void Update()
@@ -159,25 +158,12 @@ namespace Player
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
         {
-            if (_view.IsMine)
-            {
-                _view.RPC("UpdateTeamColorVisuals", RpcTarget.AllBuffered);   
-            }
+            _view.RPC("UpdateTeamColorVisuals", RpcTarget.AllBuffered);
         }
 <<<<<<< refs/remotes/origin/main
         
 =======
 
-        private void OnPlayerLeaveTeam(Photon.Realtime.Player player, PhotonTeam team)
-        {
-            if (_view.IsMine)
-            {
-                _view.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered); 
-            }
-        }
-        
-
->>>>>>> [Code][Gameplay] Lobby system progress (some minor bugs remain)
         private void OnTriggerEnter(Collider other)
         {
             if (other.TryGetComponent(out INetworkTriggerable triggerable))
@@ -546,6 +532,11 @@ namespace Player
         public void RestoreTeamlessColors()
         {
             _nickNameText.color = Color.white;
+        }
+        
+        public void RestoreTeamlessColors_RPC()
+        {
+            _view.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered);
         }
 
         public void SetNameText()
