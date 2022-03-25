@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Player
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class NetworkGiantRollball : MonoBehaviour
+    public class NetworkGiantRollball : MonoBehaviourPunCallbacks, IPunObservable
     {
         [SerializeField] private Rigidbody _snowballRigidbody;
         [SerializeField] private Transform _snowballTransform;
@@ -115,6 +115,22 @@ namespace Player
             var go = PhotonNetwork.Instantiate(ArenaManager.Instance.GiantRollballBurst.name, transform.position, Quaternion.identity);
             go.GetComponent<ParticleSystem>().Play();
             Destroy(gameObject);
+        }
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(_canDamage);
+                stream.SendNext(_isDestroyable);
+                stream.SendNext(_isGrowing);
+            }
+            else
+            {
+                _canDamage = (bool) stream.ReceiveNext();
+                _isDestroyable = (bool) stream.ReceiveNext();
+                _isGrowing = (bool) stream.ReceiveNext();
+            }
         }
     }
 }

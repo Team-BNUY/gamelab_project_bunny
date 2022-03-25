@@ -130,9 +130,12 @@ namespace Player
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
-            if (hit.collider.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !_hasSnowball)
+            if (hit.collider.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball))
             {
-                giantRollball.PushGiantRollball(transform);
+                if (!_hasSnowball)
+                {
+                    giantRollball.PushGiantRollball(transform);
+                }
                 if (giantRollball.CanDamage)
                 {
                     _view.RPC("GetDamaged", RpcTarget.All, giantRollball.Damage);
