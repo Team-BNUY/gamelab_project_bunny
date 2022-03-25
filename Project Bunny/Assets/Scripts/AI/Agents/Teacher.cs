@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace AI.Agents
 {
-    public class Teacher : Agent
+    public class Teacher : Agent, IPunObservable
     {
         // Events
         public delegate void PlayerInteraction(NetworkStudentController player);
@@ -143,6 +143,18 @@ namespace AI.Agents
         public static void LoseDeadPlayer(NetworkStudentController player)
         {
             OnLostBadStudent?.Invoke(player);
+        }
+        
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(_stunned);
+            }
+            else
+            {
+                _stunned = (bool) stream.ReceiveNext();
+            }
         }
         
         /// <summary>
