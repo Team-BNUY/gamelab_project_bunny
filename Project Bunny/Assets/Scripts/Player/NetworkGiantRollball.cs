@@ -71,7 +71,7 @@ namespace Player
         /// </summary>
         private void SelfPush()
         {
-            _snowballRigidbody.AddForce(0f, -500f, 0f);
+            _snowballRigidbody.AddForce(0f, -5000f * Physics.gravity.y, 0f);
         }
 
         /// <summary>
@@ -96,7 +96,10 @@ namespace Player
         private void TrackGiantRollballStates()
         {
             var currentSpeed= _snowballRigidbody.velocity.magnitude;
-            _isDestroyable = currentSpeed >= _destroySpeedThreshold;
+            if (!_isDestroyable && currentSpeed >= _destroySpeedThreshold)
+            {
+                _isDestroyable = true;
+            }
             _canDamage = currentSpeed >= _damageThreshold;
         }
 
