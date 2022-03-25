@@ -43,7 +43,7 @@ namespace Player
         private void OnCollisionEnter(Collision other)
         {
             _isGrowing = other.gameObject.layer == LayerMask.NameToLayer("Ground");
-            
+
             if (IsInLayerMask(other.gameObject) && _isDestroyable)
             {
                 if (other.gameObject.TryGetComponent<NetworkStudentController>(out var studentStudent) && _canDamage)
@@ -51,6 +51,11 @@ namespace Player
                     var studentPhotonView = studentStudent.photonView;
                     studentPhotonView.RPC("GetDamaged", RpcTarget.All, _damage);
                 }
+                BreakRollball();
+            }
+
+            if (other.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
+            {
                 BreakRollball();
             }
         }
@@ -71,7 +76,7 @@ namespace Player
         /// </summary>
         private void SelfPush()
         {
-            _snowballRigidbody.AddForce(0f, -5000f * Physics.gravity.y, 0f);
+            _snowballRigidbody.AddForce(0f, -100f, 0f);
         }
 
         /// <summary>
@@ -95,12 +100,13 @@ namespace Player
         /// </summary>
         private void TrackGiantRollballStates()
         {
-            var currentSpeed= _snowballRigidbody.velocity.magnitude;
-            if (!_isDestroyable && currentSpeed >= _destroySpeedThreshold)
+            var velocity = _snowballRigidbody.velocity;
+            var currentSpeed = new Vector3(velocity.x, 0f, velocity.z);
+            if (!_isDestroyable && (Mathf.Abs(currentSpeed.x) >= _destroySpeedThreshold || Mathf.Abs(currentSpeed.z) >= _destroySpeedThreshold))
             {
                 _isDestroyable = true;
             }
-            _canDamage = currentSpeed >= _damageThreshold;
+            _canDamage = velocity.magnitude >= _damageThreshold;
         }
 
         /// <summary>
