@@ -33,7 +33,7 @@ namespace Player
 
         private void Update()
         {
-            photonView.RPC(nameof(TrackGiantRollballStates), RpcTarget.All);
+            TrackGiantRollballStates();
         }
 
         private void FixedUpdate()
@@ -90,7 +90,6 @@ namespace Player
         /// <summary>
         /// Track the Giant Snowball's properties
         /// </summary>
-        [PunRPC]
         private void TrackGiantRollballStates()
         {
             var velocity = _snowballRigidbody.velocity;
@@ -125,12 +124,14 @@ namespace Player
                 stream.SendNext(_canDamage);
                 stream.SendNext(_isDestroyable);
                 stream.SendNext(_isGrowing);
+                stream.SendNext(_snowballRigidbody.velocity);
             }
             else
             {
                 _canDamage = (bool) stream.ReceiveNext();
                 _isDestroyable = (bool) stream.ReceiveNext();
                 _isGrowing = (bool) stream.ReceiveNext();
+                _snowballRigidbody.velocity = (Vector3) stream.ReceiveNext();
             }
         }
     }
