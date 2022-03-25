@@ -134,7 +134,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _destroySpeedThreshold: 7
-  _damageThreshold: 5
+  _damageThreshold: 3
   _sizeThreshold: 6
   _pushForce: 10
   _damage: 3
@@ -158,6 +158,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
+  - {fileID: -1507739266704330185}
   - {fileID: -3006674947755084028}
   sceneViewId: 0
   InstantiationId: 0
