@@ -107,6 +107,7 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
+            PhotonTeamsManager.PlayerLeftTeam += OnPlayerLeaveTeam;
         }
 
         private void Update()
@@ -158,6 +159,15 @@ namespace Player
         {
             _view.RPC("UpdateTeamColorVisuals", RpcTarget.AllBuffered);
         }
+
+        private void OnPlayerLeaveTeam(Photon.Realtime.Player player, PhotonTeam team)
+        {
+            if (_view.IsMine)
+            {
+                _view.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered); 
+            }
+        }
+        
 
         private void OnTriggerEnter(Collider other)
         {
@@ -474,8 +484,6 @@ namespace Player
                     _currentInteractable?.Exit();
                     _currentInteractable = null;
                 }
-                
-                
             }
         }
 
