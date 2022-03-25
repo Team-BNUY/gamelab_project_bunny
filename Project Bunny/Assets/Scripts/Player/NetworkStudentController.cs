@@ -107,6 +107,7 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
+            PhotonTeamsManager.PlayerLeftTeam += OnPlayerLeaveTeam;
         }
 
         private void Update()
@@ -474,8 +475,6 @@ namespace Player
                     _currentInteractable?.Exit();
                     _currentInteractable = null;
                 }
-                
-                
             }
         }
 
