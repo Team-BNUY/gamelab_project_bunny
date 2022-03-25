@@ -41,15 +41,16 @@ namespace Networking
             InitialiseUI();
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
 
-            PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
+            /*PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
             if (PhotonTeamsManager.Instance.GetTeamMembersCount(1) <= PhotonTeamsManager.Instance.GetTeamMembersCount(2))
             {
                 PhotonNetwork.LocalPlayer.JoinTeam(1);
+                BlueTeamTable.instance.AddTeamCount();
             }
             else
             {
                 PhotonNetwork.LocalPlayer.JoinTeam(2);
-            }
+            }*/
 
             _startGameBtn.interactable = false;
 
@@ -97,8 +98,8 @@ namespace Networking
             _startGameBtn.onClick.AddListener(StartGame);
             _readyUpBtn.onClick.AddListener(ReadyUp);
 
-            _blueJerseyBtn.onClick.AddListener(() => SwapTeams(1));
-            _redJerseyBtn.onClick.AddListener(() => SwapTeams(2));
+            //_blueJerseyBtn.onClick.AddListener(() => SwapTeams(1));
+            //_redJerseyBtn.onClick.AddListener(() => SwapTeams(2));
             _leaveRoomBtn.onClick.AddListener(() => PhotonNetwork.LeaveRoom());
         }
 
@@ -156,6 +157,22 @@ namespace Networking
 
         public override void OnPlayerLeftRoom(Photon.Realtime.Player newPlayer)
         {
+            if (!PhotonNetwork.IsMasterClient) return;
+            
+            if (newPlayer.GetPhotonTeam() != null)
+            {
+                if(newPlayer.GetPhotonTeam().Name == "Blue")
+                {
+                    BlueTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
+                    newPlayer.LeaveCurrentTeam();
+                }
+                else if(newPlayer.GetPhotonTeam().Name == "Red")
+                {
+                    OrangeTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
+                    newPlayer.LeaveCurrentTeam();
+                }
+            }
+            
             base.OnPlayerLeftRoom(newPlayer);
             if (_tiles.Any(x => x.player == newPlayer))
             {
@@ -170,6 +187,7 @@ namespace Networking
 
             _startGameBtn.interactable = (PhotonNetwork.LocalPlayer.IsMasterClient
                 && PhotonNetwork.PlayerList.Length >= 2);
+            
         }
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
