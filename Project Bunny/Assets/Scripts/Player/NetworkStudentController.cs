@@ -140,9 +140,9 @@ namespace Player
             }
         }
 
-        private void OnControllerColliderHit(ControllerColliderHit hit)
+        private void OnCollisionStay(Collision other)
         {
-            if (hit.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball))
+            if (other.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball))
             {
                 if (!_hasSnowball && !giantRollball.CanDamage)
                 {
