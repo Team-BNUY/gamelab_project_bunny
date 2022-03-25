@@ -62,7 +62,9 @@ namespace AI.Actions.StudentActions
             
             // Checks if the position is free
             var path = new NavMeshPath();
-            if (!navMeshAgent.CalculatePath(position, path) || path.status == NavMeshPathStatus.PathInvalid || path.status == NavMeshPathStatus.PathPartial || Physics.CheckSphere(position, navMeshAgent.radius, _student.StudentLayer)) return false;
+            if (!navMeshAgent.CalculatePath(position, path) || path.status == NavMeshPathStatus.PathInvalid || path.status == NavMeshPathStatus.PathPartial 
+                || Physics.CheckSphere(position, navMeshAgent.radius, _student.StudentLayer) 
+                || Physics.CheckBox(position, new Vector3(navMeshAgent.radius, 10f, navMeshAgent.radius), Quaternion.identity, _student.ObstacleLayer)) return false;
             
             // Checks if there is an obstacle between the student and the gang in the hypothetical join position
             foreach (var memberPosition in _gang.Members.Select(m => m.transform.position))
