@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 784256645129813037}
   m_Layer: 0
-  m_Name: Jersey_Table_A
+  m_Name: Jersey_Table_A_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,15 +48,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.919
+      value: -0.947
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.087
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.849
+      value: -0.988
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -90,6 +90,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 872da4d734860c1479ef2df22c0df9ea, type: 2}
+    - target: {fileID: -5754084199372789682, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 1550855465393654873, guid: 0280da4fc839f5640b6aa6e919999dfd, type: 3}
     - target: {fileID: 919132149155446097, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_Name
       value: Table_Leg_FBX (3)
@@ -114,15 +118,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.919
+      value: -0.947
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.087
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.861
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -156,6 +160,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 872da4d734860c1479ef2df22c0df9ea, type: 2}
+    - target: {fileID: -5754084199372789682, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 1550855465393654873, guid: 0280da4fc839f5640b6aa6e919999dfd, type: 3}
     - target: {fileID: 919132149155446097, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_Name
       value: Table_Leg_FBX (1)
@@ -180,15 +188,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0.972
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.087
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.861
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -222,6 +230,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 872da4d734860c1479ef2df22c0df9ea, type: 2}
+    - target: {fileID: -5754084199372789682, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 1550855465393654873, guid: 0280da4fc839f5640b6aa6e919999dfd, type: 3}
     - target: {fileID: 919132149155446097, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_Name
       value: Table_Leg_FBX
@@ -250,7 +262,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d55bd6acd42f384dbb4206a53d8ba6a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.816
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d55bd6acd42f384dbb4206a53d8ba6a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -288,6 +300,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 2cceac67f4e3d0847972f31daf54bb5d, type: 2}
+    - target: {fileID: -5754084199372789682, guid: 1d55bd6acd42f384dbb4206a53d8ba6a, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4185675743113982831, guid: e371a963b90694f43a7748c5e77ac7f9, type: 3}
     - target: {fileID: 919132149155446097, guid: 1d55bd6acd42f384dbb4206a53d8ba6a, type: 3}
       propertyPath: m_Name
       value: Table_Top_FBX
@@ -312,15 +328,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.972
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.087
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.849
+      value: -0.988
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -354,6 +370,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 872da4d734860c1479ef2df22c0df9ea, type: 2}
+    - target: {fileID: -5754084199372789682, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 1550855465393654873, guid: 0280da4fc839f5640b6aa6e919999dfd, type: 3}
     - target: {fileID: 919132149155446097, guid: d4de1f82f1d1f824680b777e4b0d263a, type: 3}
       propertyPath: m_Name
       value: Table_Leg_FBX (2)

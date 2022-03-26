@@ -577,7 +577,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8258238699546852672}
   m_Layer: 0
-  m_Name: Chair
+  m_Name: Chair_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -630,15 +630,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d55bd6acd42f384dbb4206a53d8ba6a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.090511
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d55bd6acd42f384dbb4206a53d8ba6a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.21257
+      value: 0.302
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d55bd6acd42f384dbb4206a53d8ba6a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.9517
+      value: 10.229
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d55bd6acd42f384dbb4206a53d8ba6a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -672,6 +672,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 512d8884d0150ff4486181c7d8135a72, type: 2}
+    - target: {fileID: -5754084199372789682, guid: 1d55bd6acd42f384dbb4206a53d8ba6a, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4185675743113982831, guid: e371a963b90694f43a7748c5e77ac7f9, type: 3}
     - target: {fileID: 919132149155446097, guid: 1d55bd6acd42f384dbb4206a53d8ba6a, type: 3}
       propertyPath: m_Name
       value: Table_Top_FBX
