@@ -9,10 +9,15 @@ namespace AI
     {
         [SerializeField] private ActionSpotType _type;
         [SerializeField] private Transform _interactiveObject;
-        
-        private readonly List<GameObject> _occupyingObjects = new List<GameObject>();
+
+        private List<GameObject> _occupyingObjects;
         private bool _occupied;
-        
+
+        private void Awake()
+        {
+            _occupyingObjects = new List<GameObject>();
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             var o = other.gameObject;
@@ -53,7 +58,7 @@ namespace AI
         
         public bool Occupied
         {
-            get => _occupied || _occupyingObjects.Any(o => o.GetComponent<Student>());
+            get => _occupied || _occupyingObjects.Any(o => o.TryGetComponent<Student>(out _));
         }
     }
     
