@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using AI.Agents;
 using UnityEngine;
 
@@ -10,28 +9,23 @@ namespace AI
         [SerializeField] private ActionSpotType _type;
         [SerializeField] private Transform _interactiveObject;
 
-        private List<GameObject> _occupyingObjects;
+        private readonly List<Student> _occupyingStudents = new List<Student>();
         private bool _occupied;
-
-        private void Awake()
-        {
-            _occupyingObjects = new List<GameObject>();
-        }
 
         private void OnTriggerEnter(Collider other)
         {
-            var o = other.gameObject;
-            if (_occupyingObjects.Contains(o)) return;
+            var student = other.GetComponent<Student>();
+            if (_occupyingStudents.Contains(student)) return;
             
-            _occupyingObjects.Add(o);
+            _occupyingStudents.Add(student);
         }
         
         private void OnTriggerExit(Collider other)
         {
-            var o = other.gameObject;
-            if (!_occupyingObjects.Contains(o)) return;
+            var student = other.GetComponent<Student>();
+            if (!_occupyingStudents.Contains(student)) return;
             
-            _occupyingObjects.Remove(o);
+            _occupyingStudents.Remove(student);
         }
 
         public void Use()
@@ -58,7 +52,7 @@ namespace AI
         
         public bool Occupied
         {
-            get => _occupied || _occupyingObjects.Any(o => o.TryGetComponent<Student>(out _));
+            get => _occupied || _occupyingStudents.Count != 0;
         }
     }
     
