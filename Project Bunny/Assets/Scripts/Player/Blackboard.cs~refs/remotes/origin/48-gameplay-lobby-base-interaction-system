@@ -2,7 +2,7 @@ using Interfaces;
 using Player;
 using UnityEngine;
 
-public class BlackboardScript : MonoBehaviour, INetworkTriggerable
+public class Blackboard : MonoBehaviour, INetworkTriggerable
 {
     #region InterfaceMethods
     

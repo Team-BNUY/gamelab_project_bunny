@@ -2,7 +2,7 @@ using Interfaces;
 using Player;
 using UnityEngine;
 
-public class OptionsBoardScript : MonoBehaviour, INetworkTriggerable
+public class OptionsBoard : MonoBehaviour, INetworkTriggerable
 {
     #region InterfaceMethods
     
