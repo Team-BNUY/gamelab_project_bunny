@@ -614,31 +614,6 @@ namespace Player
         }
         
         /// <summary>
-        /// Utility function that returns the nearest triggerable to the player
-        /// </summary>
-        /// <returns></returns>
-        private INetworkTriggerable ReturnNearestTriggerable()
-        {
-            INetworkTriggerable interactable = null;
-            var maxColliders = 3; //maximum number of objects near to the player that can be looped through
-            var hitColliders = new Collider[maxColliders];
-            var numColliders = Physics.OverlapSphereNonAlloc(transform.position, 2f, hitColliders);
-
-            if (numColliders < 1) return null;
-
-            //Loop through 3 nearest objects and check if any of them are interactables that implement IInteractable
-            for (var i = 0; i < numColliders; i++)
-            {
-                if (hitColliders[i].gameObject.TryGetComponent<INetworkTriggerable>(out var interactableObject))
-                {
-                    interactable = interactableObject;
-                }
-            }
-
-            return interactable;
-        }
-
-        /// <summary>
         /// Accessed through animation event. Disables Walking animation when necessary
         /// </summary>
         // ReSharper disable once UnusedMember.Global
