@@ -2,16 +2,16 @@ using Interfaces;
 using Player;
 using UnityEngine;
 
-public class OptionsBoardScript : MonoBehaviour, INetworkTriggerable
+public class CreditsBoard : MonoBehaviour, INetworkTriggerable
 {
     #region InterfaceMethods
     
     /// <summary>
-    /// Method that runs when you trigger this Options Board
+    /// Method that runs when you trigger this Credits Board
     /// </summary>
     public void Trigger(NetworkStudentController currentPlayer)
     {
-        Debug.Log("You just triggered the Options Board!");
+        Debug.Log("You just triggered the Credits Board!");
     }
     
     #endregion

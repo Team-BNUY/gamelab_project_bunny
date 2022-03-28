@@ -97,9 +97,7 @@ namespace Networking
 
             _startGameBtn.onClick.AddListener(StartGame);
             _readyUpBtn.onClick.AddListener(ReadyUp);
-
-            //_blueJerseyBtn.onClick.AddListener(() => SwapTeams(1));
-            //_redJerseyBtn.onClick.AddListener(() => SwapTeams(2));
+                
             _leaveRoomBtn.onClick.AddListener(() => PhotonNetwork.LeaveRoom());
         }
 
@@ -152,7 +150,7 @@ namespace Networking
             }
 
             _startGameBtn.interactable = (PhotonNetwork.LocalPlayer.IsMasterClient && PhotonNetwork.PlayerList.Length >= 2);
-            //_startGameBtn.interactable = true;
+            
         }
 
         public override void OnPlayerLeftRoom(Photon.Realtime.Player newPlayer)
