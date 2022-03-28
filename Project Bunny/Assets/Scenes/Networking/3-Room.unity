@@ -2442,6 +2442,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: tree_B_fbx
       objectReference: {fileID: 0}
+    - target: {fileID: 5187022088888707361, guid: 1496dc67c32c196419f9e523288e7de0, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5558a59e7d812b44ca89e7e0d2ed5433, type: 2}
+    - target: {fileID: 7202271454713460447, guid: 1496dc67c32c196419f9e523288e7de0, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 67e2e94238ca3ee4cacb57a478f86428, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1496dc67c32c196419f9e523288e7de0, type: 3}
 --- !u!4 &745785422 stripped
@@ -2549,7 +2557,6 @@ Transform:
   - {fileID: 592301538}
   - {fileID: 509065316}
   - {fileID: 1552523871}
-  - {fileID: 891623498}
   m_Father: {fileID: 881437726}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
