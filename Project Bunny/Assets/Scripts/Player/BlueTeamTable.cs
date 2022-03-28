@@ -51,7 +51,7 @@ namespace Player
                 else
                 {
                     PhotonNetwork.LocalPlayer.SwitchTeam(1);
-                    OrangeTeamTable.instance.SubtractTeamCount_RPC();
+                    RedTeamTable.instance.SubtractTeamCount_RPC();
                     _view.RPC("AddTeamCount", RpcTarget.AllBuffered);
                     
                 }

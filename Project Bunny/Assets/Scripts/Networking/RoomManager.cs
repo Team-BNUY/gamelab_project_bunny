@@ -168,7 +168,7 @@ namespace Networking
                 }
                 else if(newPlayer.GetPhotonTeam().Name == "Red")
                 {
-                    OrangeTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
+                    RedTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
                     newPlayer.LeaveCurrentTeam();
                 }
             }
