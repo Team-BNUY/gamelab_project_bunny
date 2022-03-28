@@ -8,14 +8,12 @@ namespace Player
     public class OrangeTeamTable : MonoBehaviour, INetworkTriggerable
     {
         public static OrangeTeamTable instance;
-    
-        [Header("Orange Table Instantiation")]
+
+        [Header("Orange Table Instantiation")] 
+        
         [SerializeField] private GameObject[] _jerseys;
 
-        [SerializeField] private Material _highlightMaterial;
-        [SerializeField] private Material _regularMaterial;
-    
-    
+
         private int _teamCount = -1;
         private const int _teamMaxSize = 4;
         public PhotonView _view;
@@ -81,7 +79,7 @@ namespace Player
             if (_teamCount < _teamMaxSize)
             {
                 _teamCount++;
-                _jerseys[_teamCount].GetComponent<Renderer>().material = _highlightMaterial;
+                _jerseys[_teamCount].gameObject.SetActive(false);
             }
         }
     
@@ -93,7 +91,7 @@ namespace Player
         {
             if (_teamCount >= 0)
             {
-                _jerseys[_teamCount].GetComponent<Renderer>().material = _regularMaterial;
+                _jerseys[_teamCount].gameObject.SetActive(true);
                 _teamCount--;
             }
         

@@ -181,8 +181,6 @@ namespace Player
         }
         #endregion
 
-        #endregion
-
         #region Actions
 
 
