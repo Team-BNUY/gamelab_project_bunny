@@ -14,8 +14,8 @@ namespace Networking
         [SerializeField] private Transform _snowballTransform;
         [SerializeField] private LineRenderer _trajectoryLineRenderer;
         [SerializeField, Min(0)] private float _initialDirection;
-        [SerializeField] private float _damage;
-
+        [SerializeField] private int _damage;
+    
         private bool _isDestroyable;
         private float _throwForce;
         private float _mass;
