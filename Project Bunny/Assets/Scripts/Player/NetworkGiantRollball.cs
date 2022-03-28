@@ -16,7 +16,7 @@ namespace Player
 
         // ReSharper disable once NotAccessedField.Local
         // TODO: Implement damage system once game loop is complete
-        [SerializeField] private float _damage;
+        [SerializeField] private int _damage;
         [SerializeField] private float _growthFactor;
 
         private bool _isGrowing;

@@ -6,7 +6,8 @@ using Photon.Pun.UtilityScripts;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Slider = UnityEngine.UI.Slider;
+using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
 
 namespace Player
 {
@@ -35,15 +36,17 @@ namespace Player
         private Vector3 _playerPosition;
         private Quaternion _playerRotation;
 
-        [Header("Player Properties")]
-        [SerializeField] private Slider _healthBar;
+        [Header("Player Properties")] 
+        [SerializeField] private Canvas _worldUI;
+        [SerializeField] private Image[] _hearts;
+        [SerializeField] private int _maxHealth;
+        private int _currentHealth;
         private GameObject _currentObjectInHand;
         private INetworkInteractable _currentInteractable;
         private INetworkTriggerable _currentTriggerable;
         private bool _isSliding;
 
         [Header("Snowball")]
-        // TODO: Dynamically instantiate and attach prefab from a Manager
         [SerializeField] private Transform _playerHand;
         [SerializeField] [Min(0)] private float _digSnowballMaxTime;
         [SerializeField] private float _minForce;
@@ -93,7 +96,6 @@ namespace Player
             _view ??= GetComponent<PhotonView>();
             _animator ??= gameObject.GetComponent<Animator>();
             _playerInput ??= GetComponent<PlayerInput>();
-            _healthBar ??= GetComponentInChildren<Slider>();
 
             _playerInput.actionEvents[0].AddListener(OnMove);
             _playerInput.actionEvents[1].AddListener(OnLook);
@@ -103,7 +105,7 @@ namespace Player
         {
             _isJerseyNull = _jersey == null;
             _throwForce = _minForce;
-            _healthBar.value = _healthBar.maxValue;
+            _currentHealth = _maxHealth;
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
@@ -281,25 +283,21 @@ namespace Player
         /// <param name="damage"></param>
         [PunRPC]
         // ReSharper disable once UnusedMember.Global
-        private void GetDamagedRPC(float damage)
+        public void GetDamaged(int damage)
         {
-            Debug.Log("hit on player " + PlayerID);
-
-            if (damage >= _healthBar.value)
+            if (damage >= _currentHealth)
             {
-                _healthBar.value = 0.0f;
+                _currentHealth = 0;
             }
             else
             {
-                _healthBar.value -= damage;
+                _currentHealth -= damage;
             }
+            SetHeartsVisibility();
 
-            _healthBar.value = _healthBar.value;
-
-            if (_healthBar.value <= 0)
+            if (_currentHealth <= 0)
             {
-                // StartCoroutine(KillStudent());
-
+                _worldUI.gameObject.SetActive(false);
                 _isDead = true;
                 _characterController.enabled = false;
                 if (PhotonNetwork.IsMasterClient)
@@ -317,23 +315,21 @@ namespace Player
 
         private void Respawn()
         {
-            _healthBar.value = _healthBar.maxValue;
+            _worldUI.gameObject.SetActive(true);
+            _currentHealth = _maxHealth;
+            SetHeartsVisibility();
             _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this);
             _characterController.enabled = true;
             _isDead = false;
         }
 
-        // private IEnumerator KillStudent()
-        // {
-        //     _isDead = true;
-        //     _characterController.enabled = false;
-        //     PhotonNetwork.Instantiate(ArenaManager.Instance.SnowmanPrefab.name, _studentTransform.position, _studentTransform.rotation);
-        //     yield return new WaitForSeconds(DEATH_TIME_DELAY);
-        //     _healthBar.value = _healthBar.maxValue;
-        //     _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this);
-        //     _characterController.enabled = true;
-        //     _isDead = false;
-        // }
+        private void SetHeartsVisibility()
+        {
+            for (var i = 1; i <= _maxHealth; i++)
+            {
+                _hearts[i-1].color = i <= _currentHealth ? Color.white : new Color(1f, 1f, 1f, 0.5f);
+            }
+        }
 
         #endregion
 
@@ -661,17 +657,19 @@ namespace Player
                 stream.SendNext(_isDigging);
                 stream.SendNext(_isWalking);
                 stream.SendNext(_isAiming);
-                stream.SendNext(_healthBar.value);
+                stream.SendNext(_currentHealth);
                 stream.SendNext(_isDead);
+                stream.SendNext(_worldUI.gameObject.activeSelf);
             }
             else
             {
-                _hasSnowball = (bool)stream.ReceiveNext();
-                _isDigging = (bool)stream.ReceiveNext();
-                _isWalking = (bool)stream.ReceiveNext();
-                _isAiming = (bool)stream.ReceiveNext();
-                _healthBar.value = (float)stream.ReceiveNext();
-                _isDead = (bool)stream.ReceiveNext();
+                _hasSnowball = (bool) stream.ReceiveNext();
+                _isDigging = (bool) stream.ReceiveNext();
+                _isWalking = (bool) stream.ReceiveNext();
+                _isAiming = (bool) stream.ReceiveNext();
+                _currentHealth = (int) stream.ReceiveNext();
+                _isDead = (bool) stream.ReceiveNext();
+                _worldUI.gameObject.SetActive((bool) stream.ReceiveNext());
             }
         }
 
