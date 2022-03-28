@@ -1,9 +1,6 @@
 using System;
-<<<<<<< refs/remotes/origin/main
 using System.Collections;
-=======
 using System.Runtime.CompilerServices;
->>>>>>> [Code][Gameplay] Lobby system progress (some minor bugs remain)
 using Cinemachine;
 using Interfaces;
 using Networking;
@@ -160,9 +157,6 @@ namespace Player
         {
             _view.RPC("UpdateTeamColorVisuals", RpcTarget.AllBuffered);
         }
-<<<<<<< refs/remotes/origin/main
-        
-=======
 
         private void OnTriggerEnter(Collider other)
         {
