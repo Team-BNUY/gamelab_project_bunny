@@ -1,11 +1,9 @@
-using System;
-using System.Collections;
-using System.Runtime.CompilerServices;
 using Cinemachine;
 using Interfaces;
 using Networking;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Slider = UnityEngine.UI.Slider;
@@ -28,7 +26,7 @@ namespace Player
         private Camera _playerCamera;
         private CinemachineVirtualCamera _playerVCam;
         private CharacterController _characterController;
-        private CinemachineComponentBase _playerVCamComponentBase;
+        private CinemachineFramingTransposer _playerVCamFramingTransposer;
 
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
@@ -68,11 +66,14 @@ namespace Player
         private static readonly int HasSnowballHash = Animator.StringToHash("hasSnowball");
         private static readonly int ThrowSnowball = Animator.StringToHash("ThrowSnowball");
 
+        // PROPERTIES (REPLACE PUBLIC GETTERS)
+        public CharacterController CharacterControllerComponent => _characterController;
         public Quaternion PlayerRotation => _playerRotation;
         public Transform PlayerHand => _playerHand;
         public bool HasSnowball => _hasSnowball;
         public bool IsDigging => _isDigging;
         public bool IsDead => _isDead;
+        public CinemachineFramingTransposer PlayerVCamFramingTransposer => _playerVCamFramingTransposer;
 
         [Header("Network")]
         [SerializeField] private TMPro.TMP_Text _nickNameText;
@@ -561,36 +562,30 @@ namespace Player
         /// Attach unique instantiated camera with player
         /// </summary>
         /// <param name="cam"></param>
+        /// <param name="angle"></param>
+        /// <param name="distance"></param>
         // ReSharper disable once UnusedMember.Global
-        public void SetCamera(GameObject cam)
+        public void SetCamera(GameObject cam, float angle, float distance)
         {
             _playerVCam = cam.GetComponent<CinemachineVirtualCamera>();
             _playerCamera = cam.GetComponentInChildren<Camera>();
-            _playerVCamComponentBase = _playerVCam.GetCinemachineComponent(CinemachineCore.Stage.Body);
             _playerVCam.Follow = _studentTransform;
+            _playerVCamFramingTransposer = _playerVCam.GetCinemachineComponent<CinemachineFramingTransposer>();
+            SetFrameTransposerProperties(angle, distance);
         }
 
         /// <summary>
-        /// Getter function to get the player's Virtual Camera
+        /// Set VCam's FrameTransposer properties
+        /// Put it in separate function to modify at any time
+        /// If you want to tweak more properties, add more arguments to this function
+        /// and the SetCamera(...) above
         /// </summary>
-        /// <returns></returns>
-        public CinemachineVirtualCamera GetVirtualCamera()
+        /// <param name="angle"></param>
+        /// <param name="distance"></param>
+        private void SetFrameTransposerProperties(float angle, float distance)
         {
-            return _playerVCam;
-        }
-
-        /// <summary>
-        /// Getter function to get the CinemachineComponentBase of the player's Virtual Camera
-        /// </summary>
-        /// <returns></returns>
-        public CinemachineComponentBase GetVirtualCameraComponentBase()
-        {
-            return _playerVCamComponentBase;
-        }
-
-        public CharacterController GetPlayerCharacterController()
-        {
-            return _characterController;
+            _playerVCamFramingTransposer.m_CameraDistance = distance;
+            _playerVCam.transform.rotation = Quaternion.Euler(angle, 0f, 0f);
         }
 
         /// <summary>

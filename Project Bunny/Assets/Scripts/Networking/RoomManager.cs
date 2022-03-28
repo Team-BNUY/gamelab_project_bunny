@@ -139,7 +139,7 @@ namespace Networking
             NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
             PhotonNetwork.LocalPlayer.TagObject = player;
-            player.SetCamera(Instantiate(_playerCamera));
+            player.SetCamera(Instantiate(_playerCamera), 40f, 15f);
         }
 
         public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
