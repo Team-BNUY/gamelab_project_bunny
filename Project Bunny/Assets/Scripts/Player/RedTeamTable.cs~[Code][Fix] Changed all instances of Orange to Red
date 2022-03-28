@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace Player
 {
-    public class OrangeTeamTable : MonoBehaviour, INetworkTriggerable
+    public class RedTeamTable : MonoBehaviour, INetworkTriggerable
     {
-        public static OrangeTeamTable instance;
+        public static RedTeamTable instance;
 
         [Header("Orange Table Instantiation")] 
         
