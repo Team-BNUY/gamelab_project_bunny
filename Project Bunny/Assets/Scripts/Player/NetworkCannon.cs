@@ -19,7 +19,7 @@ namespace Player
         private bool _isActive;
         private GameObject _player;
         private NetworkStudentController _currentStudentController;
-        private CinemachineComponentBase _playerVCamSettings;
+        private CinemachineFramingTransposer _playerVCamSettings;
         private CharacterController _playerCharController;
         [SerializeField] [Min(0)] private float _rotationSpeed;
 
@@ -71,17 +71,12 @@ namespace Player
             _currentStudentController = currentStudentController;
             _player = _currentStudentController.transform.gameObject;
 
-            //Get the Cinemachine camera component of the player's Virtual Camera.
-            _playerVCamSettings = _currentStudentController.GetVirtualCameraComponentBase();
-
             //Setting the new distance of the player camera when assuming control of the Slingshot
-            if (_playerVCamSettings is CinemachineFramingTransposer transposer)
-            {
-                transposer.m_CameraDistance = _newCameraDistance;
-            }
+            _playerVCamSettings = _currentStudentController.PlayerVCamFramingTransposer;
+            _playerVCamSettings.m_CameraDistance = _newCameraDistance;
 
             //Disable player controller in order to set the player's position manually
-            _playerCharController = _currentStudentController.GetPlayerCharacterController();
+            _playerCharController = _currentStudentController.CharacterControllerComponent;
             _playerCharController.enabled = false;
 
             //If there is no cannonball already on the slingshot, then spawn one. 
@@ -110,10 +105,7 @@ namespace Player
             _currentStudentController = null;
 
             //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
-            if (_playerVCamSettings is CinemachineFramingTransposer transposer && _playerVCamSettings != null)
-            {
-                transposer.m_CameraDistance = 25; // your value
-            }
+            _playerVCamSettings.m_CameraDistance = 25;
 
             //Restore key variables to null/default value
             _playerVCamSettings = null;
