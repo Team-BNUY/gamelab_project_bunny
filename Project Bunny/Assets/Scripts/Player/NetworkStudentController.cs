@@ -1,10 +1,9 @@
-using System;
-using System.Collections;
 using Cinemachine;
 using Interfaces;
 using Networking;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Slider = UnityEngine.UI.Slider;
@@ -27,7 +26,7 @@ namespace Player
         private Camera _playerCamera;
         private CinemachineVirtualCamera _playerVCam;
         private CharacterController _characterController;
-        private CinemachineComponentBase _playerVCamComponentBase;
+        private CinemachineFramingTransposer _playerVCamFramingTransposer;
 
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
@@ -40,6 +39,7 @@ namespace Player
         [SerializeField] private Slider _healthBar;
         private GameObject _currentObjectInHand;
         private INetworkInteractable _currentInteractable;
+        private INetworkTriggerable _currentTriggerable;
         private bool _isSliding;
 
         [Header("Snowball")]
@@ -66,11 +66,14 @@ namespace Player
         private static readonly int HasSnowballHash = Animator.StringToHash("hasSnowball");
         private static readonly int ThrowSnowball = Animator.StringToHash("ThrowSnowball");
 
+        // PROPERTIES (REPLACE PUBLIC GETTERS)
+        public CharacterController CharacterControllerComponent => _characterController;
         public Quaternion PlayerRotation => _playerRotation;
         public Transform PlayerHand => _playerHand;
         public bool HasSnowball => _hasSnowball;
         public bool IsDigging => _isDigging;
         public bool IsDead => _isDead;
+        public CinemachineFramingTransposer PlayerVCamFramingTransposer => _playerVCamFramingTransposer;
 
         [Header("Network")]
         [SerializeField] private TMPro.TMP_Text _nickNameText;
@@ -153,9 +156,30 @@ namespace Player
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
         {
-            UpdateTeamColorVisuals();
+            _view.RPC("UpdateTeamColorVisuals", RpcTarget.AllBuffered);
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.TryGetComponent(out INetworkTriggerable triggerable))
+            {
+                if (_currentTriggerable == null)
+                {
+                    _currentTriggerable = triggerable;
+                }
+            }
+        }
+        
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.TryGetComponent(out INetworkTriggerable triggerable))
+            {
+                if (_currentTriggerable == triggerable)
+                {
+                    _currentTriggerable = null;  
+                }
+            }
+        }
         #endregion
 
         #region Actions
@@ -428,6 +452,12 @@ namespace Player
         {
             if (context.performed)
             {
+                if (!_view.IsMine) return;
+                
+                
+                _currentTriggerable?.Trigger(this);
+
+
                 if (_hasSnowball) return; //Don't interact with interactables if the player already has a snowball. 
 
                 // TODO: Interact with other items here
@@ -462,6 +492,7 @@ namespace Player
         /// Temporary functionality for updating visuals like mesh object and name text colors
         /// Functionality will still be kept for later, but more refined
         /// </summary>
+        [PunRPC]
         public void UpdateTeamColorVisuals()
         {
             if (_isJerseyNull)
@@ -486,6 +517,21 @@ namespace Player
                         break;
                 }
             }
+        }
+
+        
+        /// <summary>
+        /// Tmeporary function for restoring a player's colors to all white to show they are teamless
+        /// </summary>
+        [PunRPC]
+        public void RestoreTeamlessColors()
+        {
+            _nickNameText.color = Color.white;
+        }
+        
+        public void RestoreTeamlessColors_RPC()
+        {
+            _view.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered);
         }
 
         public void SetNameText()
@@ -516,36 +562,30 @@ namespace Player
         /// Attach unique instantiated camera with player
         /// </summary>
         /// <param name="cam"></param>
+        /// <param name="angle"></param>
+        /// <param name="distance"></param>
         // ReSharper disable once UnusedMember.Global
-        public void SetCamera(GameObject cam)
+        public void SetCamera(GameObject cam, float angle, float distance)
         {
             _playerVCam = cam.GetComponent<CinemachineVirtualCamera>();
             _playerCamera = cam.GetComponentInChildren<Camera>();
-            _playerVCamComponentBase = _playerVCam.GetCinemachineComponent(CinemachineCore.Stage.Body);
             _playerVCam.Follow = _studentTransform;
+            _playerVCamFramingTransposer = _playerVCam.GetCinemachineComponent<CinemachineFramingTransposer>();
+            SetFrameTransposerProperties(angle, distance);
         }
 
         /// <summary>
-        /// Getter function to get the player's Virtual Camera
+        /// Set VCam's FrameTransposer properties
+        /// Put it in separate function to modify at any time
+        /// If you want to tweak more properties, add more arguments to this function
+        /// and the SetCamera(...) above
         /// </summary>
-        /// <returns></returns>
-        public CinemachineVirtualCamera GetVirtualCamera()
+        /// <param name="angle"></param>
+        /// <param name="distance"></param>
+        private void SetFrameTransposerProperties(float angle, float distance)
         {
-            return _playerVCam;
-        }
-
-        /// <summary>
-        /// Getter function to get the CinemachineComponentBase of the player's Virtual Camera
-        /// </summary>
-        /// <returns></returns>
-        public CinemachineComponentBase GetVirtualCameraComponentBase()
-        {
-            return _playerVCamComponentBase;
-        }
-
-        public CharacterController GetPlayerCharacterController()
-        {
-            return _characterController;
+            _playerVCamFramingTransposer.m_CameraDistance = distance;
+            _playerVCam.transform.rotation = Quaternion.Euler(angle, 0f, 0f);
         }
 
         /// <summary>
@@ -572,7 +612,7 @@ namespace Player
 
             return interactable;
         }
-
+        
         /// <summary>
         /// Accessed through animation event. Disables Walking animation when necessary
         /// </summary>

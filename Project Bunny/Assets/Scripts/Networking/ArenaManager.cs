@@ -134,7 +134,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
         player.TeamID = PhotonNetwork.LocalPlayer.GetPhotonTeam().Code;
         PhotonNetwork.LocalPlayer.TagObject = player;
-        player.SetCamera(Instantiate(_playerCamera));
+        player.SetCamera(Instantiate(_playerCamera), 60f, 25f);
     }
 
     public Vector3 GetPlayerSpawnPoint(NetworkStudentController player = null)
