@@ -297,9 +297,9 @@ namespace Player
 
             if (_currentHealth <= 0)
             {
-                _worldUI.gameObject.SetActive(false);
                 _isDead = true;
                 _characterController.enabled = false;
+                _worldUI.gameObject.SetActive(false);
                 if (PhotonNetwork.IsMasterClient)
                 {
                     PhotonNetwork.Instantiate(ArenaManager.Instance.SnowmanPrefab.name, _studentTransform.position, _studentTransform.rotation);
@@ -317,12 +317,12 @@ namespace Player
         {
             _worldUI.gameObject.SetActive(true);
             _currentHealth = _maxHealth;
-            SetHeartsVisibility();
             _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this);
             _characterController.enabled = true;
             _isDead = false;
+            SetHeartsVisibility();
         }
-
+        
         private void SetHeartsVisibility()
         {
             for (var i = 1; i <= _maxHealth; i++)
