@@ -247,8 +247,8 @@ namespace Player
             _hasSnowball = true;
             _isDigging = false;
             _digSnowballTimer = 0.0f;
-            _animator.SetBool(IsDiggingHash, false);
-            _animator.SetBool(HasSnowballHash, true);
+            _view.RPC("SetDigHashBool_RPC", RpcTarget.All, false);
+            _view.RPC("SetHasSnowballHashBool_RPC", RpcTarget.All, true);
         }
 
         /// <summary>
@@ -275,7 +275,7 @@ namespace Player
             _hasSnowball = false;
             _currentObjectInHand = null;
             _playerSnowball = null;
-            _animator.SetBool(HasSnowballHash, false);
+            _view.RPC("SetHasSnowballHashBool_RPC", RpcTarget.All, false);
         }
 
         public void GetDamaged(int damage) 
@@ -427,11 +427,11 @@ namespace Player
             //_animator.SetBool(_hasSnowballHash, _hasSnowball);
             if (photonView.IsMine && _isWalking && _inputMovement.magnitude == 0.0f)
             {
-                _animator.SetBool(IsWalkingHash, false);
+                _view.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
             }
             else if (photonView.IsMine && !_isWalking && _inputMovement.magnitude > 0.0f)
             {
-                _animator.SetBool(IsWalkingHash, true);
+                _view.RPC("SetWalkHashBool_RPC", RpcTarget.All, true);
             }
         }
 
@@ -474,8 +474,8 @@ namespace Player
                 _isDigging = true;
                 if (photonView.IsMine)
                 {
-                    _animator.SetBool(IsWalkingHash, false);
-                    _animator.SetBool(IsDiggingHash, true);
+                    _view.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
+                    _view.RPC("SetDigHashBool_RPC", RpcTarget.All, true);
                 }
             }
             // If digging is abruptly cancelled, cancel action and reset timer
@@ -485,7 +485,7 @@ namespace Player
                 _digSnowballTimer = 0.0f;
                 if (photonView.IsMine)
                 {
-                    _animator.SetBool(IsDiggingHash, false);
+                    _view.RPC("SetDigHashBool_RPC", RpcTarget.All, false);
                 }
             }
 
@@ -519,7 +519,7 @@ namespace Player
                 //If player has a snowball, then throw it. Otherwise call the Interactable's Release method.
                 if (photonView.IsMine && _hasSnowball)
                 {
-                    PlaySnowballThrowAnimation();
+                    _view.RPC("PlaySnowballThrowAnimation", RpcTarget.All);
                     ThrowStudentSnowball();
                 }
                 else
@@ -563,6 +563,30 @@ namespace Player
         }
 
         #endregion
+        
+        #region AnimationRPCs
+
+        [PunRPC]
+        public void SetWalkHashBool_RPC(bool walking)
+        {
+            _animator.SetBool(IsWalkingHash, walking);
+        }
+        
+        [PunRPC]
+        public void SetDigHashBool_RPC(bool digging)
+        {
+            _animator.SetBool(IsDiggingHash, digging);
+        }
+
+        [PunRPC]
+        public void SetHasSnowballHashBool_RPC(bool hasSnowball)
+        {
+            _animator.SetBool(HasSnowballHash, hasSnowball);
+        }
+        
+
+
+        #endregion
 
         #region RPC
 
@@ -574,6 +598,8 @@ namespace Player
         }
 
         //[PunRPC]
+        
+        [PunRPC]
         // ReSharper disable once UnusedMember.Local
         private void PlaySnowballThrowAnimation()
         {
