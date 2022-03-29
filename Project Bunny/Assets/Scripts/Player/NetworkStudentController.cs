@@ -507,6 +507,7 @@ namespace Player
                 if (photonView.IsMine && _hasSnowball)
                 {
                     PlaySnowballThrowAnimation();
+                    ThrowStudentSnowball();
                 }
                 else
                 {
