@@ -50,8 +50,12 @@ namespace Networking
                 && !otherStudent.TeamID.Equals(_studentThrower.TeamID)
                 && !otherStudent.IsDead)
             {
+                Debug.Log("damage");
                 var studentPhotonView = otherStudent.photonView;
                 studentPhotonView.RPC("GetDamaged", RpcTarget.All, _damage);
+            }
+            else {
+                Debug.Log("no damage");
             }
             
             var go = PhotonNetwork.Instantiate(ArenaManager.Instance.SnowballBurst.name, _snowballTransform.position, Quaternion.identity);

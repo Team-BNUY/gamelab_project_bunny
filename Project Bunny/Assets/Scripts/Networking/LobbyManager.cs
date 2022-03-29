@@ -21,6 +21,10 @@ namespace Networking
         [SerializeField] private Button _joinButton;
         private string _defaultName;
 
+        [Header("Singletons")]
+        [SerializeField] private GameObject _scoreManager;
+        [SerializeField] private GameObject _photonTeamsManager;
+
         void Start()
         {
             _createButton.onClick.AddListener(CreateRoom);
@@ -35,8 +39,8 @@ namespace Networking
 
             var options = new RoomOptions
             {
-                MaxPlayers = maxPlayersPerRoom, 
-                PublishUserId = true, 
+                MaxPlayers = maxPlayersPerRoom,
+                PublishUserId = true,
                 BroadcastPropsChangeToAll = true
             };
 
@@ -50,6 +54,12 @@ namespace Networking
 
         public override void OnJoinedRoom()
         {
+            GameObject.Instantiate(_photonTeamsManager);
+
+            if (PhotonNetwork.IsMasterClient)
+                PhotonNetwork.Instantiate(_scoreManager.name, Vector3.zero, Quaternion.identity);
+
+
             PhotonNetwork.LoadLevel(ROOM_SCENE_NAME);
         }
 
