@@ -107,6 +107,9 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
+            if (_view.IsMine) {
+                _view.RPC(nameof(SyncPlayerInfo), RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.UserId, PhotonNetwork.LocalPlayer.GetPhotonTeam()?.Code);
+            }
         }
 
         private void Update()
@@ -138,7 +141,7 @@ namespace Player
             {
                 if (giantRollball.CanDamage)
                 {
-                    _view.RPC("GetDamaged", RpcTarget.All, giantRollball.Damage);
+                    _view.RPC(nameof(GetDamaged), RpcTarget.All, giantRollball.Damage);
                 }
             }
         }
@@ -298,6 +301,7 @@ namespace Player
 
                 if (_view.IsMine)
                 {
+                    ScoreManager.Instance.IncrementTeamDeaths(TeamID);
                     Invoke(nameof(Respawn), DEATH_TIME_DELAY);
                 }
             }
@@ -480,7 +484,14 @@ namespace Player
         #endregion
 
         #region RPC
-        
+
+        [PunRPC]
+        private void SyncPlayerInfo(string playerID, byte TeamID)
+        {
+            this.PlayerID = playerID;
+            this.TeamID = TeamID;
+        }
+
         //[PunRPC]
         // ReSharper disable once UnusedMember.Local
         private void PlaySnowballThrowAnimation()

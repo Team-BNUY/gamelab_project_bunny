@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using Player;
@@ -32,7 +33,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _snowmanPrefab;
 
     private NetworkStudentController[] _allPlayers;
-    
+
 
     [Header("Timer")]
     [SerializeField] private TMP_Text timerDisplay;
@@ -41,9 +42,10 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private int oldTimeElapsed = 0;
     private double startTime;
     private bool returnToLobbyHasRun = false;
-    private const int TIMER_DURATION = 60 * 5;
+    private const int TIMER_DURATION = 1 * 60;
     private const string START_TIME_KEY = "StartTime";
     private const string ROOM_SCENE_NAME = "3-Room";
+    private PhotonView _view;
 
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
@@ -53,16 +55,20 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     public GameObject SnowmanPrefab => _snowmanPrefab;
     public NetworkStudentController[] AllPlayers => _allPlayers;
 
-    [SerializeField] private Transform[] _teamSpawns;
+    [SerializeField] private Transform[] _redSpawns;
+    [SerializeField] private Transform[] _blueSpawns;
 
     void Start()
     {
+        _view ??= GetComponent<PhotonView>();
+
         if (PhotonNetwork.IsMasterClient)
         {
             _allPlayers = Array.Empty<NetworkStudentController>();
-            Invoke(nameof(GetAllPlayers), 1f);
+            Invoke(nameof(GetAllPlayers), 0.1f);
         }
-        
+        ScoreManager.Instance.ResetTeamDeaths();
+
         SpawnPlayer();
         StartTimer();
     }
@@ -96,17 +102,18 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         if (timeElapsed >= TIMER_DURATION)
         {
             Debug.Log("Timer completed.");
-            //Timer has completed countdown.
             ReturnToLobby();
         }
     }
 
-    private void ReturnToLobby() {
+    private void ReturnToLobby()
+    {
         if (returnToLobbyHasRun) return;
         returnToLobbyHasRun = true;
 
         if (PhotonNetwork.IsMasterClient)
         {
+            ScoreManager.Instance.CalculateScore();
             PhotonNetwork.CurrentRoom.IsOpen = true;
             PhotonNetwork.CurrentRoom.IsVisible = true;
             PhotonNetwork.LoadLevel(ROOM_SCENE_NAME);
@@ -137,6 +144,12 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         player.SetCamera(Instantiate(_playerCamera), 60f, 25f);
     }
 
+    public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
+    {
+        //Kick everyone from the room if the master client changed (too many bugs to deal with otherwise)
+        PhotonNetwork.LeaveRoom();
+    }
+
     public Vector3 GetPlayerSpawnPoint(NetworkStudentController player = null)
     {
         float spawnRadius = 1f;
@@ -146,17 +159,48 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
         object teamId;
         PhotonTeam team;
-        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) 
+        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId)
             && PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team))
         {
-            return _teamSpawns[team.Code - 1].position + new Vector3(randx, 0, randz);
+            if (team.Code == 1)
+                return _blueSpawns[0].position + new Vector3(randx, 0, randz);
+            else
+                return _redSpawns[0].position + new Vector3(randx, 0, randz);
         }
         return Vector3.zero;
     }
-    
+
     private void GetAllPlayers()
     {
         _allPlayers = FindObjectsOfType<NetworkStudentController>();
+        SetSpawnPoints();
+    }
+
+    private void SetSpawnPoints()
+    {
+        Photon.Realtime.Player[] players = PhotonNetwork.PlayerList;
+        int blueSpawns = 0;
+        int redSpawns = 0;
+        foreach (NetworkStudentController student in _allPlayers)
+        {
+            object teamId;
+            PhotonTeam team;
+            bool tryGetPlayerTeam = players.FirstOrDefault(x => x.UserId == student.PlayerID).CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId);
+            bool tryGetTeam = PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team);
+            if (tryGetPlayerTeam && tryGetTeam)
+            {
+                if (team.Code == 1)
+                {
+                    student.transform.position = _blueSpawns[blueSpawns].position;
+                    blueSpawns++;
+                }
+                else
+                {
+                    student.transform.position = _redSpawns[redSpawns].position;
+                    redSpawns++;
+                }
+            }
+        }
     }
 
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)

@@ -49,6 +49,11 @@ MonoBehaviour:
   - GetDamaged
   - GetHitByProjectile
   - Stun
+  - SyncPlayerId
+  - SyncPlayerInfo
+  - IncrementTeamDeathsRPC
+  - ResetTeamDeathsRPC
+  - SyncMatchInformation
   - AddTeamCount
   - RestoreTeamlessColors
   - SubtractTeamCount
