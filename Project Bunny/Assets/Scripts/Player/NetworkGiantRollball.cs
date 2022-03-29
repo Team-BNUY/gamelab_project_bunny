@@ -23,7 +23,7 @@ namespace Player
         private bool _isDestroyable;
         private bool _canDamage;
         public bool CanDamage => _canDamage;
-        public float Damage => _damage;
+        public int Damage => _damage;
 
         private void Awake()
         {
