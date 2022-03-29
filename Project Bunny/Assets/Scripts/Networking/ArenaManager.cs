@@ -50,7 +50,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private int oldTimeElapsed = 0;
     private double startTime;
     private bool returnToLobbyHasRun = false;
-    private const int TIMER_DURATION = 1 * 60;
+    private const int TIMER_DURATION = 5 * 60;
     private const string START_TIME_KEY = "StartTime";
     private const string LOBBY_SCENE_NAME = "2-Lobby";
     private const string ROOM_SCENE_NAME = "3-Room";
