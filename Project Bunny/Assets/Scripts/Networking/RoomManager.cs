@@ -6,6 +6,8 @@ using ExitGames.Client.Photon;
 using Photon.Pun.UtilityScripts;
 using System.Linq;
 using Player;
+using Photon.Realtime;
+using System;
 
 namespace Networking
 {
@@ -39,6 +41,7 @@ namespace Networking
 
             SpawnPlayer();
             InitialiseUI();
+
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
 
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
@@ -79,6 +82,12 @@ namespace Networking
             GameObject.Destroy(tile.gameObject);
         }
 
+        public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
+        {
+            //Kick everyone from the room if the master client changed (too many bugs to deal with otherwise)
+            PhotonNetwork.LeaveRoom();
+        }
+
         private void InitialiseUI()
         {
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
@@ -104,6 +113,10 @@ namespace Networking
 
         public override void OnLeftRoom()
         {
+            ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
+            if (scoreManager != null)
+                GameObject.Destroy(scoreManager.gameObject);
+
             UnityEngine.SceneManagement.SceneManager.LoadScene(LOBBY_SCENE_NAME);
         }
 
