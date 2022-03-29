@@ -18,9 +18,9 @@ namespace AI
         private Gang(Student student)
         {
             _members = new List<Student> { student };
-            if (!Student.Gangs.Contains(this))
+            if (!ArenaManager.Instance.Gangs.Contains(this))
             {
-                Student.Gangs.Add(this);
+                ArenaManager.Instance.Gangs.Add(this);
             }
             
             OnNewStudentJoined += WelcomeNewStudent;
@@ -34,7 +34,7 @@ namespace AI
         
         public void Join(Student student)
         {
-            var previousGang = Student.Gangs.Find(g => student.Gang == g);
+            var previousGang = ArenaManager.Instance.Gangs.Find(g => student.Gang == g);
             previousGang?.Leave(student);
 
             student.Gang = this;
@@ -72,7 +72,7 @@ namespace AI
             
             if (_members.Count > 0) return;
             
-            Student.Gangs.Remove(this);
+            ArenaManager.Instance.Gangs.Remove(this);
             OnNewStudentJoined -= WelcomeNewStudent;
         }
 

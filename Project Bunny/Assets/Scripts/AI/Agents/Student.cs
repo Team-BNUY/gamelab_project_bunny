@@ -7,16 +7,8 @@ namespace AI.Agents
 {
     public class Student : Agent
     {
-        public static List<Gang> Gangs;
-
         [Header("Individual")] 
         [SerializeField] [Min(0f)] private float pushForce = 10f;
-        
-        [Header("Layers")] // TODO Take everything below from an eventual GameManager
-        [SerializeField] private LayerMask _studentLayer;
-        [SerializeField] private LayerMask _groundLayer;
-        [SerializeField] private LayerMask _obstacleLayer;
-        [SerializeField] private List<ActionSpot> actionSpots;
         
         private Gang _gang;
         private List<string> _movingActions = new List<string> {"Intimidate", "Join Another Gang", "Cry", "AnimationAction"};
@@ -25,8 +17,6 @@ namespace AI.Agents
         {
             if (!PhotonNetwork.IsMasterClient) return;
             
-            // References
-            Gangs ??= new List<Gang>(); // TODO Take from an eventual GameManager
             Gang.Found(this);
 
             // Goals
@@ -81,26 +71,6 @@ namespace AI.Agents
         {
             beliefStates.AddState("hitByProjectile", 1);
             InterruptGoal();
-        }
-
-        public LayerMask StudentLayer
-        {
-            get => _studentLayer;
-        }
-        
-        public LayerMask GroundLayer
-        {
-            get => _groundLayer;
-        }
-
-        public LayerMask ObstacleLayer
-        {
-            get => _obstacleLayer;
-        }
-
-        public List<ActionSpot> ActionSpots
-        {
-            get => actionSpots;
         }
 
         public Gang Gang

@@ -32,7 +32,7 @@ namespace AI.Actions.StudentActions
 
         public override bool IsAchievable()
         {
-            var gangAvailable = Student.Gangs.Count != 0 && Student.Gangs.Any(g => !g.Full && _student.Gang != g && !g.Occupied);
+            var gangAvailable = ArenaManager.Instance.Gangs.Count != 0 && ArenaManager.Instance.Gangs.Any(g => !g.Full && _student.Gang != g && !g.Occupied);
             return !_student.Occupied && gangAvailable;
         }
 
@@ -44,7 +44,7 @@ namespace AI.Actions.StudentActions
             // Finds a gang to join
             if (!IsAchievable()) return false; 
             
-            var openGangs = Student.Gangs.Where(g => !g.Full && _student.Gang != g && !g.Occupied).ToArray();
+            var openGangs = ArenaManager.Instance.Gangs.Where(g => !g.Full && _student.Gang != g && !g.Occupied).ToArray();
             var random = Random.Range(0, openGangs.Length);
             _gang = openGangs[random];
             
@@ -56,15 +56,15 @@ namespace AI.Actions.StudentActions
             var direction = new Vector3(x, 0f, z).normalized;
             var length = Random.Range(_gang.Radius - 1f, _gang.Radius); // TODO Make first parameter a "gang's circle's thickness" variable
             var prePosition = _gang.Center + direction * length;
-            Physics.Raycast(prePosition + Vector3.up * 100f, Vector3.down, out var groundInfo, float.PositiveInfinity, _student.GroundLayer);
+            Physics.Raycast(prePosition + Vector3.up * 100f, Vector3.down, out var groundInfo, float.PositiveInfinity, ArenaManager.Instance.GroundLayer);
             var y = groundInfo.point.y;
             var position = new Vector3(prePosition.x, y, prePosition.z);
             
             // Checks if the position is free
             var path = new NavMeshPath();
             if (!navMeshAgent.CalculatePath(position, path) || path.status == NavMeshPathStatus.PathInvalid || path.status == NavMeshPathStatus.PathPartial 
-                || Physics.CheckSphere(position, navMeshAgent.radius, _student.StudentLayer) 
-                || Physics.CheckBox(position, new Vector3(navMeshAgent.radius, 10f, navMeshAgent.radius), Quaternion.identity, _student.ObstacleLayer)) return false;
+                || Physics.CheckSphere(position, navMeshAgent.radius, ArenaManager.Instance.StudentLayer) 
+                || Physics.CheckBox(position, new Vector3(navMeshAgent.radius, 10f, navMeshAgent.radius), Quaternion.identity, ArenaManager.Instance.ObstacleLayer)) return false;
             
             // Checks if there is an obstacle between the student and the gang in the hypothetical join position
             foreach (var memberPosition in _gang.Members.Select(m => m.transform.position))
@@ -72,7 +72,7 @@ namespace AI.Actions.StudentActions
                 direction = memberPosition - position;
                 var distance = Vector3.Distance(memberPosition, position);
                 
-                if (Physics.Raycast(position + Vector3.up * 2.5f, direction, distance, _student.ObstacleLayer)) return false; // TODO Take student height somewhere else
+                if (Physics.Raycast(position + Vector3.up * 2.5f, direction, distance, ArenaManager.Instance.ObstacleLayer)) return false; // TODO Take student height somewhere else
             }            
             
             // Makes the student found a new gang and sets the target gang as occupied

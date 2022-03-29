@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using AI;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using Player;
@@ -31,9 +33,14 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _giantRollballBurst;
     [SerializeField] private GameObject _cannonBall;
     [SerializeField] private GameObject _snowmanPrefab;
-
+    
+    [Header("AI")]
+    [SerializeField] private LayerMask _studentLayer;
+    [SerializeField] private LayerMask _groundLayer;
+    [SerializeField] private LayerMask _obstacleLayer;
+    [SerializeField] private List<ActionSpot> _actionSpots;
     private NetworkStudentController[] _allPlayers;
-
+    private List<Gang> _gangs = new List<Gang>();
 
     [Header("Timer")]
     [SerializeField] private TMP_Text timerDisplay;
@@ -45,7 +52,6 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private const int TIMER_DURATION = 1 * 60;
     private const string START_TIME_KEY = "StartTime";
     private const string ROOM_SCENE_NAME = "3-Room";
-    private PhotonView _view;
 
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
@@ -54,14 +60,24 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     public GameObject CannonBall => _cannonBall;
     public GameObject SnowmanPrefab => _snowmanPrefab;
     public NetworkStudentController[] AllPlayers => _allPlayers;
+    public List<Gang> Gangs => _gangs;
+    public LayerMask StudentLayer => _studentLayer;
+    public LayerMask GroundLayer => _groundLayer;
+    public LayerMask ObstacleLayer => _obstacleLayer;
+    public List<ActionSpot> ActionSpots => _actionSpots;
 
     [SerializeField] private Transform[] _redSpawns;
     [SerializeField] private Transform[] _blueSpawns;
 
+    private void Awake()
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+        
+        _gangs.Clear();
+    }
+
     void Start()
     {
-        _view ??= GetComponent<PhotonView>();
-
         if (PhotonNetwork.IsMasterClient)
         {
             _allPlayers = Array.Empty<NetworkStudentController>();

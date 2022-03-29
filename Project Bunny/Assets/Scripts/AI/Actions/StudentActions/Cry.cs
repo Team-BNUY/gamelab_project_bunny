@@ -31,7 +31,7 @@ namespace AI.Actions.StudentActions
 
         public override bool IsAchievable()
         {
-            return !hasTarget || _student.ActionSpots.Count != 0 && _student.ActionSpots.Any(s => s.Type == _actionSpotType && !s.Occupied && Vector3.Distance(s.transform.position, _student.transform.position) > 5f);
+            return !hasTarget || ArenaManager.Instance.ActionSpots.Count != 0 && ArenaManager.Instance.ActionSpots.Any(s => s.Type == _actionSpotType && !s.Occupied && Vector3.Distance(s.transform.position, _student.transform.position) > 5f);
         }
 
         public override bool PrePerform()
@@ -42,7 +42,7 @@ namespace AI.Actions.StudentActions
 
             if (!hasTarget) return true;
             
-            _actionSpot = FindClosest(_student.ActionSpots.Where(s => s.Type == _actionSpotType && !s.Occupied && Vector3.Distance(s.transform.position, _student.transform.position) > 5f).ToList(), navMeshAgent);
+            _actionSpot = FindClosest(ArenaManager.Instance.ActionSpots.Where(s => s.Type == _actionSpotType && !s.Occupied && Vector3.Distance(s.transform.position, _student.transform.position) > 5f).ToList(), navMeshAgent);
 
             if (!_actionSpot) return false;
             
