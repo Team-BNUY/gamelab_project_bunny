@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Cinemachine;
 using Interfaces;
 using Networking;
@@ -27,6 +28,14 @@ namespace Player
         private CinemachineVirtualCamera _playerVCam;
         private CharacterController _characterController;
         private CinemachineFramingTransposer _playerVCamFramingTransposer;
+
+        [Header("Clothing")] 
+        [SerializeField] private GameObject _teamShirt;
+        [SerializeField] private GameObject[] _playerHats;
+        [SerializeField] private GameObject _playerBoots;
+
+        private List<Renderer> _playerHatRenderers;
+        
 
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
@@ -99,6 +108,13 @@ namespace Player
 
             _playerInput.actionEvents[0].AddListener(OnMove);
             _playerInput.actionEvents[1].AddListener(OnLook);
+
+            _playerHatRenderers = new List<Renderer>();
+            
+            foreach (var playerHat in _playerHats)
+            {
+                _playerHatRenderers.Add(playerHat.GetComponent<Renderer>());
+            }
         }
 
         private void Start()
@@ -109,10 +125,7 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
-            if (photonView.IsMine)
-            {
-                photonView.RPC(nameof(SyncPlayerInfo), RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.UserId, PhotonNetwork.LocalPlayer.GetPhotonTeam()?.Code);
-            }
+
         }
 
         private void Update()
@@ -584,14 +597,27 @@ namespace Player
             if (photonView.Owner.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) &&
                 PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team))
             {
+                if(!_teamShirt.activeSelf) _teamShirt.SetActive(true);
                 switch (team.Code)
                 {
+                    //Temporary color changing code
+                    //TO DO: Make this code more efficient so as to not use getComponent a lot and to also not use foreach
                     case 1:
-                        _jersey.material.color = Color.blue;
+                        _teamShirt.GetComponent<Renderer>().material.color = Color.blue;
+                        _playerBoots.GetComponent<Renderer>().material.color = Color.blue;
+                        foreach (var playerHatRenderer in _playerHatRenderers)
+                        {
+                            playerHatRenderer.material.color = Color.blue;
+                        }
                         _nickNameText.color = Color.blue;
                         break;
                     case 2:
-                        _jersey.material.color = Color.red;
+                        _teamShirt.GetComponent<Renderer>().material.color = Color.red;
+                        _playerBoots.GetComponent<Renderer>().material.color = Color.red;
+                        foreach (var playerHatRenderer in _playerHatRenderers)
+                        {
+                            playerHatRenderer.material.color = Color.red;
+                        }
                         _nickNameText.color = Color.red;
                         break;
                 }
@@ -605,7 +631,14 @@ namespace Player
         [PunRPC]
         public void RestoreTeamlessColors()
         {
+            _teamShirt.GetComponent<Renderer>().material.color = Color.white;
+            _playerBoots.GetComponent<Renderer>().material.color = Color.white;
+            foreach (var playerHatRenderer in _playerHatRenderers)
+            {
+                playerHatRenderer.material.color = Color.white;
+            }
             _nickNameText.color = Color.white;
+            _teamShirt.SetActive(false);
         }
 
         public void RestoreTeamlessColors_RPC()
