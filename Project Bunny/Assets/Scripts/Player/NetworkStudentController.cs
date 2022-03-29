@@ -38,6 +38,7 @@ namespace Player
 
         [Header("Player Properties")] 
         [SerializeField] private Canvas _worldUI;
+        [SerializeField] private RectTransform _canvasTransform;
         [SerializeField] private Image[] _hearts;
         [SerializeField] private int _maxHealth;
         private int _currentHealth;
@@ -601,6 +602,7 @@ namespace Player
         {
             _playerVCamFramingTransposer.m_CameraDistance = distance;
             _playerVCam.transform.rotation = Quaternion.Euler(angle, 0f, 0f);
+            _canvasTransform.rotation = Quaternion.Euler(angle, 0f, 0f);
         }
 
         /// <summary>
@@ -660,6 +662,7 @@ namespace Player
                 stream.SendNext(_currentHealth);
                 stream.SendNext(_isDead);
                 stream.SendNext(_worldUI.gameObject.activeSelf);
+                stream.SendNext(_canvasTransform.rotation);
             }
             else
             {
@@ -670,6 +673,7 @@ namespace Player
                 _currentHealth = (int) stream.ReceiveNext();
                 _isDead = (bool) stream.ReceiveNext();
                 _worldUI.gameObject.SetActive((bool) stream.ReceiveNext());
+                _canvasTransform.rotation = (Quaternion) stream.ReceiveNext();
             }
         }
 
