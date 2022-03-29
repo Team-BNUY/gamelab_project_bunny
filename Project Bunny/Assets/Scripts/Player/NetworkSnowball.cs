@@ -15,52 +15,55 @@ namespace Networking
         [SerializeField] private LineRenderer _trajectoryLineRenderer;
         [SerializeField, Min(0)] private float _initialDirection;
         [SerializeField] private float _damage;
-    
+
         private bool _isDestroyable;
         private float _throwForce;
         private float _mass;
         private float _initialVelocity;
         private readonly float _collisionCheckRadius = 0.03f;
-    
+
         private NetworkStudentController _studentThrower;
         private Transform _holdingPlace;
+        private PhotonView _view;
+        private bool hasCollided;
 
         private void Awake()
         {
             _snowballTransform ??= transform;
+            _view ??= GetComponent<PhotonView>();
             _snowballRigidbody ??= gameObject.GetComponent<Rigidbody>();
             _trajectoryLineRenderer ??= GetComponent<LineRenderer>();
             _sphereCollider ??= GetComponent<SphereCollider>();
-        
+
             _mass = _snowballRigidbody.mass;
             _trajectoryLineRenderer.enabled = false;
+            hasCollided = false;
         }
 
         private void Update()
         {
             SetSnowballAtPlace();
         }
-        
+
         private void OnCollisionEnter(Collision other)
         {
+            if (!_view.IsMine) return;
             if (!_isDestroyable) return;
+            if (hasCollided) return;
+            hasCollided = true;
 
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent)
-                && otherStudent != _studentThrower
-                && !otherStudent.TeamID.Equals(_studentThrower.TeamID)
-                && !otherStudent.IsDead)
+            && otherStudent != _studentThrower
+            && !otherStudent.TeamID.Equals(_studentThrower.TeamID)
+            && !otherStudent.IsDead)
             {
-                Debug.Log("damage");
-                var studentPhotonView = otherStudent.photonView;
-                studentPhotonView.RPC("GetDamaged", RpcTarget.All, _damage);
+                otherStudent.GetDamaged(_damage);
             }
-            else {
-                Debug.Log("no damage");
-            }
-            
+
             var go = PhotonNetwork.Instantiate(ArenaManager.Instance.SnowballBurst.name, _snowballTransform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
+
             PhotonNetwork.Destroy(gameObject);
         }
 
@@ -72,7 +75,7 @@ namespace Networking
         {
             if (_isDestroyable) return;
             if (_holdingPlace == null) return;
-            
+
             if (_holdingPlace.gameObject.TryGetComponent<NetworkStudentController>(out var student))
             {
                 _snowballTransform.position = student.PlayerHand.position;
@@ -111,7 +114,7 @@ namespace Networking
                 _trajectoryLineRenderer.SetPosition(index, SimulateArc()[index]);
             }
         }
-        
+
         /// <summary>
         /// Calculates the positions of the next steps using kinematics
         /// </summary>
@@ -119,21 +122,21 @@ namespace Networking
         private List<Vector3> SimulateArc()
         {
             var lineRendererPoints = new List<Vector3>();
-            
+
             const float maxDuration = 1.3f;
             const float timeStepInterval = 0.1f;
             const int maxSteps = (int)(maxDuration / timeStepInterval);
             var directionVector = transform.forward + new Vector3(0f, _initialDirection, 0.0f);
             var launchPosition = _snowballTransform.position + _snowballTransform.forward;
-            
+
             _initialVelocity = _throwForce / _mass * Time.fixedDeltaTime; //Velocity = Force / Mass * time
-            
+
             for (var i = 0; i < maxSteps; ++i)
             {
                 //Remember f(t) = (x0 + x*t, y0 + y*t - 9.81t²/2)
                 //calculatedPosition = Origin + (transform.forward * (speed * which step * the length of a step);
                 var calculatedPosition = launchPosition + directionVector * (_initialVelocity * i * timeStepInterval); //Move both X and Y at a constant speed per Interval
-                calculatedPosition.y += Physics.gravity.y/2 * Mathf.Pow(i * timeStepInterval, 2); //Subtract Gravity from Y
+                calculatedPosition.y += Physics.gravity.y / 2 * Mathf.Pow(i * timeStepInterval, 2); //Subtract Gravity from Y
 
                 lineRendererPoints.Add(calculatedPosition);
 

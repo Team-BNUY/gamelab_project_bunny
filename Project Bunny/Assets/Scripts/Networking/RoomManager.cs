@@ -113,8 +113,13 @@ namespace Networking
         public override void OnLeftRoom()
         {
             ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
+            PhotonTeamsManager teamsManager = FindObjectOfType<PhotonTeamsManager>();
+
             if (scoreManager != null)
                 GameObject.Destroy(scoreManager.gameObject);
+
+            if (teamsManager != null)
+                GameObject.Destroy(teamsManager.gameObject);
 
             UnityEngine.SceneManagement.SceneManager.LoadScene(LOBBY_SCENE_NAME);
         }

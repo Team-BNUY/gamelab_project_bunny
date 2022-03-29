@@ -16,7 +16,7 @@ namespace Player
     public class NetworkStudentController : MonoBehaviourPunCallbacks, IPunObservable
     {
         private const float DEATH_TIME_DELAY = 3f;
-        
+
         [Header("Components")]
         [SerializeField] private Transform _studentTransform;
         [SerializeField] private Transform _playerModel;
@@ -107,7 +107,8 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
-            if (_view.IsMine) {
+            if (_view.IsMine)
+            {
                 _view.RPC(nameof(SyncPlayerInfo), RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.UserId, PhotonNetwork.LocalPlayer.GetPhotonTeam()?.Code);
             }
         }
@@ -141,7 +142,7 @@ namespace Player
             {
                 if (giantRollball.CanDamage)
                 {
-                    _view.RPC(nameof(GetDamaged), RpcTarget.All, giantRollball.Damage);
+                    _view.RPC(nameof(GetDamagedRPC), RpcTarget.All, giantRollball.Damage);
                 }
             }
         }
@@ -172,14 +173,14 @@ namespace Player
                 }
             }
         }
-        
+
         private void OnTriggerExit(Collider other)
         {
             if (other.TryGetComponent(out INetworkTriggerable triggerable))
             {
                 if (_currentTriggerable == triggerable)
                 {
-                    _currentTriggerable = null;  
+                    _currentTriggerable = null;
                 }
             }
         }
@@ -269,14 +270,21 @@ namespace Player
             _animator.SetBool(HasSnowballHash, false);
         }
 
+        public void GetDamaged(float damage) {
+            _view.RPC(nameof(GetDamagedRPC), RpcTarget.AllBuffered, damage);
+        }
+
+
         /// <summary>
         /// Student gets damaged when snowball or combat item is thrown at them successfully
         /// </summary>
         /// <param name="damage"></param>
         [PunRPC]
         // ReSharper disable once UnusedMember.Global
-        public void GetDamaged(float damage)
+        private void GetDamagedRPC(float damage)
         {
+            Debug.Log("hit on player " + PlayerID);
+
             if (damage >= _healthBar.value)
             {
                 _healthBar.value = 0.0f;
@@ -291,7 +299,7 @@ namespace Player
             if (_healthBar.value <= 0)
             {
                 // StartCoroutine(KillStudent());
-                
+
                 _isDead = true;
                 _characterController.enabled = false;
                 if (PhotonNetwork.IsMasterClient)
@@ -457,8 +465,8 @@ namespace Player
             if (context.performed)
             {
                 if (!_view.IsMine) return;
-                
-                
+
+
                 _currentTriggerable?.Trigger(this);
 
 
@@ -513,7 +521,7 @@ namespace Player
             }
             object teamId;
             PhotonTeam team;
-            if (_view.Owner.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) && 
+            if (_view.Owner.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) &&
                 PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team))
             {
                 switch (team.Code)
@@ -530,7 +538,7 @@ namespace Player
             }
         }
 
-        
+
         /// <summary>
         /// Tmeporary function for restoring a player's colors to all white to show they are teamless
         /// </summary>
@@ -539,7 +547,7 @@ namespace Player
         {
             _nickNameText.color = Color.white;
         }
-        
+
         public void RestoreTeamlessColors_RPC()
         {
             _view.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered);
@@ -623,7 +631,7 @@ namespace Player
 
             return interactable;
         }
-        
+
         /// <summary>
         /// Accessed through animation event. Disables Walking animation when necessary
         /// </summary>
@@ -658,12 +666,12 @@ namespace Player
             }
             else
             {
-                _hasSnowball = (bool) stream.ReceiveNext();
-                _isDigging = (bool) stream.ReceiveNext();
-                _isWalking = (bool) stream.ReceiveNext();
-                _isAiming = (bool) stream.ReceiveNext();
-                _healthBar.value = (float) stream.ReceiveNext();
-                _isDead = (bool) stream.ReceiveNext();
+                _hasSnowball = (bool)stream.ReceiveNext();
+                _isDigging = (bool)stream.ReceiveNext();
+                _isWalking = (bool)stream.ReceiveNext();
+                _isAiming = (bool)stream.ReceiveNext();
+                _healthBar.value = (float)stream.ReceiveNext();
+                _isDead = (bool)stream.ReceiveNext();
             }
         }
 

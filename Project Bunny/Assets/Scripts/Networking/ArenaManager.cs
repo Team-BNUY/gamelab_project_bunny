@@ -4,6 +4,7 @@ using System.Linq;
 using AI;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
+using Photon.Realtime;
 using Player;
 using TMPro;
 using UnityEngine;
@@ -51,6 +52,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private bool returnToLobbyHasRun = false;
     private const int TIMER_DURATION = 1 * 60;
     private const string START_TIME_KEY = "StartTime";
+    private const string LOBBY_SCENE_NAME = "2-Lobby";
     private const string ROOM_SCENE_NAME = "3-Room";
 
     public GameObject SnowballPrefab => _snowballPrefab;
@@ -164,6 +166,19 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     {
         //Kick everyone from the room if the master client changed (too many bugs to deal with otherwise)
         PhotonNetwork.LeaveRoom();
+    }
+    public override void OnLeftRoom()
+    {
+        ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
+        PhotonTeamsManager teamsManager = FindObjectOfType<PhotonTeamsManager>();
+
+        if (scoreManager != null)
+            GameObject.Destroy(scoreManager.gameObject);
+
+        if (teamsManager != null)
+            GameObject.Destroy(teamsManager.gameObject);
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(LOBBY_SCENE_NAME);
     }
 
     public Vector3 GetPlayerSpawnPoint(NetworkStudentController player = null)
