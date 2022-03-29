@@ -273,7 +273,8 @@ namespace Player
             _animator.SetBool(HasSnowballHash, false);
         }
 
-        public void GetDamaged(float damage) {
+        public void GetDamaged(float damage) 
+        {
             _view.RPC(nameof(GetDamagedRPC), RpcTarget.AllBuffered, damage);
         }
 
@@ -284,7 +285,7 @@ namespace Player
         /// <param name="damage"></param>
         [PunRPC]
         // ReSharper disable once UnusedMember.Global
-        public void GetDamaged(int damage)
+        public void GetDamagedRPC(int damage)
         {
             if (damage >= _currentHealth)
             {
