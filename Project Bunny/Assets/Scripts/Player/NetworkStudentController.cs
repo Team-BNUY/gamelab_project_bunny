@@ -334,7 +334,16 @@ namespace Player
 
         private IEnumerator DestroySnowman(GameObject snowGuy)
         {
-            yield return new WaitForSeconds(3f);
+            var timer = 10f;
+            
+            while (timer > 0f)
+            {
+                snowGuy.transform.Translate(Vector3.down * Time.deltaTime, Space.World);
+                timer -= Time.deltaTime;
+
+                yield return null;
+            }
+            
             Destroy(snowGuy);
         }
 
