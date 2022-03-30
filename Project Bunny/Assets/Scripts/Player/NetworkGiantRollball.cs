@@ -23,7 +23,7 @@ namespace Player
         private bool _isDestroyable;
         private bool _canDamage;
         public bool CanDamage => _canDamage;
-        public int Damage => _damage;
+        //public int Damage => _damage;
 
         private void Awake()
         {
@@ -46,7 +46,11 @@ namespace Player
         {
             _isGrowing = other.gameObject.layer == LayerMask.NameToLayer("Ground");
 
-            if (other.gameObject.layer == LayerMask.NameToLayer("Obstacle") || (IsInLayerMask(other.gameObject) && _isDestroyable))
+            if (other.gameObject.TryGetComponent<NetworkStudentController>(out var student) && _canDamage)
+            {
+                student.photonView.RPC("GetDamagedRPC", RpcTarget.All, _damage);
+            }
+            if (other.gameObject.layer == LayerMask.NameToLayer("Obstacle") || IsInLayerMask(other.gameObject) && _isDestroyable)
             {
                 BreakRollball();
             }
