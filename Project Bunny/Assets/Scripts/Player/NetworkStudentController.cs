@@ -84,7 +84,6 @@ namespace Player
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string PlayerID { get; set; }
         public byte TeamID { get; set; }
-        private PhotonView _view;
         private bool _isJerseyNull;
 
 
@@ -94,7 +93,6 @@ namespace Player
         {
             _studentTransform ??= transform;
             _characterController ??= GetComponent<CharacterController>();
-            _view ??= GetComponent<PhotonView>();
             _animator ??= gameObject.GetComponent<Animator>();
             _playerInput ??= GetComponent<PlayerInput>();
 
@@ -110,15 +108,15 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
-            if (_view.IsMine)
+            if (photonView.IsMine)
             {
-                _view.RPC(nameof(SyncPlayerInfo), RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.UserId, PhotonNetwork.LocalPlayer.GetPhotonTeam()?.Code);
+                photonView.RPC(nameof(SyncPlayerInfo), RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.UserId, PhotonNetwork.LocalPlayer.GetPhotonTeam()?.Code);
             }
         }
 
         private void Update()
         {
-            if (!_view.IsMine || _isDead) return;
+            if (!photonView.IsMine || _isDead) return;
 
             SetStandingGround();
 
@@ -145,7 +143,7 @@ namespace Player
             {
                 if (giantRollball.CanDamage)
                 {
-                    _view.RPC(nameof(GetDamagedRPC), RpcTarget.All, giantRollball.Damage);
+                    photonView.RPC(nameof(GetDamagedRPC), RpcTarget.All, giantRollball.Damage);
                 }
             }
         }
@@ -163,7 +161,7 @@ namespace Player
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
         {
-            _view.RPC("UpdateTeamColorVisuals", RpcTarget.AllBuffered);
+            photonView.RPC("UpdateTeamColorVisuals", RpcTarget.AllBuffered);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -219,7 +217,7 @@ namespace Player
         /// </summary>
         private void DigSnowball()
         {
-            if (!_view.IsMine) return;
+            if (!photonView.IsMine) return;
 
             if (_isDigging && !_hasSnowball)
             {
@@ -261,7 +259,7 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void ThrowStudentSnowball()
         {
-            if (!_view.IsMine || _playerSnowball == null) return;
+            if (!photonView.IsMine || _playerSnowball == null) return;
 
             _playerSnowball.DisableLineRenderer();
             _isAiming = false;
@@ -275,7 +273,7 @@ namespace Player
 
         public void GetDamaged(int damage) 
         {
-            _view.RPC(nameof(GetDamagedRPC), RpcTarget.AllBuffered, damage);
+            photonView.RPC(nameof(GetDamagedRPC), RpcTarget.AllBuffered, damage);
         }
 
 
@@ -307,7 +305,7 @@ namespace Player
                     PhotonNetwork.Instantiate(ArenaManager.Instance.SnowmanPrefab.name, _studentTransform.position, _studentTransform.rotation);
                 }
 
-                if (_view.IsMine)
+                if (photonView.IsMine)
                 {
                     ScoreManager.Instance.IncrementTeamDeaths(TeamID);
                     Invoke(nameof(Respawn), DEATH_TIME_DELAY);
@@ -322,10 +320,19 @@ namespace Player
             _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this);
             _characterController.enabled = true;
             _isDead = false;
-            SetHeartsVisibility();
+            photonView.RPC(nameof(SetHeartsVisibilityRPC), RpcTarget.All);
         }
         
         private void SetHeartsVisibility()
+        {
+            for (var i = 1; i <= _maxHealth; i++)
+            {
+                _hearts[i-1].color = i <= _currentHealth ? Color.white : new Color(1f, 1f, 1f, 0.5f);
+            }
+        }
+        
+        [PunRPC]
+        private void SetHeartsVisibilityRPC()
         {
             for (var i = 1; i <= _maxHealth; i++)
             {
@@ -351,11 +358,11 @@ namespace Player
             _isWalking = _animator.GetBool(IsWalkingHash);
 
             //_animator.SetBool(_hasSnowballHash, _hasSnowball);
-            if (_view.IsMine && _isWalking && inputMovement.magnitude == 0.0f)
+            if (photonView.IsMine && _isWalking && inputMovement.magnitude == 0.0f)
             {
                 _animator.SetBool(IsWalkingHash, false);
             }
-            else if (_view.IsMine && !_isWalking && inputMovement.magnitude > 0.0f)
+            else if (photonView.IsMine && !_isWalking && inputMovement.magnitude > 0.0f)
             {
                 _animator.SetBool(IsWalkingHash, true);
             }
@@ -398,7 +405,7 @@ namespace Player
             if (context.performed)
             {
                 _isDigging = true;
-                if (_view.IsMine)
+                if (photonView.IsMine)
                 {
                     _animator.SetBool(IsWalkingHash, false);
                     _animator.SetBool(IsDiggingHash, true);
@@ -409,7 +416,7 @@ namespace Player
             {
                 _isDigging = false;
                 _digSnowballTimer = 0.0f;
-                if (_view.IsMine)
+                if (photonView.IsMine)
                 {
                     _animator.SetBool(IsDiggingHash, false);
                 }
@@ -443,7 +450,7 @@ namespace Player
             if (context.canceled)
             {
                 //If player has a snowball, then throw it. Otherwise call the Interactable's Release method.
-                if (_view.IsMine && _hasSnowball)
+                if (photonView.IsMine && _hasSnowball)
                 {
                     PlaySnowballThrowAnimation();
                 }
@@ -462,7 +469,7 @@ namespace Player
         {
             if (context.performed)
             {
-                if (!_view.IsMine) return;
+                if (!photonView.IsMine) return;
 
 
                 _currentTriggerable?.Trigger(this);
@@ -519,7 +526,7 @@ namespace Player
             }
             object teamId;
             PhotonTeam team;
-            if (_view.Owner.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) &&
+            if (photonView.Owner.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) &&
                 PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team))
             {
                 switch (team.Code)
@@ -548,12 +555,12 @@ namespace Player
 
         public void RestoreTeamlessColors_RPC()
         {
-            _view.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered);
+            photonView.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered);
         }
 
         public void SetNameText()
         {
-            _nickNameText.text = _view.Owner.NickName;
+            _nickNameText.text = photonView.Owner.NickName;
         }
         #endregion
 
@@ -637,7 +644,7 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void SetWalkingAnimator()
         {
-            if (_view.IsMine)
+            if (photonView.IsMine)
             {
                 _animator.SetBool(IsWalkingHash, _isWalking);
             }
