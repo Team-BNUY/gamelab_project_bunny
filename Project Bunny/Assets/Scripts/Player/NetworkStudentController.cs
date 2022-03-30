@@ -1,3 +1,4 @@
+using System.Collections;
 using Cinemachine;
 using Interfaces;
 using Networking;
@@ -320,7 +321,8 @@ namespace Player
                     _animator.SetBool(HasSnowballHash, false);
                 }
                 
-                Instantiate(ArenaManager.Instance.SnowmanPrefab, _studentTransform.position, _studentTransform.rotation);
+                var snowMan = Instantiate(ArenaManager.Instance.SnowmanPrefab, _studentTransform.position, _studentTransform.rotation);
+                StartCoroutine(DestroySnowman(snowMan));
                 
                 if (photonView.IsMine)
                 {
@@ -328,6 +330,12 @@ namespace Player
                     Invoke(nameof(Respawn), DEATH_TIME_DELAY);
                 }
             }
+        }
+
+        private IEnumerator DestroySnowman(GameObject snowGuy)
+        {
+            yield return new WaitForSeconds(3f);
+            Destroy(snowGuy);
         }
 
         private void Respawn()
