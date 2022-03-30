@@ -291,6 +291,7 @@ namespace Player
             if (_currentHealth <= 0)
             {
                 _isDead = true;
+                _isWalking = false;
                 _characterController.enabled = false;
                 _worldUI.gameObject.SetActive(false);
                 _playerModel.gameObject.SetActive(false);
@@ -307,6 +308,18 @@ namespace Player
                     _animator.SetBool(HasSnowballHash, false);
                 }
 
+                if (_hasSnowball && _playerSnowball != null)
+                {
+                    _playerSnowball.DisableLineRenderer();
+                    _isAiming = false;
+                    _throwForce = _minForce;
+                    _currentObjectInHand = null;
+                    _playerSnowball.DestroySnowball();
+                    _playerSnowball = null;
+                    _hasSnowball = false;
+                    _animator.SetBool(HasSnowballHash, false);
+                }
+                
                 Instantiate(ArenaManager.Instance.SnowmanPrefab, _studentTransform.position, _studentTransform.rotation);
                 
                 if (photonView.IsMine)
