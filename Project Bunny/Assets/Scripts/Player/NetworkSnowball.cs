@@ -61,14 +61,12 @@ namespace Networking
                 otherStudent.GetDamaged(_damage);
             }
 
+            if (otherStudent == _studentThrower) return;
+            
             var go = PhotonNetwork.Instantiate(ArenaManager.Instance.SnowballBurst.name, _snowballTransform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
-
-            if (otherStudent != _studentThrower)
-            {
-                PhotonNetwork.Destroy(gameObject);
-            }
+            PhotonNetwork.Destroy(gameObject);
         }
 
         /// <summary>
