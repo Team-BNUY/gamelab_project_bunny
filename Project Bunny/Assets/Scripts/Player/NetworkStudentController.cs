@@ -293,10 +293,11 @@ namespace Player
                 _isDead = true;
                 _characterController.enabled = false;
                 _worldUI.gameObject.SetActive(false);
-                Instantiate(ArenaManager.Instance.SnowmanPrefab, _studentTransform.position, _studentTransform.rotation);
 
                 if (photonView.IsMine)
                 {
+                    Instantiate(ArenaManager.Instance.SnowmanPrefab, _studentTransform.position, _studentTransform.rotation);
+
                     ScoreManager.Instance.IncrementTeamDeaths(TeamID);
                     Invoke(nameof(Respawn), DEATH_TIME_DELAY);
                 }
