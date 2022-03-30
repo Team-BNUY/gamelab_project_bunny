@@ -3,10 +3,8 @@ using Interfaces;
 using Networking;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 using Image = UnityEngine.UI.Image;
 
 namespace Player
@@ -139,7 +137,7 @@ namespace Player
             DigSnowball();
         }
 
-        private void OnCollisionEnter(Collision collision)
+        /*private void OnCollisionEnter(Collision collision)
         {
             if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball))
             {
@@ -148,7 +146,7 @@ namespace Player
                     photonView.RPC(nameof(GetDamagedRPC), RpcTarget.All, giantRollball.Damage);
                 }
             }
-        }
+        }*/
 
         private void OnCollisionStay(Collision other)
         {
