@@ -298,6 +298,7 @@ namespace Player
                 
                 if (photonView.IsMine)
                 {
+                    _playerModel.gameObject.SetActive(false);
                     ScoreManager.Instance.IncrementTeamDeaths(TeamID);
                     Invoke(nameof(Respawn), DEATH_TIME_DELAY);
                 }
@@ -306,6 +307,19 @@ namespace Player
 
         private void Respawn()
         {
+            if (_hasSnowball && _playerSnowball != null)
+            {
+                _playerSnowball.DisableLineRenderer();
+                _isAiming = false;
+                _throwForce = _minForce;
+                _currentObjectInHand = null;
+                _playerSnowball.DestroySnowball();
+                _playerSnowball = null;
+                _hasSnowball = false;
+                _animator.SetBool(HasSnowballHash, false);
+            }
+            
+            _playerModel.gameObject.SetActive(true);
             _worldUI.gameObject.SetActive(true);
             _currentHealth = _maxHealth;
             _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this);
