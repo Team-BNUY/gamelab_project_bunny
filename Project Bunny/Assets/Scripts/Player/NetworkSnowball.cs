@@ -209,6 +209,11 @@ namespace Networking
             }
         }
 
+        public void DestroySnowball()
+        {
+            PhotonNetwork.Destroy(gameObject);
+        }
+
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             if (stream.IsWriting)
