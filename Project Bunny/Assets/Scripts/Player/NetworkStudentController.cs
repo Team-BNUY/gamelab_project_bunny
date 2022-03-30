@@ -273,7 +273,7 @@ namespace Player
             _animator.SetBool(HasSnowballHash, false);
         }
 
-        public void GetDamaged(float damage) 
+        public void GetDamaged(int damage) 
         {
             _view.RPC(nameof(GetDamagedRPC), RpcTarget.AllBuffered, damage);
         }
