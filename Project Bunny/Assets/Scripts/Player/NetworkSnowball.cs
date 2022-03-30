@@ -64,7 +64,10 @@ namespace Networking
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
 
-            PhotonNetwork.Destroy(gameObject);
+            if (otherStudent != _studentThrower)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
 
         /// <summary>
