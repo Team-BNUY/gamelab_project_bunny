@@ -49,6 +49,9 @@ namespace Player
 
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var student) && _canDamage)
             {
+                if (_hasCollided) return;
+                _hasCollided = true;
+                
                 student.photonView.RPC("GetDamagedRPC", RpcTarget.All, _damage);
                 BreakRollball();
             }
