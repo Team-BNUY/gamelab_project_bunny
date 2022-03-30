@@ -137,17 +137,6 @@ namespace Player
             DigSnowball();
         }
 
-        /*private void OnCollisionEnter(Collision collision)
-        {
-            if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball))
-            {
-                if (giantRollball.CanDamage)
-                {
-                    photonView.RPC(nameof(GetDamagedRPC), RpcTarget.All, giantRollball.Damage);
-                }
-            }
-        }*/
-
         private void OnCollisionStay(Collision other)
         {
             if (other.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball))
@@ -304,10 +293,7 @@ namespace Player
                 _isDead = true;
                 _characterController.enabled = false;
                 _worldUI.gameObject.SetActive(false);
-                if (PhotonNetwork.IsMasterClient)
-                {
-                    PhotonNetwork.Instantiate(ArenaManager.Instance.SnowmanPrefab.name, _studentTransform.position, _studentTransform.rotation);
-                }
+                Instantiate(ArenaManager.Instance.SnowmanPrefab, _studentTransform.position, _studentTransform.rotation);
 
                 if (photonView.IsMine)
                 {
