@@ -46,6 +46,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [Header("Timer")]
     [SerializeField] private TMP_Text timerDisplay;
     [SerializeField] private bool hasTimerStarted = false;
+    [SerializeField] private float snowmanTimer;
     private int timeElapsed = 0;
     private int oldTimeElapsed = 0;
     private double startTime;
@@ -67,6 +68,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     public LayerMask GroundLayer => _groundLayer;
     public LayerMask ObstacleLayer => _obstacleLayer;
     public List<ActionSpot> ActionSpots => _actionSpots;
+    public float SnowmanTimer => snowmanTimer;
 
     [SerializeField] private Transform[] _redSpawns;
     [SerializeField] private Transform[] _blueSpawns;

@@ -332,9 +332,16 @@ namespace Player
             }
         }
 
+        /// <summary>
+        /// Simulate snowman melting by changing transform
+        /// and destroy it when time's up
+        /// NOTE: This function is called on an RPC method
+        /// </summary>
+        /// <param name="snowGuy"></param>
+        /// <returns></returns>
         private IEnumerator DestroySnowman(GameObject snowGuy)
         {
-            var timer = 10f;
+            var timer = ArenaManager.Instance.SnowmanTimer;
             
             while (timer > 0f)
             {
@@ -347,6 +354,10 @@ namespace Player
             Destroy(snowGuy);
         }
 
+        /// <summary>
+        /// Respawn player after death delay
+        /// NOTE: This function is called on an RPC method
+        /// </summary>
         private void Respawn()
         {
             _playerModel.gameObject.SetActive(true);
@@ -358,6 +369,10 @@ namespace Player
             photonView.RPC(nameof(SetHeartsVisibilityRPC), RpcTarget.All);
         }
         
+        /// <summary>
+        /// Set the visibility of the hearts according to the player's health
+        /// NOTE: This function is called on an RPC method
+        /// </summary>
         private void SetHeartsVisibility()
         {
             for (var i = 1; i <= _maxHealth; i++)
@@ -366,6 +381,10 @@ namespace Player
             }
         }
         
+        /// <summary>
+        /// RPC version of the method above
+        /// Used on a different call
+        /// </summary>
         [PunRPC]
         private void SetHeartsVisibilityRPC()
         {
