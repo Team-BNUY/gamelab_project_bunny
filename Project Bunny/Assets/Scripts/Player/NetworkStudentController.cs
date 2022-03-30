@@ -676,6 +676,7 @@ namespace Player
                 stream.SendNext(_currentHealth);
                 stream.SendNext(_isDead);
                 stream.SendNext(_worldUI.gameObject.activeSelf);
+                stream.SendNext(_playerModel.gameObject.activeSelf);
                 stream.SendNext(_canvasTransform.rotation);
             }
             else
@@ -687,6 +688,7 @@ namespace Player
                 _currentHealth = (int) stream.ReceiveNext();
                 _isDead = (bool) stream.ReceiveNext();
                 _worldUI.gameObject.SetActive((bool) stream.ReceiveNext());
+                _playerModel.gameObject.SetActive((bool) stream.ReceiveNext());
                 _canvasTransform.rotation = (Quaternion) stream.ReceiveNext();
             }
         }
