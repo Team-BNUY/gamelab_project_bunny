@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AI.Core;
+using Networking;
 using Photon.Pun;
 using Player;
 using UnityEngine;
@@ -95,7 +96,15 @@ namespace AI.Agents
             if (!projectile) return;
 
             if (other.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !giantRollball.CanDamage) return;
-            
+
+            if (other.gameObject.TryGetComponent<NetworkSnowball>(out NetworkSnowball ball))
+            {
+                if (ball._studentThrower.photonView.IsMine)
+                {
+                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "rascalHits");
+                }
+            }
+
             photonView.RPC("Stun", RpcTarget.All);
         }
 

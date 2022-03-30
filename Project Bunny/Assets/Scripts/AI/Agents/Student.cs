@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using AI.Core;
+using Networking;
 using Photon.Pun;
 using UnityEngine;
 
@@ -7,16 +8,16 @@ namespace AI.Agents
 {
     public class Student : Agent
     {
-        [Header("Individual")] 
+        [Header("Individual")]
         [SerializeField] [Min(0f)] private float pushForce = 10f;
-        
+
         private Gang _gang;
-        private List<string> _movingActions = new List<string> {"Intimidate", "Join Another Gang", "Cry", "AnimationAction"};
-        
+        private List<string> _movingActions = new List<string> { "Intimidate", "Join Another Gang", "Cry", "AnimationAction" };
+
         protected override void Start()
         {
             if (!PhotonNetwork.IsMasterClient) return;
-            
+
             Gang.Found(this);
 
             // Goals
@@ -34,17 +35,17 @@ namespace AI.Agents
             states = new StateSet(state);
             goal = new Goal(states, false);
             goals.Add(goal, 3);
-            
+
             state = new State("cried", 1);
             states = new StateSet(state);
             goal = new Goal(states, false);
             goals.Add(goal, 4);
-            
+
             state = new State("welcomedNewbie", 1);
             states = new StateSet(state);
             goal = new Goal(states, false);
             goals.Add(goal, 5);
-            
+
             // Creating actions
             base.Start();
         }
@@ -53,7 +54,15 @@ namespace AI.Agents
         {
             var projectile = other.CompareTag("Projectile");
             if (!projectile) return;
-            
+
+            if (other.gameObject.TryGetComponent<NetworkSnowball>(out NetworkSnowball ball))
+            {
+                if (ball._studentThrower.photonView.IsMine)
+                {
+                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "bullyHits");
+                }
+            }
+
             photonView.RPC("GetHitByProjectile", RpcTarget.All);
         }
 
@@ -61,7 +70,7 @@ namespace AI.Agents
         {
             var otherStudent = collision.gameObject.GetComponent<Student>();
             if (!otherStudent || otherStudent.currentAction != null && _movingActions.Contains(otherStudent.currentAction.Name)) return;
-            
+
             var pushVector = -collision.GetContact(0).normal;
             collision.rigidbody.AddForce(pushVector * pushForce, ForceMode.Impulse);
         }
@@ -73,14 +82,12 @@ namespace AI.Agents
             InterruptGoal();
         }
 
-        public Gang Gang
-        {
+        public Gang Gang {
             get => _gang;
             set => _gang = value;
         }
 
-        public bool Occupied
-        {
+        public bool Occupied {
             get => _gang.Occupied;
         }
     }

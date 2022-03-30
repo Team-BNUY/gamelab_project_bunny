@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1702715532028691883}
   - component: {fileID: 2320781370041929812}
   - component: {fileID: 251632973669729256}
-  - component: {fileID: -5486447803088109875}
+  - component: {fileID: 5720891659663819398}
   m_Layer: 0
   m_Name: NetworkSnowball
   m_TagString: Projectile
@@ -232,6 +232,7 @@ MonoBehaviour:
   _trajectoryLineRenderer: {fileID: 1257298224373330381}
   _initialDirection: 0.1
   _damage: 1
+  _studentThrower: {fileID: 0}
 --- !u!114 &251632973669729256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,11 +253,11 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 2320781370041929812}
-  - {fileID: -5486447803088109875}
+  - {fileID: 5720891659663819398}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &-5486447803088109875
+--- !u!114 &5720891659663819398
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -265,10 +266,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1660130140806720925}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizeVelocity: 1
-  m_SynchronizeAngularVelocity: 1
-  m_TeleportEnabled: 1
-  m_TeleportIfDistanceGreaterThan: 3
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 0
+  m_SynchronizeScale: 0
+  m_UseLocal: 1

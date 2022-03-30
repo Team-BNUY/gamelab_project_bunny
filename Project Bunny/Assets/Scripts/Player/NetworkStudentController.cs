@@ -340,6 +340,12 @@ namespace Player
             _currentObjectInHand = null;
             _playerSnowball = null;
             photonView.RPC("SetHasSnowballHashBool_RPC", RpcTarget.All, false);
+            _animator.SetBool(HasSnowballHash, false);
+
+            if (photonView.IsMine)
+            {
+                ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "ballsThrown");
+            }
         }
 
         public void GetDamaged(int damage) 
@@ -402,7 +408,7 @@ namespace Player
                 
                 if (photonView.IsMine)
                 {
-                    ScoreManager.Instance.IncrementTeamDeaths(TeamID);
+                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "deaths");
                     Invoke(nameof(Respawn), DEATH_TIME_DELAY);
                 }
             }

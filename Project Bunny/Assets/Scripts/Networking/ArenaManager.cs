@@ -87,7 +87,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             _allPlayers = Array.Empty<NetworkStudentController>();
             Invoke(nameof(GetAllPlayers), 0.1f);
         }
-        ScoreManager.Instance.ResetTeamDeaths();
+
+        ScoreManager.Instance.ClearPropertyCounters();
 
         SpawnPlayer();
         StartTimer();
