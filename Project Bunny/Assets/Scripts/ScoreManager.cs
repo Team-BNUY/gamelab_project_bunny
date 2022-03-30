@@ -2,12 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 
 public class ScoreManager : MonoBehaviour
 {
-
-
-
     private static ScoreManager _instance;
 
     public static ScoreManager Instance
@@ -22,13 +20,13 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    [Header("Death Count")]
-    [SerializeField] private int _blueDeaths = 0;
-    [SerializeField] private int _redDeaths = 0;
-
     [Header("Match Information")]
-    public bool _isFirstMatch = true;
-    public int _winningTeamCode = 0;
+    public bool isFirstMatch = true;
+    public int winningTeamCode = 0;
+    public string rascal = string.Empty;
+    public string bully = string.Empty;
+    public string hardWorker = string.Empty;
+    public string teachersPet = string.Empty;
 
     public PhotonView _view;
 
@@ -37,57 +35,140 @@ public class ScoreManager : MonoBehaviour
     {
         _isFirstMatch = false;
 
-        if (_blueDeaths < _redDeaths)
-            _winningTeamCode = 1;
-        else if (_blueDeaths > _redDeaths)
-            _winningTeamCode = 2;
+        int blueDeaths = 0;
+        int redDeaths = 0;
+        int mostBullyHits = 0;
+        int mostRascalHits = 0;
+        int mostHits = 0;
+        int leastThrows = 9999;
+
+        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+        {
+
+            //WIN CONDITION
+            if (player.CustomProperties.ContainsKey("deaths"))
+            {
+                PhotonTeam team = player.GetPhotonTeam();
+                if (team != null)
+                {
+                    int deaths = (int)player.CustomProperties["deaths"];
+
+                    if (team.Code == 1)
+                    {
+                        blueDeaths += deaths;
+                    }
+                    else if (team.Code == 2)
+                    {
+                        redDeaths += deaths;
+                    }
+                }
+            }
+
+            //HARD WORKER
+            if (player.CustomProperties.ContainsKey("hitsLanded"))
+            {
+                int hits = (int)player.CustomProperties["hitsLanded"];
+
+                if (hits > mostHits)
+                {
+                    mostHits = hits;
+                    hardWorker = player.NickName;
+                }
+            }
+
+            //TEACHER'S PET
+            if (player.CustomProperties.ContainsKey("ballsThrown"))
+            {
+                int throws = (int)player.CustomProperties["ballsThrown"];
+
+                if (throws < leastThrows)
+                {
+                    leastThrows = throws;
+                    teachersPet = player.NickName;
+                }
+            }
+
+            //BULLY
+            if (player.CustomProperties.ContainsKey("bullyHits"))
+            {
+                int hits = (int)player.CustomProperties["bullyHits"];
+
+                if (hits > mostBullyHits)
+                {
+                    mostBullyHits = hits;
+                    bully = player.NickName;
+                }
+            }
+
+            //RASCAL
+            if (player.CustomProperties.ContainsKey("rascalHits"))
+            {
+                int hits = (int)player.CustomProperties["rascalHits"];
+
+                if (hits > mostRascalHits)
+                {
+                    mostRascalHits = hits;
+                    rascal = player.NickName;
+                }
+            }
+        }
+
+        if (blueDeaths < redDeaths)
+            winningTeamCode = 1;
+        else if (redDeaths < blueDeaths)
+            winningTeamCode = 2;
         else
             Debug.Log("how do we handle exact ties? TO BE SOLVED LATER");
 
-        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, _isFirstMatch, _winningTeamCode);
+        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rascal, hardWorker, teachersPet);
     }
 
-    public void IncrementTeamDeaths(int teamCode)
+    public void IncrementPropertyCounter(Photon.Realtime.Player player, string code)
     {
-        _view.RPC(nameof(IncrementTeamDeathsRPC), RpcTarget.AllBuffered, teamCode);
+        ExitGames.Client.Photon.Hashtable props = player.CustomProperties;
+        if (props.ContainsKey(code))
+        {
+            int count = (int)props[code];
+            props[code] = ++count;
+        }
+        else
+        {
+            props.Add(code, 1); //if property does not exist, we assume it's zero.
+        }
+        player.SetCustomProperties(props);
+
     }
 
-    public void ResetTeamDeaths()
+    public void ClearPropertyCounters()
     {
-        _view.RPC(nameof(ResetTeamDeathsRPC), RpcTarget.AllBuffered);
+        ExitGames.Client.Photon.Hashtable props = PhotonNetwork.LocalPlayer.CustomProperties;
+
+        string[] keys = new string[] { "deaths", "hitsLanded", "ballsThrown", "bullyHits", "rascalHits" };
+
+        foreach (string key in keys)
+        {
+            if (props.ContainsKey(key))
+                props[key] = 0;
+            else
+                props.Add(key, 0);
+        }
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
     }
+
     #endregion
 
     #region RPC
-    [PunRPC]
-    private void IncrementTeamDeathsRPC(int teamCode)
-    {
-        switch (teamCode)
-        {
-            case 1:
-                _blueDeaths++;
-                break;
-            case 2:
-                _redDeaths++;
-                break;
-            default:
-                Debug.LogError("Invalid team number");
-                break;
-        }
-    }
 
     [PunRPC]
-    public void ResetTeamDeathsRPC()
+    public void SyncMatchInformation(bool isFirstMatch, int winningTeamCode, string bully, string rascal, string hardWorker, string teachersPet)
     {
-        _blueDeaths = 0;
-        _redDeaths = 0;
-    }
-
-    [PunRPC]
-    public void SyncMatchInformation(bool isFirstMatch, int winningTeamCode)
-    {
-        this._isFirstMatch = isFirstMatch;
-        this._winningTeamCode = winningTeamCode;
+        this.isFirstMatch = isFirstMatch;
+        this.winningTeamCode = winningTeamCode;
+        this.bully = bully;
+        this.rascal = rascal;
+        this.hardWorker = hardWorker;
+        this.teachersPet = teachersPet;
     }
     #endregion
 }

@@ -15,14 +15,14 @@ namespace Networking
         [SerializeField] private LineRenderer _trajectoryLineRenderer;
         [SerializeField, Min(0)] private float _initialDirection;
         [SerializeField] private int _damage;
-    
+
         private bool _isDestroyable;
         private float _throwForce;
         private float _mass;
         private float _initialVelocity;
         private readonly float _collisionCheckRadius = 0.03f;
 
-        private NetworkStudentController _studentThrower;
+        public NetworkStudentController _studentThrower;
         private Transform _holdingPlace;
         private PhotonView _view;
         private bool _hasCollided;
@@ -57,12 +57,17 @@ namespace Networking
             {
                 if (_hasCollided) return;
                 _hasCollided = true;
-                
+
+                if (_studentThrower.photonView.IsMine)
+                {
+                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "hitsLanded");
+                }
+
                 otherStudent.GetDamaged(_damage);
             }
 
             if (otherStudent == _studentThrower) return;
-            
+
             var go = PhotonNetwork.Instantiate(ArenaManager.Instance.SnowballBurst.name, _snowballTransform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
