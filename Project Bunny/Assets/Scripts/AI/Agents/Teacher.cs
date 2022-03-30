@@ -93,6 +93,8 @@ namespace AI.Agents
             
             var projectile = other.CompareTag("Projectile");
             if (!projectile) return;
+
+            if (other.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !giantRollball.CanDamage) return;
             
             photonView.RPC("Stun", RpcTarget.All);
         }
