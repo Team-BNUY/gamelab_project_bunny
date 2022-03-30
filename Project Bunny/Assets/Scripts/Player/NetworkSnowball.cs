@@ -25,7 +25,6 @@ namespace Networking
         private NetworkStudentController _studentThrower;
         private Transform _holdingPlace;
         private PhotonView _view;
-        private bool hasCollided;
 
         private void Awake()
         {
@@ -37,7 +36,6 @@ namespace Networking
 
             _mass = _snowballRigidbody.mass;
             _trajectoryLineRenderer.enabled = false;
-            hasCollided = false;
         }
 
         private void Update()
@@ -49,13 +47,11 @@ namespace Networking
         {
             if (!_view.IsMine) return;
             if (!_isDestroyable) return;
-            if (hasCollided) return;
-            hasCollided = true;
 
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent)
-            && otherStudent != _studentThrower
-            && !otherStudent.TeamID.Equals(_studentThrower.TeamID)
-            && !otherStudent.IsDead)
+                && otherStudent != _studentThrower
+                && !otherStudent.TeamID.Equals(_studentThrower.TeamID)
+                && !otherStudent.IsDead)
             {
                 otherStudent.GetDamaged(_damage);
             }
