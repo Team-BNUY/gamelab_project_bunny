@@ -74,7 +74,7 @@ namespace Player
         private Vector3 _playerPosition;
         private Quaternion _playerRotation;
         private Vector2 _inputMovement;
-        private float _mousePosAngle;
+        private Vector2 _deltaVector;
 
         [Header("Player Properties")] 
         [SerializeField] private Canvas _worldUI;
@@ -109,6 +109,8 @@ namespace Player
         private static readonly int IsDiggingHash = Animator.StringToHash("isDigging");
         private static readonly int HasSnowballHash = Animator.StringToHash("hasSnowball");
         private static readonly int ThrowSnowball = Animator.StringToHash("ThrowSnowball");
+        private static readonly int DeltaX = Animator.StringToHash("deltaX");
+        private static readonly int DeltaY = Animator.StringToHash("deltaY");
 
         // PROPERTIES (REPLACE PUBLIC GETTERS)
         public CharacterController CharacterControllerComponent => _characterController;
@@ -261,8 +263,30 @@ namespace Player
             
             _playerModel.rotation = _playerRotation;
 
-            var signedAngle = Vector2.SignedAngle(new Vector2(0, 1), _inputMovement);
-            Debug.Log(signedAngle);
+            var moveAngle = Vector2.SignedAngle(_inputMovement, new Vector2(0, 1));
+            if (moveAngle < 0)
+            {
+                moveAngle = 360f + moveAngle;
+            }
+
+            var rotationAngle = _playerModel.eulerAngles.y;
+            if (rotationAngle < 0)
+            {
+                rotationAngle = 360f + rotationAngle;
+            }
+            
+            var deltaDegrees = moveAngle - rotationAngle;
+            if (deltaDegrees < 0)
+            {
+                deltaDegrees = 360f + deltaDegrees;
+            }
+
+            var deltaRadians = Mathf.Deg2Rad * deltaDegrees;
+            var deltaVector = new Vector2(Mathf.Sin(deltaRadians), Mathf.Cos(deltaRadians));
+            _deltaVector = Vector2.Lerp(_deltaVector, deltaVector, 20f * Time.deltaTime);
+            
+            _animator.SetFloat(DeltaX, _deltaVector.x);
+            _animator.SetFloat(DeltaY, _deltaVector.y);
         }
 
         /// <summary>
@@ -328,7 +352,6 @@ namespace Player
         {
             photonView.RPC(nameof(GetDamagedRPC), RpcTarget.AllBuffered, damage);
         }
-
 
         /// <summary>
         /// Student gets damaged when snowball or combat item is thrown at them successfully
@@ -489,8 +512,8 @@ namespace Player
         {
             if (_playerCamera == null) return;
 
-            _mousePosAngle = Utilities.MousePosToRotationInput(_studentTransform, _playerCamera);
-            _playerRotation = Quaternion.Euler(0f, _mousePosAngle, 0f);
+            var mousePosAngle = Utilities.MousePosToRotationInput(_studentTransform, _playerCamera);
+            _playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
         }
 
         /// <summary>
