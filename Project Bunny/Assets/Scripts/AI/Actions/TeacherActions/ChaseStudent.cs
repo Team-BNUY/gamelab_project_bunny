@@ -64,7 +64,7 @@ namespace AI.Actions.TeacherActions
 
             if (Vector3.Distance(_target.transform.position, _teacher.transform.position) > 2f || _target.IsDead) return;
             
-            _target.photonView.RPC("GetDamaged", RpcTarget.All, 3);
+            _target.photonView.RPC("GetDamagedRPC", RpcTarget.All, 3);
             _teacher.BadStudents.Remove(_target);
             Teacher.LoseDeadPlayer(_target);
         }
