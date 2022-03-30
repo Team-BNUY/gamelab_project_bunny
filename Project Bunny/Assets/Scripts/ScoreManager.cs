@@ -154,6 +154,16 @@ public class ScoreManager : MonoBehaviour
         }
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+
+        ResetStats();
+    }
+
+    private void ResetStats() {
+        this.winningTeamCode = 0;
+        this.bully = string.Empty;
+        this.rascal = string.Empty;
+        this.hardWorker = string.Empty;
+        this.teachersPet = string.Empty;
     }
 
     #endregion
