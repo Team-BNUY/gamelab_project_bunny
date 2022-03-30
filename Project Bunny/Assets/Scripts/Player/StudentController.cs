@@ -25,8 +25,8 @@ namespace Player
         private Vector3 _playerCurrentVelocity;
         private Vector3 _playerPosition;
         private Quaternion _playerRotation;
-        private float _mousePosAngle;
         private Vector2 _inputMovement;
+        private Vector2 _deltaVector;
         
         [Header("Properties")]
         [SerializeField] private float _studentHealth;
@@ -57,7 +57,9 @@ namespace Player
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
         private static readonly int IsDiggingHash = Animator.StringToHash("isDigging");
         private static readonly int HasSnowballHash = Animator.StringToHash("hasSnowball");
-        
+        private static readonly int DeltaX = Animator.StringToHash("deltaX");
+        private static readonly int DeltaY = Animator.StringToHash("deltaY");
+
         public Quaternion PlayerRotation => _playerRotation;
         public Transform PlayerHand => _playerHand;
 
@@ -142,8 +144,30 @@ namespace Player
             
             _playerModel.rotation = _playerRotation;
             
-            var signedAngle = Vector2.SignedAngle(_inputMovement, new Vector2(0, 1));
-            Debug.Log(signedAngle);
+            var moveAngle = Vector2.SignedAngle(_inputMovement, new Vector2(0, 1));
+            if (moveAngle < 0)
+            {
+                moveAngle = 360f + moveAngle;
+            }
+
+            var rotationAngle = _playerModel.eulerAngles.y;
+            if (rotationAngle < 0)
+            {
+                rotationAngle = 360f + rotationAngle;
+            }
+            
+            var deltaDegrees = moveAngle - rotationAngle;
+            if (deltaDegrees < 0)
+            {
+                deltaDegrees = 360f + deltaDegrees;
+            }
+
+            var deltaRadians = Mathf.Deg2Rad * deltaDegrees;
+            var deltaVector = new Vector2(Mathf.Sin(deltaRadians), Mathf.Cos(deltaRadians));
+            _deltaVector = Vector2.Lerp(_deltaVector, deltaVector, 20f * Time.deltaTime);
+            
+            _animator.SetFloat(DeltaX, _deltaVector.x);
+            _animator.SetFloat(DeltaY, _deltaVector.y);
         }
 
         /// <summary>
@@ -270,8 +294,8 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnLook()
         {
-            _mousePosAngle = Utilities.MousePosToRotationInput(transform, _playerCamera);
-            _playerRotation = Quaternion.Euler(0f, _mousePosAngle, 0f);
+            var mousePosAngle = Utilities.MousePosToRotationInput(transform, _playerCamera);
+            _playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
         }
 
         /// <summary>
@@ -343,7 +367,7 @@ namespace Player
                 {
                     _playerSnowball.DisableLineRenderer();
                     _isAiming = false;
-                    _animator.Play($"Base Layer.Snowball Throw");
+                    _animator.SetTrigger("ThrowSnowball");
                 }
                 else
                 {
