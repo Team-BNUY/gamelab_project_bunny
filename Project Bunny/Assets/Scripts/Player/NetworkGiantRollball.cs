@@ -22,7 +22,6 @@ namespace Player
         private bool _isGrowing;
         private bool _isDestroyable;
         private bool _canDamage;
-        private bool _hasCollided;
         public bool CanDamage => _canDamage;
         //public int Damage => _damage;
 
@@ -49,8 +48,7 @@ namespace Player
 
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var student) && _canDamage)
             {
-                if (_hasCollided) return;
-                _hasCollided = true;
+                Debug.Log("YO");
                 
                 student.photonView.RPC("GetDamagedRPC", RpcTarget.All, _damage);
                 BreakRollball();
@@ -133,14 +131,12 @@ namespace Player
                 stream.SendNext(_canDamage);
                 stream.SendNext(_isDestroyable);
                 stream.SendNext(_isGrowing);
-                stream.SendNext(_hasCollided);
             }
             else
             {
                 _canDamage = (bool) stream.ReceiveNext();
                 _isDestroyable = (bool) stream.ReceiveNext();
                 _isGrowing = (bool) stream.ReceiveNext();
-                _hasCollided = (bool) stream.ReceiveNext();
             }
         }
     }
