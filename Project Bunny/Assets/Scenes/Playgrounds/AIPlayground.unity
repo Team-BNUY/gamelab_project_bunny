@@ -710,26 +710,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1429097564631009792, guid: af50235196f6c4a4a89a4191a2308538, type: 3}
-      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1429097564631009792, guid: af50235196f6c4a4a89a4191a2308538, type: 3}
-      propertyPath: m_ActionEvents.Array.data[1].m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1429097564631009792, guid: af50235196f6c4a4a89a4191a2308538, type: 3}
-      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1429097564631009792, guid: af50235196f6c4a4a89a4191a2308538, type: 3}
-      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1429097564631009792, guid: af50235196f6c4a4a89a4191a2308538, type: 3}
-      propertyPath: m_ActionEvents.Array.data[4].m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 1429097564631009820, guid: af50235196f6c4a4a89a4191a2308538, type: 3}
       propertyPath: m_Name
       value: updated_PlayerTest 1 2
@@ -794,10 +774,6 @@ PrefabInstance:
       propertyPath: _playerCamera
       value: 
       objectReference: {fileID: 1851923597}
-    - target: {fileID: 6703693712957749773, guid: af50235196f6c4a4a89a4191a2308538, type: 3}
-      propertyPath: _studentController
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 6784472358085550243, guid: af50235196f6c4a4a89a4191a2308538, type: 3}
       propertyPath: m_WarningMessage
       value: "\nBinding warning: Some generic clip(s) animate transforms that are
@@ -809,8 +785,7 @@ PrefabInstance:
         ...\n\tFrom animation clip 'mixamo.com'\n\tFrom animation clip 'mixamo.com'\n\tFrom
         animation clip 'mixamo.com'\n\tFrom animation clip 'throw'"
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2307277380677059102, guid: af50235196f6c4a4a89a4191a2308538, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af50235196f6c4a4a89a4191a2308538, type: 3}
 --- !u!95 &472557925 stripped
 Animator:
@@ -1237,40 +1212,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1691304808}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1825893668 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1429097564631009820, guid: af50235196f6c4a4a89a4191a2308538, type: 3}
-  m_PrefabInstance: {fileID: 472557924}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1825893669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1825893668}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0282620ef80cc1846aec2ff794700baa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _studentTransform: {fileID: 0}
-  _playerModel: {fileID: 0}
-  _playerInput: {fileID: 0}
-  _animator: {fileID: 0}
-  _jersey: {fileID: 0}
-  _movementSpeed: 0
-  _movementFriction: 0
-  _worldUI: {fileID: 0}
-  _canvasTransform: {fileID: 0}
-  _hearts: []
-  _maxHealth: 0
-  _playerHand: {fileID: 0}
-  _digSnowballMaxTime: 0
-  _minForce: 0
-  _maxForce: 0
-  _forceIncreaseTimeRate: 0
-  _nickNameText: {fileID: 0}
 --- !u!1001 &1851923595
 PrefabInstance:
   m_ObjectHideFlags: 0

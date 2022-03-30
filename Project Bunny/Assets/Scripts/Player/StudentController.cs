@@ -25,7 +25,9 @@ namespace Player
         private Vector3 _playerCurrentVelocity;
         private Vector3 _playerPosition;
         private Quaternion _playerRotation;
-
+        private float _mousePosAngle;
+        private Vector2 _inputMovement;
+        
         [Header("Properties")]
         [SerializeField] private float _studentHealth;
         private GameObject _currentObjectInHand;
@@ -137,7 +139,11 @@ namespace Player
                     _characterController.Move(_playerPosition * (_movementSpeed * Time.deltaTime));
                 }
             }
+            
             _playerModel.rotation = _playerRotation;
+            
+            var signedAngle = Vector2.SignedAngle(_inputMovement, new Vector2(0, 1));
+            Debug.Log(signedAngle);
         }
 
         /// <summary>
@@ -241,18 +247,18 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnMove(InputAction.CallbackContext context)
         {
-            var inputMovement = context.ReadValue<Vector2>();
+            _inputMovement = context.ReadValue<Vector2>();
             var gravity = Physics.gravity.y * Time.deltaTime * 100f;
-            _playerPosition = new Vector3(inputMovement.x, 0f, inputMovement.y);
+            _playerPosition = new Vector3(_inputMovement.x, 0f, _inputMovement.y);
             _playerPosition.y += gravity;
             _isWalking = _animator.GetBool(IsWalkingHash);
             
             //_animator.SetBool(_hasSnowballHash, _hasSnowball);
-            if (_isWalking && inputMovement.magnitude == 0.0f)
+            if (_isWalking && _inputMovement.magnitude == 0.0f)
             {
                 _animator.SetBool(IsWalkingHash, false);
             }
-            else if (!_isWalking && inputMovement.magnitude > 0.0f)
+            else if (!_isWalking && _inputMovement.magnitude > 0.0f)
             {
                 _animator.SetBool(IsWalkingHash, true);
             }
@@ -264,8 +270,8 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnLook()
         {
-            var mousePosAngle = Utilities.MousePosToRotationInput(transform, _playerCamera);
-            _playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
+            _mousePosAngle = Utilities.MousePosToRotationInput(transform, _playerCamera);
+            _playerRotation = Quaternion.Euler(0f, _mousePosAngle, 0f);
         }
 
         /// <summary>
