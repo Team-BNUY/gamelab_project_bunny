@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
-using ExitGames.Client.Photon.StructWrapping;
 using Interfaces;
 using Networking;
 using Photon.Pun;
@@ -40,7 +39,7 @@ namespace Player
         [SerializeField] private GameObject _playerSkin;
         [SerializeField] private Color[] skinColors;
         [SerializeField] private Color[] _colors;
-        private int skinColorIndex;
+        private int _skinColorIndex;
         
 
         private GameObject _currentHat;
@@ -162,7 +161,7 @@ namespace Player
             _pantColorIndex = 0;
             _hairColorIndex = 0;
             _coatColorIndex = 0;
-            skinColorIndex = 0;
+            _skinColorIndex = 0;
 
         }
 
@@ -220,21 +219,15 @@ namespace Player
         {
             if (other.TryGetComponent(out INetworkTriggerable triggerable))
             {
-                if (_currentTriggerable == null)
-                {
-                    _currentTriggerable = triggerable;
-                }
+                _currentTriggerable ??= triggerable;
             }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.TryGetComponent(out INetworkTriggerable triggerable))
+            if (other.TryGetComponent(out INetworkTriggerable triggerable) && _currentTriggerable == triggerable)
             {
-                if (_currentTriggerable == triggerable)
-                {
-                    _currentTriggerable = null;
-                }
+                _currentTriggerable = null;
             }
         }
         #endregion
@@ -687,10 +680,9 @@ namespace Player
                 Debug.LogError("Missing reference to player jersey");
                 return;
             }
-            object teamId;
-            PhotonTeam team;
-            if (photonView.Owner.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId) &&
-                PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team))
+
+            if (photonView.Owner.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out var teamId) &&
+                PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out var team))
             {
                 if(!_teamShirt.activeSelf) _teamShirt.SetActive(true);
                 switch (team.Code)
@@ -776,8 +768,15 @@ namespace Player
         [PunRPC]
         public void SwitchCoatColor()
         {
-            if (_coatColorIndex + 1 >= _colors.Length) _coatColorIndex = 0;
-            else _coatColorIndex++;
+            if (_coatColorIndex + 1 >= _colors.Length)
+            {
+                _coatColorIndex = 0;
+            }
+            else
+            {
+                _coatColorIndex++;
+            }
+            
             _coatColor = _colors[_coatColorIndex];
             _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
         }
@@ -790,7 +789,10 @@ namespace Player
             {
                 _hairStyleIndex = 0;
             }
-            else _hairStyleIndex++;
+            else
+            {
+                _hairStyleIndex++;
+            }
 
             _currentHairStyle = _playerHairStyles[_hairStyleIndex];
             _currentHairStyle.SetActive(true);
@@ -808,13 +810,16 @@ namespace Player
         [PunRPC]
         public void SwitchSkinColor()
         {
-            if (skinColorIndex + 1 >= skinColors.Length)
+            if (_skinColorIndex + 1 >= skinColors.Length)
             {
-                skinColorIndex = 0;
+                _skinColorIndex = 0;
             }
-            else skinColorIndex++;
+            else
+            {
+                _skinColorIndex++;
+            }
             
-            _playerSkin.GetComponent<Renderer>().material.color = skinColors[skinColorIndex];
+            _playerSkin.GetComponent<Renderer>().material.color = skinColors[_skinColorIndex];
         }
         
         
@@ -829,17 +834,19 @@ namespace Player
 
         
         /// <summary>
-        /// Tmeporary function for restoring a player's colors to all white to show they are teamless
+        /// Temporary function for restoring a player's colors to all white to show they are teamless
         /// </summary>
         [PunRPC]
         public void RestoreTeamlessColors()
         {
             _teamShirt.GetComponent<Renderer>().material.color = Color.white;
             _playerBoots.GetComponent<Renderer>().material.color = Color.white;
+            
             foreach (var playerHatRenderer in _playerHatRenderers)
             {
                 playerHatRenderer.material.color = Color.white;
             }
+            
             _nickNameText.color = Color.white;
             _teamShirt.SetActive(false);
         }

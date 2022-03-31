@@ -10,7 +10,8 @@ public class ScoreManager : MonoBehaviour
 
     private static ScoreManager _instance;
 
-    public static ScoreManager Instance {
+    public static ScoreManager Instance
+    {
         get {
             if (_instance == null)
             {
@@ -26,24 +27,24 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private int _redDeaths = 0;
 
     [Header("Match Information")]
-    public bool isFirstMatch = true;
-    public int winningTeamCode = 0;
+    public bool _isFirstMatch = true;
+    public int _winningTeamCode = 0;
 
     public PhotonView _view;
 
     #region PublicMethods
     public void CalculateScore()
     {
-        isFirstMatch = false;
+        _isFirstMatch = false;
 
         if (_blueDeaths < _redDeaths)
-            winningTeamCode = 1;
+            _winningTeamCode = 1;
         else if (_blueDeaths > _redDeaths)
-            winningTeamCode = 2;
+            _winningTeamCode = 2;
         else
             Debug.Log("how do we handle exact ties? TO BE SOLVED LATER");
 
-        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode);
+        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, _isFirstMatch, _winningTeamCode);
     }
 
     public void IncrementTeamDeaths(int teamCode)
@@ -85,8 +86,8 @@ public class ScoreManager : MonoBehaviour
     [PunRPC]
     public void SyncMatchInformation(bool isFirstMatch, int winningTeamCode)
     {
-        this.isFirstMatch = isFirstMatch;
-        this.winningTeamCode = winningTeamCode;
+        this._isFirstMatch = isFirstMatch;
+        this._winningTeamCode = winningTeamCode;
     }
     #endregion
 }
