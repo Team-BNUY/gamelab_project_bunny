@@ -138,7 +138,7 @@ namespace Player
             _characterController ??= GetComponent<CharacterController>();
             _animator ??= gameObject.GetComponent<Animator>();
             _playerInput ??= GetComponent<PlayerInput>();
-
+            
             _playerInput.actionEvents[0].AddListener(OnMove);
             _playerInput.actionEvents[1].AddListener(OnLook);
 
@@ -543,7 +543,6 @@ namespace Player
                 _isDigging = true;
                 if (photonView.IsMine)
                 {
-                    photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
                     photonView.RPC("SetDigHashBool_RPC", RpcTarget.All, true);
                 }
             }
