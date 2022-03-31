@@ -293,8 +293,8 @@ namespace Player
             _hasSnowball = true;
             _isDigging = false;
             _digSnowballTimer = 0.0f;
-            _view.RPC("SetDigHashBool_RPC", RpcTarget.All, false);
-            _view.RPC("SetHasSnowballHashBool_RPC", RpcTarget.All, true);
+            photonView.RPC("SetDigHashBool_RPC", RpcTarget.All, false);
+            photonView.RPC("SetHasSnowballHashBool_RPC", RpcTarget.All, true);
         }
 
         /// <summary>
@@ -321,7 +321,7 @@ namespace Player
             _hasSnowball = false;
             _currentObjectInHand = null;
             _playerSnowball = null;
-            _view.RPC("SetHasSnowballHashBool_RPC", RpcTarget.All, false);
+            photonView.RPC("SetHasSnowballHashBool_RPC", RpcTarget.All, false);
         }
 
         public void GetDamaged(int damage) 
@@ -473,11 +473,11 @@ namespace Player
             //_animator.SetBool(_hasSnowballHash, _hasSnowball);
             if (photonView.IsMine && _isWalking && _inputMovement.magnitude == 0.0f)
             {
-                _view.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
+                photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
             }
             else if (photonView.IsMine && !_isWalking && _inputMovement.magnitude > 0.0f)
             {
-                _view.RPC("SetWalkHashBool_RPC", RpcTarget.All, true);
+                photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, true);
             }
         }
 
@@ -520,8 +520,8 @@ namespace Player
                 _isDigging = true;
                 if (photonView.IsMine)
                 {
-                    _view.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
-                    _view.RPC("SetDigHashBool_RPC", RpcTarget.All, true);
+                    photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
+                    photonView.RPC("SetDigHashBool_RPC", RpcTarget.All, true);
                 }
             }
             // If digging is abruptly cancelled, cancel action and reset timer
@@ -531,7 +531,7 @@ namespace Player
                 _digSnowballTimer = 0.0f;
                 if (photonView.IsMine)
                 {
-                    _view.RPC("SetDigHashBool_RPC", RpcTarget.All, false);
+                    photonView.RPC("SetDigHashBool_RPC", RpcTarget.All, false);
                 }
             }
 
@@ -565,7 +565,7 @@ namespace Player
                 //If player has a snowball, then throw it. Otherwise call the Interactable's Release method.
                 if (photonView.IsMine && _hasSnowball)
                 {
-                    _view.RPC("PlaySnowballThrowAnimation", RpcTarget.All);
+                    photonView.RPC("PlaySnowballThrowAnimation", RpcTarget.All);
                     ThrowStudentSnowball();
                 }
                 else
@@ -795,14 +795,14 @@ namespace Player
         }
         
         
-        public void SwitchHat_RPC(){_view.RPC("SwitchHat", RpcTarget.AllBuffered);}
-        public void SwitchCoat_RPC(){_view.RPC("SwitchCoat", RpcTarget.AllBuffered);}
-        public void SwitchPants_RPC(){_view.RPC("SwitchPants", RpcTarget.AllBuffered);}
-        public void SwitchHair_RPC(){_view.RPC("SwitchHair", RpcTarget.AllBuffered);}
-        public void SwitchHairColor_RPC(){_view.RPC("SwitchHairColor", RpcTarget.AllBuffered);}
-        public void SwitchPantsColor_RPC(){_view.RPC("SwitchPantsColor", RpcTarget.AllBuffered);}
-        public void SwitchCoatColor_RPC(){_view.RPC("SwitchCoatColor", RpcTarget.AllBuffered);}
-        public void SwitchSkinColor_RPC(){_view.RPC("SwitchSkinColor", RpcTarget.AllBuffered);}
+        public void SwitchHat_RPC(){photonView.RPC("SwitchHat", RpcTarget.AllBuffered);}
+        public void SwitchCoat_RPC(){photonView.RPC("SwitchCoat", RpcTarget.AllBuffered);}
+        public void SwitchPants_RPC(){photonView.RPC("SwitchPants", RpcTarget.AllBuffered);}
+        public void SwitchHair_RPC(){photonView.RPC("SwitchHair", RpcTarget.AllBuffered);}
+        public void SwitchHairColor_RPC(){photonView.RPC("SwitchHairColor", RpcTarget.AllBuffered);}
+        public void SwitchPantsColor_RPC(){photonView.RPC("SwitchPantsColor", RpcTarget.AllBuffered);}
+        public void SwitchCoatColor_RPC(){photonView.RPC("SwitchCoatColor", RpcTarget.AllBuffered);}
+        public void SwitchSkinColor_RPC(){photonView.RPC("SwitchSkinColor", RpcTarget.AllBuffered);}
 
         
         /// <summary>
