@@ -72,68 +72,6 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!1 &8254875105244064341
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8254875105244064347}
-  - component: {fileID: 8254875105244064340}
-  m_Layer: 0
-  m_Name: Customizer_pants
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8254875105244064347
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875105244064341}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.671814, y: 6.338379, z: 3.5385513}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 8254875106955020710}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8254875105244064340
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875105244064341}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9726728532c39f84dac47b75a5f298ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myName: {fileID: 0}
-  playerName: {fileID: 0}
-  teamColor: []
-  teamMat: {fileID: 0}
-  teamShirt: {fileID: 0}
-  model:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  currentIndex: 2
-  mat: {fileID: 2100000, guid: 096ed4f3cd329c1429319614eb53b014, type: 2}
-  color:
-  - {r: 0, g: 0, b: 0, a: 0}
-  - {r: 0, g: 1, b: 0.019954205, a: 0}
-  - {r: 1, g: 0.19320273, b: 0, a: 0}
-  - {r: 1, g: 0.9318118, b: 0, a: 0}
-  - {r: 0.5055523, g: 0, b: 1, a: 0}
-  currentColorIndex: 0
-  colorSlider: {fileID: 0}
 --- !u!1 &8254875105284627431
 GameObject:
   m_ObjectHideFlags: 0
@@ -327,7 +265,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8254875105578108592}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CustomizeCharacter, Assembly-CSharp
         m_MethodName: ChangeTeamColor
         m_Mode: 3
@@ -472,7 +410,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8254875106570416989}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CustomizeCharacter, Assembly-CSharp
         m_MethodName: ChangeModel
         m_Mode: 1
@@ -805,7 +743,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8254875106199579886}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CustomizeCharacter, Assembly-CSharp
         m_MethodName: ChangeColor
         m_Mode: 1
@@ -896,62 +834,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Join team Blue
---- !u!1 &8254875105578108593
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8254875105578108599}
-  - component: {fileID: 8254875105578108592}
-  m_Layer: 0
-  m_Name: teamChanger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8254875105578108599
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875105578108593}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.671814, y: 6.338379, z: 3.5385513}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 8254875106955020710}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8254875105578108592
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875105578108593}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9726728532c39f84dac47b75a5f298ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myName: {fileID: 0}
-  playerName: {fileID: 0}
-  teamColor:
-  - {r: 0.10323429, g: 0, b: 1, a: 1}
-  - {r: 1, g: 0, b: 0, a: 1}
-  teamMat: {fileID: 2100000, guid: 90ccb6bc8d57cf0499a937a0fb66e532, type: 2}
-  teamShirt: {fileID: 0}
-  model: []
-  currentIndex: 1
-  mat: {fileID: 0}
-  color: []
-  currentColorIndex: 0
-  colorSlider: {fileID: 0}
 --- !u!1 &8254875105588236075
 GameObject:
   m_ObjectHideFlags: 0
@@ -1388,7 +1270,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8254875106199579886}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CustomizeCharacter, Assembly-CSharp
         m_MethodName: ChangeModel
         m_Mode: 1
@@ -1593,7 +1475,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8254875105244064340}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CustomizeCharacter, Assembly-CSharp
         m_MethodName: ChangeModel
         m_Mode: 1
@@ -2087,7 +1969,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8254875105244064340}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CustomizeCharacter, Assembly-CSharp
         m_MethodName: ChangeColor
         m_Mode: 1
@@ -2174,64 +2056,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &8254875105858818236
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8254875105858818210}
-  - component: {fileID: 8254875105858818211}
-  m_Layer: 0
-  m_Name: Customizer_skin
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8254875105858818210
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875105858818236}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.671814, y: 6.338379, z: 3.5385513}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 8254875106955020710}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8254875105858818211
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875105858818236}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9726728532c39f84dac47b75a5f298ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myName: {fileID: 0}
-  playerName: {fileID: 0}
-  teamColor: []
-  teamMat: {fileID: 0}
-  teamShirt: {fileID: 0}
-  model: []
-  currentIndex: 1
-  mat: {fileID: 2100000, guid: d4edd8c3816a5584e9ae726a88372410, type: 2}
-  color:
-  - {r: 0.9433962, g: 0.78797555, b: 0.4227483, a: 1}
-  - {r: 0.7924528, g: 0.37056857, b: 0.21306513, a: 1}
-  - {r: 0.9254902, g: 0.69277537, b: 0.6509804, a: 1}
-  - {r: 0.31132078, g: 0.18204372, b: 0.054334287, a: 1}
-  currentColorIndex: 0
-  colorSlider: {fileID: 0}
 --- !u!1 &8254875105887187545
 GameObject:
   m_ObjectHideFlags: 0
@@ -2432,7 +2256,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8254875106570416989}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CustomizeCharacter, Assembly-CSharp
         m_MethodName: ChangeColor
         m_Mode: 1
@@ -2622,7 +2446,6 @@ RectTransform:
   - {fileID: 8254875105299370358}
   - {fileID: 8254875106716549855}
   - {fileID: 8254875106496410562}
-  - {fileID: 8254875106955020710}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2839,70 +2662,6 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!1 &8254875106199579887
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8254875106199579885}
-  - component: {fileID: 8254875106199579886}
-  m_Layer: 0
-  m_Name: Customizer_hair
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8254875106199579885
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875106199579887}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.671814, y: 6.338379, z: 3.5385513}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 8254875106955020710}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8254875106199579886
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875106199579887}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9726728532c39f84dac47b75a5f298ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myName: {fileID: 0}
-  playerName: {fileID: 0}
-  teamColor: []
-  teamMat: {fileID: 0}
-  teamShirt: {fileID: 0}
-  model:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  currentIndex: 1
-  mat: {fileID: 2100000, guid: 03b4055cedea2a64382736559a1af98d, type: 2}
-  color:
-  - {r: 0.46226418, g: 0.21586864, b: 0.28480726, a: 0}
-  - {r: 1, g: 0.7836895, b: 0, a: 0}
-  - {r: 0, g: 0.839838, b: 1, a: 0}
-  - {r: 0.2924528, g: 0.2924528, b: 0.2924528, a: 0}
-  - {r: 1, g: 0.3443396, b: 0.91124463, a: 0}
-  currentColorIndex: 0
-  colorSlider: {fileID: 8254875107024456539}
 --- !u!1 &8254875106202907918
 GameObject:
   m_ObjectHideFlags: 0
@@ -3167,67 +2926,6 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!1 &8254875106570416990
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8254875106570416988}
-  - component: {fileID: 8254875106570416989}
-  m_Layer: 0
-  m_Name: Customizer_coat
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8254875106570416988
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875106570416990}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.671814, y: 6.338379, z: 3.5385513}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 8254875106955020710}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8254875106570416989
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875106570416990}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9726728532c39f84dac47b75a5f298ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myName: {fileID: 0}
-  playerName: {fileID: 0}
-  teamColor: []
-  teamMat: {fileID: 0}
-  teamShirt: {fileID: 0}
-  model:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  currentIndex: 2
-  mat: {fileID: 2100000, guid: 0dc6a1e929f8a6043a4da467b135bd49, type: 2}
-  color:
-  - {r: 0, g: 0, b: 0, a: 0}
-  - {r: 0.6930853, g: 1, b: 0, a: 0}
-  - {r: 1, g: 0.8207309, b: 0, a: 0}
-  - {r: 1, g: 0, b: 0.9513254, a: 0}
-  currentColorIndex: 0
-  colorSlider: {fileID: 0}
 --- !u!1 &8254875106576019477
 GameObject:
   m_ObjectHideFlags: 0
@@ -3422,7 +3120,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8254875105858818211}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CustomizeCharacter, Assembly-CSharp
         m_MethodName: ChangeColor
         m_Mode: 1
@@ -3588,63 +3286,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: dye hair
---- !u!1 &8254875106659360548
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8254875106659360554}
-  - component: {fileID: 8254875106659360555}
-  m_Layer: 0
-  m_Name: Customizer_hat
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8254875106659360554
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875106659360548}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.671814, y: 6.338379, z: 3.5385513}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 8254875106955020710}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8254875106659360555
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875106659360548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9726728532c39f84dac47b75a5f298ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myName: {fileID: 0}
-  playerName: {fileID: 0}
-  teamColor: []
-  teamMat: {fileID: 0}
-  teamShirt: {fileID: 0}
-  model:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  currentIndex: 1
-  mat: {fileID: 0}
-  color: []
-  currentColorIndex: 0
-  colorSlider: {fileID: 0}
 --- !u!1 &8254875106681364474
 GameObject:
   m_ObjectHideFlags: 0
@@ -3839,7 +3480,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8254875105578108592}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CustomizeCharacter, Assembly-CSharp
         m_MethodName: ChangeTeamColor
         m_Mode: 3
@@ -4280,42 +3921,6 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &8254875106955020711
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8254875106955020710}
-  m_Layer: 0
-  m_Name: _customizers
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8254875106955020710
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8254875106955020711}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -956.98944, y: -540.34674, z: -8.548086}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 8254875106659360554}
-  - {fileID: 8254875106199579885}
-  - {fileID: 8254875105244064347}
-  - {fileID: 8254875106570416988}
-  - {fileID: 8254875105858818210}
-  - {fileID: 8254875105578108599}
-  m_Father: {fileID: 8254875105959125351}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8254875107024456533
 GameObject:
   m_ObjectHideFlags: 0
@@ -4406,7 +4011,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8254875106199579886}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CustomizeCharacter, Assembly-CSharp
         m_MethodName: TuneColor
         m_Mode: 1
@@ -4618,7 +4223,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8254875106659360555}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CustomizeCharacter, Assembly-CSharp
         m_MethodName: ChangeModel
         m_Mode: 1
