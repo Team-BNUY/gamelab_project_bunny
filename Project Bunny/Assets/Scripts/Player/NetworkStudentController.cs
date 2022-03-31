@@ -589,7 +589,6 @@ namespace Player
                 if (photonView.IsMine && _hasSnowball)
                 {
                     photonView.RPC("PlaySnowballThrowAnimation", RpcTarget.All);
-                    ThrowStudentSnowball();
                 }
                 else
                 {
