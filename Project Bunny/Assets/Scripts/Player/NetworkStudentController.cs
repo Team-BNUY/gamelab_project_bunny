@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using ExitGames.Client.Photon.StructWrapping;
 using Interfaces;
 using Networking;
 using Photon.Pun;
@@ -33,6 +34,35 @@ namespace Player
         [SerializeField] private GameObject _teamShirt;
         [SerializeField] private GameObject[] _playerHats;
         [SerializeField] private GameObject _playerBoots;
+        [SerializeField] private GameObject[] _playerPants;
+        [SerializeField] private GameObject[] _playerHairStyles;
+        [SerializeField] private GameObject[] _playerCoats;
+        [SerializeField] private GameObject _playerSkin;
+        [SerializeField] private Color[] skinColors;
+        [SerializeField] private Color[] _colors;
+        private int skinColorIndex;
+        
+
+        private GameObject _currentHat;
+        private int _hatIndex;
+        
+        
+        private GameObject _currentPants;
+        private int _pantIndex;
+        private int _pantColorIndex;
+        private Color _pantColor;
+        
+        
+        private GameObject _currentHairStyle;
+        private int _hairStyleIndex;
+        private int _hairColorIndex;
+        private Color _hairColor;
+        
+        private GameObject _currentCoat;
+        private int _coatIndex;
+        private int _coatColorIndex;
+        private Color _coatColor;
+        
 
         private List<Renderer> _playerHatRenderers;
         
@@ -115,6 +145,22 @@ namespace Player
             {
                 _playerHatRenderers.Add(playerHat.GetComponent<Renderer>());
             }
+
+            _currentHat = _playerHats[1];
+            _currentCoat = _playerCoats[2];
+            _currentHairStyle = _playerHairStyles[1];
+            _currentPants = _playerPants[2];
+
+            _hatIndex = 0;
+            _coatIndex = 0;
+            _hairStyleIndex = 0;
+            _pantIndex = 0;
+
+            _pantColorIndex = 0;
+            _hairColorIndex = 0;
+            _coatColorIndex = 0;
+            skinColorIndex = 0;
+
         }
 
         private void Start()
@@ -650,7 +696,115 @@ namespace Player
             }
         }
 
+        [PunRPC]
+        public void SwitchHat()
+        {
+            _currentHat.SetActive(false);
+            if (_hatIndex + 1 >= _playerHats.Length)
+            {
+                _hatIndex = 0;
+            }
+            else _hatIndex++;
 
+            _currentHat = _playerHats[_hatIndex];
+            _currentHat.SetActive(true);
+        }
+        
+        
+        [PunRPC]
+        public void SwitchPants()
+        {
+            _currentPants.SetActive(false);
+            if (_pantIndex + 1 >= _playerPants.Length)
+            {
+                _pantIndex = 0;
+            }
+            else _pantIndex++;
+
+            _currentPants = _playerPants[_pantIndex];
+            _currentPants.SetActive(true);
+            _currentPants.GetComponent<Renderer>().material.color = _pantColor;
+        }
+        
+        [PunRPC]
+        public void SwitchPantsColor()
+        {
+            if (_pantColorIndex + 1 >= _colors.Length) _pantColorIndex = 0;
+            else _pantColorIndex++;
+            _pantColor = _colors[_pantColorIndex];
+            _currentPants.GetComponent<Renderer>().material.color = _pantColor;
+        }
+        
+        [PunRPC]
+        public void SwitchCoat()
+        {
+            _currentCoat.SetActive(false);
+            if (_coatIndex + 1 >= _playerCoats.Length)
+            {
+                _coatIndex = 0;
+            }
+            else _coatIndex++;
+
+            _currentCoat = _playerCoats[_coatIndex];
+            _currentCoat.SetActive(true);
+            _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
+        }
+        
+        [PunRPC]
+        public void SwitchCoatColor()
+        {
+            if (_coatColorIndex + 1 >= _colors.Length) _coatColorIndex = 0;
+            else _coatColorIndex++;
+            _coatColor = _colors[_coatColorIndex];
+            _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
+        }
+        
+        [PunRPC]
+        public void SwitchHair()
+        {
+            _currentHairStyle.SetActive(false);
+            if (_hairStyleIndex + 1 >= _playerHairStyles.Length)
+            {
+                _hairStyleIndex = 0;
+            }
+            else _hairStyleIndex++;
+
+            _currentHairStyle = _playerHairStyles[_hairStyleIndex];
+            _currentHairStyle.SetActive(true);
+        }
+        
+        [PunRPC]
+        public void SwitchHairColor()
+        {
+            if (_hairColorIndex + 1 >= _colors.Length) _hairColorIndex = 0;
+            else _hairColorIndex++;
+            _hairColor = _colors[_hairColorIndex];
+            _currentHairStyle.GetComponent<Renderer>().material.color = _hairColor;
+        }
+        
+        [PunRPC]
+        public void SwitchSkinColor()
+        {
+            if (skinColorIndex + 1 >= skinColors.Length)
+            {
+                skinColorIndex = 0;
+            }
+            else skinColorIndex++;
+            
+            _playerSkin.GetComponent<Renderer>().material.color = skinColors[skinColorIndex];
+        }
+        
+        
+        public void SwitchHat_RPC(){_view.RPC("SwitchHat", RpcTarget.AllBuffered);}
+        public void SwitchCoat_RPC(){_view.RPC("SwitchCoat", RpcTarget.AllBuffered);}
+        public void SwitchPants_RPC(){_view.RPC("SwitchPants", RpcTarget.AllBuffered);}
+        public void SwitchHair_RPC(){_view.RPC("SwitchHair", RpcTarget.AllBuffered);}
+        public void SwitchHairColor_RPC(){_view.RPC("SwitchHairColor", RpcTarget.AllBuffered);}
+        public void SwitchPantsColor_RPC(){_view.RPC("SwitchPantsColor", RpcTarget.AllBuffered);}
+        public void SwitchCoatColor_RPC(){_view.RPC("SwitchCoatColor", RpcTarget.AllBuffered);}
+        public void SwitchSkinColor_RPC(){_view.RPC("SwitchSkinColor", RpcTarget.AllBuffered);}
+
+        
         /// <summary>
         /// Tmeporary function for restoring a player's colors to all white to show they are teamless
         /// </summary>
