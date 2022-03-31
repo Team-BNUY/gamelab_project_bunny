@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AI;
+using AI.Agents;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
@@ -40,10 +41,14 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private LayerMask _obstacleLayer;
     [SerializeField] private List<ActionSpot> _actionSpots;
+    [SerializeField] private Teacher _teacherPrefab;
+    [SerializeField] private Transform _teacherSpawn;
+    [SerializeField] private Transform[] _teacherWaypoints;
     private NetworkStudentController[] _allPlayers;
     private List<Gang> _gangs = new List<Gang>();
 
-    [Header("Timer")]
+    [Header("Timers")] 
+    [SerializeField] private float _teacherSpawnTimer;
     [SerializeField] private TMP_Text timerDisplay;
     [SerializeField] private bool hasTimerStarted = false;
     [SerializeField] private float snowmanTimer;
@@ -69,6 +74,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     public LayerMask ObstacleLayer => _obstacleLayer;
     public List<ActionSpot> ActionSpots => _actionSpots;
     public float SnowmanTimer => snowmanTimer;
+    public Transform[] TeacherWaypoints => _teacherWaypoints;
 
     [SerializeField] private Transform[] _redSpawns;
     [SerializeField] private Transform[] _blueSpawns;
@@ -92,6 +98,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
         SpawnPlayer();
         StartTimer();
+        Invoke(nameof(SpawnTeacher), _teacherSpawnTimer);
     }
 
     private void Update()
@@ -165,11 +172,19 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         player.SetCamera(Instantiate(_playerCamera), 60f, 25f);
     }
 
+    private void SpawnTeacher()
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        PhotonNetwork.Instantiate(_teacherPrefab.name, _teacherSpawn.position, _teacherSpawn.rotation);
+    }
+
     public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
     {
         //Kick everyone from the room if the master client changed (too many bugs to deal with otherwise)
         PhotonNetwork.LeaveRoom();
     }
+    
     public override void OnLeftRoom()
     {
         ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
