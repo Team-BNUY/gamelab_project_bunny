@@ -33,7 +33,7 @@ public class ScoreManager : MonoBehaviour
     #region PublicMethods
     public void CalculateScore()
     {
-        _isFirstMatch = false;
+        isFirstMatch = false;
 
         int blueDeaths = 0;
         int redDeaths = 0;
