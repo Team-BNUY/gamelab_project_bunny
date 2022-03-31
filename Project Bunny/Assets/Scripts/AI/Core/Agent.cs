@@ -9,7 +9,7 @@ namespace AI.Core
 {
     public class Agent : MonoBehaviourPunCallbacks
     {
-        [Header("Testing")]
+        [Header("Debug")]
         public string action;
         
         [SerializeField] private List<ActionData> _actionsData;

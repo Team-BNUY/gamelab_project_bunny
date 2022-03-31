@@ -442,7 +442,7 @@ namespace Player
             
             while (timer > 0f)
             {
-                snowGuy.transform.Translate(Vector3.down * Time.deltaTime, Space.World);
+                snowGuy.transform.Translate(Vector3.down * Time.deltaTime / 2f, Space.World);
                 timer -= Time.deltaTime;
 
                 yield return null;

@@ -29,7 +29,7 @@ public class Surveil : Action
     /// <returns>True if the Teacher knows at least one waypoint</returns>
     public override bool IsAchievable()
     {
-        return !_teacher.Stunned && _teacher.Waypoints.Length != 0;
+        return !_teacher.Stunned && ArenaManager.Instance.TeacherWaypoints.Length != 0;
     }
     
     /// <summary>
@@ -43,8 +43,8 @@ public class Surveil : Action
         _timer = _lookAroundTime;
         
         // Sets the target
-        var random = Random.Range(0, _teacher.Waypoints.Length);
-        _waypoint = _teacher.Waypoints[random];
+        var random = Random.Range(0, ArenaManager.Instance.TeacherWaypoints.Length);
+        _waypoint = ArenaManager.Instance.TeacherWaypoints[random];
         target = _waypoint.position;
         
         // Animator parameters

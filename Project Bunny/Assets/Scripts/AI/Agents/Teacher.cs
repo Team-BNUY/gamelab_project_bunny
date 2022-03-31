@@ -29,10 +29,7 @@ namespace AI.Agents
         // Stun parameters
         [SerializeField] private float _stunDuration = 2f;
         private bool _stunned;
-        
-        [Header("Waypoints")] 
-        [SerializeField] private Transform[] _waypoints;
-                
+
         // Students references
         private NetworkStudentController _targetStudent;
         private NetworkStudentController _lastTargetStudent;
@@ -323,11 +320,6 @@ namespace AI.Agents
         public Dictionary<NetworkStudentController, Vector3> BadStudents
         {
             get => _badStudents;
-        }
-
-        public Transform[] Waypoints
-        {
-            get => _waypoints;
         }
 
         public bool Stunned
