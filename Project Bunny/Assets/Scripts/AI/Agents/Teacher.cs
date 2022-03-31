@@ -34,7 +34,9 @@ namespace AI.Agents
         private NetworkStudentController _targetStudent;
         private NetworkStudentController _lastTargetStudent;
         private Dictionary<NetworkStudentController, Vector3> _badStudents = new Dictionary<NetworkStudentController, Vector3>();
+        
         private static readonly int StunnedAnim = Animator.StringToHash("Stunned");
+        private static readonly int LookingAround = Animator.StringToHash("LookingAround");
 
         /// <summary>
         /// References all the students, add the goals and create the actions
@@ -56,6 +58,10 @@ namespace AI.Agents
 
             // Creating actions
             base.Start();
+
+            _stunned = true;
+            animator.SetBool(LookingAround, true);
+            Invoke(nameof(StartSurveilling), ArenaManager.Instance.TeacherPreparationTime);
         }
         
         /// <summary>
@@ -124,6 +130,18 @@ namespace AI.Agents
             OnFoundBadStudent -= FindStudent;
             OnLostBadStudent -= LoseStudent;
         }
+        
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(_stunned);
+            }
+            else
+            {
+                _stunned = (bool) stream.ReceiveNext();
+            }
+        }
 
         /// <summary>
         /// Forces the Teacher to look forward
@@ -147,19 +165,13 @@ namespace AI.Agents
         {
             OnLostBadStudent?.Invoke(player);
         }
-        
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+
+        private void StartSurveilling()
         {
-            if (stream.IsWriting)
-            {
-                stream.SendNext(_stunned);
-            }
-            else
-            {
-                _stunned = (bool) stream.ReceiveNext();
-            }
+            _stunned = false;
+            animator.SetBool(LookingAround, false);
         }
-        
+
         /// <summary>
         /// Remembers every student seen performing a bad action, updates their last seen position and determines which bad student is the closest
         /// </summary>
