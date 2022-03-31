@@ -492,14 +492,13 @@ namespace Player
             var gravity = Physics.gravity.y * Time.deltaTime * 100f;
             _playerPosition = new Vector3(_inputMovement.x, 0f, _inputMovement.y);
             _playerPosition.y += gravity;
-            _isWalking = _animator.GetBool(IsWalkingHash);
+            _isWalking = _inputMovement.magnitude > 0.0f;
 
-            //_animator.SetBool(_hasSnowballHash, _hasSnowball);
-            if (photonView.IsMine && _isWalking && _inputMovement.magnitude == 0.0f)
+            if (photonView.IsMine && !_isWalking)
             {
                 photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
             }
-            else if (photonView.IsMine && !_isWalking && _inputMovement.magnitude > 0.0f)
+            else if (photonView.IsMine && _isWalking)
             {
                 photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, true);
             }
