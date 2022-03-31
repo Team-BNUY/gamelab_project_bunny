@@ -127,6 +127,7 @@ namespace Player
         public string PlayerID { get; set; }
         public byte TeamID { get; set; }
         private bool _isJerseyNull;
+        private static readonly int PrepareThrow = Animator.StringToHash("PrepareThrow");
 
 
         #region Callbacks
@@ -575,6 +576,7 @@ namespace Player
                 if (_hasSnowball)
                 {
                     _isAiming = true;
+                    _animator.SetBool(PrepareThrow, true);
                 }
                 else
                 {
@@ -588,7 +590,8 @@ namespace Player
                 //If player has a snowball, then throw it. Otherwise call the Interactable's Release method.
                 if (photonView.IsMine && _hasSnowball)
                 {
-                    photonView.RPC("PlaySnowballThrowAnimation", RpcTarget.All);
+                    photonView.RPC(nameof(PlaySnowballThrowAnimation), RpcTarget.All);
+                    _animator.SetBool(PrepareThrow, false);
                 }
                 else
                 {
