@@ -340,7 +340,7 @@ namespace Player
             _currentObjectInHand = null;
             _playerSnowball = null;
             photonView.RPC("SetHasSnowballHashBool_RPC", RpcTarget.All, false);
-            _animator.SetBool(HasSnowballHash, false);
+            //_animator.SetBool(HasSnowballHash, false);
 
             if (photonView.IsMine)
             {
