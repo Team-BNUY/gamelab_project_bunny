@@ -48,7 +48,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private List<Gang> _gangs = new List<Gang>();
 
     [Header("Timers")] 
-    [SerializeField] private float _teacherSpawnTimer;
+    [SerializeField] private float _teacherSpawnTime;
+    [SerializeField] private float _teacherPreparationTime;
     [SerializeField] private TMP_Text timerDisplay;
     [SerializeField] private bool hasTimerStarted = false;
     [SerializeField] private float snowmanTimer;
@@ -75,6 +76,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     public List<ActionSpot> ActionSpots => _actionSpots;
     public float SnowmanTimer => snowmanTimer;
     public Transform[] TeacherWaypoints => _teacherWaypoints;
+    public float TeacherPreparationTime => _teacherPreparationTime;
 
     [SerializeField] private Transform[] _redSpawns;
     [SerializeField] private Transform[] _blueSpawns;
@@ -98,7 +100,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
         SpawnPlayer();
         StartTimer();
-        Invoke(nameof(SpawnTeacher), _teacherSpawnTimer);
+        Invoke(nameof(SpawnTeacher), _teacherSpawnTime);
     }
 
     private void Update()
