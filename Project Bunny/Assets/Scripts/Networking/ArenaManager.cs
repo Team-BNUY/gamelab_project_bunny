@@ -165,6 +165,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     {
         if (_returnToLobbyHasRun) return;
         _returnToLobbyHasRun = true;
+        
+        PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
 
         if (PhotonNetwork.IsMasterClient)
         {
