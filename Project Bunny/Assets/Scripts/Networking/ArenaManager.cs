@@ -6,10 +6,10 @@ using AI;
 using AI.Agents;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
-using Photon.Realtime;
 using Player;
 using TMPro;
 using UnityEngine;
+using Cinemachine;
 using Random = UnityEngine.Random;
 
 public class ArenaManager : MonoBehaviourPunCallbacks
@@ -45,6 +45,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private Teacher _teacherPrefab;
     [SerializeField] private Transform _teacherSpawn;
     [SerializeField] private Transform[] _teacherWaypoints;
+    [SerializeField] private CinemachineVirtualCamera _teacherVirtualCamera;
     private NetworkStudentController[] _allPlayers;
     private List<Gang> _gangs = new List<Gang>();
 
@@ -81,6 +82,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     public float SnowmanTimer => snowmanTimer;
     public Transform[] TeacherWaypoints => _teacherWaypoints;
     public float TeacherPreparationTime => _teacherPreparationTime;
+    public CinemachineVirtualCamera TeacherVirtualCamera => _teacherVirtualCamera;
 
     [SerializeField] private Transform[] _redSpawns;
     [SerializeField] private Transform[] _blueSpawns;
@@ -194,10 +196,10 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private IEnumerator MoveCameraToTeacher()
     {
-        _localStudentController.SetPlayerVCameraFollow(_teacherSpawn);
+        _localStudentController.LookAtTeacher(true);
         _localStudentController.SetStudentFreezeState(true);
         yield return new WaitForSeconds(_teacherCameraPanningTime);
-        _localStudentController.SetPlayerVCameraFollow(_localStudentController.transform);
+        _localStudentController.LookAtTeacher(false);
         _localStudentController.SetStudentFreezeState(false);
     }
 

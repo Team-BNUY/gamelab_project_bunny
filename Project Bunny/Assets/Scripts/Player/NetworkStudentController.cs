@@ -130,6 +130,7 @@ namespace Player
         public byte TeamID { get; set; }
         private bool _isJerseyNull;
         private static readonly int PrepareThrow = Animator.StringToHash("PrepareThrow");
+        private static readonly int CancelPrepare = Animator.StringToHash("CancelPrepare");
 
 
         #region Callbacks
@@ -184,7 +185,7 @@ namespace Player
 
             SetStandingGround();
 
-            if (!_isDigging || !_isFrozen)
+            if (!_isDigging && !_isFrozen)
             {
                 MoveStudent();
             }
@@ -507,13 +508,19 @@ namespace Player
             _playerPosition.y += gravity;
             _isWalking = _inputMovement.magnitude > 0.0f;
 
-            if (photonView.IsMine && !_isWalking)
+            if (!photonView.IsMine) return;
+            
+            switch (_isWalking)
             {
-                photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
-            }
-            else if (photonView.IsMine && _isWalking)
-            {
-                photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, true);
+                case false:
+                    photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
+                    break;
+                case true when _isFrozen:
+                    photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
+                    break;
+                case true when !_isFrozen:
+                    photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, true);
+                    break;
             }
         }
 
@@ -523,7 +530,7 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnLook(InputAction.CallbackContext context)
         {
-            if (_playerCamera == null) return;
+            if (_playerCamera == null || _isFrozen) return;
 
             var mousePosAngle = Utilities.MousePosToRotationInput(_studentTransform, _playerCamera);
             _playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
@@ -537,7 +544,7 @@ namespace Player
         public void OnDig(InputAction.CallbackContext context)
         {
             //If the player is currently interacting with an interactable, don't dig
-            if (_currentInteractable != null) return;
+            if (_currentInteractable != null || _isFrozen) return;
 
             // If player has snowball on hand or character is in the air, don't dig
             if (_hasSnowball || !_characterController.isGrounded) return;
@@ -580,6 +587,8 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void OnThrow(InputAction.CallbackContext context)
         {
+            if (_isFrozen) return;
+            
             // If the action is performed, do something
             if (context.performed)
             {
@@ -618,30 +627,25 @@ namespace Player
         /// <param name="context"></param>
         public void OnInteract(InputAction.CallbackContext context)
         {
-            if (context.performed)
+            if (!photonView.IsMine || !context.performed || _isFrozen) return;
+
+            _currentTriggerable?.Trigger(this);
+
+            if (_hasSnowball) return; //Don't interact with interactables if the player already has a snowball. 
+
+            // TODO: Interact with other items here
+            // When you press 'E', it checks to see if there is an
+            // interactable nearby and if there is, assume control of it. 
+
+            if (_currentInteractable == null)
             {
-                if (!photonView.IsMine) return;
-
-
-                _currentTriggerable?.Trigger(this);
-
-
-                if (_hasSnowball) return; //Don't interact with interactables if the player already has a snowball. 
-
-                // TODO: Interact with other items here
-                // When you press 'E', it checks to see if there is an
-                // interactable nearby and if there is, assume control of it. 
-
-                if (_currentInteractable == null)
-                {
-                    _currentInteractable = ReturnNearestInteractable();
-                    _currentInteractable?.Enter(this);
-                }
-                else
-                {
-                    _currentInteractable?.Exit();
-                    _currentInteractable = null;
-                }
+                _currentInteractable = ReturnNearestInteractable();
+                _currentInteractable?.Enter(this);
+            }
+            else
+            {
+                _currentInteractable?.Exit();
+                _currentInteractable = null;
             }
         }
 
@@ -666,8 +670,6 @@ namespace Player
         {
             _animator.SetBool(HasSnowballHash, hasSnowball);
         }
-        
-
 
         #endregion
 
@@ -910,7 +912,7 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void SetCamera(GameObject cam, float angle, float distance)
         {
-            _playerVCam = cam.GetComponent<CinemachineVirtualCamera>();
+            _playerVCam = cam.GetComponentInChildren<CinemachineVirtualCamera>();
             _playerCamera = cam.GetComponentInChildren<Camera>();
             _playerVCam.Follow = _studentTransform;
             SetPlayerVCameraFollow(_studentTransform);
@@ -943,6 +945,19 @@ namespace Player
             _playerVCam.Follow = target;
         }
 
+        public void LookAtTeacher(bool isTeacher)
+        {
+            _playerVCam.gameObject.SetActive(!isTeacher);
+            ArenaManager.Instance.TeacherVirtualCamera.gameObject.SetActive(isTeacher);
+            _isAiming = !isTeacher;
+            _animator.SetTrigger(CancelPrepare);
+            
+            if (_hasSnowball && _playerSnowball)
+            {
+                _playerSnowball.DisableLineRenderer();
+            }
+        }
+        
         /// <summary>
         /// Utility function that returns the nearest interactable to the player
         /// </summary>
