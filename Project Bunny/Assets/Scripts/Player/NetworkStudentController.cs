@@ -154,10 +154,10 @@ namespace Player
                 _playerHatRenderers.Add(playerHat.GetComponent<Renderer>());
             }
 
-            _currentHat = _playerHats[1];
-            _currentCoat = _playerCoats[2];
-            _currentHairStyle = _playerHairStyles[1];
-            _currentPants = _playerPants[2];
+            _currentHat = _playerHats[0];
+            _currentCoat = _playerCoats[0];
+            _currentHairStyle = _playerHairStyles[0];
+            _currentPants = _playerPants[0];
 
             _hatIndex = 0;
             _coatIndex = 0;
