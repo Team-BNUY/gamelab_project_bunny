@@ -100,7 +100,20 @@ namespace Networking
                 
             _leaveRoomBtn.onClick.AddListener(() =>
             {
-                PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
+                if (PhotonNetwork.LocalPlayer.GetPhotonTeam() != null)
+                {
+                    if(PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Blue")
+                    {
+                        BlueTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
+                        PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
+                    
+                    }
+                    else if(PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Red")
+                    {
+                        RedTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
+                        PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
+                    }
+                }
                 PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
                 PhotonNetwork.LeaveRoom();
             });
@@ -156,24 +169,13 @@ namespace Networking
             player.SetCamera(Instantiate(_playerCamera), 40f, 15f);
             
             player.RestoreTeamlessColors_RPC();
-            
-            if (player.TeamID==1)
-            {
-                PhotonNetwork.LocalPlayer.JoinTeam(1);
-                BlueTeamTable.instance.AddTeamCount();
-            }
-            else if(player.TeamID==2)
-            {
-                PhotonNetwork.LocalPlayer.JoinTeam(2);
-                RedTeamTable.instance.AddTeamCount();
-            }
         }
 
         public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
         {
             if (!PhotonNetwork.IsMasterClient) return;
             
-            if (newPlayer.GetPhotonTeam() != null)
+            /*if (newPlayer.GetPhotonTeam() != null)
             {
                 if(newPlayer.GetPhotonTeam().Name == "Blue")
                 {
@@ -183,7 +185,7 @@ namespace Networking
                 {
                     RedTeamTable.instance.AddTeamCount_RPC();
                 }
-            }
+            }*/
             
             base.OnPlayerEnteredRoom(newPlayer);
 
