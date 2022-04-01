@@ -27,8 +27,11 @@ namespace Player
         [SerializeField] [Min(0)] private float _coolDownTime;
         [SerializeField] private float _minForce, _maxForce;
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
+        [SerializeField] private float _minAngle, _maxAngle;
+        [SerializeField] [Range(0f, 8.0f)] private float _angleIncreaseTimeRate;
         private NetworkSnowball _playerSnowball;
         private float _throwForce;
+        private float _throwAngle;
         private bool _hasSnowball, _isAiming;
         private float _coolDownTimer;
 
@@ -36,6 +39,7 @@ namespace Player
         private void Awake()
         {
             _throwForce = _minForce;
+            _throwAngle = _minAngle;
         }
 
         private void Update()
@@ -53,6 +57,12 @@ namespace Player
                 {
                     IncreaseThrowForce();
                 }
+                
+                if (_throwAngle <= _maxAngle)
+                {
+                    IncreaseThrowAngle();
+                }
+                
                 _playerSnowball.DrawTrajectory();
             }
         }
@@ -131,11 +141,10 @@ namespace Player
         public void Release()
         {
             //If a snowball is loaded and the player is not currently aiming, throw the cannonball.
-            if (_hasSnowball && _currentCannonBall != null && _isAiming)
-            {
-                _isAiming = false;
-                ThrowSnowball();
-            }
+            if (!_hasSnowball || _currentCannonBall == null || !_isAiming) return;
+            
+            _isAiming = false;
+            ThrowSnowball();
         }
 
         #endregion
@@ -198,7 +207,13 @@ namespace Player
         private void IncreaseThrowForce()
         {
             _throwForce += Time.deltaTime * _forceIncreaseTimeRate;
-            _playerSnowball.SetSnowballAngle(_throwForce);
+            _playerSnowball.SetSnowballForce(_throwForce);
+        }
+        
+        private void IncreaseThrowAngle()
+        {
+            _throwAngle += Time.deltaTime * _angleIncreaseTimeRate;
+            _playerSnowball.SetSnowballAngle(_throwAngle);
         }
 
         /// <summary>
@@ -210,6 +225,7 @@ namespace Player
 
             _isAiming = false;
             _throwForce = _minForce;
+            _throwAngle = _minAngle;
             _hasSnowball = false;
             _playerSnowball.ThrowSnowball();
             _currentCannonBall = null;
