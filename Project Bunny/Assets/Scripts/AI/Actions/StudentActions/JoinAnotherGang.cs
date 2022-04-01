@@ -109,6 +109,8 @@ namespace AI.Actions.StudentActions
         public override bool PostPerform()
         {
             _student.BeliefStates.RemoveState("completedAnimationAction");
+            _student.BeliefStates.RemoveState("curiousAboutOthers");
+
 
             _student.Gang.SetFree();
             _gang.Join(_student);

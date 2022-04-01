@@ -89,6 +89,8 @@ namespace AI.Actions.StudentActions
             }
             
             _student.BeliefStates.RemoveState("intimidated");
+            _student.BeliefStates.AddState("curiousAboutOthers", 1);
+            
             _student.Gang.SetFree();
             _actionSpot.Free();
             _actionSpot = null;

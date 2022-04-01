@@ -81,29 +81,47 @@ namespace AI
             _newbie = newStudent;
             foreach (var member in _members.Where(m => m != newStudent))  
             {
-                var random = Random.Range(0, 3); // TODO Make chances a variable
+                var random = Random.Range(0, 3);
                 member.BeliefStates.AddState(random == 0 ? "dislikesNewMember" : "likesNewMember", 1);
                 member.BeliefStates.AddState("newStudentJoinedGang", 1);
 
-                random = Random.Range(0, 6); // TODO Inject from a GameManager or a similar class
-                if (random == 0 || random == 1)
+                if (Full)
                 {
-                    member.BeliefStates.ModifyState("suddenNeedToIntimidate", 1);
+                    PlayAlone(member);
+                    return;
                 }
-                else if (random == 2)
+
+                random = Random.Range(0, 8);
+                switch (random)
                 {
-                    member.BeliefStates.ModifyState("wantsToPlayAlone", 1);
-                    random = Random.Range(0, 2);
-                    switch (random)
-                    {
-                        case 0:
-                            member.BeliefStates.AddState("poleSeemsAttracting", 1);
-                            break;
-                        case 1:
-                            member.BeliefStates.AddState("wantsToSit", 1);
-                            break;
-                    }
+                    case 0:
+                    case 1:
+                        member.BeliefStates.ModifyState("suddenNeedToIntimidate", 1);
+                        break;
+                    case 2:
+                    case 3:
+                        PlayAlone(member);
+                        break;
+                    default:
+                        member.BeliefStates.AddState("curiousAboutOthers", 1);
+                        break;
                 }
+            }
+        }
+
+        private void PlayAlone(Student member)
+        {
+            member.BeliefStates.ModifyState("wantsToPlayAlone", 1);
+            var random = Random.Range(0, 3);
+            switch (random)
+            {
+                case 0:
+                    member.BeliefStates.AddState("poleSeemsAttracting", 1);
+                    break;
+                case 1:
+                case 2:
+                    member.BeliefStates.AddState("wantsToSit", 1);
+                    break;
             }
         }
 
@@ -126,7 +144,7 @@ namespace AI
         
         public bool Full
         {
-            get => _members.Count >= 4; // TODO Make this a variable
+            get => _members.Count >= ArenaManager.Instance.GangMaximumSize;
         }
 
         public int Size
@@ -140,7 +158,7 @@ namespace AI
             {
                 return _members.Count switch
                 {
-                    1 => 4, // Makes these variables in an eventual GameManager
+                    1 => 4,
                     2 => 5,
                     3 => 6,
                     4 => 6,

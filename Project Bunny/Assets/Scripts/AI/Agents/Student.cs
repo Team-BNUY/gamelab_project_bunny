@@ -55,7 +55,7 @@ namespace AI.Agents
             var projectile = other.CompareTag("Projectile");
             if (!projectile) return;
 
-            if (other.gameObject.TryGetComponent<NetworkSnowball>(out NetworkSnowball ball))
+            if (other.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
             {
                 if (ball._studentThrower.photonView.IsMine)
                 {
