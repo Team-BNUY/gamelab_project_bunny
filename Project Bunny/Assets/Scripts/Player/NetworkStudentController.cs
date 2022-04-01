@@ -41,16 +41,13 @@ namespace Player
         [SerializeField] private Color[] _colors;
         private int _skinColorIndex;
         
-
         private GameObject _currentHat;
         private int _hatIndex;
-        
         
         private GameObject _currentPants;
         private int _pantIndex;
         private int _pantColorIndex;
         private Color _pantColor;
-        
         
         private GameObject _currentHairStyle;
         private int _hairStyleIndex;
@@ -92,11 +89,16 @@ namespace Player
         [SerializeField] private float _minForce;
         [SerializeField] private float _maxForce;
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
+        [SerializeField] private float _minAngle;
+        [SerializeField] private float _maxAngle;
+        [SerializeField] [Range(0f, 8.0f)] private float _angleIncreaseTimeRate;
         private NetworkSnowball _playerSnowball;
         private int _currentStandingGround;
         private float _throwForce;
+        private float _throwAngle;
         private float _digSnowballTimer;
         private bool _isAiming;
+        private bool _threwSnowball;
 
         [Header("Booleans")]
         private bool _isWalking;
@@ -116,7 +118,6 @@ namespace Player
         public Quaternion PlayerRotation => _playerRotation;
         public Transform PlayerHand => _playerHand;
         public bool HasSnowball => _hasSnowball;
-        public bool IsDigging => _isDigging;
         public bool IsDead => _isDead;
         public CinemachineFramingTransposer PlayerVCamFramingTransposer => _playerVCamFramingTransposer;
 
@@ -162,18 +163,17 @@ namespace Player
             _hairColorIndex = 0;
             _coatColorIndex = 0;
             _skinColorIndex = 0;
-
         }
 
         private void Start()
         {
             _isJerseyNull = _jersey == null;
             _throwForce = _minForce;
+            _throwAngle = _minAngle;
             _currentHealth = _maxHealth;
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
-
         }
 
         private void Update()
@@ -189,10 +189,16 @@ namespace Player
 
             if (_isAiming && _hasSnowball)
             {
-                if (_throwForce <= _maxForce)
+                if (_throwForce <= _maxForce && !_threwSnowball)
                 {
                     IncreaseThrowForce();
                 }
+
+                if (_throwAngle <= _maxAngle && !_threwSnowball)
+                {
+                    IncreaseThrowAngle();
+                }
+                
                 _playerSnowball.DrawTrajectory();
             }
 
@@ -324,6 +330,12 @@ namespace Player
             _playerSnowball.SetSnowballForce(_throwForce);
         }
 
+        private void IncreaseThrowAngle()
+        {
+            _throwAngle += Time.deltaTime * _angleIncreaseTimeRate;
+            _playerSnowball.SetSnowballAngle(_throwAngle);
+        }
+
         /// <summary>
         /// Throws snowball once activated
         /// </summary>
@@ -335,6 +347,7 @@ namespace Player
             _playerSnowball.DisableLineRenderer();
             _isAiming = false;
             _throwForce = _minForce;
+            _throwAngle = _minAngle;
             _playerSnowball.ThrowSnowball();
             _hasSnowball = false;
             _currentObjectInHand = null;
@@ -384,6 +397,7 @@ namespace Player
                     _playerSnowball.DisableLineRenderer();
                     _isAiming = false;
                     _throwForce = _minForce;
+                    _throwAngle = _minAngle;
                     _currentObjectInHand = null;
                     _playerSnowball.DestroySnowball();
                     _playerSnowball = null;
@@ -396,6 +410,7 @@ namespace Player
                     _playerSnowball.DisableLineRenderer();
                     _isAiming = false;
                     _throwForce = _minForce;
+                    _throwAngle = _minAngle;
                     _currentObjectInHand = null;
                     _playerSnowball.DestroySnowball();
                     _playerSnowball = null;
@@ -588,6 +603,7 @@ namespace Player
                 if (photonView.IsMine && _hasSnowball)
                 {
                     photonView.RPC(nameof(PlaySnowballThrowAnimation), RpcTarget.All);
+                    _threwSnowball = true;
                     _animator.SetBool(PrepareThrow, false);
                 }
                 else
@@ -952,6 +968,11 @@ namespace Player
             {
                 _animator.SetBool(IsWalkingHash, _isWalking);
             }
+        }
+
+        public void SetThrewSnowball(bool value)
+        {
+            _threwSnowball = value;
         }
 
         /// <summary>

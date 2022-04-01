@@ -7,20 +7,16 @@ namespace Player
 {
     public class NetworkStudentAnimator : MonoBehaviour
     {
-
-        [SerializeField] private Animator _animator;
         [SerializeField] private NetworkStudentController _studentController;
-
 
         public void ThrowSnowball()
         {
-            Debug.Log("Throw!");
             _studentController.ThrowStudentSnowball();
         }
 
-        public void SetWalking()
+        public void SetThrewSnowball(bool value)
         {
-            _studentController.SetWalkingAnimator();
+            _studentController.SetThrewSnowball(value);
         }
     }
 
