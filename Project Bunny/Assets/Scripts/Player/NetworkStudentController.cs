@@ -168,6 +168,10 @@ namespace Player
             _hairColorIndex = 0;
             _coatColorIndex = 0;
             _skinColorIndex = 0;
+
+            _hairColor = Color.black;
+            _pantColor = Color.white;
+            _coatColor = Color.white;
         }
 
         private void Start()
