@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AI.Core;
 using Networking;
@@ -50,12 +51,14 @@ namespace AI.Agents
             base.Start();
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void OnCollisionEnter(Collision collision)
         {
-            var projectile = other.CompareTag("Projectile");
+            var projectile = collision.gameObject.CompareTag("Projectile");
             if (!projectile) return;
-
-            if (other.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
+            
+            photonView.RPC("GetHitByProjectile", RpcTarget.All);
+            
+            if (collision.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
             {
                 if (ball._studentThrower.photonView.IsMine)
                 {
@@ -63,7 +66,30 @@ namespace AI.Agents
                 }
             }
 
-            photonView.RPC("GetHitByProjectile", RpcTarget.All);
+            var snowball = collision.gameObject.GetComponent<NetworkSnowball>();
+            if (!snowball) return;
+
+            var thrower = snowball._studentThrower;
+            var throwDirection = thrower.transform.position - transform.position;
+            var angle = Vector3.SignedAngle(transform.forward, throwDirection, Vector3.up);
+            if (angle < 0 && angle >= -45f || angle >= 0 && angle < 45f)
+            {
+                SetAnimatorParameter("HitFront");
+            }
+            else if (angle < -45f && angle >= -135f)
+            {
+                SetAnimatorParameter("HitLeft");
+            }
+            else if (angle >= 45f && angle < 135f)
+            {
+                SetAnimatorParameter("HitRight");
+            }
+            else
+            {
+                SetAnimatorParameter("HitBack");
+            }
+            
+            SetAnimatorParameter("Hit", true);
         }
 
         private void OnCollisionStay(Collision collision)
@@ -73,6 +99,11 @@ namespace AI.Agents
 
             var pushVector = -collision.GetContact(0).normal;
             collision.rigidbody.AddForce(pushVector * pushForce, ForceMode.Impulse);
+        }
+
+        public void UnHit()
+        {
+            SetAnimatorParameter("Hit", false);
         }
 
         [PunRPC]
