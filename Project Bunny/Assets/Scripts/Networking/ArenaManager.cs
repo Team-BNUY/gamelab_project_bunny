@@ -16,8 +16,10 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 {
     private static ArenaManager _instance;
 
-    public static ArenaManager Instance {
-        get {
+    public static ArenaManager Instance 
+    {
+        get 
+        {
             if (_instance == null)
             {
                 _instance = FindObjectOfType<ArenaManager>();
@@ -41,6 +43,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private LayerMask _studentLayer;
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private LayerMask _obstacleLayer;
+    [SerializeField] private int _gangMaximumSize;
     [SerializeField] private List<ActionSpot> _actionSpots;
     [SerializeField] private Teacher _teacherPrefab;
     [SerializeField] private Transform _teacherSpawn;
@@ -78,6 +81,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     public LayerMask StudentLayer => _studentLayer;
     public LayerMask GroundLayer => _groundLayer;
     public LayerMask ObstacleLayer => _obstacleLayer;
+    public int GangMaximumSize => _gangMaximumSize;
     public List<ActionSpot> ActionSpots => _actionSpots;
     public float SnowmanTimer => snowmanTimer;
     public Transform[] TeacherWaypoints => _teacherWaypoints;
@@ -107,6 +111,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         SpawnPlayer();
         StartTimer();
         Invoke(nameof(SpawnTeacher), _teacherSpawnTime);
+
+        InjectInitialStudentStates();
     }
 
     private void Update()
@@ -139,6 +145,19 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         {
             Debug.Log("Timer completed.");
             ReturnToLobby();
+        }
+    }
+
+    private void InjectInitialStudentStates()
+    {
+        foreach (var gang in _gangs)    
+        {
+            if(gang.Occupied) continue;
+
+            foreach (var member in gang.Members)
+            {
+                member.BeliefStates.AddState("curiousAboutOthers", 1);
+            }
         }
     }
 

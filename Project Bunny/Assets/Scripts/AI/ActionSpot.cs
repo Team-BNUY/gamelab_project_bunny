@@ -19,7 +19,7 @@ namespace AI
             
             _occupyingStudents.Add(student);
         }
-        
+
         private void OnTriggerExit(Collider other)
         {
             var student = other.GetComponent<Student>();

@@ -15,7 +15,9 @@ MonoBehaviour:
   name: Join Another Gang
   cost: 1
   hasTarget: 1
-  preconditionStates: []
+  preconditionStates:
+  - _key: curiousAboutOthers
+    _value: 1
   afterEffectStates:
   - _key: joinedAnotherGang
     _value: 1
