@@ -58,10 +58,8 @@ namespace Player
         private int _coatIndex;
         private int _coatColorIndex;
         private Color _coatColor;
-        
 
         private List<Renderer> _playerHatRenderers;
-        
 
         [Header("Movement")]
         [SerializeField] [Min(0)] private float _movementSpeed;
@@ -131,7 +129,6 @@ namespace Player
         private bool _isJerseyNull;
         private static readonly int PrepareThrow = Animator.StringToHash("PrepareThrow");
         private static readonly int CancelPrepare = Animator.StringToHash("CancelPrepare");
-
 
         #region Callbacks
 
@@ -596,7 +593,11 @@ namespace Player
                 if (_hasSnowball)
                 {
                     _isAiming = true;
-                    _animator.SetBool(PrepareThrow, true);
+
+                    if (photonView.IsMine)
+                    {
+                        _animator.SetBool(PrepareThrow, true);
+                    }
                 }
                 else
                 {
