@@ -46,7 +46,7 @@ namespace Player
                 {
                     PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
                    _view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
-                   currentPlayer.RestoreTeamlessColors_RPC();
+                   //currentPlayer.RestoreTeamlessColors_RPC();
                 }
                 else
                 {
@@ -103,6 +103,11 @@ namespace Player
         public void SubtractTeamCount_RPC()
         { 
             _view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
+        }
+        
+        public void AddTeamCount_RPC()
+        { 
+            _view.RPC("AddTeamCount", RpcTarget.AllBuffered);
         }
 
 

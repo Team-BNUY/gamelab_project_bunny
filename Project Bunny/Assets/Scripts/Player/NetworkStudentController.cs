@@ -179,6 +179,8 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
+            PhotonTeamsManager.PlayerLeftTeam += OnPlayerLeftTeam;
+
         }
 
         private void Update()
@@ -223,7 +225,16 @@ namespace Player
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
         {
+            if (this == null) return;
             photonView.RPC("UpdateTeamColorVisuals", RpcTarget.AllBuffered);
+            //UpdateTeamColorVisuals();
+        }
+
+        private void OnPlayerLeftTeam(Photon.Realtime.Player player, PhotonTeam team)
+        {
+            if (this == null) return;
+            photonView.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered);
+            //RestoreTeamlessColors();
         }
 
         private void OnTriggerEnter(Collider other)

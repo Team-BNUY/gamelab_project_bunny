@@ -44,17 +44,6 @@ namespace Networking
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
 
-            /*PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
-            if (PhotonTeamsManager.Instance.GetTeamMembersCount(1) <= PhotonTeamsManager.Instance.GetTeamMembersCount(2))
-            {
-                PhotonNetwork.LocalPlayer.JoinTeam(1);
-                BlueTeamTable.instance.AddTeamCount();
-            }
-            else
-            {
-                PhotonNetwork.LocalPlayer.JoinTeam(2);
-            }*/
-
             // _startGameBtn.interactable = false;
 
             foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
@@ -85,8 +74,10 @@ namespace Networking
 
         public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
         {
+            PhotonNetwork.DestroyPlayerObjects(newMasterClient);
             //Kick everyone from the room if the master client changed (too many bugs to deal with otherwise)
             PhotonNetwork.LeaveRoom();
+            
         }
 
         private void InitialiseUI()
@@ -107,7 +98,12 @@ namespace Networking
             _startGameBtn.onClick.AddListener(StartGame);
             _readyUpBtn.onClick.AddListener(ReadyUp);
                 
-            _leaveRoomBtn.onClick.AddListener(() => PhotonNetwork.LeaveRoom());
+            _leaveRoomBtn.onClick.AddListener(() =>
+            {
+                PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
+                PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
+                PhotonNetwork.LeaveRoom();
+            });
         }
 
         public override void OnLeftRoom()
@@ -120,6 +116,8 @@ namespace Networking
 
             if (teamsManager != null)
                 GameObject.Destroy(teamsManager.gameObject);
+            
+            
 
             UnityEngine.SceneManagement.SceneManager.LoadScene(LOBBY_SCENE_NAME);
         }
@@ -156,10 +154,37 @@ namespace Networking
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
             PhotonNetwork.LocalPlayer.TagObject = player;
             player.SetCamera(Instantiate(_playerCamera), 40f, 15f);
+            
+            player.RestoreTeamlessColors_RPC();
+            
+            if (player.TeamID==1)
+            {
+                PhotonNetwork.LocalPlayer.JoinTeam(1);
+                BlueTeamTable.instance.AddTeamCount();
+            }
+            else if(player.TeamID==2)
+            {
+                PhotonNetwork.LocalPlayer.JoinTeam(2);
+                RedTeamTable.instance.AddTeamCount();
+            }
         }
 
         public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
         {
+            if (!PhotonNetwork.IsMasterClient) return;
+            
+            if (newPlayer.GetPhotonTeam() != null)
+            {
+                if(newPlayer.GetPhotonTeam().Name == "Blue")
+                {
+                    BlueTeamTable.instance.AddTeamCount_RPC();
+                }
+                else if(newPlayer.GetPhotonTeam().Name == "Red")
+                {
+                    RedTeamTable.instance.AddTeamCount_RPC();
+                }
+            }
+            
             base.OnPlayerEnteredRoom(newPlayer);
 
             if (!_tiles.Any(x => x.player == newPlayer))
@@ -181,6 +206,7 @@ namespace Networking
                 {
                     BlueTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
                     newPlayer.LeaveCurrentTeam();
+                    
                 }
                 else if(newPlayer.GetPhotonTeam().Name == "Red")
                 {
