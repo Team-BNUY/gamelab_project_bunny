@@ -10,6 +10,7 @@ Material:
   m_Name: SnowmanBottomMaterial
   m_Shader: {fileID: 4800000, guid: 2a230514c860643f69b6a4d1871d3825, type: 3}
   m_ShaderKeywords: _DETAILMAPBLENDINGMODE_MULTIPLY _EMISSION _TEXTUREBLENDINGMODE_MULTIPLY
+    _UNITYSHADOW_OCCLUSION
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -144,7 +145,7 @@ Material:
     - _TextureBlendingMode: 0
     - _TextureImpact: 1
     - _UVSec: 0
-    - _UnityShadowOcclusion: 0
+    - _UnityShadowOcclusion: 1
     - _VertexColorsEnabled: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
