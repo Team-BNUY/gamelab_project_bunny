@@ -79,7 +79,6 @@ namespace Player
         private GameObject _currentObjectInHand;
         private INetworkInteractable _currentInteractable;
         private INetworkTriggerable _currentTriggerable;
-        private bool _isSliding;
 
         [Header("Snowball")]
         [SerializeField] private Transform _playerHand;
@@ -95,8 +94,6 @@ namespace Player
         private float _throwForce;
         private float _throwAngle;
         private float _digSnowballTimer;
-        private bool _isAiming;
-        private bool _threwSnowball;
 
         [Header("Booleans")]
         private bool _isWalking;
@@ -104,6 +101,10 @@ namespace Player
         private bool _hasSnowball;
         private bool _isDead;
         private bool _isFrozen;
+        private bool _usingCannon;
+        private bool _isAiming;
+        private bool _threwSnowball;
+        private bool _isSliding;
         // List of readonly files. No need for them to have a _ prefix
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
         private static readonly int IsDiggingHash = Animator.StringToHash("isDigging");
@@ -118,8 +119,12 @@ namespace Player
         public Transform PlayerHand => _playerHand;
         public bool HasSnowball => _hasSnowball;
         public bool IsDead => _isDead;
-        public bool IsFrozen => _isFrozen;
         public CinemachineFramingTransposer PlayerVCamFramingTransposer => _playerVCamFramingTransposer;
+        public bool UsingCannon
+        {
+            get => _usingCannon;
+            set => _usingCannon = value;
+        }
 
         [Header("Network")]
         [SerializeField] private TMPro.TMP_Text _nickNameText;
@@ -396,12 +401,18 @@ namespace Player
 
             if (_currentHealth <= 0)
             {
+                // Resetting general settings
                 _isDead = true;
                 _isWalking = false;
                 _characterController.enabled = false;
                 _worldUI.gameObject.SetActive(false);
                 _playerModel.gameObject.SetActive(false);
                 
+                // Resets the current interactable
+                _currentInteractable?.Exit();
+                _currentInteractable = null;
+                
+                // Resetting throwing settings
                 if (_hasSnowball && _playerSnowball != null)
                 {
                     _playerSnowball.DisableLineRenderer();
@@ -414,7 +425,8 @@ namespace Player
                     _hasSnowball = false;
                     _animator.SetBool(HasSnowballHash, false);
                 }
-
+                
+                // Spawns the snowman
                 var snowMan = Instantiate(ArenaManager.Instance.SnowmanPrefab, _studentTransform.position, _studentTransform.rotation);
                 StartCoroutine(DestroySnowman(snowMan));
                 
