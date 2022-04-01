@@ -201,7 +201,7 @@ namespace AI.Agents
             // Ordering the students by distance and iterating through all of them
             foreach (var student in ArenaManager.Instance.AllPlayers.OrderBy(s => Vector3.Distance(transform.position, s.transform.position)))
             {   
-                if(!student.HasSnowball && !_badStudents.ContainsKey(student)) continue;
+                if(!student.HasSnowball && !student.UsingCannon && !_badStudents.ContainsKey(student)) continue;
                 
                 // If the student holds a tool or if it is already in the list of bad students
                 var myPosition = transform.position;

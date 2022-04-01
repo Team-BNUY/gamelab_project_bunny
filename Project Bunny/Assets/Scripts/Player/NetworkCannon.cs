@@ -79,6 +79,7 @@ namespace Player
             //Initialize key variables
             _isActive = true;
             _currentStudentController = currentStudentController;
+            _currentStudentController.UsingCannon = true;
             _player = _currentStudentController.transform.gameObject;
 
             //Setting the new distance of the player camera when assuming control of the Slingshot
@@ -102,16 +103,14 @@ namespace Player
         public void Exit()
         {
             // If already aiming while exiting, then just throw the current snowball and restore everything
-            if (_isAiming)
-            {
-                StartCannonBallThrow();
-                ThrowSnowball();
-                _coolDownTimer = 0.0f;
-            }
+            StartCannonBallThrow();
+            ThrowSnowball();
+            _coolDownTimer = 0.0f;
 
             //Restore key variables to null/default value
             _isActive = false;
             _player = null;
+            _currentStudentController.UsingCannon = false;
             _currentStudentController = null;
 
             //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
@@ -221,13 +220,16 @@ namespace Player
         /// </summary>
         private void ThrowSnowball()
         {
-            if (_playerSnowball == null) return;
-
             _isAiming = false;
             _throwForce = _minForce;
             _throwAngle = _minAngle;
             _hasSnowball = false;
-            _playerSnowball.ThrowSnowball();
+
+            if (_playerSnowball)
+            {
+                _playerSnowball.ThrowSnowball();
+            }
+            
             _currentCannonBall = null;
             _playerSnowball = null;
         }
