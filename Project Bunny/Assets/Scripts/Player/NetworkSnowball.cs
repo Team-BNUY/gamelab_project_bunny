@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Photon.Pun;
@@ -13,11 +14,11 @@ namespace Networking
         [SerializeField] private SphereCollider _sphereCollider;
         [SerializeField] private Transform _snowballTransform;
         [SerializeField] private LineRenderer _trajectoryLineRenderer;
-        [SerializeField, Min(0)] private float _initialDirection;
         [SerializeField] private int _damage;
 
         private bool _isDestroyable;
         private float _throwForce;
+        private float _throwAngle;
         private float _mass;
         private float _initialVelocity;
         private readonly float _collisionCheckRadius = 0.03f;
@@ -108,6 +109,11 @@ namespace Networking
         {
             _throwForce = force * 1000f;
         }
+        
+        public void SetSnowballAngle(float angle)
+        {
+            _throwAngle = angle;
+        }
 
         /// <summary>
         /// Draw the predictive trajectory using the Simulation Arc method
@@ -133,7 +139,7 @@ namespace Networking
             const float maxDuration = 1.3f;
             const float timeStepInterval = 0.1f;
             const int maxSteps = (int)(maxDuration / timeStepInterval);
-            var directionVector = transform.forward + new Vector3(0f, _initialDirection, 0.0f);
+            var directionVector = transform.forward + new Vector3(0f, _throwAngle, 0.0f);
             var launchPosition = _snowballTransform.position + _snowballTransform.forward;
 
             _initialVelocity = _throwForce / _mass * Time.fixedDeltaTime; //Velocity = Force / Mass * time
@@ -177,8 +183,7 @@ namespace Networking
             _isDestroyable = true;
             _sphereCollider.enabled = true;
             _snowballRigidbody.isKinematic = false;
-            // TODO: Direction will be handled via hand release on Animation
-            var direction = new Vector3(0f, _initialDirection, 0.0f);
+            var direction = new Vector3(0f, _throwAngle, 0.0f);
             direction += _snowballTransform.forward;
             _snowballRigidbody.AddForce(direction.normalized * _throwForce);
         }

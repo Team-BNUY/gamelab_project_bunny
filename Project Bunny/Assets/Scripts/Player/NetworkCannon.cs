@@ -198,7 +198,7 @@ namespace Player
         private void IncreaseThrowForce()
         {
             _throwForce += Time.deltaTime * _forceIncreaseTimeRate;
-            _playerSnowball.SetSnowballForce(_throwForce);
+            _playerSnowball.SetSnowballAngle(_throwForce);
         }
 
         /// <summary>
