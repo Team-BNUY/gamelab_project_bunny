@@ -150,7 +150,7 @@ namespace AI.Core
         /// <param name="animatorParameter">The animator parameter's name</param>
         public void SetAnimatorParameter(string animatorParameter)
         {
-            animator.SetTrigger(animatorParameter);
+            photonView.RPC(nameof(SetTriggerRPC), RpcTarget.All, animatorParameter);
         }
         
         /// <summary>
@@ -237,6 +237,12 @@ namespace AI.Core
             {
                 data.Create(this);
             }
+        }
+
+        [PunRPC]
+        private void SetTriggerRPC(string trigger)
+        {
+            animator.SetTrigger(trigger);
         }
         
         // Properties

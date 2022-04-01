@@ -118,8 +118,8 @@ namespace AI.Actions.StudentActions
             
             // Animator parameters
             var random = Random.Range(0, _animationVariants);
-            _student.SetAnimatorParameter("Random", random);
-            _student.SetAnimatorParameter(_animationTrigger);
+            agent.SetAnimatorParameter("Random", random);
+            agent.SetAnimatorParameter(_animationTrigger);
         }
     }
 }

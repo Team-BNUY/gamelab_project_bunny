@@ -82,12 +82,20 @@ namespace AI.Agents
             InterruptGoal();
         }
 
-        public Gang Gang {
+        [PunRPC]
+        private void SetTriggerRPC(string trigger)
+        {
+            animator.SetTrigger(trigger);
+        }
+        
+        public Gang Gang 
+        {
             get => _gang;
             set => _gang = value;
         }
 
-        public bool Occupied {
+        public bool Occupied 
+        {
             get => _gang.Occupied;
         }
     }
