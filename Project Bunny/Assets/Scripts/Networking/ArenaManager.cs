@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AI;
@@ -35,7 +36,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _giantRollballBurst;
     [SerializeField] private GameObject _cannonBall;
     [SerializeField] private GameObject _snowmanPrefab;
-    
+
     [Header("AI")]
     [SerializeField] private LayerMask _studentLayer;
     [SerializeField] private LayerMask _groundLayer;
@@ -53,15 +54,18 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private TMP_Text timerDisplay;
     [SerializeField] private bool hasTimerStarted = false;
     [SerializeField] private float snowmanTimer;
-    private int timeElapsed = 0;
-    private int oldTimeElapsed = 0;
-    private double startTime;
-    private bool returnToLobbyHasRun = false;
+    private int _timeElapsed = 0;
+    private int _oldTimeElapsed = 0;
+    private double _startTime;
+    private bool _returnToLobbyHasRun = false;
+    private const float _teacherCameraPanningTime = 4f;
     private const int TIMER_DURATION = 5 * 60;
     private const string START_TIME_KEY = "StartTime";
     private const string LOBBY_SCENE_NAME = "2-Lobby";
     private const string ROOM_SCENE_NAME = "3-Room";
 
+    private NetworkStudentController _localStudentController;
+    
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
     public GameObject SnowballBurst => _snowballBurst;
@@ -111,12 +115,12 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private void UpdateTimer()
     {
         if (!hasTimerStarted) return;
-        oldTimeElapsed = timeElapsed;
-        this.timeElapsed = (int)(PhotonNetwork.Time - startTime);
+        _oldTimeElapsed = _timeElapsed;
+        this._timeElapsed = (int)(PhotonNetwork.Time - _startTime);
 
-        if (timeElapsed > oldTimeElapsed)
+        if (_timeElapsed > _oldTimeElapsed)
         {
-            int timeLeft = TIMER_DURATION - timeElapsed;
+            int timeLeft = TIMER_DURATION - _timeElapsed;
 
             //Integer increment, update UI
             if (timeLeft > 60)
@@ -129,7 +133,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             }
         }
 
-        if (timeElapsed >= TIMER_DURATION)
+        if (_timeElapsed >= TIMER_DURATION)
         {
             Debug.Log("Timer completed.");
             ReturnToLobby();
@@ -138,8 +142,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private void ReturnToLobby()
     {
-        if (returnToLobbyHasRun) return;
-        returnToLobbyHasRun = true;
+        if (_returnToLobbyHasRun) return;
+        _returnToLobbyHasRun = true;
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -152,14 +156,14 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private void StartTimer()
     {
-        this.timerDisplay.text = $"{(TIMER_DURATION - timeElapsed) / 60}:{((TIMER_DURATION - timeElapsed) % 60).ToString("00")}";
+        this.timerDisplay.text = $"{(TIMER_DURATION - _timeElapsed) / 60}:{((TIMER_DURATION - _timeElapsed) % 60).ToString("00")}";
 
         if (PhotonNetwork.IsMasterClient)
         {
             var myHashTable = new ExitGames.Client.Photon.Hashtable();
-            startTime = PhotonNetwork.Time;
+            _startTime = PhotonNetwork.Time;
             hasTimerStarted = true;
-            myHashTable.Add(START_TIME_KEY, startTime);
+            myHashTable.Add(START_TIME_KEY, _startTime);
             PhotonNetwork.CurrentRoom.SetCustomProperties(myHashTable);
         }
     }
@@ -171,14 +175,30 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
         player.TeamID = PhotonNetwork.LocalPlayer.GetPhotonTeam().Code;
         PhotonNetwork.LocalPlayer.TagObject = player;
+        _localStudentController = player;
         player.SetCamera(Instantiate(_playerCamera), 60f, 25f);
     }
 
     private void SpawnTeacher()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.Instantiate(_teacherPrefab.name, _teacherSpawn.position, _teacherSpawn.rotation);
+            StartCoroutine(MoveCameraToTeacher());
+        }
+        else
+        {
+            StartCoroutine(MoveCameraToTeacher());
+        }
+    }
 
-        PhotonNetwork.Instantiate(_teacherPrefab.name, _teacherSpawn.position, _teacherSpawn.rotation);
+    private IEnumerator MoveCameraToTeacher()
+    {
+        _localStudentController.SetPlayerVCameraFollow(_teacherSpawn);
+        _localStudentController.SetStudentFreezeState(true);
+        yield return new WaitForSeconds(_teacherCameraPanningTime);
+        _localStudentController.SetPlayerVCameraFollow(_localStudentController.transform);
+        _localStudentController.SetStudentFreezeState(false);
     }
 
     public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
@@ -259,7 +279,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         base.OnRoomPropertiesUpdate(propertiesThatChanged);
         if (propertiesThatChanged.ContainsKey(START_TIME_KEY) && !PhotonNetwork.IsMasterClient)
         {
-            startTime = double.Parse(PhotonNetwork.CurrentRoom.CustomProperties[START_TIME_KEY].ToString());
+            _startTime = double.Parse(PhotonNetwork.CurrentRoom.CustomProperties[START_TIME_KEY].ToString());
             hasTimerStarted = true;
         }
     }

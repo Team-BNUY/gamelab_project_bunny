@@ -105,6 +105,7 @@ namespace Player
         private bool _isDigging;
         private bool _hasSnowball;
         private bool _isDead;
+        private bool _isFrozen;
         // List of readonly files. No need for them to have a _ prefix
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
         private static readonly int IsDiggingHash = Animator.StringToHash("isDigging");
@@ -119,6 +120,7 @@ namespace Player
         public Transform PlayerHand => _playerHand;
         public bool HasSnowball => _hasSnowball;
         public bool IsDead => _isDead;
+        public bool IsFrozen => _isFrozen;
         public CinemachineFramingTransposer PlayerVCamFramingTransposer => _playerVCamFramingTransposer;
 
         [Header("Network")]
@@ -182,12 +184,12 @@ namespace Player
 
             SetStandingGround();
 
-            if (!_isDigging)
+            if (!_isDigging || !_isFrozen)
             {
                 MoveStudent();
             }
 
-            if (_isAiming && _hasSnowball)
+            if (_isAiming && _hasSnowball && !_isFrozen)
             {
                 if (_throwForce <= _maxForce && !_threwSnowball)
                 {
@@ -294,7 +296,7 @@ namespace Player
         /// </summary>
         private void DigSnowball()
         {
-            if (!photonView.IsMine) return;
+            if (!photonView.IsMine || _isFrozen) return;
 
             if (_isDigging && !_hasSnowball)
             {
@@ -342,7 +344,7 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void ThrowStudentSnowball()
         {
-            if (!photonView.IsMine || _playerSnowball == null) return;
+            if (!photonView.IsMine || _playerSnowball == null || _isFrozen) return;
 
             _playerSnowball.DisableLineRenderer();
             _isAiming = false;
@@ -359,6 +361,16 @@ namespace Player
             {
                 ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "ballsThrown");
             }
+        }
+        
+        /// <summary>
+        /// Sets the isFrozen boolean
+        /// Can also be used to add additional things to be disabled/enabled
+        /// </summary>
+        /// <param name="isFrozen"></param>
+        public void SetStudentFreezeState(bool isFrozen)
+        {
+            _isFrozen = isFrozen;
         }
 
         public void GetDamaged(int damage) 
@@ -405,19 +417,6 @@ namespace Player
                     _animator.SetBool(HasSnowballHash, false);
                 }
 
-                if (_hasSnowball && _playerSnowball != null)
-                {
-                    _playerSnowball.DisableLineRenderer();
-                    _isAiming = false;
-                    _throwForce = _minForce;
-                    _throwAngle = _minAngle;
-                    _currentObjectInHand = null;
-                    _playerSnowball.DestroySnowball();
-                    _playerSnowball = null;
-                    _hasSnowball = false;
-                    _animator.SetBool(HasSnowballHash, false);
-                }
-                
                 var snowMan = Instantiate(ArenaManager.Instance.SnowmanPrefab, _studentTransform.position, _studentTransform.rotation);
                 StartCoroutine(DestroySnowman(snowMan));
                 
@@ -914,6 +913,7 @@ namespace Player
             _playerVCam = cam.GetComponent<CinemachineVirtualCamera>();
             _playerCamera = cam.GetComponentInChildren<Camera>();
             _playerVCam.Follow = _studentTransform;
+            SetPlayerVCameraFollow(_studentTransform);
             _playerVCamFramingTransposer = _playerVCam.GetCinemachineComponent<CinemachineFramingTransposer>();
             SetFrameTransposerProperties(angle, distance);
         }
@@ -931,6 +931,16 @@ namespace Player
             _playerVCamFramingTransposer.m_CameraDistance = distance;
             _playerVCam.transform.rotation = Quaternion.Euler(angle, 0f, 0f);
             _canvasTransform.rotation = Quaternion.Euler(angle, 0f, 0f);
+        }
+
+        /// <summary>
+        /// Dynamically change the virtual camera's follow transform
+        /// Most likely only cases: Local Player's GameObject and Teacher when spawned
+        /// </summary>
+        /// <param name="target"></param>
+        public void SetPlayerVCameraFollow(Transform target)
+        {
+            _playerVCam.Follow = target;
         }
 
         /// <summary>
@@ -994,6 +1004,7 @@ namespace Player
                 stream.SendNext(_isAiming);
                 stream.SendNext(_currentHealth);
                 stream.SendNext(_isDead);
+                stream.SendNext(_isFrozen);
                 stream.SendNext(_worldUI.gameObject.activeSelf);
                 stream.SendNext(_playerModel.gameObject.activeSelf);
                 stream.SendNext(_canvasTransform.rotation);
@@ -1006,6 +1017,7 @@ namespace Player
                 _isAiming = (bool) stream.ReceiveNext();
                 _currentHealth = (int) stream.ReceiveNext();
                 _isDead = (bool) stream.ReceiveNext();
+                _isFrozen = (bool) stream.ReceiveNext();
                 _worldUI.gameObject.SetActive((bool) stream.ReceiveNext());
                 _playerModel.gameObject.SetActive((bool) stream.ReceiveNext());
                 _canvasTransform.rotation = (Quaternion) stream.ReceiveNext();
