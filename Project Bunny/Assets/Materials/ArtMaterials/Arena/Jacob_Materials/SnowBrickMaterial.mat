@@ -69,7 +69,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: SnowBrickMaterial
   m_Shader: {fileID: 4800000, guid: 2a230514c860643f69b6a4d1871d3825, type: 3}
-  m_ShaderKeywords: DR_OUTLINE_ON _DETAILMAPBLENDINGMODE_MULTIPLY _TEXTUREBLENDINGMODE_ADD
+  m_ShaderKeywords: DR_OUTLINE_ON _DETAILMAPBLENDINGMODE_MULTIPLY _TEXTUREBLENDINGMODE_MULTIPLY
     _UNITYSHADOW_OCCLUSION
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -177,7 +177,7 @@ Material:
     - _GradientCenterY: 0
     - _GradientEnabled: 0
     - _GradientSize: 10
-    - _LightContribution: 0.5
+    - _LightContribution: 0.584
     - _LightmapDirectionPitch: 0
     - _LightmapDirectionYaw: 0
     - _Metallic: 0
@@ -200,8 +200,8 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
-    - _TextureBlendingMode: 1
-    - _TextureImpact: 0.542
+    - _TextureBlendingMode: 0
+    - _TextureImpact: 0.439
     - _UnityShadowOcclusion: 1
     - _VertexColorsEnabled: 0
     - _WorkflowMode: 1
