@@ -58,7 +58,8 @@ namespace AI.Agents
 
             // Creating actions
             base.Start();
-
+            
+            // Investigate animation for when the teacher is first spawned
             _stunned = true;
             animator.SetBool(LookingAround, true);
             Invoke(nameof(StartSurveilling), ArenaManager.Instance.TeacherPreparationTime);
@@ -74,6 +75,21 @@ namespace AI.Agents
             if (WitnessedBadAction(out var badStudent))
             {
                 _targetStudent = badStudent;
+
+                if (!_lastTargetStudent || _lastTargetStudent != _targetStudent)
+                {
+                    if (_lastTargetStudent && currentAction is {Name: "Chase Student"})
+                    {
+                        if (_lastTargetStudent.IsDead)
+                        {
+                            _badStudents.Remove(_lastTargetStudent);
+                        }
+                        
+                        InterruptGoal();
+                    }
+                    
+                    _lastTargetStudent = _targetStudent;
+                }
             }
             else if(_targetStudent)
             {
@@ -100,7 +116,7 @@ namespace AI.Agents
 
             if (other.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !giantRollball.CanDamage) return;
 
-            if (other.gameObject.TryGetComponent<NetworkSnowball>(out NetworkSnowball ball))
+            if (other.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
             {
                 if (ball._studentThrower.photonView.IsMine)
                 {
@@ -215,11 +231,7 @@ namespace AI.Agents
                 }
                 
                 // Remembers the closest bad student seen 
-                if (!badStudent)
-                {
-                    badStudent = student;
-                }
-                
+                badStudent ??= student;
                 badStudentFound = true;
             }
 
