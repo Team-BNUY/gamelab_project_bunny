@@ -158,8 +158,14 @@ namespace AI.Core
         /// </summary>
         /// <param name="animatorParameter">The animator parameter's name</param>
         /// <param name="value">The boolean value to set the animator parameter</param>
-        public void SetAnimatorParameter(string animatorParameter, bool value)
+        public void SetAnimatorParameter(string animatorParameter, bool value, bool sendToMaster = false)
         {
+            if (sendToMaster)
+            {
+                photonView.RPC(nameof(SetBoolRPC), RpcTarget.MasterClient, animatorParameter, value);
+                return;
+            }
+            
             animator.SetBool(animatorParameter, value);
         }
         
@@ -243,6 +249,12 @@ namespace AI.Core
         private void SetTriggerRPC(string trigger)
         {
             animator.SetTrigger(trigger);
+        }
+        
+        [PunRPC]
+        private void SetBoolRPC(string boolean, bool value)
+        {
+            animator.SetBool(boolean, value);
         }
         
         // Properties

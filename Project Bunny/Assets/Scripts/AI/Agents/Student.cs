@@ -74,22 +74,22 @@ namespace AI.Agents
             var angle = Vector3.SignedAngle(transform.forward, throwDirection, Vector3.up);
             if (angle < 0 && angle >= -45f || angle >= 0 && angle < 45f)
             {
-                SetAnimatorParameter("HitFront", true);
+                SetAnimatorParameter("HitFront", true, true);
             }
             else if (angle < -45f && angle >= -135f)
             {
-                SetAnimatorParameter("HitLeft", true);
+                SetAnimatorParameter("HitLeft", true, true);
             }
             else if (angle >= 45f && angle < 135f)
             {
-                SetAnimatorParameter("HitRight", true);
+                SetAnimatorParameter("HitRight", true, true);
             }
             else
             {
-                SetAnimatorParameter("HitBack", true);
+                SetAnimatorParameter("HitBack", true, true);
             }
 
-            SetAnimatorParameter("Hit", true);
+            SetAnimatorParameter("Hit", true, true);
         }
 
         private void OnCollisionStay(Collision collision)
@@ -126,6 +126,12 @@ namespace AI.Agents
         private void SetTriggerRPC(string trigger)
         {
             animator.SetTrigger(trigger);
+        }
+        
+        [PunRPC]
+        private void SetBoolRPC(string boolean, bool value)
+        {
+            animator.SetBool(boolean, value);
         }
         
         public Gang Gang 
