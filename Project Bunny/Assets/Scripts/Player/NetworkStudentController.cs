@@ -71,9 +71,11 @@ namespace Player
         private Vector2 _inputMovement;
         private Vector2 _deltaVector;
 
-        [Header("Player Properties")] 
+        [Header("Player UI")] 
         [SerializeField] private Canvas _worldUI;
         [SerializeField] private RectTransform _canvasTransform;
+        [SerializeField] private RectTransform _healthTransform;
+        [SerializeField] private RectTransform _nicknameTransform;
         [SerializeField] private Image[] _hearts;
         [SerializeField] private int _maxHealth;
         private int _currentHealth;
@@ -112,6 +114,8 @@ namespace Player
         private static readonly int ThrowSnowball = Animator.StringToHash("ThrowSnowball");
         private static readonly int DeltaX = Animator.StringToHash("deltaX");
         private static readonly int DeltaY = Animator.StringToHash("deltaY");
+        private static readonly int PrepareThrow = Animator.StringToHash("PrepareThrow");
+        private static readonly int CancelPrepare = Animator.StringToHash("CancelPrepare");
 
         // PROPERTIES (REPLACE PUBLIC GETTERS)
         public CharacterController CharacterControllerComponent => _characterController;
@@ -128,8 +132,6 @@ namespace Player
         public string PlayerID { get; set; }
         public byte TeamID { get; set; }
         private bool _isJerseyNull;
-        private static readonly int PrepareThrow = Animator.StringToHash("PrepareThrow");
-        private static readonly int CancelPrepare = Animator.StringToHash("CancelPrepare");
 
         #region Callbacks
 
@@ -1019,15 +1021,21 @@ namespace Player
         /// <param name="cam"></param>
         /// <param name="angle"></param>
         /// <param name="distance"></param>
+        /// <param name="isInYard"></param>
+        /// <param name="nameTextHeight"></param>
         // ReSharper disable once UnusedMember.Global
-        public void SetCamera(GameObject cam, float angle, float distance)
+        public void SetCamera(GameObject cam, float angle, float distance, bool isInYard, float nameTextHeight)
         {
             _playerVCam = cam.GetComponentInChildren<CinemachineVirtualCamera>();
             _playerCamera = cam.GetComponentInChildren<Camera>();
             _playerVCam.Follow = _studentTransform;
-            SetPlayerVCameraFollow(_studentTransform);
+            _playerVCam.Follow = _studentTransform;
             _playerVCamFramingTransposer = _playerVCam.GetCinemachineComponent<CinemachineFramingTransposer>();
             SetFrameTransposerProperties(angle, distance);
+            
+            _healthTransform.gameObject.SetActive(isInYard);
+            _nicknameTransform.SetBottom(nameTextHeight);
+            _nicknameTransform.SetTop(-nameTextHeight);
         }
 
         /// <summary>
@@ -1043,16 +1051,6 @@ namespace Player
             _playerVCamFramingTransposer.m_CameraDistance = distance;
             _playerVCam.transform.rotation = Quaternion.Euler(angle, 0f, 0f);
             _canvasTransform.rotation = Quaternion.Euler(angle, 0f, 0f);
-        }
-
-        /// <summary>
-        /// Dynamically change the virtual camera's follow transform
-        /// Most likely only cases: Local Player's GameObject and Teacher when spawned
-        /// </summary>
-        /// <param name="target"></param>
-        public void SetPlayerVCameraFollow(Transform target)
-        {
-            _playerVCam.Follow = target;
         }
 
         public void LookAtTeacher(bool isTeacher)
