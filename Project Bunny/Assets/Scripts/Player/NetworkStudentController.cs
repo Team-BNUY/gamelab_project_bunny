@@ -181,7 +181,7 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
-            PhotonTeamsManager.PlayerLeftTeam += OnPlayerLeftTeam;
+            //PhotonTeamsManager.PlayerLeftTeam += OnPlayerLeftTeam;
 
         }
 
@@ -228,27 +228,27 @@ namespace Player
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
         {
             if (this == null) return;
+            if (!photonView.IsMine) return;
             photonView.RPC("UpdateTeamColorVisuals", RpcTarget.AllBuffered);
-            //UpdateTeamColorVisuals();
         }
 
-        private void OnPlayerLeftTeam(Photon.Realtime.Player player, PhotonTeam team)
+        /*private void OnPlayerLeftTeam(Photon.Realtime.Player player, PhotonTeam team)
         {
             if (this == null) return;
+            if (!photonView.IsMine) return;
             photonView.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered);
-            //RestoreTeamlessColors();
-        }
+        }*/
 
         private void OnTriggerEnter(Collider other)
         {
             if (other.TryGetComponent(out INetworkTriggerable triggerable))
             {
                 _currentTriggerable ??= triggerable;
-                _currentTriggerable?.Enter();
+                if(photonView.IsMine) _currentTriggerable?.Enter();
             }
             else if (other.TryGetComponent(out INetworkInteractable interactable))
             {
-                interactable?.TriggerEnter();
+                if(photonView.IsMine) interactable?.TriggerEnter();
             }
         }
 
@@ -256,12 +256,12 @@ namespace Player
         {
             if (other.TryGetComponent(out INetworkTriggerable triggerable) && _currentTriggerable == triggerable)
             {
-                _currentTriggerable?.Exit();
+                if(photonView.IsMine) _currentTriggerable?.Exit();
                 _currentTriggerable = null;
             }
             else if (other.TryGetComponent(out INetworkInteractable interactable))
             {
-                interactable?.TriggerExit();
+                if(photonView.IsMine) interactable?.TriggerExit();
             }
         }
         #endregion
@@ -972,12 +972,7 @@ namespace Player
         {
             _playerSkin.GetComponent<Renderer>().material.color = skinColors[colorIndex];
         }
-        
-        
-        
-        
 
-        
         /// <summary>
         /// Temporary function for restoring a player's colors to all white to show they are teamless
         /// </summary>
