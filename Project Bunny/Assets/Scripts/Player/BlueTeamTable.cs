@@ -16,6 +16,7 @@ namespace Player
         private int _teamCount = -1;
         private const int _teamMaxSize = 4;
         public PhotonView _view;
+        [SerializeField] public Animator hoverEButtonUI;
    
     
         private void Awake() {
@@ -62,6 +63,20 @@ namespace Player
                 _view.RPC("AddTeamCount", RpcTarget.AllBuffered);
                 
             }
+        }
+        
+        public void Enter()
+        {
+            hoverEButtonUI.enabled = true;
+            hoverEButtonUI.StartPlayback();
+            hoverEButtonUI.gameObject.SetActive(true);
+        }
+
+        public void Exit()
+        {
+            hoverEButtonUI.StopPlayback();
+            hoverEButtonUI.enabled = false;
+            hoverEButtonUI.gameObject.SetActive(false);
         }
     
         #endregion

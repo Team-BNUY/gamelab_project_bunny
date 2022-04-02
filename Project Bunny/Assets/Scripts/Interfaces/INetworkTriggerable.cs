@@ -1,4 +1,5 @@
 using Player;
+using UnityEngine;
 
 namespace Interfaces
 {
@@ -8,5 +9,8 @@ namespace Interfaces
         /// Method that runs when you trigger a triggerable object or event
         /// </summary>
         void Trigger(NetworkStudentController currentStudentController);
+        
+        void Enter();
+        void Exit();
     }
 }

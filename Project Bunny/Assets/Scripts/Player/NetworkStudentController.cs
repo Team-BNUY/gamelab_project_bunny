@@ -244,6 +244,11 @@ namespace Player
             if (other.TryGetComponent(out INetworkTriggerable triggerable))
             {
                 _currentTriggerable ??= triggerable;
+                _currentTriggerable?.Enter();
+            }
+            else if (other.TryGetComponent(out INetworkInteractable interactable))
+            {
+                interactable?.TriggerEnter();
             }
         }
 
@@ -251,7 +256,12 @@ namespace Player
         {
             if (other.TryGetComponent(out INetworkTriggerable triggerable) && _currentTriggerable == triggerable)
             {
+                _currentTriggerable?.Exit();
                 _currentTriggerable = null;
+            }
+            else if (other.TryGetComponent(out INetworkInteractable interactable))
+            {
+                interactable?.TriggerExit();
             }
         }
         #endregion
