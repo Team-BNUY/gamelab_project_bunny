@@ -22,7 +22,6 @@ namespace Player
         private CinemachineFramingTransposer _playerVCamSettings;
         private CharacterController _playerCharController;
         [SerializeField] [Min(0)] private float _rotationSpeed;
-        [SerializeField] public Animator hoverEButtonUI;
 
         [Header("Snowball")]
         [SerializeField] [Min(0)] private float _coolDownTime;
@@ -96,11 +95,6 @@ namespace Player
             {
                 SpawnCannonBall();
             }
-            
-            //Disable the UI E button 
-            hoverEButtonUI.StopPlayback();
-            hoverEButtonUI.enabled = false;
-            hoverEButtonUI.gameObject.SetActive(false);
         }
 
         /// <summary>
@@ -150,20 +144,6 @@ namespace Player
             
             _isAiming = false;
             ThrowSnowball();
-        }
-        
-        public void TriggerEnter()
-        {
-            hoverEButtonUI.enabled = true;
-            hoverEButtonUI.StartPlayback();
-            hoverEButtonUI.gameObject.SetActive(true);
-        }
-
-        public void TriggerExit()
-        {
-            hoverEButtonUI.StopPlayback();
-            hoverEButtonUI.enabled = false;
-            hoverEButtonUI.gameObject.SetActive(false);
         }
 
         #endregion
