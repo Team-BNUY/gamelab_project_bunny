@@ -11,6 +11,7 @@ using TMPro;
 using UnityEngine;
 using Cinemachine;
 using Random = UnityEngine.Random;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class ArenaManager : MonoBehaviourPunCallbacks
 {
@@ -200,6 +201,57 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LocalPlayer.TagObject = player;
         _localStudentController = player;
         player.SetCamera(Instantiate(_playerCamera), 60f, 25f);
+
+        Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
+        Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties.ToString());
+
+        if (playerProperties.ContainsKey("hatIndex"))
+        {
+            player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties["hatIndex"] );
+        }
+        
+        if (playerProperties.ContainsKey("hairIndex"))
+        {
+            if (playerProperties.ContainsKey("hairColorIndex"))
+            {
+                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"] );
+            }
+            else
+            {
+                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], 0 );
+            }
+        }
+        
+        if (playerProperties.ContainsKey("pantIndex"))
+        {
+            if (playerProperties.ContainsKey("pantColorIndex"))
+            {
+                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"] );
+            }
+            else
+            {
+                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], 0 );
+            }
+        }
+        
+        if (playerProperties.ContainsKey("coatIndex"))
+        {
+            if (playerProperties.ContainsKey("coatColorIndex"))
+            {
+                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], (int)playerProperties["coatColorIndex"] );
+            }
+            else
+            {
+                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], 0 );
+            }
+        }
+        
+        if (playerProperties.ContainsKey("skinColorIndex"))
+        {
+            player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"] );
+        }
+
+        
     }
 
     private void SpawnTeacher()
