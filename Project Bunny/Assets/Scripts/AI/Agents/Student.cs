@@ -74,21 +74,21 @@ namespace AI.Agents
             var angle = Vector3.SignedAngle(transform.forward, throwDirection, Vector3.up);
             if (angle < 0 && angle >= -45f || angle >= 0 && angle < 45f)
             {
-                SetAnimatorParameter("HitFront");
+                SetAnimatorParameter("HitFront", true);
             }
             else if (angle < -45f && angle >= -135f)
             {
-                SetAnimatorParameter("HitLeft");
+                SetAnimatorParameter("HitLeft", true);
             }
             else if (angle >= 45f && angle < 135f)
             {
-                SetAnimatorParameter("HitRight");
+                SetAnimatorParameter("HitRight", true);
             }
             else
             {
-                SetAnimatorParameter("HitBack");
+                SetAnimatorParameter("HitBack", true);
             }
-            
+
             SetAnimatorParameter("Hit", true);
         }
 
@@ -101,9 +101,18 @@ namespace AI.Agents
             collision.rigidbody.AddForce(pushVector * pushForce, ForceMode.Impulse);
         }
 
-        public void UnHit()
+        public void Unhit()
         {
             SetAnimatorParameter("Hit", false);
+        }
+
+        public void UnhitSides()
+        {
+            SetAnimatorParameter("HitFront", false);
+            SetAnimatorParameter("HitBack", false);
+            SetAnimatorParameter("HitLeft", false);
+            SetAnimatorParameter("HitRight", false);
+
         }
 
         [PunRPC]
