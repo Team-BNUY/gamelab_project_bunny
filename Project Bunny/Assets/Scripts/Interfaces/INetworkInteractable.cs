@@ -24,5 +24,15 @@ namespace Interfaces
         /// Method that runs when you take control of an interactable
         /// </summary>
         void Enter(NetworkStudentController currentStudentController);
+        
+        /// <summary>
+        /// Method that runs when you enter the trigger volume of an Interactable
+        /// </summary>
+        void TriggerEnter();
+        
+        /// <summary>
+        /// Method that runs when you exit the trigger volume of an Interactable
+        /// </summary>
+        void TriggerExit();
     }
 }

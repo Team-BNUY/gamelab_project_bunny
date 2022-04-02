@@ -12,6 +12,7 @@ namespace Player
         [Header("Orange Table Instantiation")] 
         
         [SerializeField] private GameObject[] _jerseys;
+        [SerializeField] public Animator hoverEButtonUI;
 
 
         private int _teamCount = -1;
@@ -64,6 +65,20 @@ namespace Player
             }
             
             
+        }
+        
+        public void Enter()
+        {
+            hoverEButtonUI.enabled = true;
+            hoverEButtonUI.StartPlayback();
+            hoverEButtonUI.gameObject.SetActive(true);
+        }
+
+        public void Exit()
+        {
+            hoverEButtonUI.StopPlayback();
+            hoverEButtonUI.enabled = false;
+            hoverEButtonUI.gameObject.SetActive(false);
         }
     
         #endregion

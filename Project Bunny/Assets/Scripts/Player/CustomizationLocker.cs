@@ -22,6 +22,8 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     private int skinColorIndex;
 
     private bool isActive;
+    
+    [SerializeField] public Animator hoverEButtonUI;
 
     private void Awake()
     {
@@ -53,6 +55,20 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
         _changePantColorButton.onClick.AddListener(() => currentPlayer.SwitchPantsColor_RPC());
         _changeHairColorButton.onClick.AddListener(() => currentPlayer.SwitchHairColor_RPC());
         
+    }
+
+    public void Enter()
+    {
+        hoverEButtonUI.enabled = true;
+        hoverEButtonUI.StartPlayback();
+        hoverEButtonUI.gameObject.SetActive(true);
+    }
+
+    public void Exit()
+    {
+        hoverEButtonUI.StopPlayback();
+        hoverEButtonUI.enabled = false;
+        hoverEButtonUI.gameObject.SetActive(false);
     }
     
     #endregion
