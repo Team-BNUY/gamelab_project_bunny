@@ -19,6 +19,7 @@ namespace Player
         [SerializeField] private int _damage;
         [SerializeField] private float _growthFactor;
 
+        private int _spawnIndex;
         private bool _isGrowing;
         private bool _isDestroyable;
         private bool _canDamage;
@@ -59,6 +60,11 @@ namespace Player
             {
                 BreakRollball();
             }
+        }
+
+        public void InitializeGiantRollball(int index)
+        {
+            _spawnIndex = index;
         }
 
         /// <summary>
@@ -118,18 +124,23 @@ namespace Player
         {
             return (_hitLayers.value & (1 << obj.layer)) > 0;
         }
-
+        
         private void BreakRollball()
         {
-            var go = PhotonNetwork.Instantiate(ArenaManager.Instance.GiantRollballBurst.name, transform.position, Quaternion.identity);
+            var go = Instantiate(ArenaManager.Instance.GiantRollballBurst, transform.position, Quaternion.identity);
             go.GetComponent<ParticleSystem>().Play();
-            Destroy(gameObject);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                ArenaManager.Instance.RemoveGiantRollball(_spawnIndex);
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             if (stream.IsWriting)
             {
+                stream.SendNext(_spawnIndex);
                 stream.SendNext(_canDamage);
                 stream.SendNext(_isDestroyable);
                 stream.SendNext(_isGrowing);
@@ -137,6 +148,7 @@ namespace Player
             }
             else
             {
+                _spawnIndex = (int) stream.ReceiveNext();
                 _canDamage = (bool) stream.ReceiveNext();
                 _isDestroyable = (bool) stream.ReceiveNext();
                 _isGrowing = (bool) stream.ReceiveNext();

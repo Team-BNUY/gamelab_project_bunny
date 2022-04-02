@@ -36,6 +36,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _snowballPrefab;
     [SerializeField] private GameObject _iceballPrefab;
     [SerializeField] private GameObject _snowballBurst;
+    [SerializeField] private GameObject _giantRollballPrefab;
     [SerializeField] private GameObject _giantRollballBurst;
     [SerializeField] private GameObject _cannonBall;
     [SerializeField] private GameObject _snowmanPrefab;
@@ -63,13 +64,14 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private int _oldTimeElapsed = 0;
     private double _startTime;
     private bool _returnToLobbyHasRun = false;
-    private const float _teacherCameraPanningTime = 4f;
+    private const float TEACHER_CAMERA_PAN_TIME = 4f;
     private const int TIMER_DURATION = 5 * 60;
     private const string START_TIME_KEY = "StartTime";
     private const string LOBBY_SCENE_NAME = "2-Lobby";
     private const string ROOM_SCENE_NAME = "3-Room";
 
     private NetworkStudentController _localStudentController;
+    private NetworkGiantRollball[] _currentRollballs = new NetworkGiantRollball[2];
     
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
@@ -89,8 +91,10 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     public float TeacherPreparationTime => _teacherPreparationTime;
     public CinemachineVirtualCamera TeacherVirtualCamera => _teacherVirtualCamera;
 
+    [Header("Other Spawns")]
     [SerializeField] private Transform[] _redSpawns;
     [SerializeField] private Transform[] _blueSpawns;
+    [SerializeField] private Transform[] _giantRollballSpawns;
 
     private void Awake()
     {
@@ -105,6 +109,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         {
             _allPlayers = Array.Empty<NetworkStudentController>();
             Invoke(nameof(GetAllPlayers), 0.1f);
+            InitializeGiantRollballs();
         }
 
         ScoreManager.Instance.ClearPropertyCounters();
@@ -254,6 +259,40 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         
     }
 
+    private void InitializeGiantRollballs()
+    {
+        var i = 0;
+        foreach (var spawn in _giantRollballSpawns)
+        {
+            SpawnGiantRollball(spawn, i);
+            i++;
+        }
+    }
+
+    public void RemoveGiantRollball(int index)
+    {
+        StartCoroutine(RemoveGiantRollballWhenDestroyed(index));
+    }
+    
+    private IEnumerator RemoveGiantRollballWhenDestroyed(int index)
+    {
+        _currentRollballs[index] = null;
+        yield return new WaitForSeconds(5f);
+        SpawnGiantRollball(_giantRollballSpawns[index], index);
+    }
+
+    private void SpawnGiantRollball(Transform spawn, int index)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            var spawnTransform = spawn.transform;
+            var go = PhotonNetwork.Instantiate(_giantRollballPrefab.name, spawnTransform.position, spawnTransform.rotation);
+            var rollBall = go.GetComponent<NetworkGiantRollball>();
+            rollBall.InitializeGiantRollball(index);
+            _currentRollballs[index] = rollBall;
+        }
+    }
+
     private void SpawnTeacher()
     {
         if (PhotonNetwork.IsMasterClient)
@@ -271,7 +310,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     {
         _localStudentController.LookAtTeacher(true);
         _localStudentController.SetStudentFreezeState(true);
-        yield return new WaitForSeconds(_teacherCameraPanningTime);
+        yield return new WaitForSeconds(TEACHER_CAMERA_PAN_TIME);
         _localStudentController.LookAtTeacher(false);
         _localStudentController.SetStudentFreezeState(false);
     }
