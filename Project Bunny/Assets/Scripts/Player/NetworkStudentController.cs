@@ -181,8 +181,6 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
-            //PhotonTeamsManager.PlayerLeftTeam += OnPlayerLeftTeam;
-
         }
 
         private void Update()
@@ -690,22 +688,11 @@ namespace Player
         #region AnimationRPCs
 
         [PunRPC]
-        public void SetWalkHashBool_RPC(bool walking)
-        {
-            _animator.SetBool(IsWalkingHash, walking);
-        }
-        
+        public void SetWalkHashBool_RPC(bool walking) { _animator.SetBool(IsWalkingHash, walking); }
         [PunRPC]
-        public void SetDigHashBool_RPC(bool digging)
-        {
-            _animator.SetBool(IsDiggingHash, digging);
-        }
-
+        public void SetDigHashBool_RPC(bool digging){ _animator.SetBool(IsDiggingHash, digging);}
         [PunRPC]
-        public void SetHasSnowballHashBool_RPC(bool hasSnowball)
-        {
-            _animator.SetBool(HasSnowballHash, hasSnowball);
-        }
+        public void SetHasSnowballHashBool_RPC(bool hasSnowball) { _animator.SetBool(HasSnowballHash, hasSnowball); }
 
         #endregion
 
@@ -739,7 +726,6 @@ namespace Player
                 Debug.LogError("Missing reference to player jersey");
                 return;
             }
-
             if (photonView.Owner.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out var teamId) &&
                 PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out var team))
             {
@@ -747,7 +733,7 @@ namespace Player
                 switch (team.Code)
                 {
                     //Temporary color changing code
-                    //TO DO: Make this code more efficient so as to not use getComponent a lot and to also not use foreach
+                    //TODO: Make this code more efficient so as to not use getComponent a lot and to also not use foreach
                     case 1:
                         _teamShirt.GetComponent<Renderer>().material.color = Color.blue;
                         _playerBoots.GetComponent<Renderer>().material.color = Color.blue;
@@ -834,7 +820,6 @@ namespace Player
                 _coatIndex = 0;
             }
             else _coatIndex++;
-
             _currentCoat = _playerCoats[_coatIndex];
             _currentCoat.SetActive(true);
             _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
@@ -856,7 +841,6 @@ namespace Player
             {
                 _coatColorIndex++;
             }
-            
             _coatColor = _colors[_coatColorIndex];
             _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
             
@@ -881,10 +865,9 @@ namespace Player
 
             _currentHairStyle = _playerHairStyles[_hairStyleIndex];
             _currentHairStyle.SetActive(true);
-            
+
             if (properties.ContainsKey("hairIndex")) properties["hairIndex"] = _hairStyleIndex;
             else properties.Add("hairIndex", _hairStyleIndex);
-            
         }
         
         [PunRPC]
