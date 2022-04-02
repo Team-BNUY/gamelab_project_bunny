@@ -166,7 +166,7 @@ namespace Networking
             NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
             PhotonNetwork.LocalPlayer.TagObject = player;
-            player.SetCamera(Instantiate(_playerCamera), 40f, 15f);
+            player.SetCamera(Instantiate(_playerCamera), 40f, 15f, false, 0.374f);
             
             player.RestoreTeamlessColors_RPC();
         }

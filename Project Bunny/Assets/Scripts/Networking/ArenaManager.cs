@@ -205,7 +205,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         player.TeamID = PhotonNetwork.LocalPlayer.GetPhotonTeam().Code;
         PhotonNetwork.LocalPlayer.TagObject = player;
         _localStudentController = player;
-        player.SetCamera(Instantiate(_playerCamera), 60f, 25f);
+        player.SetCamera(Instantiate(_playerCamera), 60f, 25f, true, 0.7f);
 
         Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
         Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties.ToString());
