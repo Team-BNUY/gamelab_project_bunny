@@ -102,7 +102,6 @@ namespace Player
         private bool _hasSnowball;
         private bool _isDead;
         private bool _isFrozen;
-        private bool _usingCannon;
         private bool _isAiming;
         private bool _threwSnowball;
         private bool _isSliding;
@@ -121,11 +120,7 @@ namespace Player
         public bool HasSnowball => _hasSnowball;
         public bool IsDead => _isDead;
         public CinemachineFramingTransposer PlayerVCamFramingTransposer => _playerVCamFramingTransposer;
-        public bool UsingCannon
-        {
-            get => _usingCannon;
-            set => _usingCannon = value;
-        }
+        public bool UsingCannon { get; set; }
 
         [Header("Network")]
         [SerializeField] private TMPro.TMP_Text _nickNameText;
