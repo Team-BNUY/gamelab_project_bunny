@@ -242,11 +242,7 @@ namespace Player
             if (other.TryGetComponent(out INetworkTriggerable triggerable))
             {
                 _currentTriggerable ??= triggerable;
-                if(photonView.IsMine) _currentTriggerable?.Enter();
-            }
-            else if (other.TryGetComponent(out INetworkInteractable interactable))
-            {
-                if(photonView.IsMine) interactable?.TriggerEnter();
+                if (photonView.IsMine) _currentTriggerable?.Enter();
             }
         }
 
@@ -256,10 +252,6 @@ namespace Player
             {
                 if(photonView.IsMine) _currentTriggerable?.Exit();
                 _currentTriggerable = null;
-            }
-            else if (other.TryGetComponent(out INetworkInteractable interactable))
-            {
-                if(photonView.IsMine) interactable?.TriggerExit();
             }
         }
         #endregion
