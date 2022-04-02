@@ -188,6 +188,11 @@ namespace Player
             _isBeingControlled = false;
             _target = Vector3.zero;
             _startGame = false;
+
+            if (photonView.IsMine)
+            {
+                photonView.RPC(nameof(SyncPlayerInfo), RpcTarget.AllBuffered, PlayerID, TeamID);
+            }
         }
 
         private void Update()

@@ -436,6 +436,13 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         }
 
         if (readyPlayers == PhotonNetwork.CurrentRoom.PlayerCount)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                _allPlayers = Array.Empty<NetworkStudentController>();
+                GetAllPlayers();
+            }
             StartMatch();
+        }
     }
 }
