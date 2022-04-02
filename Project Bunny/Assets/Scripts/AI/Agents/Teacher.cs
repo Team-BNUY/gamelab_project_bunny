@@ -135,18 +135,22 @@ namespace AI.Agents
             var angle = Vector3.SignedAngle(transform.forward, throwDirection, Vector3.up);
             if (angle < 0 && angle >= -45f || angle >= 0 && angle < 45f)
             {
+                Debug.Log("front");
                 SetAnimatorParameter("HitFront", true, true);
             }
             else if (angle < -45f && angle >= -135f)
             {
+                Debug.Log("left");
                 SetAnimatorParameter("HitLeft", true, true);
             }
             else if (angle >= 45f && angle < 135f)
             {
+                Debug.Log("right");
                 SetAnimatorParameter("HitRight", true, true);
             }
             else
             {
+                Debug.Log("back");
                 SetAnimatorParameter("HitBack", true, true);
             }
 
