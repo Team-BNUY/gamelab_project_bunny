@@ -113,8 +113,6 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            _allPlayers = Array.Empty<NetworkStudentController>();
-            Invoke(nameof(GetAllPlayers), 0.1f);
             InitializeGiantRollballs();
         }
 
