@@ -174,19 +174,7 @@ namespace Networking
         public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
         {
             if (!PhotonNetwork.IsMasterClient) return;
-            
-            /*if (newPlayer.GetPhotonTeam() != null)
-            {
-                if(newPlayer.GetPhotonTeam().Name == "Blue")
-                {
-                    BlueTeamTable.instance.AddTeamCount_RPC();
-                }
-                else if(newPlayer.GetPhotonTeam().Name == "Red")
-                {
-                    RedTeamTable.instance.AddTeamCount_RPC();
-                }
-            }*/
-            
+
             base.OnPlayerEnteredRoom(newPlayer);
 
             if (!_tiles.Any(x => x.player == newPlayer))

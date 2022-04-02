@@ -32,8 +32,7 @@ namespace Player
                 _view = GetComponent<PhotonView>();
             }
         }
-    
-    
+        
         #region InterfaceMethods
     
         /// <summary>
@@ -49,7 +48,7 @@ namespace Player
                 {
                     PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
                     _view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
-                    //currentPlayer.RestoreTeamlessColors_RPC();
+                    currentPlayer.RestoreTeamlessColors_RPC();
                 }
                 else
                 {
@@ -63,8 +62,6 @@ namespace Player
                 PhotonNetwork.LocalPlayer.JoinTeam(2);
                 _view.RPC("AddTeamCount", RpcTarget.AllBuffered);
             }
-            
-            
         }
         
         public void Enter()
@@ -73,7 +70,7 @@ namespace Player
             hoverEButtonUI.StartPlayback();
             hoverEButtonUI.gameObject.SetActive(true);
         }
-
+        
         public void Exit()
         {
             hoverEButtonUI.StopPlayback();
