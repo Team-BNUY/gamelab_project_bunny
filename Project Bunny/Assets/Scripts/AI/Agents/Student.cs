@@ -56,6 +56,7 @@ namespace AI.Agents
             var projectile = collision.gameObject.CompareTag("Projectile");
             if (!projectile) return;
             
+            // Hit by any projectile
             photonView.RPC("GetHitByProjectile", RpcTarget.All);
             
             if (collision.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
@@ -65,10 +66,11 @@ namespace AI.Agents
                     ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "bullyHits");
                 }
             }
-
+            
             var snowball = collision.gameObject.GetComponent<NetworkSnowball>();
             if (!snowball) return;
-
+            
+            // Hit by a snowball
             var thrower = snowball._studentThrower;
             var throwDirection = thrower.transform.position - transform.position;
             var angle = Vector3.SignedAngle(transform.forward, throwDirection, Vector3.up);
@@ -112,7 +114,6 @@ namespace AI.Agents
             SetAnimatorParameter("HitBack", false);
             SetAnimatorParameter("HitLeft", false);
             SetAnimatorParameter("HitRight", false);
-
         }
 
         [PunRPC]

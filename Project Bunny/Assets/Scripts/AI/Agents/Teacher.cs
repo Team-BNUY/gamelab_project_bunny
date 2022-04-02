@@ -107,24 +107,50 @@ namespace AI.Agents
             LookAtViewDirection();
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void OnCollisionEnter(Collision collision)
         {
             if (_stunned) return;
             
-            var projectile = other.CompareTag("Projectile");
+            var projectile = collision.gameObject.CompareTag("Projectile");
             if (!projectile) return;
+            
+            photonView.RPC("Stun", RpcTarget.All);
 
-            if (other.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !giantRollball.CanDamage) return;
+            if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !giantRollball.CanDamage) return;
 
-            if (other.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
+            if (collision.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
             {
                 if (ball._studentThrower.photonView.IsMine)
                 {
                     ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "rascalHits");
                 }
             }
+            
+            var snowball = collision.gameObject.GetComponent<NetworkSnowball>();
+            if (!snowball) return;
+            
+            // Hit by a snowball
+            var thrower = snowball._studentThrower;
+            var throwDirection = thrower.transform.position - transform.position;
+            var angle = Vector3.SignedAngle(transform.forward, throwDirection, Vector3.up);
+            if (angle < 0 && angle >= -45f || angle >= 0 && angle < 45f)
+            {
+                SetAnimatorParameter("HitFront", true, true);
+            }
+            else if (angle < -45f && angle >= -135f)
+            {
+                SetAnimatorParameter("HitLeft", true, true);
+            }
+            else if (angle >= 45f && angle < 135f)
+            {
+                SetAnimatorParameter("HitRight", true, true);
+            }
+            else
+            {
+                SetAnimatorParameter("HitBack", true, true);
+            }
 
-            photonView.RPC("Stun", RpcTarget.All);
+            SetAnimatorParameter("Hit", true, true);
         }
 
         /// <summary>
@@ -180,6 +206,19 @@ namespace AI.Agents
         public static void LoseDeadPlayer(NetworkStudentController player)
         {
             OnLostBadStudent?.Invoke(player);
+        }
+        
+        public void Unhit()
+        {
+            SetAnimatorParameter("Hit", false);
+        }
+        
+        public void UnhitSides()
+        {
+            SetAnimatorParameter("HitFront", false);
+            SetAnimatorParameter("HitBack", false);
+            SetAnimatorParameter("HitLeft", false);
+            SetAnimatorParameter("HitRight", false);
         }
 
         private void StartSurveilling()
@@ -315,6 +354,12 @@ namespace AI.Agents
             SetAnimatorParameters();
             animator.SetBool(StunnedAnim, true);
             Invoke(nameof(WakeUp), _stunDuration);
+        }
+        
+        [PunRPC]
+        private void SetBoolRPC(string boolean, bool value)
+        {
+            animator.SetBool(boolean, value);
         }
 
         private void WakeUp()

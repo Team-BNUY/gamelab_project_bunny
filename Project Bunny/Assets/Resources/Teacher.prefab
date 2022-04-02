@@ -1253,7 +1253,6 @@ GameObject:
   - component: {fileID: 7548988713403948362}
   - component: {fileID: 1337179978811475485}
   - component: {fileID: 5734021069663416615}
-  - component: {fileID: 5238088844963777086}
   - component: {fileID: 3163279942283406589}
   m_Layer: 0
   m_Name: Teacher
@@ -1329,7 +1328,7 @@ MonoBehaviour:
   _viewBlockingLayer:
     serializedVersion: 2
     m_Bits: 1032
-  _stunDuration: 2
+  _stunDuration: 4
 --- !u!114 &2251092483985846287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1420,25 +1419,26 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 1
     Name: Stunned
+  - Type: 4
+    SynchronizeType: 1
+    Name: Hit
+  - Type: 4
+    SynchronizeType: 1
+    Name: HitFront
+  - Type: 4
+    SynchronizeType: 1
+    Name: HitBack
+  - Type: 4
+    SynchronizeType: 1
+    Name: HitRight
+  - Type: 4
+    SynchronizeType: 1
+    Name: HitLeft
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
   - SynchronizeType: 1
     LayerIndex: 1
---- !u!136 &5238088844963777086
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4419072441071652854}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  m_Radius: 0.6
-  m_Height: 4.769396
-  m_Direction: 1
-  m_Center: {x: 0, y: 2.384297, z: 0}
 --- !u!136 &3163279942283406589
 CapsuleCollider:
   m_ObjectHideFlags: 0
