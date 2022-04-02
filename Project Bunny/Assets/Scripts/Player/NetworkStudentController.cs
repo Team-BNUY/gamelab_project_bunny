@@ -488,7 +488,7 @@ namespace Player
             _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this);
             _characterController.enabled = true;
             _isDead = false;
-            photonView.RPC(nameof(SetHeartsVisibilityRPC), RpcTarget.All);
+            photonView.RPC(nameof(ResetHeartsVisibilityRPC), RpcTarget.All);
         }
         
         /// <summary>
@@ -508,11 +508,11 @@ namespace Player
         /// Used on a different call
         /// </summary>
         [PunRPC]
-        private void SetHeartsVisibilityRPC()
+        private void ResetHeartsVisibilityRPC()
         {
             for (var i = 1; i <= _maxHealth; i++)
             {
-                _hearts[i-1].color = i <= _currentHealth ? Color.white : new Color(1f, 1f, 1f, 0.5f);
+                _hearts[i-1].color = Color.white;
             }
         }
 
@@ -618,7 +618,7 @@ namespace Player
             if (context.performed)
             {
                 //If player has a snowball, then start aiming it. Otherwise call the Interactable's Click method.
-                if (_hasSnowball)
+                if (_hasSnowball && !_isDigging)
                 {
                     _isAiming = true;
 
