@@ -13,6 +13,19 @@ namespace Networking
 {
     public class RoomManager : MonoBehaviourPunCallbacks
     {
+        private static RoomManager _instance;
+
+        public static RoomManager Instance {
+            get {
+                if (_instance == null)
+                {
+                    _instance = FindObjectOfType<RoomManager>();
+                }
+
+                return _instance;
+            }
+        }
+
         private const string LOBBY_SCENE_NAME = "2-Lobby";
         private const string ARENA_SCENE_NAME = "4-Arena";
 
@@ -23,15 +36,8 @@ namespace Networking
 
         [Space(10)]
         [Header("UI")]
-        [SerializeField] private Canvas _hostCanvas;
-        [SerializeField] private Canvas _nonHostCanvas;
-        [SerializeField] private Button _startGameBtn;
-        [SerializeField] private Button _readyUpBtn;
-        [SerializeField] private Button _redJerseyBtn;
-        [SerializeField] private Button _blueJerseyBtn;
         [SerializeField] private Button _leaveRoomBtn;
-        [SerializeField] private GameObject _playerTile;
-        [SerializeField] private Transform _playerTileParent;
+        [SerializeField] private GameObject loadingScreen;
         private List<PlayerTile> _tiles;
 
         void Start()
@@ -43,72 +49,32 @@ namespace Networking
             InitialiseUI();
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
-
-            // _startGameBtn.interactable = false;
-
-            foreach (KeyValuePair<int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
-            {
-                if (_tiles.Any(x => x.player == player.Value)) continue;
-                AddPlayerTile(player.Value);
-            }
         }
 
-        private void AddPlayerTile(Photon.Realtime.Player player)
-        {
-            PlayerTile tile = Instantiate(_playerTile, _playerTileParent).GetComponent<PlayerTile>();
-            tile.SetPlayer(player);
-            _tiles.Add(tile);
-            _playerTileParent.GetComponentsInChildren<PlayerTile>().OrderBy(x => x.player.IsMasterClient).ThenBy(x => x.player.NickName);
-        }
-
-        private void RemovePlayerTile(Photon.Realtime.Player player)
-        {
-            PlayerTile tile = _tiles.FirstOrDefault(x => x.player == player);
-            _tiles.Remove(tile);
-            if (player.TagObject != null)
-            {
-                GameObject.Destroy(((NetworkStudentController)player.TagObject).gameObject);
-            }
-            GameObject.Destroy(tile.gameObject);
-        }
 
         public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
         {
             PhotonNetwork.DestroyPlayerObjects(newMasterClient);
             //Kick everyone from the room if the master client changed (too many bugs to deal with otherwise)
             PhotonNetwork.LeaveRoom();
-            
+
         }
 
         private void InitialiseUI()
         {
-            if (PhotonNetwork.LocalPlayer.IsMasterClient)
-            {
-                _customProperties.Add("ready", true);
-                _nonHostCanvas.gameObject.SetActive(false);
-                _hostCanvas.gameObject.SetActive(true);
-            }
-            else
-            {
-                _customProperties.Add("ready", false);
-                _nonHostCanvas.gameObject.SetActive(true);
-                _hostCanvas.gameObject.SetActive(false);
-            }
+            loadingScreen.SetActive(false);
 
-            _startGameBtn.onClick.AddListener(StartGame);
-            _readyUpBtn.onClick.AddListener(ReadyUp);
-                
             _leaveRoomBtn.onClick.AddListener(() =>
             {
                 if (PhotonNetwork.LocalPlayer.GetPhotonTeam() != null)
                 {
-                    if(PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Blue")
+                    if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Blue")
                     {
                         BlueTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
                         PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
-                    
+
                     }
-                    else if(PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Red")
+                    else if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Red")
                     {
                         RedTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
                         PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
@@ -129,8 +95,6 @@ namespace Networking
 
             if (teamsManager != null)
                 GameObject.Destroy(teamsManager.gameObject);
-            
-            
 
             UnityEngine.SceneManagement.SceneManager.LoadScene(LOBBY_SCENE_NAME);
         }
@@ -154,11 +118,20 @@ namespace Networking
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
         }
 
-        private void StartGame()
+        public void StartGame()
         {
-            PhotonNetwork.CurrentRoom.IsOpen = false;
-            PhotonNetwork.CurrentRoom.IsVisible = false;
-            PhotonNetwork.LoadLevel(ARENA_SCENE_NAME);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.CurrentRoom.IsOpen = false;
+                PhotonNetwork.CurrentRoom.IsVisible = false;
+                PhotonNetwork.LoadLevel(ARENA_SCENE_NAME);
+            }
+
+            if (PhotonNetwork.LevelLoadingProgress > 0 && PhotonNetwork.LevelLoadingProgress < 1)
+            {
+                loadingScreen.SetActive(true);
+            }
+
         }
 
         private void SpawnPlayer()
@@ -177,49 +150,35 @@ namespace Networking
 
             base.OnPlayerEnteredRoom(newPlayer);
 
-            if (!_tiles.Any(x => x.player == newPlayer))
-            {
-                AddPlayerTile(newPlayer);
-            }
-
-            _startGameBtn.interactable = (PhotonNetwork.LocalPlayer.IsMasterClient && PhotonNetwork.PlayerList.Length >= 2);
-            
+            base.OnPlayerEnteredRoom(newPlayer);
         }
 
         public override void OnPlayerLeftRoom(Photon.Realtime.Player newPlayer)
         {
             if (!PhotonNetwork.IsMasterClient) return;
-            
+
             if (newPlayer.GetPhotonTeam() != null)
             {
-                if(newPlayer.GetPhotonTeam().Name == "Blue")
+                if (newPlayer.GetPhotonTeam().Name == "Blue")
                 {
                     BlueTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
                     newPlayer.LeaveCurrentTeam();
-                    
+
                 }
-                else if(newPlayer.GetPhotonTeam().Name == "Red")
+                else if (newPlayer.GetPhotonTeam().Name == "Red")
                 {
                     RedTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
                     newPlayer.LeaveCurrentTeam();
                 }
             }
-            
+
             base.OnPlayerLeftRoom(newPlayer);
-            if (_tiles.Any(x => x.player == newPlayer))
-            {
-                RemovePlayerTile(newPlayer);
-            }
             if (newPlayer.TagObject != null)
             {
                 GameObject.Destroy(((NetworkStudentController)newPlayer.TagObject).gameObject);
                 _customProperties.Clear();
                 newPlayer.SetCustomProperties(_customProperties);
             }
-
-            _startGameBtn.interactable = (PhotonNetwork.LocalPlayer.IsMasterClient
-                && PhotonNetwork.PlayerList.Length >= 2);
-            
         }
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
@@ -235,11 +194,6 @@ namespace Networking
         public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
         {
             base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
-
-            if (targetPlayer != null)
-            {
-                _tiles.FirstOrDefault(x => x.player == targetPlayer).UpdateView(changedProps);
-            }
         }
     }
 }

@@ -17,10 +17,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 {
     private static ArenaManager _instance;
 
-    public static ArenaManager Instance 
-    {
-        get 
-        {
+    public static ArenaManager Instance {
+        get {
             if (_instance == null)
             {
                 _instance = FindObjectOfType<ArenaManager>();
@@ -54,7 +52,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private NetworkStudentController[] _allPlayers;
     private List<Gang> _gangs = new List<Gang>();
 
-    [Header("Timers")] 
+    [Header("Timers")]
     [SerializeField] private float _teacherSpawnTime;
     [SerializeField] private float _teacherPreparationTime;
     [SerializeField] private TMP_Text timerDisplay;
@@ -69,6 +67,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private const string START_TIME_KEY = "StartTime";
     private const string LOBBY_SCENE_NAME = "2-Lobby";
     private const string ROOM_SCENE_NAME = "3-Room";
+    private const string READY_KEY = "isready";
+    private int readyPlayers = 0;
 
     private NetworkStudentController _localStudentController;
     private NetworkGiantRollball[] _currentRollballs = new NetworkGiantRollball[2];
@@ -95,16 +95,22 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private Transform[] _redSpawns;
     [SerializeField] private Transform[] _blueSpawns;
     [SerializeField] private Transform[] _giantRollballSpawns;
+    [SerializeField] private GameObject loadingScreen;
 
     private void Awake()
     {
+        loadingScreen.SetActive(true);
         if (!PhotonNetwork.IsMasterClient) return;
-        
+
         _gangs.Clear();
     }
 
     void Start()
     {
+        SetIsReady(false);
+        loadingScreen.SetActive(true);
+        SpawnPlayer();
+
         if (PhotonNetwork.IsMasterClient)
         {
             _allPlayers = Array.Empty<NetworkStudentController>();
@@ -114,16 +120,23 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
         ScoreManager.Instance.ClearPropertyCounters();
 
-        SpawnPlayer();
-        StartTimer();
         Invoke(nameof(SpawnTeacher), _teacherSpawnTime);
 
         InjectInitialStudentStates();
+
+        //Invoke(nameof(StartMatch), 1f);
+        SetIsReady(true);
     }
 
     private void Update()
     {
         UpdateTimer();
+    }
+
+    private void StartMatch()
+    {
+        loadingScreen.SetActive(false);
+        StartTimer();
     }
 
     private void UpdateTimer()
@@ -156,9 +169,9 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private void InjectInitialStudentStates()
     {
-        foreach (var gang in _gangs)    
+        foreach (var gang in _gangs)
         {
-            if(gang.Occupied) continue;
+            if (gang.Occupied) continue;
 
             foreach (var member in gang.Members)
             {
@@ -167,11 +180,27 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         }
     }
 
+
+    private void SetIsReady(bool isReady)
+    {
+        ExitGames.Client.Photon.Hashtable props = PhotonNetwork.LocalPlayer.CustomProperties;
+        if (props.ContainsKey(READY_KEY))
+        {
+            props[READY_KEY] = isReady;
+        }
+        else
+        {
+            props.Add(READY_KEY, isReady);
+        }
+        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+    }
+
+
     private void ReturnToLobby()
     {
         if (_returnToLobbyHasRun) return;
         _returnToLobbyHasRun = true;
-        
+
         PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
 
         if (PhotonNetwork.IsMasterClient)
@@ -212,51 +241,51 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
         if (playerProperties.ContainsKey("hatIndex"))
         {
-            player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties["hatIndex"] );
+            player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties["hatIndex"]);
         }
-        
+
         if (playerProperties.ContainsKey("hairIndex"))
         {
             if (playerProperties.ContainsKey("hairColorIndex"))
             {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"] );
+                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"]);
             }
             else
             {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], 0 );
+                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], 0);
             }
         }
-        
+
         if (playerProperties.ContainsKey("pantIndex"))
         {
             if (playerProperties.ContainsKey("pantColorIndex"))
             {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"] );
+                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"]);
             }
             else
             {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], 0 );
+                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], 0);
             }
         }
-        
+
         if (playerProperties.ContainsKey("coatIndex"))
         {
             if (playerProperties.ContainsKey("coatColorIndex"))
             {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], (int)playerProperties["coatColorIndex"] );
+                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], (int)playerProperties["coatColorIndex"]);
             }
             else
             {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], 0 );
+                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], 0);
             }
         }
-        
+
         if (playerProperties.ContainsKey("skinColorIndex"))
         {
-            player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"] );
+            player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
         }
 
-        
+
     }
 
     private void InitializeGiantRollballs()
@@ -320,7 +349,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         //Kick everyone from the room if the master client changed (too many bugs to deal with otherwise)
         PhotonNetwork.LeaveRoom();
     }
-    
+
     public override void OnLeftRoom()
     {
         ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
@@ -398,4 +427,15 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
+    {
+        if (changedProps.ContainsKey(READY_KEY))
+        {
+            if ((bool)changedProps[READY_KEY])
+                readyPlayers++;
+        }
+
+        if (readyPlayers == PhotonNetwork.CurrentRoom.PlayerCount)
+            StartMatch();
+    }
 }

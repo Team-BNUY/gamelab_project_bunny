@@ -30,7 +30,7 @@ namespace Player
         private CharacterController _characterController;
         private CinemachineFramingTransposer _playerVCamFramingTransposer;
 
-        [Header("Clothing")] 
+        [Header("Clothing")]
         [SerializeField] private GameObject _teamShirt;
         [SerializeField] private GameObject[] _playerHats;
         [SerializeField] private GameObject _playerBoots;
@@ -41,20 +41,20 @@ namespace Player
         [SerializeField] private Color[] skinColors;
         [SerializeField] private Color[] _colors;
         private int _skinColorIndex;
-        
+
         private GameObject _currentHat;
         private int _hatIndex;
-        
+
         private GameObject _currentPants;
         private int _pantIndex;
         private int _pantColorIndex;
         private Color _pantColor;
-        
+
         private GameObject _currentHairStyle;
         private int _hairStyleIndex;
         private int _hairColorIndex;
         private Color _hairColor;
-        
+
         private GameObject _currentCoat;
         private int _coatIndex;
         private int _coatColorIndex;
@@ -70,6 +70,9 @@ namespace Player
         private Quaternion _playerRotation;
         private Vector2 _inputMovement;
         private Vector2 _deltaVector;
+        private bool _isBeingControlled;
+        private Vector3 _target = Vector3.zero;
+        private bool _startGame;
 
         [Header("Player UI")] 
         [SerializeField] private Canvas _worldUI;
@@ -141,12 +144,12 @@ namespace Player
             _characterController ??= GetComponent<CharacterController>();
             _animator ??= gameObject.GetComponent<Animator>();
             _playerInput ??= GetComponent<PlayerInput>();
-            
+
             _playerInput.actionEvents[0].AddListener(OnMove);
             _playerInput.actionEvents[1].AddListener(OnLook);
 
             _playerHatRenderers = new List<Renderer>();
-            
+
             foreach (var playerHat in _playerHats)
             {
                 _playerHatRenderers.Add(playerHat.GetComponent<Renderer>());
@@ -181,6 +184,10 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
+            PhotonTeamsManager.PlayerLeftTeam += OnPlayerLeftTeam;
+            _isBeingControlled = false;
+            _target = Vector3.zero;
+            _startGame = false;
         }
 
         private void Update()
@@ -191,7 +198,10 @@ namespace Player
 
             if (!_isDigging && !_isFrozen)
             {
-                MoveStudent();
+                if (!_isBeingControlled)
+                    MoveStudent();
+                else if (_target != Vector3.zero)
+                    MoveToPoint();
             }
 
             if (_isAiming && _hasSnowball && !_isFrozen)
@@ -205,7 +215,7 @@ namespace Player
                 {
                     IncreaseThrowAngle();
                 }
-                
+
                 _playerSnowball.DrawTrajectory();
             }
 
@@ -230,12 +240,12 @@ namespace Player
             photonView.RPC("UpdateTeamColorVisuals", RpcTarget.AllBuffered);
         }
 
-        /*private void OnPlayerLeftTeam(Photon.Realtime.Player player, PhotonTeam team)
+        private void OnPlayerLeftTeam(Photon.Realtime.Player player, PhotonTeam team)
         {
             if (this == null) return;
             if (!photonView.IsMine) return;
             photonView.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered);
-        }*/
+        }
 
         private void OnTriggerEnter(Collider other)
         {
@@ -264,6 +274,8 @@ namespace Player
         /// </summary>
         private void MoveStudent()
         {
+            if (_isBeingControlled) return;
+
             // If the player's character controller is disabled, then don't move them. Otherwise, move them. 
             if (_characterController.enabled)
             {
@@ -278,7 +290,7 @@ namespace Player
                     _characterController.Move(_playerPosition * (_movementSpeed * Time.deltaTime));
                 }
             }
-            
+
             _playerModel.rotation = _playerRotation;
 
             var moveAngle = Vector2.SignedAngle(_inputMovement, new Vector2(0, 1));
@@ -292,7 +304,7 @@ namespace Player
             {
                 rotationAngle = 360f + rotationAngle;
             }
-            
+
             var deltaDegrees = moveAngle - rotationAngle;
             if (deltaDegrees < 0)
             {
@@ -302,7 +314,63 @@ namespace Player
             var deltaRadians = Mathf.Deg2Rad * deltaDegrees;
             var deltaVector = new Vector2(Mathf.Sin(deltaRadians), Mathf.Cos(deltaRadians));
             _deltaVector = Vector2.Lerp(_deltaVector, deltaVector, 20f * Time.deltaTime);
-            
+
+            _animator.SetFloat(DeltaX, _deltaVector.x);
+            _animator.SetFloat(DeltaY, _deltaVector.y);
+        }
+
+        /// <summary>
+        /// Change player's position and orientation in global axes using Character Controller
+        /// </summary>
+        private void MoveToPoint()
+        {
+            if (!this._isBeingControlled) return;
+
+            var gravity = Physics.gravity.y * Time.deltaTime * 100f;
+            _playerPosition.y += gravity;
+
+            Vector3 offset = _target - transform.position;
+            offset.y = 0;
+
+            if (offset.magnitude > .1f)
+            {
+                _isWalking = true;
+                photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, true);
+                _characterController.Move(offset.normalized * (_movementSpeed * Time.deltaTime));
+            }
+            else
+            {
+                StopControlledMovement();
+                _isWalking = false;
+                photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
+
+            }
+
+            _playerRotation = Quaternion.LookRotation(offset.normalized);
+            _playerModel.rotation = _playerRotation;
+
+            var moveAngle = Vector2.SignedAngle(offset.normalized, new Vector2(0, 1));
+            if (moveAngle < 0)
+            {
+                moveAngle = 360f + moveAngle;
+            }
+
+            var rotationAngle = _playerModel.eulerAngles.y;
+            if (rotationAngle < 0)
+            {
+                rotationAngle = 360f + rotationAngle;
+            }
+
+            var deltaDegrees = moveAngle - rotationAngle;
+            if (deltaDegrees < 0)
+            {
+                deltaDegrees = 360f + deltaDegrees;
+            }
+
+            var deltaRadians = Mathf.Deg2Rad * deltaDegrees;
+            var deltaVector = new Vector2(Mathf.Sin(deltaRadians), Mathf.Cos(deltaRadians));
+            _deltaVector = Vector2.Lerp(_deltaVector, deltaVector, 20f * Time.deltaTime);
+
             _animator.SetFloat(DeltaX, _deltaVector.x);
             _animator.SetFloat(DeltaY, _deltaVector.y);
         }
@@ -378,7 +446,7 @@ namespace Player
                 ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "ballsThrown");
             }
         }
-        
+
         /// <summary>
         /// Sets the isFrozen boolean
         /// Can also be used to add additional things to be disabled/enabled
@@ -389,7 +457,7 @@ namespace Player
             _isFrozen = isFrozen;
         }
 
-        public void GetDamaged(int damage) 
+        public void GetDamaged(int damage)
         {
             photonView.RPC(nameof(GetDamagedRPC), RpcTarget.AllBuffered, damage);
         }
@@ -420,11 +488,11 @@ namespace Player
                 _characterController.enabled = false;
                 _worldUI.gameObject.SetActive(false);
                 _playerModel.gameObject.SetActive(false);
-                
+
                 // Resets the current interactable
                 _currentInteractable?.Exit();
                 _currentInteractable = null;
-                
+
                 // Resetting throwing settings
                 if (_hasSnowball && _playerSnowball != null)
                 {
@@ -438,11 +506,11 @@ namespace Player
                     _hasSnowball = false;
                     _animator.SetBool(HasSnowballHash, false);
                 }
-                
+
                 // Spawns the snowman
                 var snowMan = Instantiate(ArenaManager.Instance.SnowmanPrefab, _studentTransform.position, _studentTransform.rotation);
                 StartCoroutine(DestroySnowman(snowMan));
-                
+
                 if (photonView.IsMine)
                 {
                     ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "deaths");
@@ -461,7 +529,7 @@ namespace Player
         private IEnumerator DestroySnowman(GameObject snowGuy)
         {
             var timer = ArenaManager.Instance.SnowmanTimer;
-            
+
             while (timer > 0f)
             {
                 snowGuy.transform.Translate(Vector3.down * Time.deltaTime / 2f, Space.World);
@@ -469,7 +537,7 @@ namespace Player
 
                 yield return null;
             }
-            
+
             Destroy(snowGuy);
         }
 
@@ -487,7 +555,7 @@ namespace Player
             _isDead = false;
             photonView.RPC(nameof(ResetHeartsVisibilityRPC), RpcTarget.All);
         }
-        
+
         /// <summary>
         /// Set the visibility of the hearts according to the player's health
         /// NOTE: This function is called on an RPC method
@@ -496,10 +564,10 @@ namespace Player
         {
             for (var i = 1; i <= _maxHealth; i++)
             {
-                _hearts[i-1].color = i <= _currentHealth ? Color.white : new Color(1f, 1f, 1f, 0.5f);
+                _hearts[i - 1].color = i <= _currentHealth ? Color.white : new Color(1f, 1f, 1f, 0.5f);
             }
         }
-        
+
         /// <summary>
         /// RPC version of the method above
         /// Used on a different call
@@ -531,7 +599,7 @@ namespace Player
             _isWalking = _inputMovement.magnitude > 0.0f;
 
             if (!photonView.IsMine) return;
-            
+
             switch (_isWalking)
             {
                 case false:
@@ -610,7 +678,7 @@ namespace Player
         public void OnThrow(InputAction.CallbackContext context)
         {
             if (_isFrozen) return;
-            
+
             // If the action is performed, do something
             if (context.performed)
             {
@@ -676,7 +744,7 @@ namespace Player
         }
 
         #endregion
-        
+
         #region AnimationRPCs
 
         [PunRPC]
@@ -691,14 +759,21 @@ namespace Player
         #region RPC
 
         [PunRPC]
-        private void SyncPlayerInfo(string playerID, byte TeamID)
+        private void SyncPlayerInfo(string playerID, byte teamID)
         {
-            this.PlayerID = playerID;
-            this.TeamID = TeamID;
+            PlayerID = playerID;
+            TeamID = teamID;
+        }
+
+        [PunRPC]
+        private void SyncIsControlled(bool isBeingControlled, Vector3 target)
+        {
+            _isBeingControlled = isBeingControlled;
+            _target = target;
         }
 
         //[PunRPC]
-        
+
         [PunRPC]
         // ReSharper disable once UnusedMember.Local
         private void PlaySnowballThrowAnimation()
@@ -721,7 +796,7 @@ namespace Player
             if (photonView.Owner.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out var teamId) &&
                 PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out var team))
             {
-                if(!_teamShirt.activeSelf) _teamShirt.SetActive(true);
+                if (!_teamShirt.activeSelf) _teamShirt.SetActive(true);
                 switch (team.Code)
                 {
                     //Temporary color changing code
@@ -761,17 +836,17 @@ namespace Player
 
             _currentHat = _playerHats[_hatIndex];
             _currentHat.SetActive(true);
-            
+
             if (properties.ContainsKey("hatIndex")) properties["hatIndex"] = _hatIndex;
             else properties.Add("hatIndex", _hatIndex);
         }
-        
-        
+
+
         [PunRPC]
         public void SwitchPants()
         {
             Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-            
+
             _currentPants.SetActive(false);
             if (_pantIndex + 1 >= _playerPants.Length)
             {
@@ -782,7 +857,7 @@ namespace Player
             _currentPants = _playerPants[_pantIndex];
             _currentPants.SetActive(true);
             _currentPants.GetComponent<Renderer>().material.color = _pantColor;
-            
+
             if (properties.ContainsKey("pantIndex")) properties["pantIndex"] = _pantIndex;
             else properties.Add("pantIndex", _pantIndex);
         }
@@ -791,21 +866,21 @@ namespace Player
         public void SwitchPantsColor()
         {
             Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-            
+
             if (_pantColorIndex + 1 >= _colors.Length) _pantColorIndex = 0;
             else _pantColorIndex++;
             _pantColor = _colors[_pantColorIndex];
             _currentPants.GetComponent<Renderer>().material.color = _pantColor;
-            
+
             if (properties.ContainsKey("pantColorIndex")) properties["pantColorIndex"] = _pantColorIndex;
             else properties.Add("pantColorIndex", _pantColorIndex);
         }
-        
+
         [PunRPC]
         public void SwitchCoat()
         {
             Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-            
+
             _currentCoat.SetActive(false);
             if (_coatIndex + 1 >= _playerCoats.Length)
             {
@@ -815,16 +890,16 @@ namespace Player
             _currentCoat = _playerCoats[_coatIndex];
             _currentCoat.SetActive(true);
             _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
-            
+
             if (properties.ContainsKey("coatIndex")) properties["coatIndex"] = _coatIndex;
             else properties.Add("coatIndex", _coatIndex);
         }
-        
+
         [PunRPC]
         public void SwitchCoatColor()
         {
             Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-            
+
             if (_coatColorIndex + 1 >= _colors.Length)
             {
                 _coatColorIndex = 0;
@@ -835,16 +910,16 @@ namespace Player
             }
             _coatColor = _colors[_coatColorIndex];
             _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
-            
+
             if (properties.ContainsKey("coatColorIndex")) properties["coatColorIndex"] = _coatColorIndex;
             else properties.Add("coatColorIndex", _coatColorIndex);
         }
-        
+
         [PunRPC]
         public void SwitchHair()
         {
             Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-            
+
             _currentHairStyle.SetActive(false);
             if (_hairStyleIndex + 1 >= _playerHairStyles.Length)
             {
@@ -861,26 +936,26 @@ namespace Player
             if (properties.ContainsKey("hairIndex")) properties["hairIndex"] = _hairStyleIndex;
             else properties.Add("hairIndex", _hairStyleIndex);
         }
-        
+
         [PunRPC]
         public void SwitchHairColor()
         {
             Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-            
+
             if (_hairColorIndex + 1 >= _colors.Length) _hairColorIndex = 0;
             else _hairColorIndex++;
             _hairColor = _colors[_hairColorIndex];
             _currentHairStyle.GetComponent<Renderer>().material.color = _hairColor;
-            
+
             if (properties.ContainsKey("hairColorIndex")) properties["hairColorIndex"] = _hairColorIndex;
             else properties.Add("hairColorIndex", _hairColorIndex);
         }
-        
+
         [PunRPC]
         public void SwitchSkinColor()
         {
             Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-            
+
             if (_skinColorIndex + 1 >= skinColors.Length)
             {
                 _skinColorIndex = 0;
@@ -889,24 +964,24 @@ namespace Player
             {
                 _skinColorIndex++;
             }
-            
+
             _playerSkin.GetComponent<Renderer>().material.color = skinColors[_skinColorIndex];
 
             if (properties.ContainsKey("skinColorIndex")) properties["skinColorIndex"] = _skinColorIndex;
             else properties.Add("skinColorIndex", _skinColorIndex);
         }
-        
-        
-        
-        
-        public void SwitchHat_RPC(){photonView.RPC("SwitchHat", RpcTarget.AllBuffered);}
-        public void SwitchCoat_RPC(){photonView.RPC("SwitchCoat", RpcTarget.AllBuffered);}
-        public void SwitchPants_RPC(){photonView.RPC("SwitchPants", RpcTarget.AllBuffered);}
-        public void SwitchHair_RPC(){photonView.RPC("SwitchHair", RpcTarget.AllBuffered);}
-        public void SwitchHairColor_RPC(){photonView.RPC("SwitchHairColor", RpcTarget.AllBuffered);}
-        public void SwitchPantsColor_RPC(){photonView.RPC("SwitchPantsColor", RpcTarget.AllBuffered);}
-        public void SwitchCoatColor_RPC(){photonView.RPC("SwitchCoatColor", RpcTarget.AllBuffered);}
-        public void SwitchSkinColor_RPC(){photonView.RPC("SwitchSkinColor", RpcTarget.AllBuffered);}
+
+
+
+
+        public void SwitchHat_RPC() { photonView.RPC("SwitchHat", RpcTarget.AllBuffered); }
+        public void SwitchCoat_RPC() { photonView.RPC("SwitchCoat", RpcTarget.AllBuffered); }
+        public void SwitchPants_RPC() { photonView.RPC("SwitchPants", RpcTarget.AllBuffered); }
+        public void SwitchHair_RPC() { photonView.RPC("SwitchHair", RpcTarget.AllBuffered); }
+        public void SwitchHairColor_RPC() { photonView.RPC("SwitchHairColor", RpcTarget.AllBuffered); }
+        public void SwitchPantsColor_RPC() { photonView.RPC("SwitchPantsColor", RpcTarget.AllBuffered); }
+        public void SwitchCoatColor_RPC() { photonView.RPC("SwitchCoatColor", RpcTarget.AllBuffered); }
+        public void SwitchSkinColor_RPC() { photonView.RPC("SwitchSkinColor", RpcTarget.AllBuffered); }
 
         [PunRPC]
         public void SetHat(int index)
@@ -914,7 +989,7 @@ namespace Player
             _currentHat.SetActive(false);
             _currentHat = _playerHats[index];
         }
-        
+
         [PunRPC]
         public void SetCoat(int index, int colorIndex)
         {
@@ -923,7 +998,7 @@ namespace Player
             _currentCoat.GetComponent<Renderer>().material.color = _colors[colorIndex];
             _currentCoat.SetActive(true);
         }
-        
+
         [PunRPC]
         public void SetHair(int index, int colorIndex)
         {
@@ -932,7 +1007,7 @@ namespace Player
             _currentHairStyle.GetComponent<Renderer>().material.color = _colors[colorIndex];
             _currentHairStyle.SetActive(true);
         }
-        
+
         [PunRPC]
         public void SetPants(int index, int colorIndex)
         {
@@ -941,7 +1016,7 @@ namespace Player
             _currentPants.GetComponent<Renderer>().material.color = _colors[colorIndex];
             _currentPants.SetActive(true);
         }
-        
+
         [PunRPC]
         public void SetSkinColor(int colorIndex)
         {
@@ -956,12 +1031,12 @@ namespace Player
         {
             _teamShirt.GetComponent<Renderer>().material.color = Color.white;
             _playerBoots.GetComponent<Renderer>().material.color = Color.white;
-            
+
             foreach (var playerHatRenderer in _playerHatRenderers)
             {
                 playerHatRenderer.material.color = Color.white;
             }
-            
+
             _nickNameText.color = Color.white;
             _teamShirt.SetActive(false);
         }
@@ -1039,13 +1114,13 @@ namespace Player
             ArenaManager.Instance.TeacherVirtualCamera.gameObject.SetActive(isTeacher);
             _isAiming = !isTeacher;
             _animator.SetTrigger(CancelPrepare);
-            
+
             if (_hasSnowball && _playerSnowball)
             {
                 _playerSnowball.DisableLineRenderer();
             }
         }
-        
+
         /// <summary>
         /// Utility function that returns the nearest interactable to the player
         /// </summary>
@@ -1114,6 +1189,8 @@ namespace Player
                 stream.SendNext(_healthTransform.gameObject.activeSelf);
                 stream.SendNext(_nicknameTransform.offsetMax);
                 stream.SendNext(_nicknameTransform.offsetMin);
+                stream.SendNext(_isBeingControlled);
+                stream.SendNext(_target);
             }
             else
             {
@@ -1130,6 +1207,30 @@ namespace Player
                 _healthTransform.gameObject.SetActive((bool) stream.ReceiveNext());
                 _nicknameTransform.offsetMax = (Vector2) stream.ReceiveNext();
                 _nicknameTransform.offsetMin = (Vector2) stream.ReceiveNext();
+                _isBeingControlled = (bool) stream.ReceiveNext();
+                _target = (Vector3) stream.ReceiveNext();
+            }
+        }
+
+        #endregion
+
+        #region PublicCalls
+        public void SetControlledMovement(Vector3 target, bool startGame)
+        {
+            photonView.RPC(nameof(SyncIsControlled), RpcTarget.AllBuffered, true, target);
+            _isBeingControlled = true;
+            _target = target;
+            _startGame = startGame;
+        }
+
+        private void StopControlledMovement()
+        {
+            _target = Vector3.zero;
+
+            if (_startGame)
+            {
+                _startGame = false;
+                RoomManager.Instance.StartGame();
             }
         }
 
