@@ -124,7 +124,7 @@ namespace AI.Agents
             {
                 if (ball._studentThrower.photonView.IsMine)
                 {
-                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "rascalHits");
+                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.REBEL_KEY);
                 }
             }
             

@@ -58,9 +58,15 @@ namespace Networking
                 if (_hasCollided) return;
                 _hasCollided = true;
 
+                Debug.Log(_damage);
                 if (_studentThrower.photonView.IsMine)
                 {
-                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "hitsLanded");
+                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.HARD_WORKER_KEY);
+
+                    if (_damage == 3)
+                    {
+                        ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.GLACE_FOLIE_KEY);
+                    }
                 }
 
                 otherStudent.GetDamaged(_damage);
@@ -108,7 +114,7 @@ namespace Networking
         {
             _throwForce = force * 1000f;
         }
-        
+
         public void SetSnowballAngle(float angle)
         {
             _throwAngle = angle;

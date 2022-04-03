@@ -446,6 +446,11 @@ namespace Player
             _digSnowballTimer = 0.0f;
             photonView.RPC("SetDigHashBool_RPC", RpcTarget.All, false);
             photonView.RPC("SetHasSnowballHashBool_RPC", RpcTarget.All, true);
+
+            if (photonView.IsMine)
+            {
+                ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.SHOVELER_KEY);
+            }
         }
 
         /// <summary>
@@ -484,7 +489,7 @@ namespace Player
 
             if (photonView.IsMine)
             {
-                ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "ballsThrown");
+                ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.TEACHERS_PET_KEY);
             }
         }
 
@@ -570,7 +575,7 @@ namespace Player
 
                 if (photonView.IsMine)
                 {
-                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, "deaths");
+                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.DEATHS_KEY);
                     Invoke(nameof(Respawn), DEATH_TIME_DELAY);
                 }
             }

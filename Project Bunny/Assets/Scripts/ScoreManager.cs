@@ -19,14 +19,31 @@ public class ScoreManager : MonoBehaviour
             return _instance;
         }
     }
+    [Header("PROPERTY KEYS")]
+    public const string DEATHS_KEY = "deaths";
+    public const string REBEL_KEY = "rebelHits";
+    public const string BULLY_KEY = "bullyHits";
+    public const string HARD_WORKER_KEY = "hitsLanded";
+    public const string TEACHERS_PET_KEY = "ballsThrown";
+    public const string MEET_IN_OFFICE_KEY = "caughtByTeacher";
+    public const string GLACE_FOLIE_KEY = "iceHitsLanded";
+    public const string SHOVELER_KEY = "snowballsDug";
+    public const string AVALANCHE_KEY = "giantRollballHits";
 
     [Header("Match Information")]
     public bool isFirstMatch = true;
     public int winningTeamCode = 0;
-    public string rascal = string.Empty;
+
+    public string[] scores = new string[8];
+    // rebel - 0, bully - 1, hardWorker - 2, teachersPet - 3, office - 4, glaceFolie - 5, shoveler - 6, avalance - 7
+    public string rebel = string.Empty;
     public string bully = string.Empty;
     public string hardWorker = string.Empty;
     public string teachersPet = string.Empty;
+    public string meetMeInMyOffice = string.Empty;
+    public string glaceFolie = string.Empty;
+    public string shoveler = string.Empty;
+    public string avalanche = string.Empty;
 
     public PhotonView _view;
 
@@ -41,17 +58,21 @@ public class ScoreManager : MonoBehaviour
         int mostRascalHits = 0;
         int mostHits = 0;
         int leastThrows = 9999;
+        int mostCaught = 0;
+        int mostIceHits = 0;
+        int mostSnowballsDug = 0;
+        int mostRollballsHits = 0;
 
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
 
             //WIN CONDITION
-            if (player.CustomProperties.ContainsKey("deaths"))
+            if (player.CustomProperties.ContainsKey(DEATHS_KEY))
             {
                 PhotonTeam team = player.GetPhotonTeam();
                 if (team != null)
                 {
-                    int deaths = (int)player.CustomProperties["deaths"];
+                    int deaths = (int)player.CustomProperties[DEATHS_KEY];
 
                     if (team.Code == 1)
                     {
@@ -65,50 +86,106 @@ public class ScoreManager : MonoBehaviour
             }
 
             //HARD WORKER
-            if (player.CustomProperties.ContainsKey("hitsLanded"))
+            if (player.CustomProperties.ContainsKey(HARD_WORKER_KEY))
             {
-                int hits = (int)player.CustomProperties["hitsLanded"];
+                int hits = (int)player.CustomProperties[HARD_WORKER_KEY];
 
                 if (hits > mostHits)
                 {
                     mostHits = hits;
                     hardWorker = player.NickName;
+                    scores[2] = player.NickName;
                 }
             }
 
             //TEACHER'S PET
-            if (player.CustomProperties.ContainsKey("ballsThrown"))
+            if (player.CustomProperties.ContainsKey(TEACHERS_PET_KEY))
             {
-                int throws = (int)player.CustomProperties["ballsThrown"];
+                int throws = (int)player.CustomProperties[TEACHERS_PET_KEY];
 
                 if (throws < leastThrows)
                 {
                     leastThrows = throws;
                     teachersPet = player.NickName;
+                    scores[3] = player.NickName;
                 }
             }
 
             //BULLY
-            if (player.CustomProperties.ContainsKey("bullyHits"))
+            if (player.CustomProperties.ContainsKey(BULLY_KEY))
             {
-                int hits = (int)player.CustomProperties["bullyHits"];
+                int hits = (int)player.CustomProperties[BULLY_KEY];
 
                 if (hits > mostBullyHits)
                 {
                     mostBullyHits = hits;
                     bully = player.NickName;
+                    scores[1] = player.NickName;
                 }
             }
 
             //RASCAL
-            if (player.CustomProperties.ContainsKey("rascalHits"))
+            if (player.CustomProperties.ContainsKey(REBEL_KEY))
             {
-                int hits = (int)player.CustomProperties["rascalHits"];
+                int hits = (int)player.CustomProperties[REBEL_KEY];
 
                 if (hits > mostRascalHits)
                 {
                     mostRascalHits = hits;
-                    rascal = player.NickName;
+                    rebel = player.NickName;
+                    scores[0] = player.NickName;
+                }
+            }
+
+            //MEET ME IN MY OFFICE
+            if (player.CustomProperties.ContainsKey(MEET_IN_OFFICE_KEY))
+            {
+                int caught = (int)player.CustomProperties[MEET_IN_OFFICE_KEY];
+
+                if (caught > mostCaught)
+                {
+                    mostRascalHits = mostCaught;
+                    meetMeInMyOffice = player.NickName;
+                    scores[4] = player.NickName;
+                }
+            }
+
+            //GLACE FOLIE
+            if (player.CustomProperties.ContainsKey(GLACE_FOLIE_KEY))
+            {
+                int iceHits = (int)player.CustomProperties[GLACE_FOLIE_KEY];
+
+                if (iceHits > mostIceHits)
+                {
+                    mostIceHits = iceHits;
+                    glaceFolie = player.NickName;
+                    scores[5] = player.NickName;
+                }
+            }
+
+            //SHOVELER
+            if (player.CustomProperties.ContainsKey(SHOVELER_KEY))
+            {
+                int snowballsDug = (int)player.CustomProperties[SHOVELER_KEY];
+
+                if (snowballsDug > mostSnowballsDug)
+                {
+                    mostIceHits = snowballsDug;
+                    shoveler = player.NickName;
+                    scores[6] = player.NickName;
+                }
+            }
+
+            //AVALANCHE
+            if (player.CustomProperties.ContainsKey(AVALANCHE_KEY))
+            {
+                int rollballHits = (int)player.CustomProperties[AVALANCHE_KEY];
+
+                if (rollballHits > mostRollballsHits)
+                {
+                    mostRollballsHits = rollballHits;
+                    avalanche = player.NickName;
+                    scores[7] = player.NickName;
                 }
             }
         }
@@ -120,7 +197,7 @@ public class ScoreManager : MonoBehaviour
         else
             Debug.Log("how do we handle exact ties? TO BE SOLVED LATER");
 
-        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rascal, hardWorker, teachersPet);
+        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rebel, hardWorker, teachersPet);
     }
 
     public void IncrementPropertyCounter(Photon.Realtime.Player player, string code)
@@ -161,7 +238,7 @@ public class ScoreManager : MonoBehaviour
     private void ResetStats() {
         this.winningTeamCode = 0;
         this.bully = string.Empty;
-        this.rascal = string.Empty;
+        this.rebel = string.Empty;
         this.hardWorker = string.Empty;
         this.teachersPet = string.Empty;
     }
@@ -176,7 +253,7 @@ public class ScoreManager : MonoBehaviour
         this.isFirstMatch = isFirstMatch;
         this.winningTeamCode = winningTeamCode;
         this.bully = bully;
-        this.rascal = rascal;
+        this.rebel = rascal;
         this.hardWorker = hardWorker;
         this.teachersPet = teachersPet;
     }
