@@ -1,4 +1,5 @@
 using AI.Agents;
+using Player;
 using UnityEngine;
 
 public class UnhitOnExit : StateMachineBehaviour
@@ -7,5 +8,6 @@ public class UnhitOnExit : StateMachineBehaviour
     {
         animator.GetComponent<Student>()?.Unhit();
         animator.GetComponent<Teacher>()?.Unhit();
+        animator.GetComponent<NetworkStudentAnimator>()?.Unhit();
     }
 }

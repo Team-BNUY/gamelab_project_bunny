@@ -1,4 +1,5 @@
 using AI.Agents;
+using Player;
 using UnityEngine;
 
 public class UnhitSidesOnEnter : StateMachineBehaviour
@@ -7,5 +8,6 @@ public class UnhitSidesOnEnter : StateMachineBehaviour
     {
         animator.GetComponent<Student>()?.UnhitSides();
         animator.GetComponent<Teacher>()?.UnhitSides();
+        animator.GetComponent<NetworkStudentAnimator>()?.UnhitSides();
     }
 }

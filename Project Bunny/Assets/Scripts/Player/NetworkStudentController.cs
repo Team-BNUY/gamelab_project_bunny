@@ -110,6 +110,8 @@ namespace Player
         private bool _isAiming;
         private bool _threwSnowball;
         private bool _isSliding;
+        private bool _isJerseyNull;
+
         // List of readonly files. No need for them to have a _ prefix
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
         private static readonly int IsDiggingHash = Animator.StringToHash("isDigging");
@@ -119,7 +121,12 @@ namespace Player
         private static readonly int DeltaY = Animator.StringToHash("deltaY");
         private static readonly int PrepareThrow = Animator.StringToHash("PrepareThrow");
         private static readonly int CancelPrepare = Animator.StringToHash("CancelPrepare");
-
+        private static readonly int Hit = Animator.StringToHash("Hit");
+        private static readonly int HitFront = Animator.StringToHash("HitFront");
+        private static readonly int HitBack = Animator.StringToHash("HitBack");
+        private static readonly int HitLeft = Animator.StringToHash("HitLeft");
+        private static readonly int HitRight = Animator.StringToHash("HitRight");
+        
         // PROPERTIES (REPLACE PUBLIC GETTERS)
         public CharacterController CharacterControllerComponent => _characterController;
         public Quaternion PlayerRotation => _playerRotation;
@@ -134,7 +141,6 @@ namespace Player
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string PlayerID { get; set; }
         public byte TeamID { get; set; }
-        private bool _isJerseyNull;
 
         #region Callbacks
 
@@ -225,6 +231,36 @@ namespace Player
             }
 
             DigSnowball();
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            var snowball = collision.gameObject.GetComponent<NetworkSnowball>();
+            if (!snowball) return;
+            
+            // Hit by a snowball
+            var thrower = snowball._studentThrower;
+            var throwDirection = thrower.transform.position - _playerModel.position;
+            var angle = Vector3.SignedAngle(_playerModel.forward, throwDirection, Vector3.up);
+            
+            if (angle < 0 && angle >= -45f || angle >= 0 && angle < 45f)
+            {
+                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All,"HitFront", true);
+            }
+            else if (angle < -45f && angle >= -135f)
+            {
+                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All,"HitLeft", true);
+            }
+            else if (angle >= 45f && angle < 135f)
+            {
+                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All,"HitRight", true);
+            }
+            else
+            {
+                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All,"HitBack", true);
+            }
+            
+            photonView.RPC(nameof(SetBoolRPC), RpcTarget.All,"Hit", true);
         }
 
         private void OnCollisionStay(Collision other)
@@ -463,6 +499,19 @@ namespace Player
             _isAiming = false;
             _throwForce = _minForce;
             _throwAngle = _minAngle;
+        }
+        
+        public void Unhit()
+        {
+            _animator.SetBool(Hit, false);
+        }
+        
+        public void UnhitSides()
+        {
+            _animator.SetBool(HitFront, false);
+            _animator.SetBool(HitBack, false);
+            _animator.SetBool(HitLeft, false);
+            _animator.SetBool(HitRight, false);
         }
 
         public void GetDamaged(int damage)
@@ -780,6 +829,12 @@ namespace Player
             _target = target;
         }
 
+        [PunRPC]
+        private void SetBoolRPC(string boolean, bool value)
+        {
+            _animator.SetBool(boolean, value);
+        }
+
         //[PunRPC]
 
         [PunRPC]
@@ -978,9 +1033,6 @@ namespace Player
             if (properties.ContainsKey("skinColorIndex")) properties["skinColorIndex"] = _skinColorIndex;
             else properties.Add("skinColorIndex", _skinColorIndex);
         }
-
-
-
 
         public void SwitchHat_RPC() { photonView.RPC("SwitchHat", RpcTarget.AllBuffered); }
         public void SwitchCoat_RPC() { photonView.RPC("SwitchCoat", RpcTarget.AllBuffered); }
