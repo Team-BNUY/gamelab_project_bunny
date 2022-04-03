@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using AI;
 using AI.Agents;
@@ -45,19 +46,22 @@ public class Surveil : Action
         _timer = _lookAroundTime;
         
         // Sets the target
-        var unoccupiedWaypoints = ArenaManager.Instance.TeacherWaypoints.Where(w => !w.Occupied).ToArray();
-        var random = Random.Range(0, unoccupiedWaypoints.Length);
-        _waypoint = unoccupiedWaypoints[random];
-        target = _waypoint.transform.position;
+        if (hasTarget)
+        {
+            var unoccupiedWaypoints = ArenaManager.Instance.TeacherWaypoints.Where(w => !w.Occupied).ToArray();
+            var random = Random.Range(0, unoccupiedWaypoints.Length);
+            _waypoint = unoccupiedWaypoints[random];
+            target = _waypoint.transform.position;
+            
+            // Animator parameters
+            _teacher.AnimationState = AnimationState.Walk;
         
-        // Animator parameters
-        _teacher.AnimationState = AnimationState.Walk;
-        
-        // View parameters
-        _teacher.LookForward();
-        navMeshAgent.speed = _speed;
-        _teacher.FieldOfView = _walkingFieldOfView;
-        
+            // View parameters
+            _teacher.LookForward();
+            navMeshAgent.speed = _speed;
+            _teacher.FieldOfView = _walkingFieldOfView;
+        }
+
         return true;
     }
 
@@ -70,9 +74,16 @@ public class Surveil : Action
         
         if (!invoked)
         {
-            // Animator parameters
-            _teacher.AnimationState = AnimationState.Idle;
-            _teacher.SetAnimatorParameter("LookingAround", true);
+            if (hasTarget)
+            {
+                // Animator parameters
+                _teacher.AnimationState = AnimationState.Idle;
+                _teacher.SetAnimatorParameter("LookingAround", true);
+            }
+            else
+            {
+                _teacher.StartCoroutine(RotateTowardsHit());
+            }
         }
 
         invoked = true;
@@ -89,6 +100,11 @@ public class Surveil : Action
     /// <returns>True</returns>
     public override bool PostPerform()
     {
+        if (!hasTarget)
+        {
+            _teacher.BeliefStates.RemoveState("hitByProjectile");
+        }
+        
         _teacher.SetAnimatorParameter("LookingAround", false);
         
         return success;
@@ -96,7 +112,30 @@ public class Surveil : Action
 
     public override void OnInterrupt()
     {
+        if (!hasTarget)
+        {
+            _teacher.BeliefStates.RemoveState("hitByProjectile");
+        }
+        
         _teacher.SetAnimatorParameter("LookingAround", false);
         navMeshAgent.SetDestination(_teacher.transform.position);
+    }
+    
+    private IEnumerator RotateTowardsHit()
+    {
+        var hitDirection = _teacher.HitDirection;
+        do
+        {
+            var lookRotation = Quaternion.LookRotation(hitDirection, Vector3.up);
+            var lerpRotation = Quaternion.Lerp(_teacher.transform.rotation, lookRotation, 20f * Time.deltaTime);
+            _teacher.transform.rotation = lerpRotation;
+
+            yield return null;
+        } 
+        while (Vector3.Angle(hitDirection, _teacher.transform.forward) > 4f);
+        
+        // Animator parameters
+        _teacher.AnimationState = AnimationState.Idle;
+        _teacher.SetAnimatorParameter("LookingAround", true);
     }
 }
