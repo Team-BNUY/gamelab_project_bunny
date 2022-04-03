@@ -39,6 +39,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4627928904290097811}
     m_Modifications:
+    - target: {fileID: 5369286258660730291, guid: bc2e296941794f345b214a79c12b387b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5369286258660730291, guid: bc2e296941794f345b214a79c12b387b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5369286258660730291, guid: bc2e296941794f345b214a79c12b387b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5369286258660730291, guid: bc2e296941794f345b214a79c12b387b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
     - target: {fileID: 7858298835629736729, guid: bc2e296941794f345b214a79c12b387b, type: 3}
       propertyPath: m_Name
       value: Door_And_Frame_Prefab
