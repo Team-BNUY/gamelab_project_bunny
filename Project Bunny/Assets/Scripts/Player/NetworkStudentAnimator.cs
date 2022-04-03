@@ -16,6 +16,16 @@ namespace Player
         {
             _studentController.SetThrewSnowball(value);
         }
+
+        public void Unhit()
+        {
+            _studentController.Unhit();
+        }
+
+        public void UnhitSides()
+        {
+            _studentController.UnhitSides();
+        }
     }
 
 }

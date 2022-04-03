@@ -1175,8 +1175,28 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 1
     Name: PrepareThrow
+  - Type: 4
+    SynchronizeType: 1
+    Name: Hit
+  - Type: 4
+    SynchronizeType: 1
+    Name: HitFront
+  - Type: 4
+    SynchronizeType: 1
+    Name: HitRight
+  - Type: 4
+    SynchronizeType: 1
+    Name: HitLeft
+  - Type: 4
+    SynchronizeType: 1
+    Name: HitBack
+  - Type: 9
+    SynchronizeType: 1
+    Name: CancelPrepare
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
   - SynchronizeType: 1
     LayerIndex: 1
+  - SynchronizeType: 1
+    LayerIndex: 2
