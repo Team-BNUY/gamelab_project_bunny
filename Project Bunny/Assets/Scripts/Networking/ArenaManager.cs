@@ -225,9 +225,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     }
 
     private void SpawnPlayer()
-    { 
+    {
         NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
-
 
         if (player.photonView.IsMine)
         {
@@ -377,7 +376,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         else if (TeamID == 2)
             return _redSpawns[0].position + new Vector3(randx, 0, randz);
         else
-            return Vector3.zero;
+            throw new NullReferenceException("INVALID TEAM ID: " + TeamID);
     }
 
     private void GetAllPlayers()
@@ -393,35 +392,19 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         int redSpawns = 0;
         foreach (NetworkStudentController student in _allPlayers)
         {
-            object teamId;
-            PhotonTeam team;
-            bool tryGetPlayerTeam = players.FirstOrDefault(x => x.UserId == student.PlayerID).CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId);
-            bool tryGetTeam = PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team);
-            if (tryGetPlayerTeam && tryGetTeam)
+            if (student.TeamID == 1)
             {
-                if (team.Code == 1)
-                {
-                    student.transform.position = _blueSpawns[blueSpawns].position;
-                    blueSpawns++;
-                }
-                else
-                {
-                    student.transform.position = _redSpawns[redSpawns].position;
-                    redSpawns++;
-                }
+                student.transform.position = _blueSpawns[blueSpawns].position;
+                blueSpawns++;
             }
-            else {
-                if (student.TeamID == 1)
-                {
-                    student.transform.position = _blueSpawns[blueSpawns].position;
-                    blueSpawns++;
-                }
-                else if(student.TeamID == 2)
-                {
-                    student.transform.position = _redSpawns[redSpawns].position;
-                    redSpawns++;
-                }
-
+            else if (student.TeamID == 2)
+            {
+                student.transform.position = _redSpawns[redSpawns].position;
+                redSpawns++;
+            }
+            else
+            {
+                Debug.LogError("PROBLEM");
             }
         }
     }
