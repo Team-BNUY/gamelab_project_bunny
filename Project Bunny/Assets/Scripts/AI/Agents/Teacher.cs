@@ -28,6 +28,7 @@ namespace AI.Agents
         
         // Stun parameters
         [SerializeField] private float _stunDuration = 2f;
+        private Vector3 _hitDirection;
         private bool _stunned;
 
         // Students references
@@ -117,7 +118,8 @@ namespace AI.Agents
             if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !giantRollball.CanDamage) return;
             
             photonView.RPC("Stun", RpcTarget.All);
-            
+            BeliefStates.AddState("hitByProjectile", 1);
+
             if (collision.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
             {
                 if (ball._studentThrower.photonView.IsMine)
@@ -130,9 +132,10 @@ namespace AI.Agents
             if (!snowball) return;
             
             // Hit by a snowball
-            var thrower = snowball._studentThrower;
-            var throwDirection = thrower.transform.position - transform.position;
-            var angle = Vector3.SignedAngle(transform.forward, throwDirection, Vector3.up);
+            var throwerPosition = snowball._studentThrower.transform.position;
+            var adjustedThrowerPosition = new Vector3(throwerPosition.x, transform.position.y, throwerPosition.z);
+            _hitDirection = adjustedThrowerPosition - transform.position;
+            var angle = Vector3.SignedAngle(transform.forward, _hitDirection, Vector3.up);
             
             SetAnimatorParameter("Hit", true, true);
             if (angle < 0 && angle >= -45f || angle >= 0 && angle < 45f)
@@ -301,7 +304,7 @@ namespace AI.Agents
         {
             beliefStates.AddState("seesBadStudent", 1);
             
-            if (currentAction is {Name: "Investigate"})
+            if (currentAction is {Name: "Investigate"} || currentAction is {Name: "SurveilAfterHit"})
             {
                 InterruptGoal();
             }
@@ -316,7 +319,7 @@ namespace AI.Agents
             beliefStates.AddState("seesBadStudent", 1);
             RememberStudent(student);
             
-            if (currentAction is {Name: "Investigate"} || currentAction is {Name: "Surveil"})
+            if (currentAction is {Name: "Investigate"} || currentAction is {Name: "Surveil"} || currentAction is {Name: "SurveilAfterHit"})
             {
                 InterruptGoal();
             }
@@ -394,6 +397,11 @@ namespace AI.Agents
         public bool Stunned
         {
             get => _stunned;
+        }
+
+        public Vector3 HitDirection
+        {
+            get => _hitDirection;
         }
     }
 }
