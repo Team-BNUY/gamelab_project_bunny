@@ -460,6 +460,9 @@ namespace Player
         public void SetStudentFreezeState(bool isFrozen)
         {
             _isFrozen = isFrozen;
+            _isAiming = false;
+            _throwForce = _minForce;
+            _throwAngle = _minAngle;
         }
 
         public void GetDamaged(int damage)
@@ -1118,7 +1121,11 @@ namespace Player
             _playerVCam.gameObject.SetActive(!isTeacher);
             ArenaManager.Instance.TeacherVirtualCamera.gameObject.SetActive(isTeacher);
             _isAiming = !isTeacher;
-            _animator.SetTrigger(CancelPrepare);
+            
+            if (_animator.GetCurrentAnimatorStateInfo(1).IsName("Prepare Snowball"))
+            {
+                _animator.SetTrigger(CancelPrepare);
+            }
 
             if (_hasSnowball && _playerSnowball)
             {
