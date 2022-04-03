@@ -23,8 +23,12 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     // Start is called before the first frame update
     private void Start()
     {
-        door.transform.localPosition = closedPos;
-        door.transform.localRotation = Quaternion.Euler(closedRot);
+        if (door != null)
+        {
+            door.transform.localPosition = closedPos;
+            door.transform.localRotation = Quaternion.Euler(closedRot);
+        }
+        
     }
 
     public void Trigger(NetworkStudentController currentStudentController)
