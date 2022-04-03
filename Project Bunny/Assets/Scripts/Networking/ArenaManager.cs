@@ -432,7 +432,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             if (PhotonNetwork.IsMasterClient)
             {
                 //_allPlayers = Array.Empty<NetworkStudentController>();
-                GetAllPlayers();
+                //GetAllPlayers();
             }
             StartMatch();
         }
