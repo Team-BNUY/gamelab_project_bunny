@@ -235,7 +235,6 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         player.SetCamera(Instantiate(_playerCamera), 60f, 25f, true, 0.7f);
 
         Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
-        Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties.ToString());
 
         if (playerProperties.ContainsKey("hatIndex"))
         {

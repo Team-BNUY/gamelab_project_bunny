@@ -8,6 +8,7 @@ using System.Linq;
 using Player;
 using Photon.Realtime;
 using System;
+using Newtonsoft.Json;
 
 namespace Networking
 {
@@ -49,6 +50,18 @@ namespace Networking
             SpawnPlayer();
             InitialiseUI();
 
+
+            //Code that automatically removes the appropriate number of jerseys from the table when
+            //we come back to the Classroom after a match.
+            //Will Uncomment if needed. Right now everyone loses their teams and team colors when they come back from a match.
+            
+            /*if (PhotonTeamsManager.Instance.GetTeamMembersCount(1) > 0 ||
+                PhotonTeamsManager.Instance.GetTeamMembersCount(2) > 0)
+            {
+                CorrectNumberOfJerseys();  
+            }*/
+            
+
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
         }
 
@@ -64,26 +77,26 @@ namespace Networking
         private void InitialiseUI()
         {
             loadingScreen.SetActive(false);
+        }
 
-            _leaveRoomBtn.onClick.AddListener(() =>
+        public void PlayerLeaveRoom()
+        {
+            if (PhotonNetwork.LocalPlayer.GetPhotonTeam() != null)
             {
-                if (PhotonNetwork.LocalPlayer.GetPhotonTeam() != null)
+                if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Blue")
                 {
-                    if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Blue")
-                    {
-                        BlueTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
-                        PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
+                    BlueTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
+                    PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
 
-                    }
-                    else if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Red")
-                    {
-                        RedTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
-                        PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
-                    }
                 }
-                PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
-                PhotonNetwork.LeaveRoom();
-            });
+                else if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Red")
+                {
+                    RedTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
+                    PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
+                }
+            }
+            PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
+            PhotonNetwork.LeaveRoom();
         }
 
         public override void OnLeftRoom()
@@ -132,7 +145,23 @@ namespace Networking
             {
                 loadingScreen.SetActive(true);
             }
+        }
 
+        public void CorrectNumberOfJerseys()
+        {
+            if (!PhotonNetwork.IsMasterClient) return;
+            
+            foreach (var player in PhotonNetwork.PlayerList)
+            {
+                if (player.GetPhotonTeam().Name == "Blue")
+                {
+                    BlueTeamTable.instance.AddTeamCount_RPC();
+                }
+                else if (player.GetPhotonTeam().Name == "Red")
+                {
+                    RedTeamTable.instance.AddTeamCount_RPC();
+                }
+            }
         }
 
         private void SpawnPlayer()
@@ -141,6 +170,54 @@ namespace Networking
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
             PhotonNetwork.LocalPlayer.TagObject = player;
             player.SetCamera(Instantiate(_playerCamera), 40f, 15f, false, 0.374f);
+            
+            Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
+
+            if (playerProperties.ContainsKey("hatIndex"))
+            {
+                player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties["hatIndex"]);
+            }
+
+            if (playerProperties.ContainsKey("hairIndex"))
+            {
+                if (playerProperties.ContainsKey("hairColorIndex"))
+                {
+                    player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"]);
+                }
+                else
+                {
+                    player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], 0);
+                }
+            }
+
+            if (playerProperties.ContainsKey("pantIndex"))
+            {
+                if (playerProperties.ContainsKey("pantColorIndex"))
+                {
+                    player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"]);
+                }
+                else
+                {
+                    player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], 0);
+                }
+            }
+
+            if (playerProperties.ContainsKey("coatIndex"))
+            {
+                if (playerProperties.ContainsKey("coatColorIndex"))
+                {
+                    player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], (int)playerProperties["coatColorIndex"]);
+                }
+                else
+                {
+                    player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], 0);
+                }
+            }
+
+            if (playerProperties.ContainsKey("skinColorIndex"))
+            {
+                player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
+            }
             
             player.RestoreTeamlessColors_RPC();
         }
