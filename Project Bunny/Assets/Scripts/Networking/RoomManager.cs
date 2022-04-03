@@ -41,6 +41,7 @@ namespace Networking
         [SerializeField] private Button _leaveRoomBtn;
         [SerializeField] private GameObject loadingScreen;
         [SerializeField] private Image[] displayedScores;
+        [SerializeField] private Image teamWhoWon;
         [SerializeField] private TMPro.TMP_Text[] displayedNames;
         [SerializeField] private Sprite[] scoreSprites;
         private List<PlayerTile> _tiles;
@@ -82,6 +83,7 @@ namespace Networking
 
             if (ScoreManager.Instance)
             {
+                teamWhoWon.gameObject.SetActive(false);
                 foreach (Image img in displayedScores)
                 {
                     img.gameObject.SetActive(false);
@@ -89,6 +91,14 @@ namespace Networking
 
                 if (!ScoreManager.Instance.isFirstMatch)
                 {
+                    teamWhoWon.gameObject.SetActive(true);
+                    if (ScoreManager.Instance.winningTeamCode == 1)
+                        teamWhoWon.color = Color.blue;
+                    else if (ScoreManager.Instance.winningTeamCode == 2)
+                        teamWhoWon.color = Color.red;
+                    else
+                        teamWhoWon.gameObject.SetActive(false);
+
                     int countedScores = 0;
                     for (int i = 0; i < ScoreManager.Instance.scores.Length; i++) {
                         if (!String.IsNullOrEmpty(ScoreManager.Instance.scores[i]) && countedScores <= 4) {

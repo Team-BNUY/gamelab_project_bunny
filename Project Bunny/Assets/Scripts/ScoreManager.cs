@@ -8,8 +8,7 @@ public class ScoreManager : MonoBehaviour
 {
     private static ScoreManager _instance;
 
-    public static ScoreManager Instance
-    {
+    public static ScoreManager Instance {
         get {
             if (_instance == null)
             {
@@ -197,7 +196,7 @@ public class ScoreManager : MonoBehaviour
         else
             Debug.Log("how do we handle exact ties? TO BE SOLVED LATER");
 
-        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rebel, hardWorker, teachersPet);
+        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rebel, hardWorker, teachersPet, glaceFolie, shoveler, avalanche, meetMeInMyOffice);
     }
 
     public void IncrementPropertyCounter(Photon.Realtime.Player player, string code)
@@ -220,7 +219,12 @@ public class ScoreManager : MonoBehaviour
     {
         ExitGames.Client.Photon.Hashtable props = PhotonNetwork.LocalPlayer.CustomProperties;
 
-        string[] keys = new string[] { "deaths", "hitsLanded", "ballsThrown", "bullyHits", "rascalHits" };
+        this.glaceFolie = string.Empty;
+        this.shoveler = string.Empty;
+        this.avalanche = string.Empty;
+        this.meetMeInMyOffice = string.Empty;
+        this.scores = new string[8];
+        string[] keys = new string[] { DEATHS_KEY, REBEL_KEY, BULLY_KEY, HARD_WORKER_KEY, TEACHERS_PET_KEY, MEET_IN_OFFICE_KEY, GLACE_FOLIE_KEY, SHOVELER_KEY, AVALANCHE_KEY };
 
         foreach (string key in keys)
         {
@@ -235,12 +239,18 @@ public class ScoreManager : MonoBehaviour
         ResetStats();
     }
 
-    private void ResetStats() {
+    private void ResetStats()
+    {
         this.winningTeamCode = 0;
         this.bully = string.Empty;
         this.rebel = string.Empty;
         this.hardWorker = string.Empty;
         this.teachersPet = string.Empty;
+        this.glaceFolie = string.Empty;
+        this.shoveler = string.Empty;
+        this.avalanche = string.Empty;
+        this.meetMeInMyOffice = string.Empty;
+        this.scores = new string[8];
     }
 
     #endregion
@@ -248,14 +258,19 @@ public class ScoreManager : MonoBehaviour
     #region RPC
 
     [PunRPC]
-    public void SyncMatchInformation(bool isFirstMatch, int winningTeamCode, string bully, string rascal, string hardWorker, string teachersPet)
+    public void SyncMatchInformation(bool isFirstMatch, int winningTeamCode, string bully, string rebel, string hardWorker, string teachersPet, string glaceFolie, string shoveler, string avalanche, string meetMeInMyOffice)
     {
         this.isFirstMatch = isFirstMatch;
         this.winningTeamCode = winningTeamCode;
         this.bully = bully;
-        this.rebel = rascal;
+        this.rebel = rebel;
         this.hardWorker = hardWorker;
         this.teachersPet = teachersPet;
+        this.glaceFolie = glaceFolie;
+        this.shoveler = shoveler;
+        this.avalanche = avalanche;
+        this.meetMeInMyOffice = meetMeInMyOffice;
+        this.scores = new string[] { rebel, bully, hardWorker, teachersPet, meetMeInMyOffice, glaceFolie, shoveler, avalanche };
     }
     #endregion
 }
