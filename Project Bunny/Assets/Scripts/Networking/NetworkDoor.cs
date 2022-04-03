@@ -10,6 +10,8 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
 
     [SerializeField] private Transform[] waitPoints;
     [SerializeField] private Transform doorPoint;
+    [SerializeField] public Animator hoverEButtonUI;
+    [SerializeField] public GameObject door;
 
     [SerializeField] private Vector3 openPos;
     [SerializeField] private Vector3 openRot;
@@ -21,16 +23,16 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     // Start is called before the first frame update
     private void Start()
     {
-        transform.position = closedPos;
-        transform.rotation = Quaternion.Euler(closedRot);
+        door.transform.localPosition = closedPos;
+        door.transform.localRotation = Quaternion.Euler(closedRot);
     }
 
     public void Trigger(NetworkStudentController currentStudentController)
     {
         if (!PhotonNetwork.IsMasterClient) return;
         
-        transform.position = openPos;
-        transform.rotation = Quaternion.Euler(openRot);
+        door.transform.localPosition = openPos;
+        door.transform.localRotation = Quaternion.Euler(openRot);
         var allPlayers = FindObjectsOfType<NetworkStudentController>();
         var waitPointIndex = 0;
         foreach (var student in allPlayers)
@@ -50,12 +52,20 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
 
     public void Enter()
     {
-        Debug.Log("Entered Door");
+        if (!PhotonNetwork.IsMasterClient) return;
+        
+        hoverEButtonUI.enabled = true;
+        hoverEButtonUI.StartPlayback();
+        hoverEButtonUI.gameObject.SetActive(true);
     }
 
     public void Exit()
     {
-        Debug.Log("Exited Door");
+        if (!PhotonNetwork.IsMasterClient) return;
+        
+        hoverEButtonUI.StopPlayback();
+        hoverEButtonUI.enabled = false;
+        hoverEButtonUI.gameObject.SetActive(false);
     }
 
     private IEnumerator ExitClassroom(NetworkStudentController student)
