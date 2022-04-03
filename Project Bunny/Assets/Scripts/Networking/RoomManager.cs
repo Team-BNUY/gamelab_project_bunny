@@ -55,11 +55,11 @@ namespace Networking
             //we come back to the Classroom after a match.
             //Will Uncomment if needed. Right now everyone loses their teams and team colors when they come back from a match.
             
-            /*if (PhotonTeamsManager.Instance.GetTeamMembersCount(1) > 0 ||
+            if (PhotonTeamsManager.Instance.GetTeamMembersCount(1) > 0 ||
                 PhotonTeamsManager.Instance.GetTeamMembersCount(2) > 0)
             {
                 CorrectNumberOfJerseys();  
-            }*/
+            }
             
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
