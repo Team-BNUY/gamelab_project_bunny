@@ -2,6 +2,7 @@ using AI.Agents;
 using AI.Core;
 using Photon.Pun;
 using Player;
+using System.Linq;
 using UnityEngine;
 
 namespace AI.Actions.TeacherActions
@@ -65,6 +66,16 @@ namespace AI.Actions.TeacherActions
             if (Vector3.Distance(_target.transform.position, _teacher.transform.position) > 2f || _target.IsDead) return;
             
             _target.photonView.RPC("GetDamagedRPC", RpcTarget.All, 3);
+
+            Photon.Realtime.Player targetPlayer = PhotonNetwork.CurrentRoom.Players.FirstOrDefault(x => x.Value.UserId == _target.PlayerID).Value;
+            if (targetPlayer != null)
+            {
+                ScoreManager.Instance.IncrementPropertyCounter(targetPlayer, ScoreManager.MEET_IN_OFFICE_KEY);
+            }
+            else {
+                Debug.LogError("Attempt to get target player for score failed.");
+            }
+
             _teacher.BadStudents.Remove(_target);
             Teacher.LoseDeadPlayer(_target);
         }

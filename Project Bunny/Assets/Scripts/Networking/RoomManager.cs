@@ -40,6 +40,9 @@ namespace Networking
         [Header("UI")]
         [SerializeField] private Button _leaveRoomBtn;
         [SerializeField] private GameObject loadingScreen;
+        [SerializeField] private Image[] displayedScores;
+        [SerializeField] private TMPro.TMP_Text[] displayedNames;
+        [SerializeField] private Sprite[] scoreSprites;
         private List<PlayerTile> _tiles;
 
         void Start()
@@ -54,13 +57,12 @@ namespace Networking
             //Code that automatically removes the appropriate number of jerseys from the table when
             //we come back to the Classroom after a match.
             //Will Uncomment if needed. Right now everyone loses their teams and team colors when they come back from a match.
-            
+
             if (PhotonTeamsManager.Instance.GetTeamMembersCount(1) > 0 ||
                 PhotonTeamsManager.Instance.GetTeamMembersCount(2) > 0)
             {
-                CorrectNumberOfJerseys();  
+                CorrectNumberOfJerseys();
             }
-            
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
         }
@@ -77,6 +79,55 @@ namespace Networking
         private void InitialiseUI()
         {
             loadingScreen.SetActive(false);
+
+            if (ScoreManager.Instance)
+            {
+                foreach (Image img in displayedScores)
+                {
+                    img.gameObject.SetActive(false);
+                }
+
+                if (!ScoreManager.Instance.isFirstMatch)
+                {
+                    int countedScores = 0;
+                    for (int i = 0; i < ScoreManager.Instance.scores.Length; i++) {
+                        if (!String.IsNullOrEmpty(ScoreManager.Instance.scores[i]) && countedScores <= 4) {
+                            displayedScores[countedScores].gameObject.SetActive(true);
+                            displayedScores[countedScores].sprite = scoreSprites[i];
+                            displayedNames[countedScores].text = ScoreManager.Instance.scores[i];
+                            countedScores++;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (Image img in displayedScores)
+                    {
+                        img.gameObject.SetActive(false);
+                    }
+                }
+            }
+            else
+            {
+                foreach (Image img in displayedScores)
+                {
+                    img.gameObject.SetActive(false);
+                }
+            }
+
+
+            if (ScoreManager.Instance)
+            {
+                string scores = "";
+                scores += "Rebel: " + ScoreManager.Instance.rebel;
+                scores += "\nBully: " + ScoreManager.Instance.bully;
+                scores += "\nHard Worker: " + ScoreManager.Instance.hardWorker;
+                scores += "\nTeacher's Pet: " + ScoreManager.Instance.teachersPet;
+                scores += "\nMeet In My Office: " + ScoreManager.Instance.meetMeInMyOffice;
+                scores += "\nGlace Folie: " + ScoreManager.Instance.glaceFolie;
+                scores += "\nShoveler: " + ScoreManager.Instance.shoveler;
+                scores += "\nAvalanche: " + ScoreManager.Instance.avalanche;
+            }
         }
 
         public void PlayerLeaveRoom()
@@ -150,7 +201,7 @@ namespace Networking
         public void CorrectNumberOfJerseys()
         {
             if (!PhotonNetwork.IsMasterClient) return;
-            
+
             foreach (var player in PhotonNetwork.PlayerList)
             {
                 if (player.GetPhotonTeam().Name == "Blue")
@@ -170,7 +221,7 @@ namespace Networking
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
             PhotonNetwork.LocalPlayer.TagObject = player;
             player.SetCamera(Instantiate(_playerCamera), 40f, 15f, false, 0.374f);
-            
+
             Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
             if (playerProperties.ContainsKey("hatIndex"))
@@ -218,7 +269,7 @@ namespace Networking
             {
                 player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
             }
-            
+
             player.RestoreTeamlessColors_RPC();
         }
 

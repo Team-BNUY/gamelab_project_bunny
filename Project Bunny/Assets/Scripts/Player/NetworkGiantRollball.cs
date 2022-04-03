@@ -52,7 +52,13 @@ namespace Player
             {
                 if (_hasCollided || !PhotonNetwork.IsMasterClient) return;
                 _hasCollided = true;
-                
+
+
+                if (student.photonView.IsMine)
+                {
+                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.AVALANCHE_KEY);
+                }
+
                 student.photonView.RPC("GetDamagedRPC", RpcTarget.All, _damage);
                 BreakRollball();
             }
