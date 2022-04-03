@@ -410,6 +410,19 @@ public class ArenaManager : MonoBehaviourPunCallbacks
                     redSpawns++;
                 }
             }
+            else {
+                if (student.TeamID == 1)
+                {
+                    student.transform.position = _blueSpawns[blueSpawns].position;
+                    blueSpawns++;
+                }
+                else if(student.TeamID == 2)
+                {
+                    student.transform.position = _redSpawns[redSpawns].position;
+                    redSpawns++;
+                }
+
+            }
         }
     }
 
@@ -435,7 +448,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                _allPlayers = Array.Empty<NetworkStudentController>();
+                //_allPlayers = Array.Empty<NetworkStudentController>();
                 GetAllPlayers();
             }
             StartMatch();
