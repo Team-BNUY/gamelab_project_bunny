@@ -44,7 +44,7 @@ namespace AI.Agents
         protected override void Start()
         {
             if (!PhotonNetwork.IsMasterClient) return;
-        
+            
             // Goals
             var state = new State("searchedForBadStudent", 1);
             var states = new StateSet(state);
@@ -133,28 +133,24 @@ namespace AI.Agents
             var thrower = snowball._studentThrower;
             var throwDirection = thrower.transform.position - transform.position;
             var angle = Vector3.SignedAngle(transform.forward, throwDirection, Vector3.up);
+            
+            SetAnimatorParameter("Hit", true, true);
             if (angle < 0 && angle >= -45f || angle >= 0 && angle < 45f)
             {
-                Debug.Log("front");
                 SetAnimatorParameter("HitFront", true, true);
             }
             else if (angle < -45f && angle >= -135f)
             {
-                Debug.Log("left");
                 SetAnimatorParameter("HitLeft", true, true);
             }
             else if (angle >= 45f && angle < 135f)
             {
-                Debug.Log("right");
                 SetAnimatorParameter("HitRight", true, true);
             }
             else
             {
-                Debug.Log("back");
                 SetAnimatorParameter("HitBack", true, true);
             }
-
-            SetAnimatorParameter("Hit", true, true);
         }
 
         /// <summary>
