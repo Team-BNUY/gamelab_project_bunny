@@ -47,7 +47,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private List<ActionSpot> _actionSpots;
     [SerializeField] private Teacher _teacherPrefab;
     [SerializeField] private Transform _teacherSpawn;
-    [SerializeField] private Transform[] _teacherWaypoints;
+    [SerializeField] private Waypoint[] _teacherWaypoints;
     [SerializeField] private CinemachineVirtualCamera _teacherVirtualCamera;
     private NetworkStudentController[] _allPlayers;
     private List<Gang> _gangs = new List<Gang>();
@@ -87,7 +87,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     public int GangMaximumSize => _gangMaximumSize;
     public List<ActionSpot> ActionSpots => _actionSpots;
     public float SnowmanTimer => snowmanTimer;
-    public Transform[] TeacherWaypoints => _teacherWaypoints;
+    public Waypoint[] TeacherWaypoints => _teacherWaypoints;
     public float TeacherPreparationTime => _teacherPreparationTime;
     public CinemachineVirtualCamera TeacherVirtualCamera => _teacherVirtualCamera;
 
