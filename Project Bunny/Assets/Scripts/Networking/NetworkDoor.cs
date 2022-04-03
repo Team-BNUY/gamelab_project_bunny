@@ -35,8 +35,12 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     {
         if (!PhotonNetwork.IsMasterClient) return;
         
-        door.transform.localPosition = openPos;
-        door.transform.localRotation = Quaternion.Euler(openRot);
+        if (door != null)
+        {
+            door.transform.localPosition = openPos;
+            door.transform.localRotation = Quaternion.Euler(openRot); 
+        }
+
         var allPlayers = FindObjectsOfType<NetworkStudentController>();
         var waitPointIndex = 0;
         foreach (var student in allPlayers)
