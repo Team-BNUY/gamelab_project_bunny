@@ -72,7 +72,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private NetworkStudentController _localStudentController;
     private NetworkGiantRollball[] _currentRollballs = new NetworkGiantRollball[2];
-    
+
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
     public GameObject SnowballBurst => _snowballBurst;
@@ -225,69 +225,68 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     }
 
     private void SpawnPlayer()
-    {
+    { 
         NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
-        player.transform.position = GetPlayerSpawnPoint(player);
-        player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
-        player.TeamID = PhotonNetwork.LocalPlayer.GetPhotonTeam().Code;
-        PhotonNetwork.LocalPlayer.TagObject = player;
-        _localStudentController = player;
-        player.SetCamera(Instantiate(_playerCamera), 60f, 25f, true, 0.7f);
+
 
         if (player.photonView.IsMine)
         {
+            player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
+            player.TeamID = PhotonNetwork.LocalPlayer.GetPhotonTeam().Code;
+            player.transform.position = GetPlayerSpawnPoint(player.TeamID);
+            PhotonNetwork.LocalPlayer.TagObject = player;
+            _localStudentController = player;
+            player.SetCamera(Instantiate(_playerCamera), 60f, 25f, true, 0.7f);
             player.photonView.RPC("SyncPlayerInfo", RpcTarget.AllBuffered, player.PlayerID, player.TeamID);
-        }
-        
-        Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
-        if (playerProperties.ContainsKey("hatIndex"))
-        {
-            player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties["hatIndex"]);
-        }
+            Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
-        if (playerProperties.ContainsKey("hairIndex"))
-        {
-            if (playerProperties.ContainsKey("hairColorIndex"))
+            if (playerProperties.ContainsKey("hatIndex"))
             {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"]);
+                player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties["hatIndex"]);
             }
-            else
+
+            if (playerProperties.ContainsKey("hairIndex"))
             {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], 0);
+                if (playerProperties.ContainsKey("hairColorIndex"))
+                {
+                    player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"]);
+                }
+                else
+                {
+                    player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], 0);
+                }
+            }
+
+            if (playerProperties.ContainsKey("pantIndex"))
+            {
+                if (playerProperties.ContainsKey("pantColorIndex"))
+                {
+                    player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"]);
+                }
+                else
+                {
+                    player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], 0);
+                }
+            }
+
+            if (playerProperties.ContainsKey("coatIndex"))
+            {
+                if (playerProperties.ContainsKey("coatColorIndex"))
+                {
+                    player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], (int)playerProperties["coatColorIndex"]);
+                }
+                else
+                {
+                    player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], 0);
+                }
+            }
+
+            if (playerProperties.ContainsKey("skinColorIndex"))
+            {
+                player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
             }
         }
-
-        if (playerProperties.ContainsKey("pantIndex"))
-        {
-            if (playerProperties.ContainsKey("pantColorIndex"))
-            {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"]);
-            }
-            else
-            {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], 0);
-            }
-        }
-
-        if (playerProperties.ContainsKey("coatIndex"))
-        {
-            if (playerProperties.ContainsKey("coatColorIndex"))
-            {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], (int)playerProperties["coatColorIndex"]);
-            }
-            else
-            {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], 0);
-            }
-        }
-
-        if (playerProperties.ContainsKey("skinColorIndex"))
-        {
-            player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
-        }
-
-
     }
 
     private void InitializeGiantRollballs()
@@ -304,7 +303,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     {
         StartCoroutine(RemoveGiantRollballWhenDestroyed(index));
     }
-    
+
     private IEnumerator RemoveGiantRollballWhenDestroyed(int index)
     {
         _currentRollballs[index] = null;
@@ -366,24 +365,19 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         UnityEngine.SceneManagement.SceneManager.LoadScene(LOBBY_SCENE_NAME);
     }
 
-    public Vector3 GetPlayerSpawnPoint(NetworkStudentController player = null)
+    public Vector3 GetPlayerSpawnPoint(byte TeamID)
     {
         float spawnRadius = 1f;
         float randx, randz;
         randx = Random.Range(-spawnRadius, spawnRadius);
         randz = Random.Range(-spawnRadius, spawnRadius);
 
-        object teamId;
-        PhotonTeam team;
-        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PhotonTeamsManager.TeamPlayerProp, out teamId)
-            && PhotonTeamsManager.Instance.TryGetTeamByCode((byte)teamId, out team))
-        {
-            if (team.Code == 1)
-                return _blueSpawns[0].position + new Vector3(randx, 0, randz);
-            else
-                return _redSpawns[0].position + new Vector3(randx, 0, randz);
-        }
-        return Vector3.zero;
+        if (TeamID == 1)
+            return _blueSpawns[0].position + new Vector3(randx, 0, randz);
+        else if (TeamID == 2)
+            return _redSpawns[0].position + new Vector3(randx, 0, randz);
+        else
+            return Vector3.zero;
     }
 
     private void GetAllPlayers()
