@@ -1,3 +1,5 @@
+using System.Linq;
+using AI;
 using AI.Agents;
 using AI.Core;
 using UnityEngine;
@@ -6,7 +8,7 @@ public class Surveil : Action
 {
     private Teacher _teacher;
 
-    private Transform _waypoint;
+    private Waypoint _waypoint;
     private float _speed;
     private float _lookAroundTime;
     private float _walkingFieldOfView;
@@ -43,9 +45,10 @@ public class Surveil : Action
         _timer = _lookAroundTime;
         
         // Sets the target
-        var random = Random.Range(0, ArenaManager.Instance.TeacherWaypoints.Length);
-        _waypoint = ArenaManager.Instance.TeacherWaypoints[random];
-        target = _waypoint.position;
+        var unoccupiedWaypoints = ArenaManager.Instance.TeacherWaypoints.Where(w => !w.Occupied).ToArray();
+        var random = Random.Range(0, unoccupiedWaypoints.Length);
+        _waypoint = unoccupiedWaypoints[random];
+        target = _waypoint.transform.position;
         
         // Animator parameters
         _teacher.AnimationState = AnimationState.Walk;
