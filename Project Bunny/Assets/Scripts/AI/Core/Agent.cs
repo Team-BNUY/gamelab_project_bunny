@@ -152,17 +152,18 @@ namespace AI.Core
         {
             photonView.RPC(nameof(SetTriggerRPC), RpcTarget.All, animatorParameter);
         }
-        
+
         /// <summary>
         /// Sets the boolean <paramref name="animatorParameter"/> to <paramref name="value"/>
         /// </summary>
         /// <param name="animatorParameter">The animator parameter's name</param>
         /// <param name="value">The boolean value to set the animator parameter</param>
+        /// <param name="sendToMaster"></param>
         public void SetAnimatorParameter(string animatorParameter, bool value, bool sendToMaster = false)
         {
             if (sendToMaster)
             {
-                photonView.RPC(nameof(SetBoolRPC), RpcTarget.MasterClient, animatorParameter, value);
+                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All, animatorParameter, value);
                 return;
             }
             

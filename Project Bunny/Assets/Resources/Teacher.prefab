@@ -1249,11 +1249,11 @@ GameObject:
   - component: {fileID: 3897973591823291724}
   - component: {fileID: 6987421137034989366}
   - component: {fileID: 8347440499575126243}
+  - component: {fileID: 3163279942283406589}
   - component: {fileID: 2251092483985846287}
   - component: {fileID: 7548988713403948362}
   - component: {fileID: 1337179978811475485}
-  - component: {fileID: 5734021069663416615}
-  - component: {fileID: 3163279942283406589}
+  - component: {fileID: 4430502746076065541}
   m_Layer: 0
   m_Name: Teacher
   m_TagString: Untagged
@@ -1321,7 +1321,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5ca84a531b74e704bbd31aa6231d472c, type: 2}
   - {fileID: 11400000, guid: f9dd4dd768aa6794285e64c481cb3302, type: 2}
   - {fileID: 11400000, guid: 243694962ba81454dae29a9db92dfb07, type: 2}
-  _head: {fileID: 4341138929795209642, guid: 7d78ae5c081ac084398d78f67349f43b, type: 3}
+  _head: {fileID: 6168305261835024236}
   _fieldOfView: 90
   _viewDistance: 20
   _headRotationSpeed: 10
@@ -1329,6 +1329,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1032
   _stunDuration: 4
+--- !u!136 &3163279942283406589
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4419072441071652854}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 4.769396
+  m_Direction: 1
+  m_Center: {x: 0, y: 2.384297, z: 0}
 --- !u!114 &2251092483985846287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1350,7 +1364,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 8347440499575126243}
   - {fileID: 1337179978811475485}
-  - {fileID: 5734021069663416615}
+  - {fileID: 4430502746076065541}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -1392,7 +1406,7 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!114 &5734021069663416615
+--- !u!114 &4430502746076065541
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1409,18 +1423,6 @@ MonoBehaviour:
   m_SynchronizeParameters:
   - Type: 4
     SynchronizeType: 1
-    Name: Walking
-  - Type: 4
-    SynchronizeType: 1
-    Name: Running
-  - Type: 4
-    SynchronizeType: 1
-    Name: LookingAround
-  - Type: 4
-    SynchronizeType: 1
-    Name: Stunned
-  - Type: 4
-    SynchronizeType: 1
     Name: Hit
   - Type: 4
     SynchronizeType: 1
@@ -1434,25 +1436,21 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 1
     Name: HitLeft
+  - Type: 4
+    SynchronizeType: 1
+    Name: Walking
+  - Type: 4
+    SynchronizeType: 1
+    Name: Running
+  - Type: 4
+    SynchronizeType: 1
+    Name: LookingAround
+  - Type: 4
+    SynchronizeType: 1
+    Name: Stunned
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
-  - SynchronizeType: 1
-    LayerIndex: 1
---- !u!136 &3163279942283406589
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4419072441071652854}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 4.769396
-  m_Direction: 1
-  m_Center: {x: 0, y: 2.384297, z: 0}
 --- !u!1 &4511399101340624908
 GameObject:
   m_ObjectHideFlags: 0
