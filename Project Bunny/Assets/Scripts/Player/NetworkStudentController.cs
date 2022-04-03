@@ -612,7 +612,7 @@ namespace Player
             _playerModel.gameObject.SetActive(true);
             _worldUI.gameObject.SetActive(true);
             _currentHealth = _maxHealth;
-            _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this);
+            _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this.TeamID);
             _characterController.enabled = true;
             _isDead = false;
             photonView.RPC(nameof(ResetHeartsVisibilityRPC), RpcTarget.All);
