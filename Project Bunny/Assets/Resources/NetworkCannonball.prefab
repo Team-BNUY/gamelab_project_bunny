@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4897359728783406355}
   - component: {fileID: 5778073387835718462}
   - component: {fileID: 751920713879394536}
-  - component: {fileID: -3441844670343419531}
+  - component: {fileID: 582385311714282895}
   m_Layer: 0
   m_Name: NetworkCannonball
   m_TagString: Projectile
@@ -253,11 +253,11 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 5778073387835718462}
-  - {fileID: -3441844670343419531}
+  - {fileID: 582385311714282895}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &-3441844670343419531
+--- !u!114 &582385311714282895
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -266,13 +266,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 4854422905516743973}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizeVelocity: 1
-  m_SynchronizeAngularVelocity: 0
-  m_TeleportEnabled: 1
-  m_TeleportIfDistanceGreaterThan: 0.5
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1001 &6246962265957680948
 PrefabInstance:
   m_ObjectHideFlags: 0
