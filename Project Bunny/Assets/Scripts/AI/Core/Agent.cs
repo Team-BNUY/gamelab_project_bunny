@@ -123,6 +123,7 @@ namespace AI.Core
                 if(!currentAction.HasTarget)
                 {
                     currentAction.Running = true;
+                    SetAnimatorParameters();
 
                     return;
                 }

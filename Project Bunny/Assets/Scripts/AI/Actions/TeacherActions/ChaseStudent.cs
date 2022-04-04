@@ -63,11 +63,13 @@ namespace AI.Actions.TeacherActions
             navMeshAgent.speed = _speed;
             navMeshAgent.SetDestination(targetPosition);
 
+            agent.AnimationState = AnimationState.Run;
+            
             if (Vector3.Distance(_target.transform.position, _teacher.transform.position) > 2f || _target.IsDead) return;
             
             _target.photonView.RPC("GetDamagedRPC", RpcTarget.All, 3);
 
-            Photon.Realtime.Player targetPlayer = PhotonNetwork.CurrentRoom.Players.FirstOrDefault(x => x.Value.UserId == _target.PlayerID).Value;
+            var targetPlayer = PhotonNetwork.CurrentRoom.Players.FirstOrDefault(x => x.Value.UserId == _target.PlayerID).Value;
             if (targetPlayer != null)
             {
                 ScoreManager.Instance.IncrementPropertyCounter(targetPlayer, ScoreManager.MEET_IN_OFFICE_KEY);
