@@ -353,6 +353,9 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     {
         ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
         PhotonTeamsManager teamsManager = FindObjectOfType<PhotonTeamsManager>();
+        
+        Hashtable emptyTable = new Hashtable();
+        PhotonNetwork.LocalPlayer.CustomProperties = emptyTable;
 
         if (scoreManager != null)
             GameObject.Destroy(scoreManager.gameObject);
