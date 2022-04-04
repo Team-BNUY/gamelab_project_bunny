@@ -234,6 +234,11 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             _localStudentController = player;
             player.SetCamera(Instantiate(_playerCamera), 60f, 25f, true, 0.7f);
             player.photonView.RPC("SyncPlayerInfo", RpcTarget.AllBuffered, player.PlayerID, player.TeamID);
+        }
+
+        if (!photonView.IsMine) return;
+        
+        Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
             Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
