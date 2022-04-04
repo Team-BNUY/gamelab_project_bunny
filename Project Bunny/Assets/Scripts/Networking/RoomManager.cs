@@ -165,6 +165,9 @@ namespace Networking
             ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
             PhotonTeamsManager teamsManager = FindObjectOfType<PhotonTeamsManager>();
 
+            Hashtable emptyTable = new Hashtable();
+            PhotonNetwork.LocalPlayer.CustomProperties = emptyTable;
+
             if (scoreManager != null)
                 GameObject.Destroy(scoreManager.gameObject);
 
@@ -279,8 +282,8 @@ namespace Networking
             {
                 player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
             }
-
-            player.RestoreTeamlessColors_RPC();
+            
+            //player.RestoreTeamlessColors_RPC();
         }
 
         public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
