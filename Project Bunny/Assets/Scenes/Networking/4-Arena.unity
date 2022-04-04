@@ -22461,10 +22461,6 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 29
       objectReference: {fileID: 0}
-    - target: {fileID: 7597243257626280, guid: 9f2cd2d667545cb44aeb032937595ee9, type: 3}
-      propertyPath: hoverEButtonUI
-      value: 
-      objectReference: {fileID: 498485760}
     - target: {fileID: 3808900633230351856, guid: 9f2cd2d667545cb44aeb032937595ee9, type: 3}
       propertyPath: m_Name
       value: NetworkCannon
@@ -22515,24 +22511,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f2cd2d667545cb44aeb032937595ee9, type: 3}
---- !u!1 &2021794885 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3808900633230351856, guid: 9f2cd2d667545cb44aeb032937595ee9, type: 3}
-  m_PrefabInstance: {fileID: 2021794884}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &2021794886
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2021794885}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.1041814, y: 2.0464826, z: 3.2717066}
-  m_Center: {x: 0.009032845, y: 0.5232413, z: -0.053628266}
 --- !u!1001 &2040105486
 PrefabInstance:
   m_ObjectHideFlags: 0

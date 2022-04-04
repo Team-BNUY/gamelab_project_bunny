@@ -62,6 +62,9 @@ namespace Player
             _currentStudentController.UsingCannon = true;
             _player = _currentStudentController.transform.gameObject;
 
+            // Idle animation
+            _currentStudentController.SetAnimatorParameter("InteractIdle", true);
+            
             //Setting the new distance of the player camera when assuming control of the Slingshot
             _playerVCamSettings = _currentStudentController.PlayerVCamFramingTransposer;
             _playerVCamSettings.m_CameraDistance = _newCameraDistance;
@@ -88,6 +91,9 @@ namespace Player
                 _aimArrow.SetActive(false);
             }
             
+            // Idle animation
+            _currentStudentController.SetAnimatorParameter("InteractIdle", false);
+
             // If already aiming while exiting, then just throw the current snowball and restore everything
             _coolDownTimer = 0.0f;
 
@@ -118,21 +124,11 @@ namespace Player
                     _aimArrow.SetActive(false);
                 }
                 
-                _isActive = false;
-                ThrowSnowball();
-                _player = null;
-                _currentStudentController.CurrentInteractable = null;
-                _currentStudentController.UsingCannon = false;
-                _currentStudentController = null;
-                
-                //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
-                _playerVCamSettings.m_CameraDistance = 25;
-
-                //Restore key variables to null/default value
-                _playerVCamSettings = null;
-                _playerCharController.enabled = true;
-                _playerCharController = null;
-                _coolDownTimer = 0f;
+                // Idle animation
+                _currentStudentController.SetAnimatorParameter("InteractIdle", false);
+                var random = Random.Range(0, 3);
+                _currentStudentController.SetAnimatorParameter("Random", random);
+                _currentStudentController.SetAnimatorParameter("Kick");
             }
         }
 
@@ -148,6 +144,25 @@ namespace Player
 
         #region CannonBallLogic
 
+        public void PushRollball()
+        {
+            _isActive = false;
+            ThrowSnowball();
+            _player = null;
+            _currentStudentController.CurrentInteractable = null;
+            _currentStudentController.UsingCannon = false;
+            _currentStudentController = null;
+                
+            //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
+            _playerVCamSettings.m_CameraDistance = 25;
+
+            //Restore key variables to null/default value
+            _playerVCamSettings = null;
+            _playerCharController.enabled = true;
+            _playerCharController = null;
+            _coolDownTimer = 0f;
+        }
+        
         /// <summary>
         /// Start the snowball timer and spawn a new snowball when the timer is up
         /// </summary>

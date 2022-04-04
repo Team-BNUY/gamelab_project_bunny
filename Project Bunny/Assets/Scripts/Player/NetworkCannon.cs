@@ -78,6 +78,9 @@ namespace Player
             _currentStudentController = currentStudentController;
             _currentStudentController.UsingCannon = true;
             _player = _currentStudentController.transform.gameObject;
+            
+            // Idle animation
+            _currentStudentController.SetAnimatorParameter("InteractIdle", true);
 
             //Setting the new distance of the player camera when assuming control of the Slingshot
             _playerVCamSettings = _currentStudentController.PlayerVCamFramingTransposer;
@@ -108,6 +111,9 @@ namespace Player
             {
                 _aimArrow.SetActive(false);
             }
+            
+            // Idle animation
+            _currentStudentController.SetAnimatorParameter("InteractIdle", false);
             
             // If already aiming while exiting, then just throw the current snowball and restore everything
             StartCannonBallThrow();

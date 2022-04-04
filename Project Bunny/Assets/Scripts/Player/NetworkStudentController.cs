@@ -1214,24 +1214,18 @@ namespace Player
 
             return interactable;
         }
-
-        /// <summary>
-        /// Accessed through animation event. Disables Walking animation when necessary
-        /// </summary>
-        // ReSharper disable once UnusedMember.Global
-        public void SetWalkingAnimator()
+        
+        private void StopControlledMovement()
         {
-            if (photonView.IsMine)
+            _target = Vector3.zero;
+
+            if (_startGame)
             {
-                _animator.SetBool(IsWalkingHash, _isWalking);
+                _startGame = false;
+                RoomManager.Instance.StartGame();
             }
         }
-
-        public void SetThrewSnowball(bool value)
-        {
-            _threwSnowball = value;
-        }
-
+        
         /// <summary>
         /// This is a very important method, it basically is entirely responsible for syncing the object on the network.
         /// If (stream.IsWriting) == true, it means that we own the player, so transmit data to everyone else on the network (hence, write)
@@ -1295,16 +1289,36 @@ namespace Player
             _target = target;
             _startGame = startGame;
         }
-
-        private void StopControlledMovement()
+        
+        /// <summary>
+        /// Accessed through animation event. Disables Walking animation when necessary
+        /// </summary>
+        public void SetWalkingAnimator()
         {
-            _target = Vector3.zero;
-
-            if (_startGame)
+            if (photonView.IsMine)
             {
-                _startGame = false;
-                RoomManager.Instance.StartGame();
+                _animator.SetBool(IsWalkingHash, _isWalking);
             }
+        }
+
+        public void SetThrewSnowball(bool value)
+        {
+            _threwSnowball = value;
+        }
+        
+        public void SetAnimatorParameter(string parameter)
+        {
+            _animator.SetTrigger(parameter);
+        }
+        
+        public void SetAnimatorParameter(string parameter, bool value)
+        {
+            _animator.SetBool(parameter, value);
+        }
+        
+        public void SetAnimatorParameter(string parameter, int value)
+        {
+            _animator.SetInteger(parameter, value);
         }
 
         #endregion
