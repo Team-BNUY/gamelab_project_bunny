@@ -327,7 +327,10 @@ namespace Player
                 }
             }
 
-            _playerModel.rotation = _playerRotation;
+            if (_currentInteractable == null)
+            {
+                SetPlayerRotation(_playerRotation);
+            }
 
             var moveAngle = Vector2.SignedAngle(_inputMovement, new Vector2(0, 1));
             if (moveAngle < 0)
@@ -353,6 +356,11 @@ namespace Player
 
             _animator.SetFloat(DeltaX, _deltaVector.x);
             _animator.SetFloat(DeltaY, _deltaVector.y);
+        }
+
+        public void SetPlayerRotation(Quaternion rotation)
+        {
+            _playerModel.rotation = rotation;
         }
 
         /// <summary>

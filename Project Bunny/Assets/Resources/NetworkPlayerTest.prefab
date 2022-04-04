@@ -273,6 +273,7 @@ GameObject:
   - component: {fileID: 2104885480262047604}
   - component: {fileID: 4226020307260982628}
   - component: {fileID: -2418218621845064218}
+  - component: {fileID: 1765486282949474202}
   m_Layer: 0
   m_Name: NetworkPlayerTest
   m_TagString: Player
@@ -572,6 +573,20 @@ MonoBehaviour:
   m_SynchronizeRotation: 0
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!136 &1765486282949474202
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1118839828255377487}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.52
+  m_Height: 3.455279
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.6976393, z: 0}
 --- !u!1 &1960300779590348132
 GameObject:
   m_ObjectHideFlags: 0

@@ -32,16 +32,16 @@ namespace Player
 
         private void Start()
         {
-            SpawnCannonBall();
+            SpawnRollBall();
         }
         
         private void Update()
         {
-            CannonBallUpdate();
+            CannonRollBallUpdate();
             
             if (!_isActive) return;
 
-            RotateSlingShot();
+            RotateRollballAiming();
         }
 
         #endregion
@@ -135,7 +135,7 @@ namespace Player
         /// <summary>
         /// Start the snowball timer and spawn a new snowball when the timer is up
         /// </summary>
-        private void CannonBallUpdate()
+        private void CannonRollBallUpdate()
         {
             if (_playerRollball) return;
             
@@ -145,24 +145,25 @@ namespace Player
             //If the cooldown timer is up, then spawn a new cannonball. If not, return. 
             if (_coolDownTimer < _coolDownTime) return;
             
-            SpawnCannonBall();
+            SpawnRollBall();
         }
 
         /// <summary>
         /// Rotate the Slingshot with variable speed towards the mouse cursor.
         /// </summary>
-        private void RotateSlingShot()
+        private void RotateRollballAiming()
         {
             //var mousePosAngle = Utilities.MousePosToRotationInput(this.transform, _playerCam);
             var finalRotation = _currentStudentController.PlayerRotation * Quaternion.Euler(0f, 90f, 0f);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, Time.deltaTime * _rotationSpeed);
             _player.transform.position = _playerSeat.position;
+            _currentStudentController.SetPlayerRotation(_playerSeat.rotation * Quaternion.Euler(0f, -90f, 0f));
         }
 
         /// <summary>
         /// Spawn a new cannonball and set values for relevant variables
         /// </summary>
-        private void SpawnCannonBall()
+        private void SpawnRollBall()
         {
             _currentRollball = PhotonNetwork.Instantiate(ArenaManager.Instance.GiantRollballPrefab.name, _rollballSeat.position, _rollballSeat.rotation);
             _playerRollball = _currentRollball.GetComponent<NetworkGiantRollball>();
