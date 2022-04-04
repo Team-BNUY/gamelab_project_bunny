@@ -50,7 +50,8 @@ namespace AI.Actions.TeacherActions
             // General parameters
             navMeshAgent.speed = _speed;
             _teacher.AnimationState = AnimationState.Run;
-            
+            agent.SetAnimatorParameter("LookingAround", false);
+
             // View parameters
             _teacher.FieldOfView = _walkingFieldOfView;
             _teacher.LookForward();
