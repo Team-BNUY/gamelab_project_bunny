@@ -118,7 +118,7 @@ namespace AI.Agents
             if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !giantRollball.CanDamage) return;
             
             photonView.RPC("Stun", RpcTarget.All);
-            BeliefStates.AddState("hitByProjectile", 1);
+            photonView.RPC(nameof(GetHitByProjectile), RpcTarget.All);
 
             if (collision.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
             {
@@ -213,15 +213,15 @@ namespace AI.Agents
         
         public void Unhit()
         {
-            SetAnimatorParameter("Hit", false);
+            SetAnimatorParameter("Hit", false, true);
         }
         
         public void UnhitSides()
         {
-            SetAnimatorParameter("HitFront", false);
-            SetAnimatorParameter("HitBack", false);
-            SetAnimatorParameter("HitLeft", false);
-            SetAnimatorParameter("HitRight", false);
+            SetAnimatorParameter("HitFront", false, true);
+            SetAnimatorParameter("HitBack", false, true);
+            SetAnimatorParameter("HitLeft", false, true);
+            SetAnimatorParameter("HitRight", false, true);
         }
 
         private void StartSurveilling()
@@ -357,6 +357,13 @@ namespace AI.Agents
             SetAnimatorParameters();
             animator.SetBool(StunnedAnim, true);
             Invoke(nameof(WakeUp), _stunDuration);
+        }
+        
+        [PunRPC]
+        private void GetHitByProjectile()
+        {
+            beliefStates.AddState("hitByProjectile", 1);
+            InterruptGoal();
         }
         
         [PunRPC]

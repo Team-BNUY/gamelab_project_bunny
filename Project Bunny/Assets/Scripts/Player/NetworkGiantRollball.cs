@@ -44,7 +44,7 @@ namespace Player
             GrowSize();
         }
 
-        private void OnCollisionEnter(Collision other)
+        private void OnCollisionStay(Collision other)
         {
             _isGrowing = other.gameObject.layer == LayerMask.NameToLayer("Ground");
 

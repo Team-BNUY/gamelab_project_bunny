@@ -105,15 +105,15 @@ namespace AI.Agents
 
         public void Unhit()
         {
-            SetAnimatorParameter("Hit", false);
+            SetAnimatorParameter("Hit", false, true);
         }
 
         public void UnhitSides()
         {
-            SetAnimatorParameter("HitFront", false);
-            SetAnimatorParameter("HitBack", false);
-            SetAnimatorParameter("HitLeft", false);
-            SetAnimatorParameter("HitRight", false);
+            SetAnimatorParameter("HitFront", false, true);
+            SetAnimatorParameter("HitBack", false, true);
+            SetAnimatorParameter("HitLeft", false, true);
+            SetAnimatorParameter("HitRight", false, true);
         }
 
         [PunRPC]
