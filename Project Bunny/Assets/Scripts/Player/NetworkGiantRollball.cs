@@ -54,7 +54,6 @@ namespace Player
                 if (_hasCollided || !PhotonNetwork.IsMasterClient) return;
                 _hasCollided = true;
 
-
                 if (student.photonView.IsMine)
                 {
                     ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.AVALANCHE_KEY);
@@ -69,17 +68,6 @@ namespace Player
             }
         }
 
-        private void OnTriggerStay(Collider other)
-        {
-            if (other.gameObject.layer.Equals(LayerMask.GetMask("Ground")) ||
-                other.gameObject.layer.Equals(LayerMask.GetMask("Obstacle"))) return;
-            
-            if (!_canDamage)
-            {
-                PushGiantRollball(other.transform);
-            }
-        }
-
         public void InitializeGiantRollball(int index)
         {
             _spawnIndex = index;
@@ -89,11 +77,13 @@ namespace Player
         /// Let student push the giant snowball
         /// </summary>
         /// <param name="pusherTransform"></param>
-        private void PushGiantRollball(Transform pusherTransform)
+        public void PushGiantRollball(Transform pusherTransform)
         {
+            _snowballRigidbody.isKinematic = false;
+            
             var distance = _snowballTransform.position - pusherTransform.position;
             distance = distance.normalized;
-            _snowballRigidbody.AddForce(distance * _pushForce);
+            _snowballRigidbody.AddForce(distance * _pushForce, ForceMode.Impulse);
         }
 
         /// <summary>
@@ -147,11 +137,8 @@ namespace Player
         {
             var go = Instantiate(ArenaManager.Instance.GiantRollballBurst, transform.position, Quaternion.identity);
             go.GetComponent<ParticleSystem>().Play();
-            if (PhotonNetwork.IsMasterClient)
-            {
-                ArenaManager.Instance.RemoveGiantRollball(_spawnIndex);
-                PhotonNetwork.Destroy(gameObject);
-            }
+            
+            PhotonNetwork.Destroy(gameObject);
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

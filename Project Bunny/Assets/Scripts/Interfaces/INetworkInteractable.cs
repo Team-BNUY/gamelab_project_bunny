@@ -24,5 +24,7 @@ namespace Interfaces
         /// Method that runs when you take control of an interactable
         /// </summary>
         void Enter(NetworkStudentController currentStudentController);
+        
+        public bool IsActive { get; }
     }
 }

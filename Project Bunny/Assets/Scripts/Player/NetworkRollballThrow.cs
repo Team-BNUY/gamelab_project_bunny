@@ -1,21 +1,19 @@
 using UnityEngine;
 using Cinemachine;
 using Interfaces;
-using Networking;
 using Photon.Pun;
 
 namespace Player
 {
-    public class NetworkCannon : MonoBehaviour, INetworkInteractable
+    public class NetworkRollballThrow : MonoBehaviour, INetworkInteractable
     {
         [Header("Components")]
         [SerializeField] private Transform _playerSeat;
-        [SerializeField] private Transform _cannonBallSeat;
-        public Transform CannonBallSeat => _cannonBallSeat;
+        [SerializeField] private Transform _rollballSeat;
 
         [Header("Properties")]
         [SerializeField] private float _newCameraDistance;
-        private GameObject _currentCannonBall;
+        private GameObject _currentRollball;
         private bool _isActive;
         private GameObject _player;
         private NetworkStudentController _currentStudentController;
@@ -25,48 +23,25 @@ namespace Player
 
         [Header("Snowball")]
         [SerializeField] [Min(0)] private float _coolDownTime;
-        [SerializeField] private float _minForce, _maxForce;
-        [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
-        [SerializeField] private float _minAngle, _maxAngle;
-        [SerializeField] [Range(0f, 8.0f)] private float _angleIncreaseTimeRate;
-        private NetworkSnowball _playerSnowball;
-        private float _throwForce;
-        private float _throwAngle;
-        private bool _hasSnowball, _isAiming;
+        private NetworkGiantRollball _playerRollball;
         private float _coolDownTimer;
-        
+
         public bool IsActive => _isActive;
 
         #region Callbacks
-        private void Awake()
-        {
-            _throwForce = _minForce;
-            _throwAngle = _minAngle;
-        }
 
+        private void Start()
+        {
+            SpawnCannonBall();
+        }
+        
         private void Update()
         {
+            CannonBallUpdate();
+            
             if (!_isActive) return;
 
             RotateSlingShot();
-            CannonBallUpdate();
-
-            if (!_isAiming || !_hasSnowball) return;
-
-            if (_isAiming && _hasSnowball)
-            {
-                if (_throwForce <= _maxForce)
-                {
-                    IncreaseThrowForce();
-                }
-                
-                if (_throwAngle <= _maxAngle)
-                {
-                    IncreaseThrowAngle();
-                }
-                
-                _playerSnowball.DrawTrajectory();
-            }
         }
 
         #endregion
@@ -78,6 +53,8 @@ namespace Player
         /// </summary>
         public void Enter(NetworkStudentController currentStudentController)
         {
+            if (_currentRollball == null) return;
+            
             //Initialize key variables
             _isActive = true;
             _currentStudentController = currentStudentController;
@@ -91,12 +68,6 @@ namespace Player
             //Disable player controller in order to set the player's position manually
             _playerCharController = _currentStudentController.CharacterControllerComponent;
             _playerCharController.enabled = false;
-
-            //If there is no cannonball already on the slingshot, then spawn one. 
-            if (_currentCannonBall == null && _coolDownTimer >= _coolDownTime)
-            {
-                SpawnCannonBall();
-            }
         }
 
         /// <summary>
@@ -104,9 +75,9 @@ namespace Player
         /// </summary>
         public void Exit()
         {
+            if (!_currentStudentController) return;
+            
             // If already aiming while exiting, then just throw the current snowball and restore everything
-            StartCannonBallThrow();
-            ThrowSnowball();
             _coolDownTimer = 0.0f;
 
             //Restore key variables to null/default value
@@ -129,10 +100,23 @@ namespace Player
         /// </summary>
         public void Click()
         {
-            //If a cannonball is loaded, then begin the process of shooting it. 
-            if (_hasSnowball)
+            if (_isActive && _currentStudentController && _currentRollball)
             {
-                StartCannonBallThrow();
+                _isActive = false;
+                ThrowSnowball();
+                _player = null;
+                _currentStudentController.CurrentInteractable = null;
+                _currentStudentController.UsingCannon = false;
+                _currentStudentController = null;
+                
+                //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
+                _playerVCamSettings.m_CameraDistance = 25;
+
+                //Restore key variables to null/default value
+                _playerVCamSettings = null;
+                _playerCharController.enabled = true;
+                _playerCharController = null;
+                _coolDownTimer = 0f;
             }
         }
 
@@ -141,11 +125,7 @@ namespace Player
         /// </summary>
         public void Release()
         {
-            //If a snowball is loaded and the player is not currently aiming, throw the cannonball.
-            if (!_hasSnowball || _currentCannonBall == null || !_isAiming) return;
-            
-            _isAiming = false;
-            ThrowSnowball();
+
         }
 
         #endregion
@@ -153,27 +133,18 @@ namespace Player
         #region CannonBallLogic
 
         /// <summary>
-        /// Start aiming the cannonball
-        /// </summary>
-        private void StartCannonBallThrow()
-        {
-            _isAiming = true;
-        }
-
-        /// <summary>
         /// Start the snowball timer and spawn a new snowball when the timer is up
         /// </summary>
         private void CannonBallUpdate()
         {
+            if (_playerRollball) return;
+            
             //If there is no cannonball currently loaded, then increase the timer. 
-            if (!_hasSnowball)
-            {
-                _coolDownTimer += Time.deltaTime;
-            }
+            _coolDownTimer += Time.deltaTime;
 
             //If the cooldown timer is up, then spawn a new cannonball. If not, return. 
             if (_coolDownTimer < _coolDownTime) return;
-
+            
             SpawnCannonBall();
         }
 
@@ -193,28 +164,8 @@ namespace Player
         /// </summary>
         private void SpawnCannonBall()
         {
-            _currentCannonBall = PhotonNetwork.Instantiate(ArenaManager.Instance.CannonBall.name, _cannonBallSeat.position, _cannonBallSeat.rotation);
-            // TODO: Object pooling to avoid using GetComponent at Instantiation
-            _playerSnowball = _currentCannonBall.GetComponent<NetworkSnowball>();
-            _playerSnowball.SetSnowballThrower(_currentStudentController);
-            _playerSnowball.SetHoldingPlace(transform);
-            _hasSnowball = true;
-            _coolDownTimer = 0f;
-        }
-
-        /// <summary>
-        /// When aiming, increase the throw force of the cannonball
-        /// </summary>
-        private void IncreaseThrowForce()
-        {
-            _throwForce += Time.deltaTime * _forceIncreaseTimeRate;
-            _playerSnowball.SetSnowballForce(_throwForce);
-        }
-        
-        private void IncreaseThrowAngle()
-        {
-            _throwAngle += Time.deltaTime * _angleIncreaseTimeRate;
-            _playerSnowball.SetSnowballAngle(_throwAngle);
+            _currentRollball = PhotonNetwork.Instantiate(ArenaManager.Instance.GiantRollballPrefab.name, _rollballSeat.position, _rollballSeat.rotation);
+            _playerRollball = _currentRollball.GetComponent<NetworkGiantRollball>();
         }
 
         /// <summary>
@@ -222,18 +173,13 @@ namespace Player
         /// </summary>
         private void ThrowSnowball()
         {
-            _isAiming = false;
-            _throwForce = _minForce;
-            _throwAngle = _minAngle;
-            _hasSnowball = false;
-
-            if (_playerSnowball)
+            if (_playerRollball)
             {
-                _playerSnowball.ThrowSnowball();
+                _playerRollball.PushGiantRollball(_currentStudentController.transform);
             }
             
-            _currentCannonBall = null;
-            _playerSnowball = null;
+            _currentRollball = null;
+            _playerRollball = null;
         }
 
         #endregion
