@@ -63,15 +63,15 @@ namespace Networking
                 }
             }
 
+            if (other.gameObject.TryGetComponent<NetworkCannon>(out _)) return;
+            
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent)
                 && otherStudent != _studentThrower
-                && !otherStudent.TeamID.Equals(_studentThrower.TeamID)
                 && !otherStudent.IsDead)
             {
                 if (_hasCollided) return;
                 _hasCollided = true;
 
-                Debug.Log(_damage);
                 if (_studentThrower.photonView.IsMine)
                 {
                     ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.HARD_WORKER_KEY);
