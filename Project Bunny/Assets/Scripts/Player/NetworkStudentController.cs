@@ -25,6 +25,7 @@ namespace Player
         [SerializeField] private PlayerInput _playerInput;
         [SerializeField] private Animator _animator;
         [SerializeField] private SkinnedMeshRenderer _jersey;
+        [SerializeField] private Collider _playerCollider;
         private Camera _playerCamera;
         private CinemachineVirtualCamera _playerVCam;
         private CharacterController _characterController;
@@ -135,6 +136,7 @@ namespace Player
         public bool HasSnowball => _hasSnowball;
         public bool IsDead => _isDead;
         public CinemachineFramingTransposer PlayerVCamFramingTransposer => _playerVCamFramingTransposer;
+        public Collider PlayerCollider => _playerCollider;
         public INetworkInteractable CurrentInteractable
         {
             get => _currentInteractable;

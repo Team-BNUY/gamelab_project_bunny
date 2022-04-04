@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4813863054407201053}
   - component: {fileID: -152660347859332919}
   - component: {fileID: 3252739054877349092}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cannonball
   m_TagString: Projectile
   m_Icon: {fileID: 0}
@@ -289,6 +289,10 @@ PrefabInstance:
     - target: {fileID: 6414252773208847546, guid: 18bc448f19b13194286123decf19c22f, type: 3}
       propertyPath: m_Name
       value: SnowballBurst
+      objectReference: {fileID: 0}
+    - target: {fileID: 6414252773208847546, guid: 18bc448f19b13194286123decf19c22f, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 18bc448f19b13194286123decf19c22f, type: 3}

@@ -118,8 +118,15 @@ namespace Player
             _currentStudentController.SetAnimatorParameter("InteractIdle", false);
             
             // If already aiming while exiting, then just throw the current snowball and restore everything
-            StartCannonBallThrow();
-            ThrowSnowball();
+            if (_isAiming)
+            {
+                ThrowSnowball();
+            }
+            else
+            {
+                PhotonNetwork.Destroy(_cannonBallObject);
+                _cannonballCollection.Clear();
+            }
             _coolDownTimer = 0.0f;
 
             //Restore key variables to null/default value
