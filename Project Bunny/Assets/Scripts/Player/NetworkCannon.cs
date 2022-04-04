@@ -14,37 +14,41 @@ namespace Player
         [SerializeField] private Transform _playerSeat;
         [SerializeField] private Transform _cannonBallSeat;
         [SerializeField] private GameObject _aimArrow;
+        [SerializeField] private Transform _bone;
         public Transform CannonBallSeat => _cannonBallSeat;
 
         [Header("Properties")]
         [SerializeField] private float _newCameraDistance;
+        [SerializeField] [Min(0)] private float _rotationSpeed;
+        [SerializeField] [Range(0f, 2.0f)] private float _pullIncreaseTimeRate;
+        [SerializeField] [Min(0)] private float _pullingFactor = 0.75f;
         private GameObject _cannonBallObject;
         private bool _isActive;
         private GameObject _player;
         private NetworkStudentController _currentStudentController;
         private CinemachineFramingTransposer _playerVCamSettings;
         private CharacterController _playerCharController;
-        [SerializeField] [Min(0)] private float _rotationSpeed;
+        private Vector3 _initialBonePosition;
+        private Vector3 _initialSnowballSeatPosition;
 
         [Header("Snowball")]
         [SerializeField] [Min(0)] private float _coolDownTime;
         [SerializeField] private float _minForce, _maxForce;
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
         [SerializeField] private float _minAngle, _maxAngle;
-        [SerializeField] [Range(0f, 8.0f)] private float _angleIncreaseTimeRate;
         private List<NetworkSnowball> _cannonballCollection = new List<NetworkSnowball>();
         private float _throwForce;
-        private float _throwAngle;
         private bool _hasSnowball, _isAiming;
         private float _coolDownTimer;
         
         public bool IsActive => _isActive;
 
         #region Callbacks
-        private void Awake()
+        private void Start()
         {
             _throwForce = _minForce;
-            _throwAngle = _minAngle;
+            _initialBonePosition = _bone.transform.localPosition;
+            _initialSnowballSeatPosition = _cannonBallSeat.transform.localPosition;
         }
 
         private void Update()
@@ -54,13 +58,11 @@ namespace Player
             RotateSlingShot();
             CannonBallUpdate();
 
-            if (!_hasSnowball) return;
+            if (!_hasSnowball || !_isAiming) return;
 
-            if (_hasSnowball)
+            if (_throwForce < _maxForce)
             {
-                _cannonballCollection[0].DrawTrajectory();
                 IncreaseThrowForce();
-                IncreaseThrowAngle();
             }
         }
 
@@ -140,13 +142,9 @@ namespace Player
         /// </summary>
         public void Click()
         {
-            //If a cannonball is loaded, then begin the process of shooting it. 
-            if (_hasSnowball)
-            {
-                //StartCannonBallThrow();
-                ThrowSnowball();
-                _hasSnowball = false;
-            }
+            if (!_hasSnowball) return;
+
+            _isAiming = true;
         }
 
         /// <summary>
@@ -154,11 +152,10 @@ namespace Player
         /// </summary>
         public void Release()
         {
-            //If a snowball is loaded and the player is not currently aiming, throw the cannonball.
-            //if (!_hasSnowball || _currentCannonBall == null || !_isAiming) return;
+            if (!_hasSnowball) return;
             
-            //_isAiming = false;
-            //ThrowSnowball();
+            ThrowSnowball();
+            _hasSnowball = false;
         }
 
         #endregion
@@ -221,16 +218,18 @@ namespace Player
         /// </summary>
         private void IncreaseThrowForce()
         {
-            //_throwForce += Time.deltaTime * _forceIncreaseTimeRate;
-            _throwForce = _maxForce;
+            var position = _bone.transform.localPosition;
+            var nextOnAxis = position.y - Time.deltaTime * _pullIncreaseTimeRate;
+            var newPosition = new Vector3(position.x, nextOnAxis, position.z);
+            _bone.transform.localPosition = newPosition;
+            
+            position = _cannonBallSeat.transform.localPosition;
+            nextOnAxis = position.x - Time.deltaTime * _pullIncreaseTimeRate * _pullingFactor;
+            newPosition = new Vector3(nextOnAxis, position.y, position.z);
+            _cannonBallSeat.transform.localPosition = newPosition;
+            
+            _throwForce += Time.deltaTime * _forceIncreaseTimeRate;
             _cannonballCollection.ForEach(c => c.SetSnowballForce(_throwForce));
-        }
-        
-        private void IncreaseThrowAngle()
-        {
-            //_throwAngle += Time.deltaTime * _angleIncreaseTimeRate;
-            _throwAngle = _maxAngle;
-            _cannonballCollection.ForEach(c => c.SetSnowballAngle(_throwAngle));
         }
 
         /// <summary>
@@ -240,7 +239,6 @@ namespace Player
         {
             _isAiming = false;
             _throwForce = _minForce;
-            _throwAngle = _minAngle;
             _hasSnowball = false;
 
             if (_cannonballCollection != null)
@@ -251,6 +249,9 @@ namespace Player
                     cannonBall.transform.parent = null;
                     cannonBall.ThrowBurstSnowballs(_minForce, _maxForce, _minAngle, _maxAngle);
                 }
+
+                _bone.transform.localPosition = _initialBonePosition;
+                _cannonBallSeat.transform.localPosition = _initialSnowballSeatPosition;
             }
             
             PhotonNetwork.Destroy(_cannonBallObject);
