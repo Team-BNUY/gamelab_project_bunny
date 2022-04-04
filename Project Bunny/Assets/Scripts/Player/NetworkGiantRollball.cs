@@ -47,7 +47,7 @@ namespace Player
 
         private void OnCollisionStay(Collision other)
         {
-            _isGrowing = other.gameObject.layer == LayerMask.NameToLayer("Ground");
+            _isGrowing = other.gameObject.layer.Equals(LayerMask.GetMask("Ground"));
 
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var student) && _canDamage)
             {
@@ -63,7 +63,7 @@ namespace Player
                 student.photonView.RPC("GetDamagedRPC", RpcTarget.All, _damage);
                 BreakRollball();
             }
-            else if (other.gameObject.layer == LayerMask.NameToLayer("Obstacle") || IsInLayerMask(other.gameObject) && _isDestroyable)
+            else if (other.gameObject.layer.Equals(LayerMask.GetMask("Obstacle")) || IsInLayerMask(other.gameObject) && _isDestroyable)
             {
                 BreakRollball();
             }
@@ -71,6 +71,8 @@ namespace Player
 
         private void OnTriggerStay(Collider other)
         {
+            if (other.gameObject.layer.Equals(LayerMask.GetMask("Ground")) || other.gameObject.layer.Equals(LayerMask.GetMask("Obstacle"))) return;
+            
             if (!_canDamage)
             {
                 PushGiantRollball(other.transform);
