@@ -45,6 +45,7 @@ namespace AI.Actions.TeacherActions
             if (!_target) return false;
             
             agent.AnimationState = AnimationState.Run;
+            agent.SetAnimatorParameter("LookingAround", false);
 
             return true;
         }
