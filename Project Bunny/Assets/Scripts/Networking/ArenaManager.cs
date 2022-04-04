@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using AI;
 using AI.Agents;
 using Photon.Pun;
@@ -71,12 +70,12 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private int readyPlayers = 0;
 
     private NetworkStudentController _localStudentController;
-    private NetworkGiantRollball[] _currentRollballs = new NetworkGiantRollball[2];
 
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
     public GameObject SnowballBurst => _snowballBurst;
     public GameObject GiantRollballBurst => _giantRollballBurst;
+    public GameObject GiantRollballPrefab => _giantRollballPrefab;
     public GameObject CannonBall => _cannonBall;
     public GameObject SnowmanPrefab => _snowmanPrefab;
     public NetworkStudentController[] AllPlayers => _allPlayers;
@@ -110,11 +109,6 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         SetIsReady(false);
         loadingScreen.SetActive(true);
         SpawnPlayer();
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            InitializeGiantRollballs();
-        }
 
         ScoreManager.Instance.ClearPropertyCounters();
 
@@ -290,41 +284,6 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         player.transform.position = GetPlayerSpawnPoint(player.TeamID);
     }
     
-
-    private void InitializeGiantRollballs()
-    {
-        var i = 0;
-        foreach (var spawn in _giantRollballSpawns)
-        {
-            SpawnGiantRollball(spawn, i);
-            i++;
-        }
-    }
-
-    public void RemoveGiantRollball(int index)
-    {
-        StartCoroutine(RemoveGiantRollballWhenDestroyed(index));
-    }
-
-    private IEnumerator RemoveGiantRollballWhenDestroyed(int index)
-    {
-        _currentRollballs[index] = null;
-        yield return new WaitForSeconds(5f);
-        SpawnGiantRollball(_giantRollballSpawns[index], index);
-    }
-
-    private void SpawnGiantRollball(Transform spawn, int index)
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            var spawnTransform = spawn.transform;
-            var go = PhotonNetwork.Instantiate(_giantRollballPrefab.name, spawnTransform.position, spawnTransform.rotation);
-            var rollBall = go.GetComponent<NetworkGiantRollball>();
-            rollBall.InitializeGiantRollball(index);
-            _currentRollballs[index] = rollBall;
-        }
-    }
-
     private void SpawnTeacher()
     {
         if (PhotonNetwork.IsMasterClient)

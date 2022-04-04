@@ -135,6 +135,11 @@ namespace Player
         public bool HasSnowball => _hasSnowball;
         public bool IsDead => _isDead;
         public CinemachineFramingTransposer PlayerVCamFramingTransposer => _playerVCamFramingTransposer;
+        public INetworkInteractable CurrentInteractable
+        {
+            get => _currentInteractable;
+            set => _currentInteractable = value;
+        }
         public bool UsingCannon { get; set; }
 
         [Header("Network")]
@@ -1182,7 +1187,7 @@ namespace Player
         private INetworkInteractable ReturnNearestInteractable()
         {
             INetworkInteractable interactable = null;
-            var maxColliders = 3; //maximum number of objects near to the player that can be looped through
+            var maxColliders = 5; //maximum number of objects near to the player that can be looped through
             var hitColliders = new Collider[maxColliders];
             var numColliders = Physics.OverlapSphereNonAlloc(_studentTransform.position, 1f, hitColliders);
 
@@ -1193,6 +1198,8 @@ namespace Player
             {
                 if (hitColliders[i].gameObject.TryGetComponent<INetworkInteractable>(out var interactableObject))
                 {
+                    if(interactableObject.IsActive) continue;
+                    
                     interactable = interactableObject;
                 }
             }
