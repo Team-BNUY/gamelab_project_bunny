@@ -236,7 +236,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             player.photonView.RPC("SyncPlayerInfo", RpcTarget.AllBuffered, player.PlayerID, player.TeamID);
         }
 
-        if (!photonView.IsMine) return;
+        if (!player.photonView.IsMine) return;
         
         Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
