@@ -226,7 +226,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private void SpawnPlayer()
     {
-        NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
+        NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, GetPlayerSpawnPoint(PhotonNetwork.LocalPlayer.GetPhotonTeam().Code), Quaternion.identity).GetComponent<NetworkStudentController>();
         if (player.photonView.IsMine)
         {
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
@@ -431,8 +431,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                //_allPlayers = Array.Empty<NetworkStudentController>();
-                //GetAllPlayers();
+                _allPlayers = Array.Empty<NetworkStudentController>();
+                Invoke(nameof(GetAllPlayers), 0.1f);
             }
             StartMatch();
         }
