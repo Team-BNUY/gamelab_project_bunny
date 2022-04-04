@@ -53,7 +53,7 @@ namespace Player
         /// </summary>
         public void Enter(NetworkStudentController currentStudentController)
         {
-            if (_currentRollball == null) return;
+            if (_currentRollball == null || _currentStudentController.HasSnowball) return;
             
             //Initialize key variables
             _isActive = true;
