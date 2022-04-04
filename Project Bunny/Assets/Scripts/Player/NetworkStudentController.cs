@@ -626,7 +626,7 @@ namespace Player
         {
             for (var i = 1; i <= _maxHealth; i++)
             {
-                _hearts[i - 1].color = i <= _currentHealth ? Color.white : new Color(1f, 1f, 1f, 0.5f);
+                _hearts[i - 1].color = i <= _currentHealth ? Color.white : new Color(1f, 1f, 1f, 0.0f);
             }
         }
 
