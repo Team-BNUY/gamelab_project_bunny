@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: -1507739266704330185}
   - component: {fileID: 593892945959538631}
   - component: {fileID: -3006674947755084028}
-  - component: {fileID: 3842601498819161105}
   - component: {fileID: 3168385847241897245}
   m_Layer: 0
   m_Name: NetworkGiantRollball
@@ -181,22 +180,6 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
---- !u!208 &3842601498819161105
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9027766068581955839}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 0.6, y: 0.6, z: 0.6}
-  m_MoveThreshold: 0.1
-  m_Carve: 1
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!135 &3168385847241897245
 SphereCollider:
   m_ObjectHideFlags: 0
