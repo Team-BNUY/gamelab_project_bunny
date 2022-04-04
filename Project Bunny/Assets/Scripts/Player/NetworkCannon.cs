@@ -13,6 +13,7 @@ namespace Player
         [Header("Components")]
         [SerializeField] private Transform _playerSeat;
         [SerializeField] private Transform _cannonBallSeat;
+        [SerializeField] private GameObject _aimArrow;
         public Transform CannonBallSeat => _cannonBallSeat;
 
         [Header("Properties")]
@@ -85,6 +86,11 @@ namespace Player
             //Disable player controller in order to set the player's position manually
             _playerCharController = _currentStudentController.CharacterControllerComponent;
             _playerCharController.enabled = false;
+            
+            if (_currentStudentController.photonView.IsMine)
+            {
+                _aimArrow.SetActive(true);
+            }
 
             //If there is no cannonball already on the slingshot, then spawn one. 
             if (_cannonBallObject == null && _coolDownTimer >= _coolDownTime)
@@ -98,6 +104,11 @@ namespace Player
         /// </summary>
         public void Exit()
         {
+            if (_currentStudentController.photonView.IsMine)
+            {
+                _aimArrow.SetActive(false);
+            }
+            
             // If already aiming while exiting, then just throw the current snowball and restore everything
             StartCannonBallThrow();
             ThrowSnowball();

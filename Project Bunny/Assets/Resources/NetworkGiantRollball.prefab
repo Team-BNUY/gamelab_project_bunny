@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: -1507739266704330185}
   - component: {fileID: 593892945959538631}
   - component: {fileID: -3006674947755084028}
-  - component: {fileID: 3168385847241897245}
   m_Layer: 0
   m_Name: NetworkGiantRollball
   m_TagString: Projectile
@@ -133,7 +132,7 @@ MonoBehaviour:
   _snowballTransform: {fileID: 5548079061548076500}
   _hitLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 1536
   _destroySpeedThreshold: 7
   _damageThreshold: 5
   _sizeThreshold: 6
@@ -180,19 +179,6 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
---- !u!135 &3168385847241897245
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9027766068581955839}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1655725015718180260
 PrefabInstance:
   m_ObjectHideFlags: 0
