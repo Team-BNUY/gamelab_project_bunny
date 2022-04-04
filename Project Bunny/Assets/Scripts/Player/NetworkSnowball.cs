@@ -213,7 +213,7 @@ namespace Networking
             _isDestroyable = true;
             _sphereCollider.enabled = true;
             _snowballRigidbody.isKinematic = false;
-            var direction = new Vector3(Random.Range(minAngle, maxAngle), Random.Range(minAngle, maxAngle), 0.0f);
+            var direction = new Vector3(Random.Range(-maxAngle, maxAngle), Random.Range(minAngle, maxAngle), 0.0f);
             direction += _snowballTransform.forward;
             _snowballRigidbody.AddForce(direction.normalized * Random.Range(minForce, maxForce) * 1000f);
         }

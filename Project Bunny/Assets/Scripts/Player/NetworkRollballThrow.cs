@@ -10,6 +10,7 @@ namespace Player
         [Header("Components")]
         [SerializeField] private Transform _playerSeat;
         [SerializeField] private Transform _rollballSeat;
+        [SerializeField] private GameObject _aimArrow;
 
         [Header("Properties")]
         [SerializeField] private float _newCameraDistance;
@@ -68,6 +69,11 @@ namespace Player
             //Disable player controller in order to set the player's position manually
             _playerCharController = _currentStudentController.CharacterControllerComponent;
             _playerCharController.enabled = false;
+            
+            if (_currentStudentController.photonView.IsMine)
+            {
+                _aimArrow.SetActive(true);
+            }
         }
 
         /// <summary>
@@ -76,6 +82,11 @@ namespace Player
         public void Exit()
         {
             if (!_currentStudentController) return;
+            
+            if (_currentStudentController.photonView.IsMine)
+            {
+                _aimArrow.SetActive(false);
+            }
             
             // If already aiming while exiting, then just throw the current snowball and restore everything
             _coolDownTimer = 0.0f;
@@ -102,6 +113,11 @@ namespace Player
         {
             if (_isActive && _currentStudentController && _currentRollball)
             {
+                if (_currentStudentController.photonView.IsMine)
+                {
+                    _aimArrow.SetActive(false);
+                }
+                
                 _isActive = false;
                 ThrowSnowball();
                 _player = null;

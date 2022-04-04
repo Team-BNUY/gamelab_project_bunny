@@ -61,7 +61,7 @@ namespace Player
                 student.photonView.RPC("GetDamagedRPC", RpcTarget.All, _damage);
                 BreakRollball();
             }
-            else if (other.gameObject.layer == LayerMask.NameToLayer("Obstacle") || IsInLayerMask(other.gameObject) && _isDestroyable)
+            else if (IsInLayerMask(other.gameObject) && _isDestroyable)
             {
                 BreakRollball();
             }
