@@ -226,6 +226,7 @@ namespace Networking
         public void SetSnowballThrower(NetworkStudentController student)
         {
             _studentThrower = student;
+            Physics.IgnoreCollision(_studentThrower.PlayerCollider, _sphereCollider);
         }
 
         /// <summary>
