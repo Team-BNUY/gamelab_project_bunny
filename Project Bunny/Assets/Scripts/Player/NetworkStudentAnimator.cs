@@ -12,6 +12,14 @@ namespace Player
             _studentController.ThrowStudentSnowball();
         }
 
+        public void PushRollball()
+        {
+            if (_studentController.CurrentInteractable is NetworkRollballThrow rollballThrow)
+            {
+                rollballThrow.PushRollball();
+            }
+        }
+
         public void SetThrewSnowball(bool value)
         {
             _studentController.SetThrewSnowball(value);
