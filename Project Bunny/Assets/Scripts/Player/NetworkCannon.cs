@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Cinemachine;
 using Interfaces;
@@ -15,7 +17,7 @@ namespace Player
 
         [Header("Properties")]
         [SerializeField] private float _newCameraDistance;
-        private GameObject _currentCannonBall;
+        private GameObject _cannonBallObject;
         private bool _isActive;
         private GameObject _player;
         private NetworkStudentController _currentStudentController;
@@ -29,7 +31,7 @@ namespace Player
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
         [SerializeField] private float _minAngle, _maxAngle;
         [SerializeField] [Range(0f, 8.0f)] private float _angleIncreaseTimeRate;
-        private NetworkSnowball _playerSnowball;
+        private List<NetworkSnowball> _cannonballCollection = new List<NetworkSnowball>();
         private float _throwForce;
         private float _throwAngle;
         private bool _hasSnowball, _isAiming;
@@ -51,21 +53,13 @@ namespace Player
             RotateSlingShot();
             CannonBallUpdate();
 
-            if (!_isAiming || !_hasSnowball) return;
+            if (!_hasSnowball) return;
 
-            if (_isAiming && _hasSnowball)
+            if (_hasSnowball)
             {
-                if (_throwForce <= _maxForce)
-                {
-                    IncreaseThrowForce();
-                }
-                
-                if (_throwAngle <= _maxAngle)
-                {
-                    IncreaseThrowAngle();
-                }
-                
-                _playerSnowball.DrawTrajectory();
+                _cannonballCollection[0].DrawTrajectory();
+                IncreaseThrowForce();
+                IncreaseThrowAngle();
             }
         }
 
@@ -93,7 +87,7 @@ namespace Player
             _playerCharController.enabled = false;
 
             //If there is no cannonball already on the slingshot, then spawn one. 
-            if (_currentCannonBall == null && _coolDownTimer >= _coolDownTime)
+            if (_cannonBallObject == null && _coolDownTimer >= _coolDownTime)
             {
                 SpawnCannonBall();
             }
@@ -132,7 +126,9 @@ namespace Player
             //If a cannonball is loaded, then begin the process of shooting it. 
             if (_hasSnowball)
             {
-                StartCannonBallThrow();
+                //StartCannonBallThrow();
+                ThrowSnowball();
+                _hasSnowball = false;
             }
         }
 
@@ -142,10 +138,10 @@ namespace Player
         public void Release()
         {
             //If a snowball is loaded and the player is not currently aiming, throw the cannonball.
-            if (!_hasSnowball || _currentCannonBall == null || !_isAiming) return;
+            //if (!_hasSnowball || _currentCannonBall == null || !_isAiming) return;
             
-            _isAiming = false;
-            ThrowSnowball();
+            //_isAiming = false;
+            //ThrowSnowball();
         }
 
         #endregion
@@ -194,11 +190,11 @@ namespace Player
         /// </summary>
         private void SpawnCannonBall()
         {
-            _currentCannonBall = PhotonNetwork.Instantiate(ArenaManager.Instance.CannonBall.name, _cannonBallSeat.position, _cannonBallSeat.rotation);
+            _cannonBallObject = PhotonNetwork.Instantiate(ArenaManager.Instance.CannonBall.name, _cannonBallSeat.position, _cannonBallSeat.rotation);
+            _cannonBallObject.transform.parent = _cannonBallSeat;
             // TODO: Object pooling to avoid using GetComponent at Instantiation
-            _playerSnowball = _currentCannonBall.GetComponent<NetworkSnowball>();
-            _playerSnowball.SetSnowballThrower(_currentStudentController);
-            _playerSnowball.SetHoldingPlace(transform);
+            _cannonballCollection = _cannonBallObject.GetComponentsInChildren<NetworkSnowball>().ToList();
+            _cannonballCollection.ForEach(c => c.SetSnowballThrower(_currentStudentController));
             _hasSnowball = true;
             _coolDownTimer = 0f;
         }
@@ -208,14 +204,16 @@ namespace Player
         /// </summary>
         private void IncreaseThrowForce()
         {
-            _throwForce += Time.deltaTime * _forceIncreaseTimeRate;
-            _playerSnowball.SetSnowballForce(_throwForce);
+            //_throwForce += Time.deltaTime * _forceIncreaseTimeRate;
+            _throwForce = _maxForce;
+            _cannonballCollection.ForEach(c => c.SetSnowballForce(_throwForce));
         }
         
         private void IncreaseThrowAngle()
         {
-            _throwAngle += Time.deltaTime * _angleIncreaseTimeRate;
-            _playerSnowball.SetSnowballAngle(_throwAngle);
+            //_throwAngle += Time.deltaTime * _angleIncreaseTimeRate;
+            _throwAngle = _maxAngle;
+            _cannonballCollection.ForEach(c => c.SetSnowballAngle(_throwAngle));
         }
 
         /// <summary>
@@ -228,13 +226,20 @@ namespace Player
             _throwAngle = _minAngle;
             _hasSnowball = false;
 
-            if (_playerSnowball)
+            if (_cannonballCollection != null)
             {
-                _playerSnowball.ThrowSnowball();
+                foreach (var cannonBall in _cannonballCollection)
+                {
+                    cannonBall.SetHoldingPlace(_cannonBallSeat);
+                    cannonBall.transform.parent = null;
+                    cannonBall.ThrowBurstSnowballs(_minForce, _maxForce, _minAngle, _maxAngle);
+                }
             }
             
-            _currentCannonBall = null;
-            _playerSnowball = null;
+            PhotonNetwork.Destroy(_cannonBallObject);
+            _cannonBallObject = null;
+            _cannonballCollection?.Clear();
+            _cannonballCollection = null;
         }
 
         #endregion

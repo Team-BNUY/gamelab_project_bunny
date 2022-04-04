@@ -7057,7 +7057,7 @@ MonoBehaviour:
   _snowballBurst: {fileID: 6414252773208847546, guid: 22e2d8239a0c48647b932f0dff19fbea, type: 3}
   _giantRollballPrefab: {fileID: 9027766068581955839, guid: b716dd7179ac88d40908d7d48ddd3404, type: 3}
   _giantRollballBurst: {fileID: 6414252773208847546, guid: 30ea816c583fcf94799b542704a36fef, type: 3}
-  _cannonBall: {fileID: 4854422905516743973, guid: 5e62362fc854e2e4588b495334e45b9c, type: 3}
+  _cannonBall: {fileID: 1860188596719162149, guid: a98db43c166c3fe40aa445f9f76d7b3e, type: 3}
   _snowmanPrefab: {fileID: 5714933658485935016, guid: 020ee4a79dd45344ba5b59af867346c8, type: 3}
   _studentLayer:
     serializedVersion: 2
@@ -20360,7 +20360,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1671709704}
   - component: {fileID: 1671709708}
-  - component: {fileID: 1671709707}
   - component: {fileID: 1671709706}
   - component: {fileID: 1671709705}
   m_Layer: 0
@@ -20434,14 +20433,6 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
---- !u!81 &1671709707
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1671709703}
-  m_Enabled: 1
 --- !u!20 &1671709708
 Camera:
   m_ObjectHideFlags: 0

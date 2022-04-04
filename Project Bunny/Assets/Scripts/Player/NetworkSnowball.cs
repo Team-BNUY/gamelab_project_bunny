@@ -14,6 +14,7 @@ namespace Networking
         [SerializeField] private Transform _snowballTransform;
         [SerializeField] private LineRenderer _trajectoryLineRenderer;
         [SerializeField] private int _damage;
+        [SerializeField] private bool _isCannonUsable;
 
         private bool _isDestroyable;
         private float _throwForce;
@@ -36,7 +37,10 @@ namespace Networking
             _sphereCollider ??= GetComponent<SphereCollider>();
 
             _mass = _snowballRigidbody.mass;
-            _trajectoryLineRenderer.enabled = false;
+            if (_trajectoryLineRenderer != null)
+            {
+                _trajectoryLineRenderer.enabled = false;
+            }
             _hasCollided = false;
         }
 
@@ -49,6 +53,16 @@ namespace Networking
         {
             //if (!_view.IsMine) return;
             if (!_isDestroyable) return;
+
+            if (other.gameObject.TryGetComponent<NetworkSnowball>(out var otherSnowball))
+            {
+                // If both are spawned from a cannon, ignore each other's collisions
+                if (otherSnowball._isCannonUsable && _isCannonUsable)
+                {
+                    Debug.Log("YO");
+                    return;
+                }
+            }
 
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent)
                 && otherStudent != _studentThrower
@@ -125,6 +139,8 @@ namespace Networking
         /// </summary>
         public void DrawTrajectory()
         {
+            if (_trajectoryLineRenderer == null) return;
+            
             _trajectoryLineRenderer.enabled = true;
             _trajectoryLineRenderer.positionCount = SimulateArc().Count;
             for (var index = 0; index < _trajectoryLineRenderer.positionCount; index++)
@@ -191,6 +207,16 @@ namespace Networking
             var direction = new Vector3(0f, _throwAngle, 0.0f);
             direction += _snowballTransform.forward;
             _snowballRigidbody.AddForce(direction.normalized * _throwForce);
+        }
+
+        public void ThrowBurstSnowballs(float minForce, float maxForce, float minAngle, float maxAngle)
+        {
+            _isDestroyable = true;
+            _sphereCollider.enabled = true;
+            _snowballRigidbody.isKinematic = false;
+            var direction = new Vector3(Random.Range(minAngle, maxAngle), Random.Range(minAngle, maxAngle), 0.0f);
+            direction += _snowballTransform.forward;
+            _snowballRigidbody.AddForce(direction.normalized * Random.Range(minForce, maxForce) * 1000f);
         }
 
         /// <summary>
