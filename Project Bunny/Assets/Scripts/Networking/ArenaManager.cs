@@ -118,8 +118,6 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
         ScoreManager.Instance.ClearPropertyCounters();
 
-        Invoke(nameof(SpawnTeacher), _teacherSpawnTime);
-
         InjectInitialStudentStates();
 
         //Invoke(nameof(StartMatch), 1f);
@@ -133,6 +131,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private void StartMatch()
     {
+        Invoke(nameof(SpawnTeacher), _teacherSpawnTime);
         loadingScreen.SetActive(false);
         StartTimer();
     }
