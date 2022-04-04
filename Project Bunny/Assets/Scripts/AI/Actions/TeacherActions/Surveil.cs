@@ -124,6 +124,7 @@ public class Surveil : Action
     private IEnumerator RotateTowardsHit()
     {
         var hitDirection = _teacher.HitDirection;
+        Debug.Log(hitDirection);
         do
         {
             var lookRotation = Quaternion.LookRotation(hitDirection, Vector3.up);

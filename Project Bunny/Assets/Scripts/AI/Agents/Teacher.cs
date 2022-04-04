@@ -116,9 +116,6 @@ namespace AI.Agents
             if (!projectile) return;
             
             if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !giantRollball.CanDamage) return;
-            
-            photonView.RPC(nameof(Stun), RpcTarget.All);
-            photonView.RPC(nameof(GetHitByProjectile), RpcTarget.All);
 
             if (collision.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
             {
@@ -134,8 +131,11 @@ namespace AI.Agents
             // Hit by a snowball
             var throwerPosition = snowball._studentThrower.transform.position;
             var adjustedThrowerPosition = new Vector3(throwerPosition.x, transform.position.y, throwerPosition.z);
-            _hitDirection = adjustedThrowerPosition - transform.position;
+            var hitDirection = adjustedThrowerPosition - transform.position;
             var angle = Vector3.SignedAngle(transform.forward, _hitDirection, Vector3.up);
+            
+            photonView.RPC(nameof(Stun), RpcTarget.All, hitDirection);
+            photonView.RPC(nameof(GetHitByProjectile), RpcTarget.All);
             
             SetAnimatorParameter("Hit", true, true);
             if (angle < 0 && angle >= -45f || angle >= 0 && angle < 45f)
@@ -351,9 +351,10 @@ namespace AI.Agents
         }
         
         [PunRPC]
-        private void Stun()
+        private void Stun(Vector3 hitDirection)
         {
             _stunned = true;
+            _hitDirection = hitDirection;
             InterruptGoal();
             animationState = AnimationState.Idle;
             SetAnimatorParameters();
