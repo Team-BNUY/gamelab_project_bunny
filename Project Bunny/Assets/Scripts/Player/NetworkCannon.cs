@@ -125,7 +125,7 @@ namespace Player
             else
             {
                 PhotonNetwork.Destroy(_cannonBallObject);
-                _cannonballCollection.Clear();
+                _cannonballCollection?.Clear();
             }
             _coolDownTimer = 0.0f;
 
