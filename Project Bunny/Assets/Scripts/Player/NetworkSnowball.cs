@@ -59,7 +59,6 @@ namespace Networking
                 // If both are spawned from a cannon, ignore each other's collisions
                 if (otherSnowball._isCannonUsable && _isCannonUsable)
                 {
-                    Debug.Log("YO");
                     return;
                 }
             }

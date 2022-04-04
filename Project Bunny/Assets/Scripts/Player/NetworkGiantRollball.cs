@@ -1,4 +1,3 @@
-using System;
 using Photon.Pun;
 using UnityEngine;
 
@@ -66,11 +65,6 @@ namespace Player
             {
                 BreakRollball();
             }
-        }
-
-        public void InitializeGiantRollball(int index)
-        {
-            _spawnIndex = index;
         }
 
         /// <summary>
