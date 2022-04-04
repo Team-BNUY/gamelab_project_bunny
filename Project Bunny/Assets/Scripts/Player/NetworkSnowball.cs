@@ -215,7 +215,7 @@ namespace Networking
             _snowballRigidbody.isKinematic = false;
             var direction = new Vector3(Random.Range(-maxAngle, maxAngle), Random.Range(minAngle, maxAngle), 0.0f);
             direction += _snowballTransform.forward;
-            _snowballRigidbody.AddForce(direction.normalized * Random.Range(minForce, maxForce) * 1000f);
+            _snowballRigidbody.AddForce(direction.normalized * Random.Range(minForce, maxForce) * _throwForce);
         }
 
         /// <summary>
