@@ -137,7 +137,7 @@ MonoBehaviour:
   _destroySpeedThreshold: 7
   _damageThreshold: 5
   _sizeThreshold: 6
-  _pushForce: 40
+  _pushForce: 50
   _damage: 3
   _growthFactor: 0.1
 --- !u!114 &593892945959538631
@@ -191,7 +191,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.72
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1655725015718180260
 PrefabInstance:
