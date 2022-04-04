@@ -907,6 +907,8 @@ namespace Player
 
             if (properties.ContainsKey("hatIndex")) properties["hatIndex"] = _hatIndex;
             else properties.Add("hatIndex", _hatIndex);
+
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
         }
 
 
@@ -928,6 +930,8 @@ namespace Player
 
             if (properties.ContainsKey("pantIndex")) properties["pantIndex"] = _pantIndex;
             else properties.Add("pantIndex", _pantIndex);
+            
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
         }
 
         [PunRPC]
@@ -942,6 +946,8 @@ namespace Player
 
             if (properties.ContainsKey("pantColorIndex")) properties["pantColorIndex"] = _pantColorIndex;
             else properties.Add("pantColorIndex", _pantColorIndex);
+            
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
         }
 
         [PunRPC]
@@ -961,6 +967,8 @@ namespace Player
 
             if (properties.ContainsKey("coatIndex")) properties["coatIndex"] = _coatIndex;
             else properties.Add("coatIndex", _coatIndex);
+            
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
         }
 
         [PunRPC]
@@ -981,6 +989,8 @@ namespace Player
 
             if (properties.ContainsKey("coatColorIndex")) properties["coatColorIndex"] = _coatColorIndex;
             else properties.Add("coatColorIndex", _coatColorIndex);
+            
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
         }
 
         [PunRPC]
@@ -1003,6 +1013,8 @@ namespace Player
 
             if (properties.ContainsKey("hairIndex")) properties["hairIndex"] = _hairStyleIndex;
             else properties.Add("hairIndex", _hairStyleIndex);
+            
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
         }
 
         [PunRPC]
@@ -1017,6 +1029,8 @@ namespace Player
 
             if (properties.ContainsKey("hairColorIndex")) properties["hairColorIndex"] = _hairColorIndex;
             else properties.Add("hairColorIndex", _hairColorIndex);
+            
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
         }
 
         [PunRPC]
@@ -1037,6 +1051,8 @@ namespace Player
 
             if (properties.ContainsKey("skinColorIndex")) properties["skinColorIndex"] = _skinColorIndex;
             else properties.Add("skinColorIndex", _skinColorIndex);
+            
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
         }
 
         public void SwitchHat_RPC() { photonView.RPC("SwitchHat", RpcTarget.AllBuffered); }
