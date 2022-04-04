@@ -226,17 +226,16 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private void SpawnPlayer()
     {
-        if (photonView.IsMine)
+        NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
+        if (player.photonView.IsMine)
         {
-            NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<NetworkStudentController>();
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
-            player.TeamID = PhotonNetwork.LocalPlayer.GetPhotonTeam().Code;     
+            player.TeamID = PhotonNetwork.LocalPlayer.GetPhotonTeam().Code;
             PhotonNetwork.LocalPlayer.TagObject = player;
             _localStudentController = player;
             player.SetCamera(Instantiate(_playerCamera), 60f, 25f, true, 0.7f);
             player.photonView.RPC("SyncPlayerInfo", RpcTarget.AllBuffered, player.PlayerID, player.TeamID);
 
-            player.transform.position = GetPlayerSpawnPoint(player.TeamID);
             Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
             if (playerProperties.ContainsKey("hatIndex"))
@@ -284,6 +283,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             {
                 player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
             }
+
+            player.transform.position = GetPlayerSpawnPoint(player.TeamID);
         }
     }
 
