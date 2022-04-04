@@ -117,7 +117,7 @@ namespace AI.Agents
             
             if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !giantRollball.CanDamage) return;
             
-            photonView.RPC("Stun", RpcTarget.All);
+            photonView.RPC(nameof(Stun), RpcTarget.All);
             photonView.RPC(nameof(GetHitByProjectile), RpcTarget.All);
 
             if (collision.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
@@ -181,10 +181,12 @@ namespace AI.Agents
             if (stream.IsWriting)
             {
                 stream.SendNext(_stunned);
+                stream.SendNext(_hitDirection);
             }
             else
             {
                 _stunned = (bool) stream.ReceiveNext();
+                _hitDirection = (Vector3) stream.ReceiveNext();
             }
         }
 
@@ -213,15 +215,15 @@ namespace AI.Agents
         
         public void Unhit()
         {
-            SetAnimatorParameter("Hit", false, true);
+            SetAnimatorParameter("Hit", false);
         }
         
         public void UnhitSides()
         {
-            SetAnimatorParameter("HitFront", false, true);
-            SetAnimatorParameter("HitBack", false, true);
-            SetAnimatorParameter("HitLeft", false, true);
-            SetAnimatorParameter("HitRight", false, true);
+            SetAnimatorParameter("HitFront", false);
+            SetAnimatorParameter("HitBack", false);
+            SetAnimatorParameter("HitLeft", false);
+            SetAnimatorParameter("HitRight", false);
         }
 
         private void StartSurveilling()
@@ -363,7 +365,6 @@ namespace AI.Agents
         private void GetHitByProjectile()
         {
             beliefStates.AddState("hitByProjectile", 1);
-            InterruptGoal();
         }
         
         [PunRPC]
