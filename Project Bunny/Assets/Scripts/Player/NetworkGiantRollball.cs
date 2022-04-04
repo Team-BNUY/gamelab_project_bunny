@@ -1,3 +1,4 @@
+using System;
 using Photon.Pun;
 using UnityEngine;
 
@@ -68,6 +69,14 @@ namespace Player
             }
         }
 
+        private void OnTriggerStay(Collider other)
+        {
+            if (!_canDamage)
+            {
+                PushGiantRollball(other.transform);
+            }
+        }
+
         public void InitializeGiantRollball(int index)
         {
             _spawnIndex = index;
@@ -76,10 +85,10 @@ namespace Player
         /// <summary>
         /// Let student push the giant snowball
         /// </summary>
-        /// <param name="student"></param>
-        public void PushGiantRollball(Transform student)
+        /// <param name="pusherTransform"></param>
+        private void PushGiantRollball(Transform pusherTransform)
         {
-            var distance = _snowballTransform.position - student.position;
+            var distance = _snowballTransform.position - pusherTransform.position;
             distance = distance.normalized;
             _snowballRigidbody.AddForce(distance * _pushForce);
         }

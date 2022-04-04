@@ -264,17 +264,6 @@ namespace Player
             photonView.RPC(nameof(SetBoolRPC), RpcTarget.All,"Hit", true);
         }
 
-        private void OnCollisionStay(Collision other)
-        {
-            if (other.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball))
-            {
-                if (!_hasSnowball && !giantRollball.CanDamage)
-                {
-                    giantRollball.PushGiantRollball(transform);
-                }
-            }
-        }
-
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
         {
             if (this == null) return;
