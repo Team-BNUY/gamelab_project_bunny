@@ -59,11 +59,8 @@ namespace Networking
             //we come back to the Classroom after a match.
             //Will Uncomment if needed. Right now everyone loses their teams and team colors when they come back from a match.
 
-            if (PhotonTeamsManager.Instance.GetTeamMembersCount(1) > 0 ||
-                PhotonTeamsManager.Instance.GetTeamMembersCount(2) > 0)
-            {
-                CorrectNumberOfJerseys();
-            }
+           
+            
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
         }
@@ -179,8 +176,8 @@ namespace Networking
             ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
             PhotonTeamsManager teamsManager = FindObjectOfType<PhotonTeamsManager>();
 
-            Hashtable emptyTable = new Hashtable();
-            PhotonNetwork.LocalPlayer.CustomProperties = emptyTable;
+            /*Hashtable emptyTable = new Hashtable();
+            PhotonNetwork.LocalPlayer.CustomProperties = emptyTable;*/
 
             if (scoreManager != null)
                 GameObject.Destroy(scoreManager.gameObject);
@@ -227,18 +224,15 @@ namespace Networking
 
         public void CorrectNumberOfJerseys()
         {
-            if (!PhotonNetwork.IsMasterClient) return;
-
-            foreach (var player in PhotonNetwork.PlayerList)
+            if (PhotonNetwork.LocalPlayer.GetPhotonTeam() == null) return;
+            
+            if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Blue")
             {
-                if (player.GetPhotonTeam().Name == "Blue")
-                {
-                    BlueTeamTable.instance.AddTeamCount_RPC();
-                }
-                else if (player.GetPhotonTeam().Name == "Red")
-                {
-                    RedTeamTable.instance.AddTeamCount_RPC();
-                }
+                BlueTeamTable.instance.AddTeamCount_RPC();
+            }
+            else if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Red")
+            {
+                RedTeamTable.instance.AddTeamCount_RPC();
             }
         }
 
@@ -296,8 +290,8 @@ namespace Networking
         {
             player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"skinColorIndex"]);
         }
-            
-            //player.RestoreTeamlessColors_RPC();
+        player.UpdateTeamColorVisuals();    
+        CorrectNumberOfJerseys();
         }
 
         public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)

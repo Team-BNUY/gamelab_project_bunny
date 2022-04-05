@@ -63,7 +63,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private double _startTime;
     private bool _returnToLobbyHasRun = false;
     private const float TEACHER_CAMERA_PAN_TIME = 4f;
-    private const int TIMER_DURATION = 5 * 60;
+    private const int TIMER_DURATION = 5;
     private const string START_TIME_KEY = "StartTime";
     private const string LOBBY_SCENE_NAME = "2-Lobby";
     private const string ROOM_SCENE_NAME = "3-Room";
@@ -357,8 +357,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
         PhotonTeamsManager teamsManager = FindObjectOfType<PhotonTeamsManager>();
         
-        Hashtable emptyTable = new Hashtable();
-        PhotonNetwork.LocalPlayer.CustomProperties = emptyTable;
+        /*Hashtable emptyTable = new Hashtable();
+        PhotonNetwork.LocalPlayer.CustomProperties = emptyTable;*/
 
         if (scoreManager != null)
             GameObject.Destroy(scoreManager.gameObject);

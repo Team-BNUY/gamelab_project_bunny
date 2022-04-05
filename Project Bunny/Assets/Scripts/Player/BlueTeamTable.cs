@@ -72,11 +72,6 @@ namespace Player
             hoverEButtonUI.gameObject.SetActive(true);
             
             if (!PhotonNetwork.IsMasterClient) return;
-
-            foreach (var player in PhotonNetwork.PlayerList)
-            {
-                Debug.Log(player.CustomProperties);
-            }
         }
 
         public void Exit()

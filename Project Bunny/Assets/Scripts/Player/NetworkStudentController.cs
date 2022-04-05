@@ -1038,6 +1038,7 @@ namespace Player
         {
             _currentHat.SetActive(false);
             _currentHat = _playerHats[index];
+            _currentHat.SetActive(true);
         }
 
         [PunRPC]
@@ -1094,6 +1095,11 @@ namespace Player
         public void RestoreTeamlessColors_RPC()
         {
             photonView.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered);
+        }
+        
+        public void UpdateTeamColors_RPC()
+        {
+            photonView.RPC(nameof(UpdateTeamColorVisuals), RpcTarget.AllBuffered);
         }
 
         public void SetNameText()
