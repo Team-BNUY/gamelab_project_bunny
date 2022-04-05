@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -45,6 +47,12 @@ namespace Player
         public bool IsActive => _isActive;
 
         #region Callbacks
+
+        private void Awake()
+        {
+            photonView.OwnershipTransfer = OwnershipOption.Takeover;
+        }
+
         private void Start()
         {
             _throwForce = _minForce;
@@ -78,6 +86,7 @@ namespace Player
         {
             //Initialize key variables
             photonView.RPC(nameof(SetActive), RpcTarget.All, true, currentStudentController.PlayerID);
+            photonView.TransferOwnership(_currentStudentController.photonView.Owner);
             _currentStudentController.UsingCannon = true;
             _player = _currentStudentController.transform.gameObject;
             
@@ -102,6 +111,16 @@ namespace Player
             if (_cannonBallObject == null && _coolDownTimer >= _coolDownTime)
             {
                 SpawnCannonBall();
+            }
+        }
+
+        private IEnumerator RotateSelf()
+        {
+            while (true)
+            {
+                transform.position += Vector3.up * Time.deltaTime;
+                
+                yield return null;
             }
         }
 

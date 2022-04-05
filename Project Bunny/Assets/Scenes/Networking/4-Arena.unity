@@ -7113,9 +7113,6 @@ MonoBehaviour:
   - {fileID: 2075747523}
   - {fileID: 796284376}
   - {fileID: 794364104}
-  _giantRollballSpawns:
-  - {fileID: 494533930}
-  - {fileID: 2083691055}
   loadingScreen: {fileID: 1990687413}
 --- !u!4 &602910349
 Transform:
@@ -22460,6 +22457,10 @@ PrefabInstance:
     - target: {fileID: -7237814118755616007, guid: 9f2cd2d667545cb44aeb032937595ee9, type: 3}
       propertyPath: sceneViewId
       value: 29
+      objectReference: {fileID: 0}
+    - target: {fileID: -6674628545062950158, guid: 9f2cd2d667545cb44aeb032937595ee9, type: 3}
+      propertyPath: m_SynchronizePosition
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3808900633230351856, guid: 9f2cd2d667545cb44aeb032937595ee9, type: 3}
       propertyPath: m_Name
