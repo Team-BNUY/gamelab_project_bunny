@@ -54,7 +54,7 @@ namespace Player
 
         private void Update()
         {
-            if (!_isActive) return;
+            if (!_isActive || !photonView.IsMine) return;
 
             RotateSlingShot();
             CannonBallUpdate();
