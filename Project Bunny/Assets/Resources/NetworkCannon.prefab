@@ -69,11 +69,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7758723951493826449}
+  - component: {fileID: 2021794886}
   - component: {fileID: 4532915996142237181}
   - component: {fileID: 7597243257626280}
   - component: {fileID: -7237814118755616007}
   - component: {fileID: -6674628545062950158}
-  - component: {fileID: 2021794886}
   m_Layer: 12
   m_Name: NetworkCannon
   m_TagString: Untagged
@@ -96,6 +96,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 92.148, z: 0}
+--- !u!65 &2021794886
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3808900633230351856}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.1041814, y: 2.0464826, z: 3.2717066}
+  m_Center: {x: 0.009032845, y: 0.5232413, z: -0.053628266}
 --- !u!65 &4532915996142237181
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -172,23 +185,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizePosition: 0
+  m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!65 &2021794886
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3808900633230351856}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.1041814, y: 2.0464826, z: 3.2717066}
-  m_Center: {x: 0.009032845, y: 0.5232413, z: -0.053628266}
 --- !u!1 &6067177495881802960
 GameObject:
   m_ObjectHideFlags: 0
