@@ -8,7 +8,7 @@ using Photon.Pun;
 
 namespace Player
 {
-    public class NetworkCannon : MonoBehaviourPunCallbacks, INetworkInteractable
+    public class NetworkCannon : MonoBehaviourPunCallbacks, INetworkInteractable, IPunObservable
     {
         [Header("Components")]
         [SerializeField] private Transform _playerSeat;
@@ -300,5 +300,25 @@ namespace Player
         }
 
         #endregion
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(_hasSnowball);
+                stream.SendNext(_isAiming);
+                stream.SendNext(_throwForce);
+                stream.SendNext(_coolDownTimer);
+                stream.SendNext(_isActive);
+            }
+            else
+            {
+                _hasSnowball = (bool) stream.ReceiveNext();
+                _isAiming = (bool) stream.ReceiveNext();
+                _throwForce = (float) stream.ReceiveNext();
+                _coolDownTimer = (float) stream.ReceiveNext();
+                _isActive = (bool) stream.ReceiveNext();
+            }
+        }
     }
 }
