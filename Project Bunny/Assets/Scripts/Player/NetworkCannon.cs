@@ -8,7 +8,7 @@ using Photon.Pun;
 
 namespace Player
 {
-    public class NetworkCannon : MonoBehaviour, INetworkInteractable
+    public class NetworkCannon : MonoBehaviourPunCallbacks, INetworkInteractable
     {
         [Header("Components")]
         [SerializeField] private Transform _playerSeat;
@@ -286,8 +286,11 @@ namespace Player
                 _bone.transform.localPosition = _initialBonePosition;
                 _cannonBallSeat.transform.localPosition = _initialSnowballSeatPosition;
             }
-            
-            PhotonNetwork.Destroy(_cannonBallObject);
+
+            if (photonView.IsMine)
+            {
+                PhotonNetwork.Destroy(_cannonBallObject);
+            }
             _cannonBallObject = null;
             _cannonballCollection?.Clear();
             _cannonballCollection = null;
