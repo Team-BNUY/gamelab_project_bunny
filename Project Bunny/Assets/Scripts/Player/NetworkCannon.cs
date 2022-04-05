@@ -25,6 +25,7 @@ namespace Player
         private GameObject _cannonBallObject;
         private bool _isActive;
         private GameObject _player;
+        private string _currentUserId;
         private NetworkStudentController _currentStudentController;
         private CinemachineFramingTransposer _playerVCamSettings;
         private CharacterController _playerCharController;
@@ -54,7 +55,7 @@ namespace Player
 
         private void Update()
         {
-            if (!_isActive || !photonView.IsMine) return;
+            if (!_isActive) return;
 
             RotateSlingShot();
             CannonBallUpdate();
@@ -77,8 +78,8 @@ namespace Player
         public void Enter(NetworkStudentController currentStudentController)
         {
             //Initialize key variables
-            photonView.RPC(nameof(SetActive), RpcTarget.All, true);
-            _currentStudentController = currentStudentController;
+            photonView.RPC(nameof(SetActive), RpcTarget.All, true, currentStudentController.PlayerID);
+            _currentStudentController = currentStudentController; 
             _currentStudentController.UsingCannon = true;
             _player = _currentStudentController.transform.gameObject;
             
@@ -136,7 +137,7 @@ namespace Player
             _coolDownTimer = 0.0f;
 
             //Restore key variables to null/default value
-            photonView.RPC(nameof(SetActive), RpcTarget.All, false);
+            photonView.RPC(nameof(SetActive), RpcTarget.All, false, default(string));
             _player = null;
             _currentStudentController.UsingCannon = false;
             _currentStudentController = null;
@@ -322,9 +323,11 @@ namespace Player
         }
 
         [PunRPC]
-        public void SetActive(bool value)
+        public void SetActive(bool value, string userId)
         {
             _isActive = value;
+            _currentUserId = userId;
+            _currentStudentController = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == userId);
         }
     }
 }
