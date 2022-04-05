@@ -196,11 +196,6 @@ namespace Player
             _target = Vector3.zero;
             _startGame = false;
 
-            if (PhotonNetwork.IsMasterClient)
-            {
-                _hostCrown.SetActive(true);
-            }
-            
             if (photonView.IsMine)
             {
                 photonView.RPC(nameof(SyncPlayerInfo), RpcTarget.AllBuffered, PlayerID, TeamID);
