@@ -402,6 +402,22 @@ MonoBehaviour:
         m_CallState: 1
     m_ActionId: a7b3d584-2208-4fb9-a6ed-2ea48a8a04f8
     m_ActionName: Player/Interact[/Keyboard/e,/XInputControllerWindows/buttonSouth]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2104885480262047604}
+        m_TargetAssemblyTypeName: Player.NetworkStudentController, Assembly-CSharp
+        m_MethodName: OnMousePosition
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+    m_ActionId: 43badfab-bdcc-4d6e-9b77-ccffb7d24c23
+    m_ActionName: Player/MousePosition[/Mouse/position]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -1312,6 +1328,12 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 1
     Name: InteractIdle
+  - Type: 4
+    SynchronizeType: 1
+    Name: UsingInteractable
+  - Type: 1
+    SynchronizeType: 2
+    Name: RotationDirection
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
@@ -1319,3 +1341,5 @@ MonoBehaviour:
     LayerIndex: 1
   - SynchronizeType: 1
     LayerIndex: 2
+  - SynchronizeType: 1
+    LayerIndex: 3

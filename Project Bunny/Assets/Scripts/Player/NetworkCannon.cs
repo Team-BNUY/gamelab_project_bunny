@@ -30,6 +30,7 @@ namespace Player
         private CharacterController _playerCharController;
         private Vector3 _initialBonePosition;
         private Vector3 _initialSnowballSeatPosition;
+        private Vector3 _previousMouseToWorldDirection;
 
         [Header("Snowball")]
         [SerializeField] [Min(0)] private float _coolDownTime;
@@ -83,6 +84,7 @@ namespace Player
             
             // Idle animation
             _currentStudentController.SetAnimatorParameter("InteractIdle", true);
+            _currentStudentController.SetAnimatorParameter("UsingInteractable", true);
 
             //Setting the new distance of the player camera when assuming control of the Slingshot
             _playerVCamSettings = _currentStudentController.PlayerVCamFramingTransposer;
@@ -116,7 +118,8 @@ namespace Player
             
             // Idle animation
             _currentStudentController.SetAnimatorParameter("InteractIdle", false);
-            
+            _currentStudentController.SetAnimatorParameter("UsingInteractable", false);
+
             // If already aiming while exiting, then just throw the current snowball and restore everything
             if (_isAiming)
             {
@@ -199,8 +202,31 @@ namespace Player
         /// </summary>
         private void RotateSlingShot()
         {
-            //var mousePosAngle = Utilities.MousePosToRotationInput(this.transform, _playerCam);
             var finalRotation = _currentStudentController.PlayerRotation * Quaternion.Euler(0f, 90f, 0f);
+
+            var mousePosition = _currentStudentController.MousePosition;
+            var playerCamera = _currentStudentController.PlayerCamera;
+            var cameraTransform = playerCamera.transform;
+            var cameraPosition = cameraTransform.position;
+            Physics.Raycast(cameraPosition, cameraTransform.forward, out var hitInfo, float.PositiveInfinity, LayerMask.GetMask("Ground"));
+            var distanceToGround = Vector3.Distance(hitInfo.point, cameraPosition);
+            var mouseToWorldPosition = playerCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, distanceToGround));
+            var playerModel = _currentStudentController.PlayerModel;
+            var playerPosition = playerModel.position;
+            var targetDirection = mouseToWorldPosition - playerPosition;
+
+            if (_previousMouseToWorldDirection == Vector3.zero)
+            {
+                _previousMouseToWorldDirection = targetDirection;
+            }
+            
+            var angle = Vector3.SignedAngle(_previousMouseToWorldDirection, targetDirection, Vector3.up);
+
+            _previousMouseToWorldDirection = Vector3.Slerp(_previousMouseToWorldDirection, targetDirection, Time.deltaTime * 8f);
+            
+            _currentStudentController.SetAnimatorParameter("UsingInteractable", true);
+            _currentStudentController.SetAnimatorParameter("RotationDirection", angle);
+            
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, Time.deltaTime * _rotationSpeed);
             _player.transform.position = _playerSeat.position;
             _currentStudentController.SetPlayerRotation(_playerSeat.rotation * Quaternion.Euler(0f, -90f, 0f));
