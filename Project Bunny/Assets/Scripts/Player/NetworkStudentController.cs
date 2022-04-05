@@ -294,7 +294,10 @@ namespace Player
             if (other.TryGetComponent(out INetworkTriggerable triggerable))
             {
                 _currentTriggerable ??= triggerable;
-                if (photonView.IsMine) _currentTriggerable?.Enter();
+                if (photonView.IsMine)
+                {
+                    _currentTriggerable?.Enter();
+                }
             }
         }
 
@@ -302,7 +305,10 @@ namespace Player
         {
             if (other.TryGetComponent(out INetworkTriggerable triggerable) && _currentTriggerable == triggerable)
             {
-                if(photonView.IsMine) _currentTriggerable?.Exit();
+                if (photonView.IsMine)
+                {
+                    _currentTriggerable?.Exit();
+                }
                 _currentTriggerable = null;
             }
         }

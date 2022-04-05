@@ -93,7 +93,6 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [Header("Other Spawns")]
     [SerializeField] private Transform[] _redSpawns;
     [SerializeField] private Transform[] _blueSpawns;
-    [SerializeField] private Transform[] _giantRollballSpawns;
     [SerializeField] private GameObject loadingScreen;
 
     private void Awake()
@@ -347,7 +346,11 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private void GetAllPlayers()
     {
         _allPlayers = FindObjectsOfType<NetworkStudentController>();
-        SetSpawnPoints();
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            SetSpawnPoints();
+        }
     }
 
     private void SetSpawnPoints()
@@ -394,11 +397,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
         if (readyPlayers == PhotonNetwork.CurrentRoom.PlayerCount)
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                _allPlayers = Array.Empty<NetworkStudentController>();
-                Invoke(nameof(GetAllPlayers), 0.1f);
-            }
+            _allPlayers = Array.Empty<NetworkStudentController>();
+            Invoke(nameof(GetAllPlayers), 0.1f);
             StartMatch();
         }
     }
