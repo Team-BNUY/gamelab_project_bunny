@@ -74,6 +74,7 @@ namespace Player
         private bool _isBeingControlled;
         private Vector3 _target = Vector3.zero;
         private bool _startGame;
+        private Vector2 _mousePosition;
 
         [Header("Player UI")] 
         [SerializeField] private Canvas _worldUI;
@@ -137,6 +138,9 @@ namespace Player
         public bool IsDead => _isDead;
         public CinemachineFramingTransposer PlayerVCamFramingTransposer => _playerVCamFramingTransposer;
         public Collider PlayerCollider => _playerCollider;
+        public Camera PlayerCamera => _playerCamera;
+        public Transform PlayerModel => _playerModel;
+        public Vector2 MousePosition => _mousePosition;
         public INetworkInteractable CurrentInteractable
         {
             get => _currentInteractable;
@@ -691,6 +695,14 @@ namespace Player
 
             var mousePosAngle = Utilities.MousePosToRotationInput(_studentTransform, _playerCamera);
             _playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
+        }
+        
+        // ReSharper disable once UnusedMember.Global
+        public void OnMousePosition(InputAction.CallbackContext context)
+        {
+            if (_playerCamera == null || _isFrozen) return;
+
+            _mousePosition = context.ReadValue<Vector2>();
         }
 
         /// <summary>
@@ -1321,6 +1333,11 @@ namespace Player
         public void SetAnimatorParameter(string parameter, int value)
         {
             _animator.SetInteger(parameter, value);
+        }
+        
+        public void SetAnimatorParameter(string parameter, float value)
+        {
+            _animator.SetFloat(parameter, value);
         }
 
         #endregion
