@@ -77,7 +77,7 @@ namespace Player
         public void Enter(NetworkStudentController currentStudentController)
         {
             //Initialize key variables
-            _isActive = true;
+            photonView.RPC(nameof(SetActive), RpcTarget.All, true);
             _currentStudentController = currentStudentController;
             _currentStudentController.UsingCannon = true;
             _player = _currentStudentController.transform.gameObject;
@@ -136,7 +136,7 @@ namespace Player
             _coolDownTimer = 0.0f;
 
             //Restore key variables to null/default value
-            _isActive = false;
+            photonView.RPC(nameof(SetActive), RpcTarget.All, false);
             _player = null;
             _currentStudentController.UsingCannon = false;
             _currentStudentController = null;
@@ -319,6 +319,12 @@ namespace Player
                 _coolDownTimer = (float) stream.ReceiveNext();
                 _isActive = (bool) stream.ReceiveNext();
             }
+        }
+
+        [PunRPC]
+        public void SetActive(bool value)
+        {
+            _isActive = value;
         }
     }
 }
