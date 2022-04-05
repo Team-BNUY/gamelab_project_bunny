@@ -240,50 +240,50 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     
         Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
-        if (playerProperties.ContainsKey("hatIndex"))
+        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"hatIndex"))
         {
-            player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties["hatIndex"]);
+            player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"hatIndex"]);
         }
 
-        if (playerProperties.ContainsKey("hairIndex"))
+        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"hairIndex"))
         {
-            if (playerProperties.ContainsKey("hairColorIndex"))
+            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"hairColorIndex"))
             {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"]);
+                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"hairIndex"], (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"hairColorIndex"]);
             }
             else
             {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], 0);
+                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"hairIndex"], 0);
             }
         }
 
-        if (playerProperties.ContainsKey("pantIndex"))
+        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"pantIndex"))
         {
-            if (playerProperties.ContainsKey("pantColorIndex"))
+            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"pantColorIndex"))
             {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"]);
+                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"pantIndex"], (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"pantColorIndex"]);
             }
             else
             {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], 0);
+                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"pantIndex"], 0);
             }
         }
 
-        if (playerProperties.ContainsKey("coatIndex"))
+        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"coatIndex"))
         {
-            if (playerProperties.ContainsKey("coatColorIndex"))
+            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"coatColorIndex"))
             {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], (int)playerProperties["coatColorIndex"]);
+                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"coatIndex"], (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"coatColorIndex"]);
             }
             else
             {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], 0);
+                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"coatIndex"], 0);
             }
         }
 
-        if (playerProperties.ContainsKey("skinColorIndex"))
+        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"skinColorIndex"))
         {
-            player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
+            player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"skinColorIndex"]);
         }
 
         player.transform.position = GetPlayerSpawnPoint(player.TeamID);

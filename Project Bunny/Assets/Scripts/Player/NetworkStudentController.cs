@@ -894,7 +894,6 @@ namespace Player
         [PunRPC]
         public void SwitchHat()
         {
-            Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
             _currentHat.SetActive(false);
             if (_hatIndex + 1 >= _playerHats.Length)
             {
@@ -905,18 +904,13 @@ namespace Player
             _currentHat = _playerHats[_hatIndex];
             _currentHat.SetActive(true);
 
-            if (properties.ContainsKey("hatIndex")) properties["hatIndex"] = _hatIndex;
-            else properties.Add("hatIndex", _hatIndex);
-
-            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
+            RoomManager.Instance.SetCustomProperty("hatIndex", _hatIndex);
         }
 
 
         [PunRPC]
         public void SwitchPants()
         {
-            Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-
             _currentPants.SetActive(false);
             if (_pantIndex + 1 >= _playerPants.Length)
             {
@@ -928,33 +922,23 @@ namespace Player
             _currentPants.SetActive(true);
             _currentPants.GetComponent<Renderer>().material.color = _pantColor;
 
-            if (properties.ContainsKey("pantIndex")) properties["pantIndex"] = _pantIndex;
-            else properties.Add("pantIndex", _pantIndex);
-            
-            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
+            RoomManager.Instance.SetCustomProperty("pantIndex", _pantIndex);
         }
 
         [PunRPC]
         public void SwitchPantsColor()
         {
-            Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-
             if (_pantColorIndex + 1 >= _colors.Length) _pantColorIndex = 0;
             else _pantColorIndex++;
             _pantColor = _colors[_pantColorIndex];
             _currentPants.GetComponent<Renderer>().material.color = _pantColor;
 
-            if (properties.ContainsKey("pantColorIndex")) properties["pantColorIndex"] = _pantColorIndex;
-            else properties.Add("pantColorIndex", _pantColorIndex);
-            
-            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
+            RoomManager.Instance.SetCustomProperty("pantColorIndex", _pantColorIndex);
         }
 
         [PunRPC]
         public void SwitchCoat()
         {
-            Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-
             _currentCoat.SetActive(false);
             if (_coatIndex + 1 >= _playerCoats.Length)
             {
@@ -965,17 +949,12 @@ namespace Player
             _currentCoat.SetActive(true);
             _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
 
-            if (properties.ContainsKey("coatIndex")) properties["coatIndex"] = _coatIndex;
-            else properties.Add("coatIndex", _coatIndex);
-            
-            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
+            RoomManager.Instance.SetCustomProperty("coatIndex", _coatIndex);
         }
 
         [PunRPC]
         public void SwitchCoatColor()
         {
-            Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-
             if (_coatColorIndex + 1 >= _colors.Length)
             {
                 _coatColorIndex = 0;
@@ -987,17 +966,12 @@ namespace Player
             _coatColor = _colors[_coatColorIndex];
             _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
 
-            if (properties.ContainsKey("coatColorIndex")) properties["coatColorIndex"] = _coatColorIndex;
-            else properties.Add("coatColorIndex", _coatColorIndex);
-            
-            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
+            RoomManager.Instance.SetCustomProperty("coatColorIndex", _coatColorIndex);
         }
 
         [PunRPC]
         public void SwitchHair()
         {
-            Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-
             _currentHairStyle.SetActive(false);
             if (_hairStyleIndex + 1 >= _playerHairStyles.Length)
             {
@@ -1007,38 +981,28 @@ namespace Player
             {
                 _hairStyleIndex++;
             }
-
             _currentHairStyle = _playerHairStyles[_hairStyleIndex];
             _currentHairStyle.SetActive(true);
+            _currentHairStyle.GetComponent<Renderer>().material.color = _hairColor;
 
-            if (properties.ContainsKey("hairIndex")) properties["hairIndex"] = _hairStyleIndex;
-            else properties.Add("hairIndex", _hairStyleIndex);
-            
-            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
+            RoomManager.Instance.SetCustomProperty("hairIndex", _hairStyleIndex);
         }
 
         [PunRPC]
         public void SwitchHairColor()
         {
-            Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-
             if (_hairColorIndex + 1 >= _colors.Length) _hairColorIndex = 0;
             else _hairColorIndex++;
             _hairColor = _colors[_hairColorIndex];
             _currentHairStyle.GetComponent<Renderer>().material.color = _hairColor;
 
-            if (properties.ContainsKey("hairColorIndex")) properties["hairColorIndex"] = _hairColorIndex;
-            else properties.Add("hairColorIndex", _hairColorIndex);
-            
-            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
+            RoomManager.Instance.SetCustomProperty("hairColorIndex", _hairColorIndex);
         }
 
         [PunRPC]
         public void SwitchSkinColor()
         {
-            Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
-
-            if (_skinColorIndex + 1 >= skinColors.Length)
+           if (_skinColorIndex + 1 >= skinColors.Length)
             {
                 _skinColorIndex = 0;
             }
@@ -1049,10 +1013,7 @@ namespace Player
 
             _playerSkin.GetComponent<Renderer>().material.color = skinColors[_skinColorIndex];
 
-            if (properties.ContainsKey("skinColorIndex")) properties["skinColorIndex"] = _skinColorIndex;
-            else properties.Add("skinColorIndex", _skinColorIndex);
-            
-            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
+            RoomManager.Instance.SetCustomProperty("skinColorIndex", _skinColorIndex);
         }
 
         public void SwitchHat_RPC() { photonView.RPC("SwitchHat", RpcTarget.AllBuffered); }
