@@ -79,6 +79,7 @@ namespace Player
         [SerializeField] private RectTransform _canvasTransform;
         [SerializeField] private RectTransform _healthTransform;
         [SerializeField] private RectTransform _nicknameTransform;
+        [SerializeField] private GameObject _hostCrown;
         [SerializeField] private Image[] _hearts;
         [SerializeField] private int _maxHealth;
         private int _currentHealth;
@@ -195,6 +196,11 @@ namespace Player
             _target = Vector3.zero;
             _startGame = false;
 
+            if (PhotonNetwork.IsMasterClient)
+            {
+                _hostCrown.SetActive(true);
+            }
+            
             if (photonView.IsMine)
             {
                 photonView.RPC(nameof(SyncPlayerInfo), RpcTarget.AllBuffered, PlayerID, TeamID);
@@ -1134,15 +1140,16 @@ namespace Player
         /// <param name="distance"></param>
         /// <param name="isInYard"></param>
         /// <param name="nameTextHeight"></param>
+        /// <param name="canvasHeight"></param>
         // ReSharper disable once UnusedMember.Global
-        public void SetCamera(GameObject cam, float angle, float distance, bool isInYard, float nameTextHeight)
+        public void SetCamera(GameObject cam, float angle, float distance, bool isInYard, float nameTextHeight, float canvasHeight)
         {
             _playerVCam = cam.GetComponentInChildren<CinemachineVirtualCamera>();
             _playerCamera = cam.GetComponentInChildren<Camera>();
             _playerVCam.Follow = _studentTransform;
             _playerVCam.Follow = _studentTransform;
             _playerVCamFramingTransposer = _playerVCam.GetCinemachineComponent<CinemachineFramingTransposer>();
-            SetFrameTransposerProperties(angle, distance);
+            SetFrameTransposerProperties(angle, distance, canvasHeight);
             
             _healthTransform.gameObject.SetActive(isInYard);
             _nicknameTransform.SetBottom(nameTextHeight);
@@ -1157,11 +1164,13 @@ namespace Player
         /// </summary>
         /// <param name="angle"></param>
         /// <param name="distance"></param>
-        private void SetFrameTransposerProperties(float angle, float distance)
+        /// <param name="canvasHeight"></param>
+        private void SetFrameTransposerProperties(float angle, float distance, float canvasHeight)
         {
             _playerVCamFramingTransposer.m_CameraDistance = distance;
             _playerVCam.transform.rotation = Quaternion.Euler(angle, 0f, 0f);
             _canvasTransform.rotation = Quaternion.Euler(angle, 0f, 0f);
+            _canvasTransform.localPosition = new Vector3(0f, canvasHeight, 0.23f);
         }
 
         public void LookAtTeacher(bool isTeacher)
@@ -1249,7 +1258,9 @@ namespace Player
                 stream.SendNext(_healthTransform.gameObject.activeSelf);
                 stream.SendNext(_nicknameTransform.offsetMax);
                 stream.SendNext(_nicknameTransform.offsetMin);
+                stream.SendNext(_hostCrown.gameObject.activeSelf);
                 stream.SendNext(_isBeingControlled);
+                stream.SendNext(_isJerseyNull);
                 stream.SendNext(_target);
             }
             else
@@ -1267,7 +1278,9 @@ namespace Player
                 _healthTransform.gameObject.SetActive((bool) stream.ReceiveNext());
                 _nicknameTransform.offsetMax = (Vector2) stream.ReceiveNext();
                 _nicknameTransform.offsetMin = (Vector2) stream.ReceiveNext();
+                _hostCrown.gameObject.SetActive((bool) stream.ReceiveNext());
                 _isBeingControlled = (bool) stream.ReceiveNext();
+                _isJerseyNull = (bool) stream.ReceiveNext();
                 _target = (Vector3) stream.ReceiveNext();
             }
         }

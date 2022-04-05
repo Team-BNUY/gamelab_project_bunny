@@ -232,7 +232,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             player.TeamID = PhotonNetwork.LocalPlayer.GetPhotonTeam().Code;
             PhotonNetwork.LocalPlayer.TagObject = player;
             _localStudentController = player;
-            player.SetCamera(Instantiate(_playerCamera), 60f, 25f, true, 0.7f);
+            player.SetCamera(Instantiate(_playerCamera), 60f, 25f, true, 0.7f, 5f);
             player.photonView.RPC("SyncPlayerInfo", RpcTarget.AllBuffered, player.PlayerID, player.TeamID);
         }
 
