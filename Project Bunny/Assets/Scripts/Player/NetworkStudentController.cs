@@ -904,6 +904,7 @@ namespace Player
             _currentHat = _playerHats[_hatIndex];
             _currentHat.SetActive(true);
 
+            if (photonView.IsMine)
             RoomManager.Instance.SetCustomProperty("hatIndex", _hatIndex);
         }
 
@@ -922,6 +923,7 @@ namespace Player
             _currentPants.SetActive(true);
             _currentPants.GetComponent<Renderer>().material.color = _pantColor;
 
+            if (photonView.IsMine)
             RoomManager.Instance.SetCustomProperty("pantIndex", _pantIndex);
         }
 
@@ -933,6 +935,7 @@ namespace Player
             _pantColor = _colors[_pantColorIndex];
             _currentPants.GetComponent<Renderer>().material.color = _pantColor;
 
+            if (photonView.IsMine)
             RoomManager.Instance.SetCustomProperty("pantColorIndex", _pantColorIndex);
         }
 
@@ -949,6 +952,7 @@ namespace Player
             _currentCoat.SetActive(true);
             _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
 
+            if (photonView.IsMine)
             RoomManager.Instance.SetCustomProperty("coatIndex", _coatIndex);
         }
 
@@ -966,6 +970,7 @@ namespace Player
             _coatColor = _colors[_coatColorIndex];
             _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
 
+            if (photonView.IsMine)
             RoomManager.Instance.SetCustomProperty("coatColorIndex", _coatColorIndex);
         }
 
@@ -985,6 +990,7 @@ namespace Player
             _currentHairStyle.SetActive(true);
             _currentHairStyle.GetComponent<Renderer>().material.color = _hairColor;
 
+            if (photonView.IsMine)
             RoomManager.Instance.SetCustomProperty("hairIndex", _hairStyleIndex);
         }
 
@@ -996,6 +1002,7 @@ namespace Player
             _hairColor = _colors[_hairColorIndex];
             _currentHairStyle.GetComponent<Renderer>().material.color = _hairColor;
 
+            if (photonView.IsMine)
             RoomManager.Instance.SetCustomProperty("hairColorIndex", _hairColorIndex);
         }
 
@@ -1013,6 +1020,7 @@ namespace Player
 
             _playerSkin.GetComponent<Renderer>().material.color = skinColors[_skinColorIndex];
 
+            if (photonView.IsMine)
             RoomManager.Instance.SetCustomProperty("skinColorIndex", _skinColorIndex);
         }
 

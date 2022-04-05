@@ -70,6 +70,13 @@ namespace Player
             hoverEButtonUI.enabled = true;
             hoverEButtonUI.StartPlayback();
             hoverEButtonUI.gameObject.SetActive(true);
+            
+            if (!PhotonNetwork.IsMasterClient) return;
+
+            foreach (var player in PhotonNetwork.PlayerList)
+            {
+                Debug.Log(player.CustomProperties);
+            }
         }
 
         public void Exit()
