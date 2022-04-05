@@ -303,18 +303,10 @@ namespace Player
         {
             if (stream.IsWriting)
             {
-                stream.SendNext(_hasSnowball);
-                stream.SendNext(_isAiming);
-                stream.SendNext(_throwForce);
-                stream.SendNext(_coolDownTimer);
                 stream.SendNext(_isActive);
             }
             else
             {
-                _hasSnowball = (bool) stream.ReceiveNext();
-                _isAiming = (bool) stream.ReceiveNext();
-                _throwForce = (float) stream.ReceiveNext();
-                _coolDownTimer = (float) stream.ReceiveNext();
                 _isActive = (bool) stream.ReceiveNext();
             }
         }
