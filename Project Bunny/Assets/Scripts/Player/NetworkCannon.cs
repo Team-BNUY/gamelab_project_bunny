@@ -25,7 +25,6 @@ namespace Player
         private GameObject _cannonBallObject;
         private bool _isActive;
         private GameObject _player;
-        private string _currentUserId;
         private NetworkStudentController _currentStudentController;
         private CinemachineFramingTransposer _playerVCamSettings;
         private CharacterController _playerCharController;
@@ -324,7 +323,6 @@ namespace Player
         public void SetActive(bool value, string userId)
         {
             _isActive = value;
-            _currentUserId = userId;
             _currentStudentController = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == userId);
         }
     }
