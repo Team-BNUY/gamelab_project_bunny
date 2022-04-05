@@ -81,7 +81,7 @@ namespace Networking
         {
             if (_customProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+propertyName))
             {
-                _customProperties[propertyName] = propertyValue;
+                _customProperties[PhotonNetwork.LocalPlayer.UserId+propertyName] = propertyValue;
             }
             else
             {
