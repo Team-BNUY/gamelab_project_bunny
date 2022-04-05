@@ -127,7 +127,10 @@ namespace Player
             }
             else
             {
-                PhotonNetwork.Destroy(_cannonBallObject);
+                if (_cannonBallObject != null)
+                {
+                    PhotonNetwork.Destroy(_cannonBallObject);
+                }
                 _cannonballCollection?.Clear();
             }
             _coolDownTimer = 0.0f;
@@ -287,7 +290,7 @@ namespace Player
                 _cannonBallSeat.transform.localPosition = _initialSnowballSeatPosition;
             }
 
-            if (photonView.IsMine)
+            if (_cannonBallObject != null)
             {
                 PhotonNetwork.Destroy(_cannonBallObject);
             }
