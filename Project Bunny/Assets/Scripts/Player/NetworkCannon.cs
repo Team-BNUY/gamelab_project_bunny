@@ -79,7 +79,6 @@ namespace Player
         {
             //Initialize key variables
             photonView.RPC(nameof(SetActive), RpcTarget.All, true, currentStudentController.PlayerID);
-            _currentStudentController = currentStudentController; 
             _currentStudentController.UsingCannon = true;
             _player = _currentStudentController.transform.gameObject;
             
@@ -137,10 +136,9 @@ namespace Player
             _coolDownTimer = 0.0f;
 
             //Restore key variables to null/default value
-            photonView.RPC(nameof(SetActive), RpcTarget.All, false, default(string));
             _player = null;
             _currentStudentController.UsingCannon = false;
-            _currentStudentController = null;
+            photonView.RPC(nameof(SetActive), RpcTarget.All, false, default(string));
 
             //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
             _playerVCamSettings.m_CameraDistance = 25;
