@@ -174,14 +174,6 @@ namespace Player
         #region CannonBallLogic
 
         /// <summary>
-        /// Start aiming the cannonball
-        /// </summary>
-        private void StartCannonBallThrow()
-        {
-            _isAiming = true;
-        }
-
-        /// <summary>
         /// Start the snowball timer and spawn a new snowball when the timer is up
         /// </summary>
         private void CannonBallUpdate()
