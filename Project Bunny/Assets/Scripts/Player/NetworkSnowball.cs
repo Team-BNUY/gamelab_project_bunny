@@ -47,7 +47,7 @@ namespace Networking
 
         private void OnCollisionEnter(Collision other)
         {
-            if (!_view.IsMine) return;
+            //if (!_view.IsMine) return;
             if (!_isDestroyable) return;
 
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent)
@@ -72,8 +72,8 @@ namespace Networking
                 otherStudent.GetDamaged(_damage);
             }
 
-            if (otherStudent == _studentThrower) return;
-
+            if (otherStudent && otherStudent == _studentThrower) return;
+            
             var go = PhotonNetwork.Instantiate(ArenaManager.Instance.SnowballBurst.name, _snowballTransform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
