@@ -9,7 +9,7 @@ namespace Networking
     public class LobbyManager : MonoBehaviourPunCallbacks
     {
         private const string ROOM_SCENE_NAME = "3-Room";
-        private const string DEFAULT_PLAYER_NAME = "Joe";
+        private const string DEFAULT_PLAYER_NAME = "My Name";
         private const string PLAYER_PREF_NAME_KEY = "PlayerName";
         private const byte maxPlayersPerRoom = 9;
 
