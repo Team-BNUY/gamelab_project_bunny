@@ -55,7 +55,7 @@ namespace Player
 
         private void Update()
         {
-            if (!_isActive) return;
+            if (!_isActive || !_currentStudentController ||!_currentStudentController.photonView.IsMine) return;
 
             RotateSlingShot();
             CannonBallUpdate();
