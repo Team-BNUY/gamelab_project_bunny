@@ -49,7 +49,12 @@ namespace Networking
         void Start()
         {
             _tiles = new List<PlayerTile>();
-            _customProperties = new Hashtable();
+
+            if (PhotonNetwork.LocalPlayer.CustomProperties != null)
+            { 
+                _customProperties = PhotonNetwork.LocalPlayer.CustomProperties;
+            }
+            else _customProperties = new Hashtable();
 
             SpawnPlayer();
             InitialiseUI();
