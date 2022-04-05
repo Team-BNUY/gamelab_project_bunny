@@ -249,7 +249,7 @@ namespace Networking
             _localStudentController = player;
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
             PhotonNetwork.LocalPlayer.TagObject = player;
-            player.SetCamera(Instantiate(_playerCamera), 40f, 15f, false, 0.374f);
+            player.SetCamera(Instantiate(_playerCamera), 40f, 15f, false, 0.374f, 4f);
 
             Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
