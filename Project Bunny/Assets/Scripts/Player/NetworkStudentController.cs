@@ -1154,6 +1154,7 @@ namespace Player
             _healthTransform.gameObject.SetActive(isInYard);
             _nicknameTransform.SetBottom(nameTextHeight);
             _nicknameTransform.SetTop(-nameTextHeight);
+            _hostCrown.SetActive(!isInYard && PhotonNetwork.IsMasterClient);
         }
 
         /// <summary>
