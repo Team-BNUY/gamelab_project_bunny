@@ -14,20 +14,18 @@ namespace Player
         [SerializeField] private Transform _rollballSeat;
         [SerializeField] private GameObject _aimArrow;
 
-        [Header("Properties")]
+        [Header("Properties")] [SerializeField] private int _id;
         [SerializeField] private float _newCameraDistance;
-        private GameObject _currentRollball;
+        [SerializeField] [Min(0)] private float _rotationSpeed;
         private bool _isActive;
         private GameObject _player;
         private NetworkStudentController _currentStudentController;
         private CinemachineFramingTransposer _playerVCamSettings;
         private CharacterController _playerCharController;
-        [SerializeField] [Min(0)] private float _rotationSpeed;
         private Vector3 _previousMouseToWorldDirection;
 
         [Header("Snowball")]
         [SerializeField] [Min(0)] private float _coolDownTime;
-        private NetworkGiantRollball _playerRollball;
         private float _cooldownTimer;
         private bool _ready;
 
@@ -65,7 +63,7 @@ namespace Player
         /// </summary>
         public void Enter(NetworkStudentController currentStudentController)
         {
-            if (_currentRollball == null || currentStudentController.HasSnowball) return;
+            if (!_ready || currentStudentController.HasSnowball) return;
             
             //Initialize key variables
             photonView.RPC(nameof(SetActive), RpcTarget.All, true, currentStudentController.PlayerID);
@@ -130,21 +128,22 @@ namespace Player
         /// </summary>
         public void Click()
         {
-            if (_isActive && _currentStudentController && _currentRollball)
+            if (!_isActive || !_currentStudentController || !_ready) return;
+            
+            if (_currentStudentController.photonView.IsMine)
             {
-                if (_currentStudentController.photonView.IsMine)
-                {
-                    _aimArrow.SetActive(false);
-                }
-                
-                // Idle animation
-                _currentStudentController.SetAnimatorParameter("InteractIdle", false);
-                _currentStudentController.SetAnimatorParameter("UsingInteractable", false);
-
-                var random = Random.Range(0, 3);
-                _currentStudentController.SetAnimatorParameter("Random", random);
-                _currentStudentController.SetAnimatorParameter("Kick");
+                _aimArrow.SetActive(false);
             }
+
+            _currentStudentController.IsKicking = true;
+                
+            // Idle animation
+            _currentStudentController.SetAnimatorParameter("InteractIdle", false);
+            _currentStudentController.SetAnimatorParameter("UsingInteractable", false);
+
+            var random = Random.Range(0, 3);
+            _currentStudentController.SetAnimatorParameter("Random", random);
+            _currentStudentController.SetAnimatorParameter("Kick");
         }
 
         /// <summary>
@@ -182,7 +181,7 @@ namespace Player
         /// </summary>
         private void CannonRollBallUpdate()
         {
-            if (_playerRollball || _ready || !PhotonNetwork.IsMasterClient) return;
+            if (_ready || !PhotonNetwork.IsMasterClient) return;
             
             //If there is no cannonball currently loaded, then increase the timer. 
             _cooldownTimer += Time.deltaTime;
@@ -190,7 +189,6 @@ namespace Player
             //If the cooldown timer is up, then spawn a new cannonball. If not, return. 
             if (_cooldownTimer < _coolDownTime) return;
             
-            Debug.Log(Time.time);
             SpawnRollBall();
         }
 
@@ -233,8 +231,8 @@ namespace Player
         /// </summary>
         private void SpawnRollBall()
         {
-            _currentRollball = PhotonNetwork.Instantiate(ArenaManager.Instance.GiantRollballPrefab.name, _rollballSeat.position, _rollballSeat.rotation);
-            _playerRollball = _currentRollball.GetComponent<NetworkGiantRollball>();
+            var currentRollball = PhotonNetwork.Instantiate(ArenaManager.Instance.GiantRollballPrefab.name, _rollballSeat.position, _rollballSeat.rotation);
+            currentRollball.GetComponent<NetworkGiantRollball>().ID = _id;
             _ready = true;
         }
 
@@ -243,13 +241,16 @@ namespace Player
         /// </summary>
         private void ThrowSnowball()
         {
-            if (_playerRollball)
+            if (_ready)
             {
-                _playerRollball.PushGiantRollball(_currentStudentController);
+                var playerRollball = FindObjectsOfType<NetworkGiantRollball>().FirstOrDefault(b => b.ID == _id);
+                if (playerRollball)
+                {
+                    playerRollball.photonView.TransferOwnership(_currentStudentController.photonView.Owner);
+                    playerRollball.PushGiantRollball(_currentStudentController);
+                }
             }
             
-            _currentRollball = null;
-            _playerRollball = null;
             _ready = false;
         }
 

@@ -130,16 +130,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _snowballRigidbody: {fileID: -152660347859332919}
   _snowballTransform: {fileID: 5548079061548076500}
-  _collider: {fileID: 4813863054407201053}
   _hitLayers:
     serializedVersion: 2
     m_Bits: 3584
-  _destroySpeedThreshold: 7
-  _damageThreshold: 5
   _sizeThreshold: 6
   _pushForce: 50
   _damage: 3
   _growthFactor: 0.1
+  _id: 0
 --- !u!114 &593892945959538631
 MonoBehaviour:
   m_ObjectHideFlags: 0
