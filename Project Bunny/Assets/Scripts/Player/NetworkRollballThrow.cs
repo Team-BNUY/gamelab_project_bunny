@@ -231,11 +231,10 @@ namespace Player
         /// </summary>
         private void SpawnRollBall()
         {
-            Debug.Log("Spawned at: " + _cooldownTimer);
-            
             var currentRollball = PhotonNetwork.Instantiate(ArenaManager.Instance.GiantRollballPrefab.name, _rollballSeat.position, _rollballSeat.rotation);
             currentRollball.GetComponent<NetworkGiantRollball>().ID = _id;
             _ready = true;
+            _cooldownTimer = 0f;
         }
 
         /// <summary>
