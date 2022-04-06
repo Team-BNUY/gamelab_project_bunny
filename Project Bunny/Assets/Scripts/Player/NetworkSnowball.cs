@@ -82,6 +82,8 @@ namespace Networking
                         ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.GLACE_FOLIE_KEY);
                     }
                 }
+                
+                otherStudent.GetDamaged(_damage);
             }
 
             if (otherStudent && otherStudent == _studentThrower) return;
