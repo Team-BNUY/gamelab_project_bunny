@@ -8,6 +8,7 @@ namespace Player
     {
         [SerializeField] private Rigidbody _snowballRigidbody;
         [SerializeField] private Transform _snowballTransform;
+        [SerializeField] private Collider _collider;
         [SerializeField] private LayerMask _hitLayers;
         [SerializeField, Min(0.0f)] private float _destroySpeedThreshold;
         [SerializeField, Min(0.0f)] private float _damageThreshold;
@@ -19,13 +20,13 @@ namespace Player
         [SerializeField] private int _damage;
         [SerializeField] private float _growthFactor;
 
+        private NetworkStudentController _pusher;
         private int _spawnIndex;
         private bool _isGrowing;
         private bool _isDestroyable;
         private bool _canDamage;
         private bool _hasCollided;
         public bool CanDamage => _canDamage;
-        //public int Damage => _damage;
 
         private void Awake()
         {
@@ -48,17 +49,17 @@ namespace Player
         {
             _isGrowing = other.gameObject.layer == LayerMask.NameToLayer("Ground");
 
-            if (other.gameObject.TryGetComponent<NetworkStudentController>(out var student) && _canDamage)
+            if (other.gameObject.TryGetComponent<NetworkStudentController>(out var player) && _canDamage)
             {
-                if (_hasCollided || !PhotonNetwork.IsMasterClient) return;
+                if (_hasCollided || player == _pusher || !PhotonNetwork.IsMasterClient) return;
                 _hasCollided = true;
 
-                if (student.photonView.IsMine)
+                if (player.photonView.IsMine)
                 {
                     ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.AVALANCHE_KEY);
                 }
 
-                student.photonView.RPC("GetDamagedRPC", RpcTarget.All, _damage);
+                player.photonView.RPC("GetDamagedRPC", RpcTarget.All, _damage);
                 BreakRollball();
             }
             else if (IsInLayerMask(other.gameObject) && _isDestroyable)
@@ -71,11 +72,13 @@ namespace Player
         /// Let student push the giant snowball
         /// </summary>
         /// <param name="pusherTransform"></param>
-        public void PushGiantRollball(Transform pusherTransform)
+        public void PushGiantRollball(NetworkStudentController pusher)
         {
+            Physics.IgnoreCollision(pusher.PlayerCollider, _collider);
+
             _snowballRigidbody.isKinematic = false;
-            
-            var distance = _snowballTransform.position - pusherTransform.position;
+
+            var distance = _snowballTransform.position - pusher.transform.position;
             distance = distance.normalized;
             _snowballRigidbody.AddForce(distance * _pushForce, ForceMode.Impulse);
         }

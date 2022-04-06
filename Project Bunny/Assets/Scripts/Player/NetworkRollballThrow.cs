@@ -42,6 +42,8 @@ namespace Player
 
         private void Start()
         {
+            if (!PhotonNetwork.IsMasterClient) return;
+            
             SpawnRollBall();
         }
         
@@ -180,7 +182,7 @@ namespace Player
         /// </summary>
         private void CannonRollBallUpdate()
         {
-            if (_playerRollball || _ready) return;
+            if (_playerRollball || _ready || !PhotonNetwork.IsMasterClient) return;
             
             //If there is no cannonball currently loaded, then increase the timer. 
             _cooldownTimer += Time.deltaTime;
@@ -188,6 +190,7 @@ namespace Player
             //If the cooldown timer is up, then spawn a new cannonball. If not, return. 
             if (_cooldownTimer < _coolDownTime) return;
             
+            Debug.Log(Time.time);
             SpawnRollBall();
         }
 
@@ -218,7 +221,6 @@ namespace Player
 
             _previousMouseToWorldDirection = Vector3.Slerp(_previousMouseToWorldDirection, targetDirection, Time.deltaTime * 8f);
             
-            _currentStudentController.SetAnimatorParameter("UsingInteractable", true);
             _currentStudentController.SetAnimatorParameter("RotationDirection", angle);
             
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, Time.deltaTime * _rotationSpeed);
@@ -243,7 +245,7 @@ namespace Player
         {
             if (_playerRollball)
             {
-                _playerRollball.PushGiantRollball(_currentStudentController.transform);
+                _playerRollball.PushGiantRollball(_currentStudentController);
             }
             
             _currentRollball = null;

@@ -8,7 +8,6 @@ using Photon.Pun.UtilityScripts;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Image = UnityEngine.UI.Image;
-using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Player
 {
