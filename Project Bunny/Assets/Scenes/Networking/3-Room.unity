@@ -12485,6 +12485,7 @@ MonoBehaviour:
   _changeCoatColorButton: {fileID: 1817070764}
   _changePantColorButton: {fileID: 1817070766}
   _changeHairColorButton: {fileID: 1817070768}
+  _doneButton: {fileID: 1817070772}
   skinColors: []
   hoverEButtonUI: {fileID: 1945982969}
 --- !u!43 &1268328747
@@ -21404,6 +21405,30 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3699886957701306229, guid: 783103adb45d8ae41b43d9d19a069759, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3699886957701306229, guid: 783103adb45d8ae41b43d9d19a069759, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1817070771}
+    - target: {fileID: 3699886957701306229, guid: 783103adb45d8ae41b43d9d19a069759, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetActive
+      objectReference: {fileID: 0}
+    - target: {fileID: 3699886957701306229, guid: 783103adb45d8ae41b43d9d19a069759, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UnityEngine.GameObject, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3699886957701306229, guid: 783103adb45d8ae41b43d9d19a069759, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3699886957701306229, guid: 783103adb45d8ae41b43d9d19a069759, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3699886957828689657, guid: 783103adb45d8ae41b43d9d19a069759, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -21564,6 +21589,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3699886957338030238, guid: 783103adb45d8ae41b43d9d19a069759, type: 3}
   m_PrefabInstance: {fileID: 1817070761}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1817070772 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3699886957701306229, guid: 783103adb45d8ae41b43d9d19a069759, type: 3}
+  m_PrefabInstance: {fileID: 1817070761}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &1830172585
 Mesh:
   m_ObjectHideFlags: 0
