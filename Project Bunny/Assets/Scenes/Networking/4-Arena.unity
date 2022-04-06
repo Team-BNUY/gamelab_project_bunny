@@ -980,6 +980,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 9141053910075568098, guid: c48d3640d860fdf4fae51bc95d63367a, type: 3}
   m_PrefabInstance: {fileID: 76301252}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &76301255 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5380561059917380156, guid: c48d3640d860fdf4fae51bc95d63367a, type: 3}
+  m_PrefabInstance: {fileID: 76301252}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &78109698
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6952,6 +6963,11 @@ MonoBehaviour:
   _snowmanPrefab: {fileID: 5714933658485935016, guid: 020ee4a79dd45344ba5b59af867346c8, type: 3}
   _cannonBall: {fileID: 4854422905516743973, guid: 5e62362fc854e2e4588b495334e45b9c, type: 3}
   _cannon: {fileID: 2021794885}
+  _cannonBall: {fileID: 1791823268317378158, guid: a98db43c166c3fe40aa445f9f76d7b3e, type: 3}
+  _teamShirts:
+  - {fileID: 21300000, guid: fa685be921d8cc94e89474bd4680504e, type: 3}
+  - {fileID: 21300000, guid: b4bbc9ea578b9bd4193afb60fcc06f48, type: 3}
+  - {fileID: 21300000, guid: dddbed2b30d96c245a40951237c2de82, type: 3}
   _studentLayer:
     serializedVersion: 2
     m_Bits: 1536
@@ -7006,7 +7022,8 @@ MonoBehaviour:
   - {fileID: 2075747523}
   - {fileID: 796284376}
   - {fileID: 794364104}
-  loadingScreen: {fileID: 1990687413}
+  _loadingScreen: {fileID: 1990687413}
+  _leadingTeamShirt: {fileID: 76301255}
 --- !u!4 &602910349
 Transform:
   m_ObjectHideFlags: 0

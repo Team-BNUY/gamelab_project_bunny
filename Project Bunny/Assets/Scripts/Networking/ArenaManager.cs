@@ -9,6 +9,7 @@ using Player;
 using TMPro;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -38,6 +39,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _snowmanPrefab;
     [SerializeField] private GameObject _cannonBall;
     [SerializeField] private NetworkCannon _cannon;
+    [SerializeField] private NetworkCannonBalls _cannonBall;
+    [SerializeField] private Sprite[] _teamShirts = new Sprite[3];
 
     [Header("AI")]
     [SerializeField] private LayerMask _studentLayer;
@@ -95,11 +98,13 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [Header("Other Spawns")]
     [SerializeField] private Transform[] _redSpawns;
     [SerializeField] private Transform[] _blueSpawns;
-    [SerializeField] private GameObject loadingScreen;
+    [SerializeField] private GameObject _loadingScreen;
+    [SerializeField] private Image _leadingTeamShirt;
 
     private void Awake()
     {
-        loadingScreen.SetActive(true);
+        _loadingScreen.SetActive(true);
+        _leadingTeamShirt.sprite = _teamShirts[0];
         if (!PhotonNetwork.IsMasterClient) return;
 
         _gangs.Clear();
@@ -108,7 +113,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     void Start()
     {
         SetIsReady(false);
-        loadingScreen.SetActive(true);
+        _loadingScreen.SetActive(true);
         SpawnPlayer();
 
         ScoreManager.Instance.ClearPropertyCounters();
@@ -127,7 +132,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private void StartMatch()
     {
         Invoke(nameof(SpawnTeacher), _teacherSpawnTime);
-        loadingScreen.SetActive(false);
+        _loadingScreen.SetActive(false);
         StartTimer();
     }
 
@@ -377,6 +382,11 @@ public class ArenaManager : MonoBehaviourPunCallbacks
                 Debug.LogError("PROBLEM");
             }
         }
+    }
+
+    public void SetLeadingShirt(int teamCode)
+    {
+        _leadingTeamShirt.sprite = _teamShirts[teamCode];
     }
 
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)

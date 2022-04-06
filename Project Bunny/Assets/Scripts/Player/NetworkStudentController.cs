@@ -606,6 +606,7 @@ namespace Player
                 if (photonView.IsMine)
                 {
                     ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.DEATHS_KEY);
+                    ArenaManager.Instance.SetLeadingShirt(ScoreManager.Instance.GetLeadingTeam());
                     Invoke(nameof(Respawn), DEATH_TIME_DELAY);
                 }
             }

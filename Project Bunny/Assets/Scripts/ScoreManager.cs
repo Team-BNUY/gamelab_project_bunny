@@ -32,7 +32,7 @@ public class ScoreManager : MonoBehaviour
     [Header("Match Information")]
     public bool isFirstMatch = true;
     public int winningTeamCode = 0;
-
+    
     public string[] scores = new string[8];
     public int[] scoreValues = new int[8];
     // rebel - 0, bully - 1, hardWorker - 2, teachersPet - 3, office - 4, glaceFolie - 5, shoveler - 6, avalance - 7
@@ -209,6 +209,51 @@ public class ScoreManager : MonoBehaviour
         _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rebel, hardWorker, teachersPet, glaceFolie, shoveler, avalanche, meetMeInMyOffice, (object)scoreValues);
     }
 
+    public int GetLeadingTeam()
+    {
+        var blueDeaths = 0;
+        var redDeaths = 0;
+        
+        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+        {
+            //WIN CONDITION
+            if (!player.CustomProperties.ContainsKey(DEATHS_KEY)) continue;
+            
+            var team = player.GetPhotonTeam();
+            if (team == null) continue;
+            
+            var deaths = (int) player.CustomProperties[DEATHS_KEY];
+
+            switch (team.Code)
+            {
+                case 1:
+                    blueDeaths += deaths;
+                    break;
+                case 2:
+                    redDeaths += deaths;
+                    break;
+            }
+        }
+
+        if (blueDeaths < redDeaths)
+        {
+            winningTeamCode = 1;
+        }
+        else if (redDeaths < blueDeaths)
+        {
+            winningTeamCode = 2;
+        }
+        else
+        {
+            winningTeamCode = 0;
+            //Debug.Log("how do we handle exact ties? TO BE SOLVED LATER");
+        }
+
+        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, winningTeamCode);
+        return winningTeamCode;
+    }
+    
+
     public void IncrementPropertyCounter(Photon.Realtime.Player player, string code)
     {
         ExitGames.Client.Photon.Hashtable props = player.CustomProperties;
@@ -278,6 +323,12 @@ public class ScoreManager : MonoBehaviour
         this.meetMeInMyOffice = meetMeInMyOffice;
         this.scores = new string[] { rebel, bully, hardWorker, teachersPet, meetMeInMyOffice, glaceFolie, shoveler, avalanche };
         this.scoreValues = scoreVals;
+    }
+
+    [PunRPC]
+    public void SyncLeadingTeamScore(int leadingTeamCode)
+    {
+        this.winningTeamCode = leadingTeamCode;
     }
     #endregion
 }
