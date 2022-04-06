@@ -1,5 +1,7 @@
 using System;
 using Interfaces;
+using Networking;
+using Photon.Pun;
 using Player;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +19,7 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     [SerializeField] private Button _changeCoatColorButton;
     [SerializeField] private Button _changePantColorButton;
     [SerializeField] private Button _changeHairColorButton;
+    [SerializeField] private Button _doneButton;
 
     [SerializeField] private Color[] skinColors;
     private int skinColorIndex;
@@ -38,11 +41,13 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     /// </summary>
     public void Trigger(NetworkStudentController currentPlayer)
     {
-        _customizationPanel.SetActive(!isActive);
-        isActive = !isActive;
+        if (isActive) return;
+        
+        _customizationPanel.SetActive(true);
+        isActive = true;
 
         
-        currentPlayer.CharacterControllerComponent.enabled = !isActive;
+        currentPlayer.CharacterControllerComponent.enabled = false;
         
         _changeHatButton.onClick.AddListener(() => currentPlayer.SwitchHat_RPC());
         _changeCoatButton.onClick.AddListener(() => currentPlayer.SwitchCoat_RPC());
@@ -54,7 +59,15 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
         
         _changePantColorButton.onClick.AddListener(() => currentPlayer.SwitchPantsColor_RPC());
         _changeHairColorButton.onClick.AddListener(() => currentPlayer.SwitchHairColor_RPC());
+        _doneButton.onClick.AddListener((() => Leave()));
         
+    }
+
+    public void Leave()
+    {
+        RoomManager.Instance.LocalStudentController.CharacterControllerComponent.enabled = true;
+        _customizationPanel.SetActive(false);
+        isActive = false;
     }
 
     public void Enter()

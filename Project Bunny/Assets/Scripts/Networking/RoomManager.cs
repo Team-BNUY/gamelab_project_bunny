@@ -45,6 +45,8 @@ namespace Networking
         [SerializeField] private TMPro.TMP_Text[] displayedNames;
         [SerializeField] private Sprite[] scoreSprites;
         private List<PlayerTile> _tiles;
+        private NetworkStudentController _localStudentController;
+        public NetworkStudentController LocalStudentController => _localStudentController;
 
         void Start()
         {
@@ -244,6 +246,7 @@ namespace Networking
         private void SpawnPlayer()
         {
             NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, _playerSpawnPosition.transform.position, Quaternion.identity).GetComponent<NetworkStudentController>();
+            _localStudentController = player;
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
             PhotonNetwork.LocalPlayer.TagObject = player;
             player.SetCamera(Instantiate(_playerCamera), 40f, 15f, false, 0.374f);
