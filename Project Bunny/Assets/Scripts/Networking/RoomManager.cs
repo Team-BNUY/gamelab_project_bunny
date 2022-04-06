@@ -43,7 +43,12 @@ namespace Networking
         [SerializeField] private Image[] displayedScores;
         [SerializeField] private Image teamWhoWon;
         [SerializeField] private TMPro.TMP_Text[] displayedNames;
+        [SerializeField] private TMPro.TMP_Text[] displayedWinCons;
         [SerializeField] private Sprite[] scoreSprites;
+        [SerializeField] private Sprite blueWinSprite;
+        [SerializeField] private Sprite redWinSprite;
+        [SerializeField] private GameObject firstRunWhiteboard;
+        [SerializeField] private GameObject scoresWhiteboard;
         private List<PlayerTile> _tiles;
         private NetworkStudentController _localStudentController;
         public NetworkStudentController LocalStudentController => _localStudentController;
@@ -63,19 +68,12 @@ namespace Networking
             }
             else _customProperties = new Hashtable();
 
-            SpawnPlayer();
             InitialiseUI();
-
-            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("isFirstRun")) {
-                this.isFirstRun = false;
-            }
+            SpawnPlayer();
 
             //Code that automatically removes the appropriate number of jerseys from the table when
             //we come back to the Classroom after a match.
             //Will Uncomment if needed. Right now everyone loses their teams and team colors when they come back from a match.
-
-           
-            
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
         }
@@ -109,34 +107,46 @@ namespace Networking
 
             if (ScoreManager.Instance)
             {
-                teamWhoWon.gameObject.SetActive(false);
+                this.isFirstRun = ScoreManager.Instance.isFirstMatch;
+                
                 foreach (Image img in displayedScores)
                 {
                     img.gameObject.SetActive(false);
                 }
 
-                if (!ScoreManager.Instance.isFirstMatch)
+                if (!isFirstRun)
                 {
-                    teamWhoWon.gameObject.SetActive(true);
+                    firstRunWhiteboard.SetActive(false);
+                    scoresWhiteboard.SetActive(true);
+
                     if (ScoreManager.Instance.winningTeamCode == 1)
-                        teamWhoWon.color = Color.blue;
+                        teamWhoWon.sprite = blueWinSprite;
                     else if (ScoreManager.Instance.winningTeamCode == 2)
-                        teamWhoWon.color = Color.red;
+                        teamWhoWon.sprite = redWinSprite;
                     else
                         teamWhoWon.gameObject.SetActive(false);
 
-                    int countedScores = 0;
-                    for (int i = 0; i < ScoreManager.Instance.scores.Length; i++) {
-                        if (!String.IsNullOrEmpty(ScoreManager.Instance.scores[i]) && countedScores <= 4) {
-                            displayedScores[countedScores].gameObject.SetActive(true);
-                            displayedScores[countedScores].sprite = scoreSprites[i];
-                            displayedNames[countedScores].text = ScoreManager.Instance.scores[i];
-                            countedScores++;
+
+                    List<int> randomScoresIndex = new List<int>();
+
+                    while (randomScoresIndex.Count < displayedScores.Length) {
+                        int rand = UnityEngine.Random.Range(0, ScoreManager.Instance.scores.Length);
+                        if (!String.IsNullOrEmpty(ScoreManager.Instance.scores[rand]) && !randomScoresIndex.Contains(rand) && ScoreManager.Instance.scoreValues[rand] != 0) {
+                            randomScoresIndex.Add(rand);
                         }
+                    }
+
+                    for (int i = 0; i < randomScoresIndex.Count; i++) {
+                        displayedScores[i].gameObject.SetActive(true);
+                        displayedScores[i].sprite = scoreSprites[randomScoresIndex[i]];
+                        displayedNames[i].text = ScoreManager.Instance.scores[randomScoresIndex[i]];
+                        displayedWinCons[i].text = GetWinConText(ScoreManager.Instance.scoreValues[randomScoresIndex[i]], randomScoresIndex[i]);
                     }
                 }
                 else
                 {
+                    firstRunWhiteboard.SetActive(true);
+                    scoresWhiteboard.SetActive(false);
                     foreach (Image img in displayedScores)
                     {
                         img.gameObject.SetActive(false);
@@ -145,26 +155,40 @@ namespace Networking
             }
             else
             {
+                firstRunWhiteboard.SetActive(true);
+                scoresWhiteboard.SetActive(false);
                 foreach (Image img in displayedScores)
                 {
                     img.gameObject.SetActive(false);
                 }
             }
+        }
 
-
-            if (ScoreManager.Instance)
-            {
-                string scores = "";
-                scores += "Rebel: " + ScoreManager.Instance.rebel;
-                scores += "\nBully: " + ScoreManager.Instance.bully;
-                scores += "\nHard Worker: " + ScoreManager.Instance.hardWorker;
-                scores += "\nTeacher's Pet: " + ScoreManager.Instance.teachersPet;
-                scores += "\nMeet In My Office: " + ScoreManager.Instance.meetMeInMyOffice;
-                scores += "\nGlace Folie: " + ScoreManager.Instance.glaceFolie;
-                scores += "\nShoveler: " + ScoreManager.Instance.shoveler;
-                scores += "\nAvalanche: " + ScoreManager.Instance.avalanche;
+        private string GetWinConText(int score, int index) {
+            // rebel - 0, bully - 1, hardWorker - 2, teachersPet - 3,
+            // office - 4, glaceFolie - 5, shoveler - 6, avalance - 7
+            switch (index) {
+                case 0:
+                    return $"Hit the teacher {score} times";
+                case 1:
+                    return $"Bullied others {score} times";
+                case 2:
+                    return $"Landed {score} hits";
+                case 3:
+                    return $"Only threw {score} snowballs";
+                case 4:
+                    return $"Got caught {score} times";
+                case 5:
+                    return $"Threw {score} ice balls";
+                case 6:
+                    return $"Dug out {score} snowballs";
+                case 7:
+                    return $"Got hit by {score} giant balls";
+                default:
+                    return string.Empty;
             }
         }
+
 
         public void PlayerLeaveRoom()
         {
