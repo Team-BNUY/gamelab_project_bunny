@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace Player
 {
-    public class NetworkRollballThrow : MonoBehaviourPunCallbacks, INetworkInteractable
+    public class NetworkRollballThrow : MonoBehaviourPunCallbacks, INetworkInteractable, IPunObservable
     {
         [Header("Components")]
         [SerializeField] private Transform _playerSeat;
@@ -256,6 +256,18 @@ namespace Player
         {
             _isActive = value;
             _currentStudentController = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == userId);
+        }
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(_isActive);
+            }
+            else
+            {
+                _isActive = (bool) stream.ReceiveNext();
+            }
         }
     }
 }
