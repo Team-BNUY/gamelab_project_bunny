@@ -33,7 +33,7 @@ namespace Networking
         [Header("Player Instantiation")]
         [SerializeField] private GameObject _playerPrefab;
         [SerializeField] private GameObject _playerCamera;
-        [SerializeField] private GameObject _playerSpawnPosition;
+        [SerializeField] private Transform[] _playerSpawnPosition;
         private Hashtable _customProperties;
 
         [Space(10)]
@@ -47,10 +47,15 @@ namespace Networking
         private List<PlayerTile> _tiles;
         private NetworkStudentController _localStudentController;
         public NetworkStudentController LocalStudentController => _localStudentController;
+        private List<NetworkStudentController> _masterStudentList;
+
+        public bool isFirstRun = true;
 
         void Start()
         {
             _tiles = new List<PlayerTile>();
+            _masterStudentList = new List<NetworkStudentController>();
+            _customProperties = new Hashtable();
 
             if (PhotonNetwork.LocalPlayer.CustomProperties != null)
             { 
@@ -61,6 +66,9 @@ namespace Networking
             SpawnPlayer();
             InitialiseUI();
 
+            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("isFirstRun")) {
+                this.isFirstRun = false;
+            }
 
             //Code that automatically removes the appropriate number of jerseys from the table when
             //we come back to the Classroom after a match.
@@ -243,13 +251,32 @@ namespace Networking
             }
         }
 
+        private void SetAllPlayerSpawns() {
+            NetworkStudentController[] students = FindObjectsOfType<NetworkStudentController>();
+
+            for (int i = 0; i < _playerSpawnPosition.Length; i++) {
+                students[i].transform.position = _playerSpawnPosition[i].position;
+            }
+        }
+
         private void SpawnPlayer()
         {
-            NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, _playerSpawnPosition.transform.position, Quaternion.identity).GetComponent<NetworkStudentController>();
+            NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, _playerSpawnPosition[0].position, Quaternion.identity).GetComponent<NetworkStudentController>();
             _localStudentController = player;
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
             PhotonNetwork.LocalPlayer.TagObject = player;
             player.SetCamera(Instantiate(_playerCamera), 40f, 15f, false, 0.374f, 4f);
+
+            if (isFirstRun)
+            {
+                player.transform.position = _playerSpawnPosition[PhotonNetwork.CurrentRoom.PlayerCount].position;
+            }
+            else {
+                if (PhotonNetwork.IsMasterClient) {
+                    Invoke(nameof(SetAllPlayerSpawns), 0.1f);
+                }
+            }
+
 
             Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
@@ -307,8 +334,6 @@ namespace Networking
             if (!PhotonNetwork.IsMasterClient) return;
 
             base.OnPlayerEnteredRoom(newPlayer);
-
-            base.OnPlayerEnteredRoom(newPlayer);
         }
 
         public override void OnPlayerLeftRoom(Photon.Realtime.Player newPlayer)
@@ -336,16 +361,6 @@ namespace Networking
                 GameObject.Destroy(((NetworkStudentController)newPlayer.TagObject).gameObject);
                 _customProperties.Clear();
                 newPlayer.SetCustomProperties(_customProperties);
-            }
-        }
-
-        private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
-        {
-            PlayerTile tile = _tiles.FirstOrDefault(x => x.player == player);
-
-            if (tile != null)
-            {
-                tile.SetTeamIndicator(team.Code);
             }
         }
 

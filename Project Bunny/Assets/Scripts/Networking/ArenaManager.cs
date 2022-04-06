@@ -63,7 +63,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private double _startTime;
     private bool _returnToLobbyHasRun = false;
     private const float TEACHER_CAMERA_PAN_TIME = 4f;
-    private const int TIMER_DURATION = 5 * 60;
+    private const int TIMER_DURATION = 1 * 60;
     private const string START_TIME_KEY = "StartTime";
     private const string LOBBY_SCENE_NAME = "2-Lobby";
     private const string ROOM_SCENE_NAME = "3-Room";
@@ -219,6 +219,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             _startTime = PhotonNetwork.Time;
             hasTimerStarted = true;
             myHashTable.Add(START_TIME_KEY, _startTime);
+            myHashTable.Add("isFirstRun", true);
             PhotonNetwork.CurrentRoom.SetCustomProperties(myHashTable);
         }
     }
