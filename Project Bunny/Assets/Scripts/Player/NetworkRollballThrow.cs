@@ -276,7 +276,8 @@ namespace Player
             _isActive = value;
             _currentStudentController = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == userId);
         }
-
+        
+        [PunRPC]
         public void ReadyUp(bool value)
         {
             _ready = value;
