@@ -87,13 +87,13 @@ namespace Networking
 
         public void SetCustomProperty(string propertyName, int propertyValue)
         {
-            if (_customProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+propertyName))
+            if (_customProperties.ContainsKey(propertyName))
             {
-                _customProperties[PhotonNetwork.LocalPlayer.UserId+propertyName] = propertyValue;
+                _customProperties[propertyName] = propertyValue;
             }
             else
             {
-                _customProperties.Add(PhotonNetwork.LocalPlayer.UserId+propertyName, propertyValue);
+                _customProperties.Add(propertyName, propertyValue);
             }
             
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
@@ -305,50 +305,50 @@ namespace Networking
 
             Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
-        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"hatIndex"))
+        if (playerProperties.ContainsKey("hatIndex"))
         {
-            player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"hatIndex"]);
+            player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties["hatIndex"]);
         }
 
-        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"hairIndex"))
+        if (playerProperties.ContainsKey("hairIndex"))
         {
-            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"hairColorIndex"))
+            if (playerProperties.ContainsKey("hairColorIndex"))
             {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"hairIndex"], (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"hairColorIndex"]);
+                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"]);
             }
             else
             {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"hairIndex"], 0);
+                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], 0);
             }
         }
 
-        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"pantIndex"))
+        if (playerProperties.ContainsKey("pantIndex"))
         {
-            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"pantColorIndex"))
+            if (playerProperties.ContainsKey("pantColorIndex"))
             {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"pantIndex"], (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"pantColorIndex"]);
+                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"]);
             }
             else
             {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"pantIndex"], 0);
+                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], 0);
             }
         }
 
-        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"coatIndex"))
+        if (playerProperties.ContainsKey("coatIndex"))
         {
-            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"coatColorIndex"))
+            if (playerProperties.ContainsKey("coatColorIndex"))
             {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"coatIndex"], (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"coatColorIndex"]);
+                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], (int)playerProperties["coatColorIndex"]);
             }
             else
             {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"coatIndex"], 0);
+                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], 0);
             }
         }
 
-        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"skinColorIndex"))
+        if (playerProperties.ContainsKey("skinColorIndex"))
         {
-            player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"skinColorIndex"]);
+            player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
         }
         player.RestoreTeamlessColors_RPC();    
         //CorrectNumberOfJerseys();
