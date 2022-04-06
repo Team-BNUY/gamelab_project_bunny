@@ -1,3 +1,4 @@
+using System.Linq;
 using Photon.Pun;
 using UnityEngine;
 
@@ -8,10 +9,7 @@ namespace Player
     {
         [SerializeField] private Rigidbody _snowballRigidbody;
         [SerializeField] private Transform _snowballTransform;
-        [SerializeField] private Collider _collider;
         [SerializeField] private LayerMask _hitLayers;
-        [SerializeField, Min(0.0f)] private float _destroySpeedThreshold;
-        [SerializeField, Min(0.0f)] private float _damageThreshold;
         [SerializeField, Min(0.0f)] private float _sizeThreshold;
         [SerializeField, Min(0.0f)] private float _pushForce;
 
@@ -21,22 +19,25 @@ namespace Player
         [SerializeField] private float _growthFactor;
 
         private NetworkStudentController _pusher;
-        private int _spawnIndex;
         private bool _isGrowing;
-        private bool _isDestroyable;
         private bool _canDamage;
         private bool _hasCollided;
+        public int _id;
+        
         public bool CanDamage => _canDamage;
 
+        public int ID
+        {
+            get => _id;
+            set => _id = value;
+        }
+        
         private void Awake()
         {
+            photonView.OwnershipTransfer = OwnershipOption.Takeover;
+            
             _snowballRigidbody ??= gameObject.GetComponent<Rigidbody>();
             _snowballTransform ??= transform;
-        }
-
-        private void Update()
-        {
-            TrackGiantRollballStates();
         }
 
         private void FixedUpdate()
@@ -51,7 +52,7 @@ namespace Player
 
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var player) && _canDamage)
             {
-                if (_hasCollided || player == _pusher || !PhotonNetwork.IsMasterClient) return;
+                if (_hasCollided || _pusher && _pusher.IsKicking) return;
                 _hasCollided = true;
 
                 if (player.photonView.IsMine)
@@ -62,7 +63,7 @@ namespace Player
                 player.photonView.RPC("GetDamagedRPC", RpcTarget.All, _damage);
                 BreakRollball();
             }
-            else if (IsInLayerMask(other.gameObject) && _isDestroyable)
+            else if (IsInLayerMask(other.gameObject))
             {
                 BreakRollball();
             }
@@ -74,13 +75,32 @@ namespace Player
         /// <param name="pusherTransform"></param>
         public void PushGiantRollball(NetworkStudentController pusher)
         {
-            Physics.IgnoreCollision(pusher.PlayerCollider, _collider);
-
-            _snowballRigidbody.isKinematic = false;
+            photonView.RPC(nameof(SetPusher), RpcTarget.All, pusher.PlayerID);
+            Invoke(nameof(StopKicking), 0.5f);
+            
+            photonView.RPC(nameof(DisableIsKinematic), RpcTarget.All);
+            _canDamage = true;
 
             var distance = _snowballTransform.position - pusher.transform.position;
             distance = distance.normalized;
             _snowballRigidbody.AddForce(distance * _pushForce, ForceMode.Impulse);
+        }
+
+        [PunRPC]
+        public void SetPusher(string playerID)
+        {
+            _pusher = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == playerID);
+        }
+
+        [PunRPC]
+        public void DisableIsKinematic()
+        {
+            _snowballRigidbody.isKinematic = false;
+        }
+        
+        private void StopKicking()
+        {
+            _pusher.IsKicking = false;
         }
 
         /// <summary>
@@ -106,19 +126,6 @@ namespace Player
                 _snowballTransform.localScale += Vector3.one * (_growthFactor * _snowballRigidbody.velocity.magnitude * Time.fixedDeltaTime);
             }
         }
-        
-        /// <summary>
-        /// Track the Giant Snowball's properties
-        /// </summary>
-        private void TrackGiantRollballStates()
-        {
-            var velocity = _snowballRigidbody.velocity;
-            if (!_isDestroyable && velocity.magnitude >= _destroySpeedThreshold)
-            {
-                _isDestroyable = true;
-            }
-            _canDamage = velocity.magnitude >= _damageThreshold;
-        }
 
         /// <summary>
         /// Check if collider object is part of the breakable layers
@@ -134,27 +141,28 @@ namespace Player
         {
             var go = Instantiate(ArenaManager.Instance.GiantRollballBurst, transform.position, Quaternion.identity);
             go.GetComponent<ParticleSystem>().Play();
-            
-            PhotonNetwork.Destroy(gameObject);
+
+            if (photonView.IsMine)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             if (stream.IsWriting)
             {
-                stream.SendNext(_spawnIndex);
                 stream.SendNext(_canDamage);
-                stream.SendNext(_isDestroyable);
                 stream.SendNext(_isGrowing);
                 stream.SendNext(_hasCollided);
+                stream.SendNext(_id);
             }
             else
             {
-                _spawnIndex = (int) stream.ReceiveNext();
                 _canDamage = (bool) stream.ReceiveNext();
-                _isDestroyable = (bool) stream.ReceiveNext();
                 _isGrowing = (bool) stream.ReceiveNext();
                 _hasCollided = (bool) stream.ReceiveNext();
+                _id = (int) stream.ReceiveNext();
             }
         }
     }

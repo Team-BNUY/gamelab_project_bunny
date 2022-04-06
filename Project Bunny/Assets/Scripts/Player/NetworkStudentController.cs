@@ -112,6 +112,7 @@ namespace Player
         private bool _isAiming;
         private bool _threwSnowball;
         private bool _isSliding;
+        private bool _isKicking;
         private bool _isJerseyNull;
 
         // List of readonly files. No need for them to have a _ prefix
@@ -144,6 +145,11 @@ namespace Player
         {
             get => _currentInteractable;
             set => _currentInteractable = value;
+        }
+        public bool IsKicking
+        {
+            get => _isKicking;
+            set => _isKicking = value;
         }
         public bool UsingCannon { get; set; }
 
@@ -1275,6 +1281,7 @@ namespace Player
                 stream.SendNext(_isBeingControlled);
                 stream.SendNext(_isJerseyNull);
                 stream.SendNext(_target);
+                stream.SendNext(_isKicking);
             }
             else
             {
@@ -1295,6 +1302,7 @@ namespace Player
                 _isBeingControlled = (bool) stream.ReceiveNext();
                 _isJerseyNull = (bool) stream.ReceiveNext();
                 _target = (Vector3) stream.ReceiveNext();
+                _isKicking = (bool) stream.ReceiveNext();
             }
         }
 
