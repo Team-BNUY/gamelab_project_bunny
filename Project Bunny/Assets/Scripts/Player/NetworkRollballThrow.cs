@@ -63,7 +63,8 @@ namespace Player
         /// </summary>
         public void Enter(NetworkStudentController currentStudentController)
         {
-            if (!_ready || currentStudentController.HasSnowball) return;
+            Debug.Log(!_ready + " VS " + _isActive + " VS " + currentStudentController.HasSnowball);
+            if (!_ready || _isActive || currentStudentController.HasSnowball) return;
             
             //Initialize key variables
             photonView.RPC(nameof(SetActive), RpcTarget.All, true, currentStudentController.PlayerID);
@@ -112,7 +113,6 @@ namespace Player
             _player = null;
             _currentStudentController.UsingCannon = false;
             photonView.RPC(nameof(SetActive), RpcTarget.All, false, default(string));
-
 
             //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
             if (_playerVCamSettings)

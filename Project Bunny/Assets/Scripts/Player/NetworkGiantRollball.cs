@@ -52,7 +52,7 @@ namespace Player
 
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var player) && _canDamage)
             {
-                if (_hasCollided || _pusher && _pusher.IsKicking) return;
+                if (_hasCollided || _pusher && player == _pusher && _pusher.IsKicking) return;
                 _hasCollided = true;
 
                 if (player.photonView.IsMine)
