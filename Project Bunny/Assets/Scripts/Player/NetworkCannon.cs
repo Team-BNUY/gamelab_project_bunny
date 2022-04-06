@@ -238,8 +238,9 @@ namespace Player
             for (var i = 0; i < _numberOfSnowballs; i++)
             {
                 var cannonBall = PhotonNetwork.Instantiate(ArenaManager.Instance.CannonBall.name, _cannonBallSeat.position, _cannonBallSeat.rotation);
-                cannonBall.transform.SetParent(_cannonBallSeat);
-                _cannonballCollection.Add(cannonBall.GetComponent<NetworkSnowball>());
+                var snowball = cannonBall.GetComponent<NetworkSnowball>();
+                snowball.photonView.RPC("SetParent", RpcTarget.All, true);
+                _cannonballCollection.Add(snowball);
             }
             
             _cannonballCollection.ForEach(c => c.SetSnowballThrower(_currentStudentController));
@@ -280,7 +281,7 @@ namespace Player
                 foreach (var cannonBall in _cannonballCollection)
                 {
                     cannonBall.SetHoldingPlace(_cannonBallSeat);
-                    cannonBall.transform.parent = null;
+                    cannonBall.photonView.RPC("SetParent", RpcTarget.All, false);
                     cannonBall.ThrowBurstSnowballs(_minForce, _maxForce, _minAngle, _maxAngle);
                 }
 
