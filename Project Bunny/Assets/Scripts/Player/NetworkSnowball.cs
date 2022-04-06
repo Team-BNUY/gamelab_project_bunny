@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Networking
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class NetworkSnowball : MonoBehaviourPunCallbacks, IPunObservable, IPunInstantiateMagicCallback
+    public class NetworkSnowball : MonoBehaviourPunCallbacks, IPunObservable
     {
         [SerializeField] private Rigidbody _snowballRigidbody;
         [SerializeField] private SphereCollider _sphereCollider;
@@ -266,14 +266,18 @@ namespace Networking
                 _isDestroyable = (bool)stream.ReceiveNext();
             }
         }
-
-        public void OnPhotonInstantiate(PhotonMessageInfo info)
+        
+        [PunRPC]
+        public void SetParent(bool toCannonSeat)
         {
-            if (!_isCannonUsable) return;
-
-            var cannon = ArenaManager.Instance.Cannon;
-            transform.position = cannon.CannonBallSeat.position;
-            transform.SetParent(cannon.transform);
+            if (toCannonSeat)
+            {
+                transform.SetParent(ArenaManager.Instance.Cannon.CannonBallSeat);   
+            }
+            else
+            {
+                transform.SetParent(null);
+            }
         }
     }
 }
