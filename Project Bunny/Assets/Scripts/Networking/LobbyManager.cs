@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
@@ -13,12 +14,16 @@ namespace Networking
         private const string PLAYER_PREF_NAME_KEY = "PlayerName";
         private const byte maxPlayersPerRoom = 9;
 
+        [Header("Login UI")]
         [SerializeField] private TMP_InputField _createInput;
         [SerializeField] private TMP_InputField _joinInput;
         [SerializeField] private TMP_InputField _nameInput;
-
         [SerializeField] private Button _createButton;
         [SerializeField] private Button _joinButton;
+        
+        [Header("Audio")]
+        [SerializeField] private AudioSource _loginAudioSource;
+        [SerializeField] private AudioClip _writingSoundClip;
         private string _defaultName;
 
         [Header("Singletons")]
@@ -35,6 +40,14 @@ namespace Networking
 
         public void CreateRoom()
         {
+            StartCoroutine(StartCreatingRoom());
+        }
+
+        private IEnumerator StartCreatingRoom()
+        {
+            SetWrittingSound();
+            yield return new WaitForSeconds(0.3f);
+            
             PhotonNetwork.NickName = _defaultName;
 
             var options = new RoomOptions
@@ -49,12 +62,19 @@ namespace Networking
 
         public void JoinRoom()
         {
+            StartCoroutine(StartJoiningRoom());
+        }
+
+        private IEnumerator StartJoiningRoom()
+        {
+            SetWrittingSound();
+            yield return new WaitForSeconds(0.3f);
             PhotonNetwork.JoinRoom(_joinInput.text);
         }
 
         public override void OnJoinedRoom()
         {
-            GameObject.Instantiate(_photonTeamsManager);
+            Instantiate(_photonTeamsManager);
 
             if (PhotonNetwork.IsMasterClient)
                 PhotonNetwork.Instantiate(_scoreManager.name, Vector3.zero, Quaternion.identity);
@@ -88,6 +108,14 @@ namespace Networking
 
             PhotonNetwork.NickName = newName;
             PlayerPrefs.SetString(PLAYER_PREF_NAME_KEY, newName);
+        }
+
+        private void SetWrittingSound()
+        {
+            _loginAudioSource.playOnAwake = false;
+            _loginAudioSource.loop = false;
+            _loginAudioSource.clip = _writingSoundClip;
+            _loginAudioSource.Play();
         }
     }
 }
