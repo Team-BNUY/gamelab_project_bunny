@@ -1151,8 +1151,6 @@ namespace Player
         [PunRPC]
         public void RestoreTeamlessColors()
         {
-            if (!photonView.IsMine) return;
-            
             _teamShirt.GetComponent<Renderer>().material.color = Color.white;
             _playerBoots.GetComponent<Renderer>().material.color = Color.white;
 
