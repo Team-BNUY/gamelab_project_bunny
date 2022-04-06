@@ -1199,8 +1199,8 @@ namespace Player
         {
             _playerVCam = cam.GetComponentInChildren<CinemachineVirtualCamera>();
             _playerCamera = cam.GetComponentInChildren<Camera>();
-            _cameraStabilizer = _playerVCam.GetComponent<CameraStabilizer>();
-            _cameraStabilizer.CameraOwner = this;
+            //_cameraStabilizer = _playerVCam.GetComponent<CameraStabilizer>();
+            //_cameraStabilizer.CameraOwner = this;
             _playerVCam.Follow = _studentTransform;
             _playerVCam.Follow = _studentTransform;
             _playerVCamFramingTransposer = _playerVCam.GetCinemachineComponent<CinemachineFramingTransposer>();

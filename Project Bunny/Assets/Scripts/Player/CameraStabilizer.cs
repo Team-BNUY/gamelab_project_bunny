@@ -14,7 +14,6 @@ namespace Player
         
         protected override void PostPipelineStageCallback(CinemachineVirtualCameraBase vcam, CinemachineCore.Stage stage, ref CameraState state, float deltaTime)
         {
-            
             if (vcam == null) return;
             if (stage != CinemachineCore.Stage.Body || !CameraOwner.IsCameraDeadZone) return;
             
