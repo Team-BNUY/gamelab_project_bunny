@@ -60,11 +60,11 @@ namespace Networking
         {
             _customProperties = new Hashtable();
 
-            if (PhotonNetwork.LocalPlayer.CustomProperties != null)
+            /*if (PhotonNetwork.LocalPlayer.CustomProperties != null)
             { 
                 _customProperties = PhotonNetwork.LocalPlayer.CustomProperties;
             }
-            else _customProperties = new Hashtable();
+            else _customProperties = new Hashtable();*/
 
             InitialiseUI();
             SpawnPlayer();
@@ -262,7 +262,7 @@ namespace Networking
             }
         }
 
-        public void CorrectNumberOfJerseys()
+        /*public void CorrectNumberOfJerseys()
         {
             if (PhotonNetwork.LocalPlayer.GetPhotonTeam() == null) return;
             
@@ -274,7 +274,7 @@ namespace Networking
             {
                 RedTeamTable.instance.AddTeamCount_RPC();
             }
-        }
+        }*/
 
         private void SetAllPlayerSpawns() {
             NetworkStudentController[] students = FindObjectsOfType<NetworkStudentController>();
@@ -350,8 +350,8 @@ namespace Networking
         {
             player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"skinColorIndex"]);
         }
-        player.UpdateTeamColorVisuals();    
-        CorrectNumberOfJerseys();
+        player.RestoreTeamlessColors_RPC();    
+        //CorrectNumberOfJerseys();
         }
 
         public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
