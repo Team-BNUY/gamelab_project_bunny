@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using UnityEngine;
 using Cinemachine;
@@ -29,7 +28,8 @@ namespace Player
         [Header("Snowball")]
         [SerializeField] [Min(0)] private float _coolDownTime;
         private NetworkGiantRollball _playerRollball;
-        private float _coolDownTimer;
+        private float _cooldownTimer;
+        private bool _ready;
 
         public bool IsActive => _isActive;
 
@@ -106,7 +106,7 @@ namespace Player
             _currentStudentController.SetAnimatorParameter("UsingInteractable", false);
 
             // If already aiming while exiting, then just throw the current snowball and restore everything
-            _coolDownTimer = 0.0f;
+            _cooldownTimer = 0.0f;
 
             //Restore key variables to null/default value
             _player = null;
@@ -172,7 +172,7 @@ namespace Player
             _playerVCamSettings = null;
             _playerCharController.enabled = true;
             _playerCharController = null;
-            _coolDownTimer = 0f;
+            _cooldownTimer = 0f;
         }
         
         /// <summary>
@@ -180,13 +180,13 @@ namespace Player
         /// </summary>
         private void CannonRollBallUpdate()
         {
-            if (_playerRollball) return;
+            if (_playerRollball || _ready) return;
             
             //If there is no cannonball currently loaded, then increase the timer. 
-            _coolDownTimer += Time.deltaTime;
+            _cooldownTimer += Time.deltaTime;
 
             //If the cooldown timer is up, then spawn a new cannonball. If not, return. 
-            if (_coolDownTimer < _coolDownTime) return;
+            if (_cooldownTimer < _coolDownTime) return;
             
             SpawnRollBall();
         }
@@ -233,6 +233,7 @@ namespace Player
         {
             _currentRollball = PhotonNetwork.Instantiate(ArenaManager.Instance.GiantRollballPrefab.name, _rollballSeat.position, _rollballSeat.rotation);
             _playerRollball = _currentRollball.GetComponent<NetworkGiantRollball>();
+            _ready = true;
         }
 
         /// <summary>
@@ -247,6 +248,7 @@ namespace Player
             
             _currentRollball = null;
             _playerRollball = null;
+            _ready = false;
         }
 
         #endregion
@@ -263,10 +265,12 @@ namespace Player
             if (stream.IsWriting)
             {
                 stream.SendNext(_isActive);
+                stream.SendNext(_ready);
             }
             else
             {
                 _isActive = (bool) stream.ReceiveNext();
+                _ready = (bool) stream.ReceiveNext();
             }
         }
     }
