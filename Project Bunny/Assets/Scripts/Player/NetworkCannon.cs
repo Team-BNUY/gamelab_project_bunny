@@ -224,7 +224,6 @@ namespace Player
 
             _previousMouseToWorldDirection = Vector3.Slerp(_previousMouseToWorldDirection, targetDirection, Time.deltaTime * 8f);
             
-            _currentStudentController.SetAnimatorParameter("UsingInteractable", true);
             _currentStudentController.SetAnimatorParameter("RotationDirection", angle);
             
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, Time.deltaTime * _rotationSpeed);
