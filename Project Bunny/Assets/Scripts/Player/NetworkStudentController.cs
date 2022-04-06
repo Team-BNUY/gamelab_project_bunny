@@ -222,7 +222,7 @@ namespace Player
             SetNameText();
             UpdateTeamColorVisuals();
             PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
-            PhotonTeamsManager.PlayerLeftTeam += OnPlayerLeftTeam;
+            //PhotonTeamsManager.PlayerLeftTeam += OnPlayerLeftTeam;
             _isBeingControlled = false;
             _target = Vector3.zero;
             _startGame = false;
