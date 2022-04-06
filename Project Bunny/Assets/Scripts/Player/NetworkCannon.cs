@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -62,7 +60,7 @@ namespace Player
 
         private void Update()
         {
-            if (!_isActive || !_currentStudentController ||!_currentStudentController.photonView.IsMine) return;
+            if (!_isActive || !_currentStudentController || !_currentStudentController.photonView.IsMine) return;
 
             RotateSlingShot();
             CannonBallUpdate();
@@ -111,16 +109,6 @@ namespace Player
             if (_cannonBallObject == null && _coolDownTimer >= _coolDownTime)
             {
                 SpawnCannonBall();
-            }
-        }
-
-        private IEnumerator RotateSelf()
-        {
-            while (true)
-            {
-                transform.position += Vector3.up * Time.deltaTime;
-                
-                yield return null;
             }
         }
 
@@ -250,7 +238,8 @@ namespace Player
         private void SpawnCannonBall()
         {
             _cannonBallObject = PhotonNetwork.Instantiate(ArenaManager.Instance.CannonBall.name, _cannonBallSeat.position, _cannonBallSeat.rotation);
-            _cannonBallObject.transform.parent = _cannonBallSeat;
+            _cannonBallObject.transform.SetParent(_cannonBallSeat);
+            
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _cannonballCollection = _cannonBallObject.GetComponentsInChildren<NetworkSnowball>().ToList();
             _cannonballCollection.ForEach(c => c.SetSnowballThrower(_currentStudentController));
