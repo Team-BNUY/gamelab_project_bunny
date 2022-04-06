@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 using Player;
 using UnityEngine;
 
@@ -81,8 +82,6 @@ namespace Networking
                         ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.GLACE_FOLIE_KEY);
                     }
                 }
-
-                otherStudent.GetDamaged(_damage);
             }
 
             if (otherStudent && otherStudent == _studentThrower) return;
