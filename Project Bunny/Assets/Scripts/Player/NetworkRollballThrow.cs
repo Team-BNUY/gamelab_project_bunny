@@ -115,12 +115,17 @@ namespace Player
 
 
             //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
-            _playerVCamSettings.m_CameraDistance = 25;
+            if (_playerVCamSettings)
+            {
+                _playerVCamSettings.m_CameraDistance = 25;
+                _playerVCamSettings = null;
+            }
 
-            //Restore key variables to null/default value
-            _playerVCamSettings = null;
-            _playerCharController.enabled = true;
-            _playerCharController = null;
+            if (_playerCharController)
+            {
+                _playerCharController.enabled = true;
+                _playerCharController = null;
+            }
         }
 
         /// <summary>
