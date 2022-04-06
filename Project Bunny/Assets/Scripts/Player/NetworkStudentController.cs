@@ -141,6 +141,7 @@ namespace Player
         public Camera PlayerCamera => _playerCamera;
         public Transform PlayerModel => _playerModel;
         public Vector2 MousePosition => _mousePosition;
+        public Animator Animator => _animator;
         public INetworkInteractable CurrentInteractable
         {
             get => _currentInteractable;
@@ -572,8 +573,11 @@ namespace Player
                 _playerModel.gameObject.SetActive(false);
 
                 // Resets the current interactable
-                _currentInteractable?.Exit();
-                _currentInteractable = null;
+                if (photonView.IsMine)
+                {
+                    _currentInteractable?.Exit();
+                    _currentInteractable = null;
+                }
 
                 // Resetting throwing settings
                 if (_hasSnowball && _playerSnowball != null)
@@ -632,7 +636,7 @@ namespace Player
             _playerModel.gameObject.SetActive(true);
             _worldUI.gameObject.SetActive(true);
             _currentHealth = _maxHealth;
-            _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(this.TeamID);
+            _studentTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(TeamID);
             _characterController.enabled = true;
             _isDead = false;
             photonView.RPC(nameof(ResetHeartsVisibilityRPC), RpcTarget.All);
@@ -815,7 +819,7 @@ namespace Player
 
             _currentTriggerable?.Trigger(this);
 
-            if (_hasSnowball) return; //Don't interact with interactables if the player already has a snowball. 
+            if (_hasSnowball || _isDead) return; //Don't interact with interactables if the player already has a snowball. 
 
             // TODO: Interact with other items here
             // When you press 'E', it checks to see if there is an
