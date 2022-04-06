@@ -6771,7 +6771,7 @@ MonoBehaviour:
   - {fileID: 2137605113}
   - {fileID: 689303241}
   _teacherVirtualCamera: {fileID: 488402739}
-  _teacherSpawnTime: 10
+  _teacherSpawnTime: 120
   _teacherPreparationTime: 4
   timerDisplay: {fileID: 76301253}
   hasTimerStarted: 0
@@ -22137,7 +22137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7597243257626280, guid: 9f2cd2d667545cb44aeb032937595ee9, type: 3}
       propertyPath: _numberOfSnowballs
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3808900633230351856, guid: 9f2cd2d667545cb44aeb032937595ee9, type: 3}
       propertyPath: m_Name
