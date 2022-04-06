@@ -1230,13 +1230,14 @@ namespace Player
         private INetworkInteractable ReturnNearestInteractable()
         {
             INetworkInteractable interactable = null;
-            var maxColliders = 5; //maximum number of objects near to the player that can be looped through
+            var maxColliders = 10; //maximum number of objects near to the player that can be looped through
             var hitColliders = new Collider[maxColliders];
-            var numColliders = Physics.OverlapSphereNonAlloc(_studentTransform.position, 1f, hitColliders);
+            var numColliders = Physics.OverlapSphereNonAlloc(_studentTransform.position, 1.5f, hitColliders);
+            Debug.Log(numColliders);
 
             if (numColliders < 1) return null;
 
-            //Loop through 3 nearest objects and check if any of them are interactables that implement IInteractable
+            //Loop through 10 nearest objects and check if any of them are interactables that implement IInteractable
             for (var i = 0; i < numColliders; i++)
             {
                 if (hitColliders[i].gameObject.TryGetComponent<INetworkInteractable>(out var interactableObject))
