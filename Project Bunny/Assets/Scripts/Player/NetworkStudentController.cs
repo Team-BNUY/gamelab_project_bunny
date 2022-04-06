@@ -29,6 +29,7 @@ namespace Player
         private CinemachineVirtualCamera _playerVCam;
         private CharacterController _characterController;
         private CinemachineFramingTransposer _playerVCamFramingTransposer;
+        private CameraStabilizer _cameraStabilizer;
 
         [Header("Clothing")]
         [SerializeField] private GameObject _teamShirt;
@@ -115,6 +116,7 @@ namespace Player
         private bool _isKicking;
         private bool _isJerseyNull;
         private bool _usingCannon;
+        private bool _isInCameraDeadZone; // local, since camera is local
 
         // List of readonly files. No need for them to have a _ prefix
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
@@ -137,6 +139,7 @@ namespace Player
         public Transform PlayerHand => _playerHand;
         public bool HasSnowball => _hasSnowball;
         public bool IsDead => _isDead;
+        public bool IsCameraDeadZone => _isInCameraDeadZone;
         public CinemachineFramingTransposer PlayerVCamFramingTransposer => _playerVCamFramingTransposer;
         public Collider PlayerCollider => _playerCollider;
         public Camera PlayerCamera => _playerCamera;
@@ -303,6 +306,11 @@ namespace Player
 
         private void OnTriggerEnter(Collider other)
         {
+            if (other.gameObject.tag.Equals("CameraDeadZone"))
+            {
+                _isInCameraDeadZone = true;
+            }
+            
             if (other.TryGetComponent(out INetworkTriggerable triggerable))
             {
                 _currentTriggerable ??= triggerable;
@@ -315,6 +323,11 @@ namespace Player
 
         private void OnTriggerExit(Collider other)
         {
+            if (other.gameObject.tag.Equals("CameraDeadZone"))
+            {
+                _isInCameraDeadZone = false;
+            }
+            
             if (other.TryGetComponent(out INetworkTriggerable triggerable) && _currentTriggerable == triggerable)
             {
                 if (photonView.IsMine)
@@ -1185,6 +1198,8 @@ namespace Player
         {
             _playerVCam = cam.GetComponentInChildren<CinemachineVirtualCamera>();
             _playerCamera = cam.GetComponentInChildren<Camera>();
+            _cameraStabilizer = cam.GetComponent<CameraStabilizer>();
+            _cameraStabilizer.CameraOwner = this;
             _playerVCam.Follow = _studentTransform;
             _playerVCam.Follow = _studentTransform;
             _playerVCamFramingTransposer = _playerVCam.GetCinemachineComponent<CinemachineFramingTransposer>();
