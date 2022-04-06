@@ -34,6 +34,7 @@ public class ScoreManager : MonoBehaviour
     public int winningTeamCode = 0;
 
     public string[] scores = new string[8];
+    public int[] scoreValues = new int[8];
     // rebel - 0, bully - 1, hardWorker - 2, teachersPet - 3, office - 4, glaceFolie - 5, shoveler - 6, avalance - 7
     public string rebel = string.Empty;
     public string bully = string.Empty;
@@ -43,6 +44,7 @@ public class ScoreManager : MonoBehaviour
     public string glaceFolie = string.Empty;
     public string shoveler = string.Empty;
     public string avalanche = string.Empty;
+
 
     public PhotonView _view;
 
@@ -92,8 +94,9 @@ public class ScoreManager : MonoBehaviour
                 if (hits > mostHits)
                 {
                     mostHits = hits;
-                    hardWorker = player.NickName;
                     scores[2] = player.NickName;
+                    this.hardWorker = player.NickName;
+                    scoreValues[2] = mostHits;
                 }
             }
 
@@ -105,8 +108,9 @@ public class ScoreManager : MonoBehaviour
                 if (throws < leastThrows)
                 {
                     leastThrows = throws;
-                    teachersPet = player.NickName;
                     scores[3] = player.NickName;
+                    this.teachersPet = player.NickName;
+                    scoreValues[3] = leastThrows;
                 }
             }
 
@@ -118,8 +122,9 @@ public class ScoreManager : MonoBehaviour
                 if (hits > mostBullyHits)
                 {
                     mostBullyHits = hits;
-                    bully = player.NickName;
                     scores[1] = player.NickName;
+                    this.bully = player.NickName;
+                    scoreValues[1] = mostBullyHits;
                 }
             }
 
@@ -131,8 +136,9 @@ public class ScoreManager : MonoBehaviour
                 if (hits > mostRascalHits)
                 {
                     mostRascalHits = hits;
-                    rebel = player.NickName;
                     scores[0] = player.NickName;
+                    this.rebel = player.NickName; 
+                    scoreValues[0] = mostRascalHits;
                 }
             }
 
@@ -143,9 +149,10 @@ public class ScoreManager : MonoBehaviour
 
                 if (caught > mostCaught)
                 {
-                    mostRascalHits = mostCaught;
-                    meetMeInMyOffice = player.NickName;
+                    mostCaught = caught;
                     scores[4] = player.NickName;
+                    this.meetMeInMyOffice = player.NickName;
+                    scoreValues[4] = mostCaught;
                 }
             }
 
@@ -157,8 +164,9 @@ public class ScoreManager : MonoBehaviour
                 if (iceHits > mostIceHits)
                 {
                     mostIceHits = iceHits;
-                    glaceFolie = player.NickName;
                     scores[5] = player.NickName;
+                    this.glaceFolie = player.NickName;
+                    scoreValues[6] = mostIceHits;
                 }
             }
 
@@ -169,9 +177,10 @@ public class ScoreManager : MonoBehaviour
 
                 if (snowballsDug > mostSnowballsDug)
                 {
-                    mostIceHits = snowballsDug;
-                    shoveler = player.NickName;
+                    mostSnowballsDug = snowballsDug;
                     scores[6] = player.NickName;
+                    this.shoveler = player.NickName;
+                    scoreValues[6] = mostSnowballsDug;
                 }
             }
 
@@ -183,8 +192,9 @@ public class ScoreManager : MonoBehaviour
                 if (rollballHits > mostRollballsHits)
                 {
                     mostRollballsHits = rollballHits;
-                    avalanche = player.NickName;
                     scores[7] = player.NickName;
+                    this.avalanche = player.NickName;
+                    scoreValues[7] = mostRollballsHits;
                 }
             }
         }
@@ -196,7 +206,7 @@ public class ScoreManager : MonoBehaviour
         else
             Debug.Log("how do we handle exact ties? TO BE SOLVED LATER");
 
-        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rebel, hardWorker, teachersPet, glaceFolie, shoveler, avalanche, meetMeInMyOffice);
+        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rebel, hardWorker, teachersPet, glaceFolie, shoveler, avalanche, meetMeInMyOffice, (object)scoreValues);
     }
 
     public void IncrementPropertyCounter(Photon.Realtime.Player player, string code)
@@ -219,11 +229,6 @@ public class ScoreManager : MonoBehaviour
     {
         ExitGames.Client.Photon.Hashtable props = PhotonNetwork.LocalPlayer.CustomProperties;
 
-        this.glaceFolie = string.Empty;
-        this.shoveler = string.Empty;
-        this.avalanche = string.Empty;
-        this.meetMeInMyOffice = string.Empty;
-        this.scores = new string[8];
         string[] keys = new string[] { DEATHS_KEY, REBEL_KEY, BULLY_KEY, HARD_WORKER_KEY, TEACHERS_PET_KEY, MEET_IN_OFFICE_KEY, GLACE_FOLIE_KEY, SHOVELER_KEY, AVALANCHE_KEY };
 
         foreach (string key in keys)
@@ -251,6 +256,7 @@ public class ScoreManager : MonoBehaviour
         this.avalanche = string.Empty;
         this.meetMeInMyOffice = string.Empty;
         this.scores = new string[8];
+        this.scoreValues = new int[8];
     }
 
     #endregion
@@ -258,7 +264,7 @@ public class ScoreManager : MonoBehaviour
     #region RPC
 
     [PunRPC]
-    public void SyncMatchInformation(bool isFirstMatch, int winningTeamCode, string bully, string rebel, string hardWorker, string teachersPet, string glaceFolie, string shoveler, string avalanche, string meetMeInMyOffice)
+    public void SyncMatchInformation(bool isFirstMatch, int winningTeamCode, string bully, string rebel, string hardWorker, string teachersPet, string glaceFolie, string shoveler, string avalanche, string meetMeInMyOffice, int[] scoreVals)
     {
         this.isFirstMatch = isFirstMatch;
         this.winningTeamCode = winningTeamCode;
@@ -271,6 +277,7 @@ public class ScoreManager : MonoBehaviour
         this.avalanche = avalanche;
         this.meetMeInMyOffice = meetMeInMyOffice;
         this.scores = new string[] { rebel, bully, hardWorker, teachersPet, meetMeInMyOffice, glaceFolie, shoveler, avalanche };
+        this.scoreValues = scoreVals;
     }
     #endregion
 }
