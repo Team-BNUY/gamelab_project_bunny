@@ -35,8 +35,9 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _snowballBurst;
     [SerializeField] private GameObject _giantRollballPrefab;
     [SerializeField] private GameObject _giantRollballBurst;
-    [SerializeField] private GameObject _cannonBall;
     [SerializeField] private GameObject _snowmanPrefab;
+    [SerializeField] private NetworkCannon _cannon;
+    [SerializeField] private NetworkCannonBalls _cannonBall;
 
     [Header("AI")]
     [SerializeField] private LayerMask _studentLayer;
@@ -76,7 +77,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     public GameObject SnowballBurst => _snowballBurst;
     public GameObject GiantRollballBurst => _giantRollballBurst;
     public GameObject GiantRollballPrefab => _giantRollballPrefab;
-    public GameObject CannonBall => _cannonBall;
+    public NetworkCannon Cannon => _cannon;
+    public NetworkCannonBalls CannonBall => _cannonBall;
     public GameObject SnowmanPrefab => _snowmanPrefab;
     public NetworkStudentController[] AllPlayers => _allPlayers;
     public List<Gang> Gangs => _gangs;
