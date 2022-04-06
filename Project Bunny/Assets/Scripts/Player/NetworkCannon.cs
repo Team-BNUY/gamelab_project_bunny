@@ -134,7 +134,8 @@ namespace Player
             }
             else
             {
-                _cannonballCollection?.Clear();
+                _cannonballCollection.ForEach(b => b.DestroySnowball());
+                _cannonballCollection.Clear();
             }
             
             _coolDownTimer = 0.0f;
@@ -274,7 +275,7 @@ namespace Player
             _throwForce = _minForce;
             _hasSnowball = false;
 
-            if (_cannonballCollection != null)
+            if (_cannonballCollection.Count != 0)
             {
                 foreach (var cannonBall in _cannonballCollection)
                 {
@@ -287,8 +288,7 @@ namespace Player
                 _cannonBallSeat.transform.localPosition = _initialSnowballSeatPosition;
             }
             
-            _cannonballCollection?.Clear();
-            _cannonballCollection = null;
+            _cannonballCollection.Clear();
         }
 
         #endregion
