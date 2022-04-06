@@ -107,7 +107,7 @@ namespace Player
             }
 
             //If there is no cannonball already on the slingshot, then spawn one. 
-            if (_cannonBallObject == null && _coolDownTimer >= _cooldownTime)
+            if (_hasSnowball && _coolDownTimer >= _cooldownTime)
             {
                 SpawnCannonBall();
             }
@@ -134,12 +134,9 @@ namespace Player
             }
             else
             {
-                if (_cannonBallObject != null)
-                {
-                    PhotonNetwork.Destroy(_cannonBallObject);
-                }
                 _cannonballCollection?.Clear();
             }
+            
             _coolDownTimer = 0.0f;
 
             //Restore key variables to null/default value
@@ -289,12 +286,7 @@ namespace Player
                 _bone.transform.localPosition = _initialBonePosition;
                 _cannonBallSeat.transform.localPosition = _initialSnowballSeatPosition;
             }
-
-            if (_cannonBallObject != null)
-            {
-                PhotonNetwork.Destroy(_cannonBallObject);
-            }
-            _cannonBallObject = null;
+            
             _cannonballCollection?.Clear();
             _cannonballCollection = null;
         }
