@@ -58,19 +58,19 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private float _teacherSpawnTime;
     [SerializeField] private float _teacherPreparationTime;
     [SerializeField] private TMP_Text timerDisplay;
-    [SerializeField] private bool hasTimerStarted = false;
+    [SerializeField] private bool hasTimerStarted;
     [SerializeField] private float snowmanTimer;
-    private int _timeElapsed = 0;
-    private int _oldTimeElapsed = 0;
+    private int _timeElapsed;
+    private int _oldTimeElapsed;
     private double _startTime;
-    private bool _returnToLobbyHasRun = false;
+    private bool _returnToLobbyHasRun;
     private const float TEACHER_CAMERA_PAN_TIME = 4f;
     private const int TIMER_DURATION = 1 * 60;
     private const string START_TIME_KEY = "StartTime";
     private const string LOBBY_SCENE_NAME = "2-Lobby";
     private const string ROOM_SCENE_NAME = "3-Room";
     private const string READY_KEY = "isready";
-    private int readyPlayers = 0;
+    private int readyPlayers;
 
     private NetworkStudentController _localStudentController;
 
@@ -139,21 +139,22 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private void UpdateTimer()
     {
         if (!hasTimerStarted) return;
+        
         _oldTimeElapsed = _timeElapsed;
-        this._timeElapsed = (int)(PhotonNetwork.Time - _startTime);
+        _timeElapsed = (int)(PhotonNetwork.Time - _startTime);
 
         if (_timeElapsed > _oldTimeElapsed)
         {
-            int timeLeft = TIMER_DURATION - _timeElapsed;
+            var timeLeft = TIMER_DURATION - _timeElapsed;
 
             //Integer increment, update UI
             if (timeLeft > 60)
             {
-                this.timerDisplay.text = $"{timeLeft / 60}:{(timeLeft % 60).ToString("00")}";
+                timerDisplay.text = $"{timeLeft / 60}:{(timeLeft % 60).ToString("00")}";
             }
             else
             {
-                this.timerDisplay.text = timeLeft.ToString();
+                timerDisplay.text = timeLeft.ToString();
             }
         }
 
@@ -180,7 +181,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private void SetIsReady(bool isReady)
     {
-        ExitGames.Client.Photon.Hashtable props = PhotonNetwork.LocalPlayer.CustomProperties;
+        Hashtable props = PhotonNetwork.LocalPlayer.CustomProperties;
         if (props.ContainsKey(READY_KEY))
         {
             props[READY_KEY] = isReady;
@@ -191,27 +192,25 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         }
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
     }
-
-
+    
     private void ReturnToLobby()
     {
         if (_returnToLobbyHasRun) return;
         _returnToLobbyHasRun = true;
-
+        
         PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
 
-        if (PhotonNetwork.IsMasterClient)
-        {
-            ScoreManager.Instance.CalculateScore();
-            PhotonNetwork.CurrentRoom.IsOpen = true;
-            PhotonNetwork.CurrentRoom.IsVisible = true;
-            PhotonNetwork.LoadLevel(ROOM_SCENE_NAME);
-        }
+        if (!PhotonNetwork.IsMasterClient) return;
+        
+        ScoreManager.Instance.CalculateScore();
+        PhotonNetwork.CurrentRoom.IsOpen = true;
+        PhotonNetwork.CurrentRoom.IsVisible = true;
+        PhotonNetwork.LoadLevel(ROOM_SCENE_NAME);
     }
 
     private void StartTimer()
     {
-        this.timerDisplay.text = $"{(TIMER_DURATION - _timeElapsed) / 60}:{((TIMER_DURATION - _timeElapsed) % 60).ToString("00")}";
+        timerDisplay.text = $"{(TIMER_DURATION - _timeElapsed) / 60}:{((TIMER_DURATION - _timeElapsed) % 60).ToString("00")}";
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -329,27 +328,27 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LocalPlayer.CustomProperties = emptyTable;*/
 
         if (scoreManager != null)
-            GameObject.Destroy(scoreManager.gameObject);
+            Destroy(scoreManager.gameObject);
 
         if (teamsManager != null)
-            GameObject.Destroy(teamsManager.gameObject);
+            Destroy(teamsManager.gameObject);
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(LOBBY_SCENE_NAME);
     }
 
     public Vector3 GetPlayerSpawnPoint(byte TeamID)
     {
-        float spawnRadius = 1f;
+        var spawnRadius = 1f;
         float randx, randz;
         randx = Random.Range(-spawnRadius, spawnRadius);
         randz = Random.Range(-spawnRadius, spawnRadius);
 
-        if (TeamID == 1)
-            return _blueSpawns[0].position + new Vector3(randx, 0, randz);
-        else if (TeamID == 2)
-            return _redSpawns[0].position + new Vector3(randx, 0, randz);
-        else
-            throw new NullReferenceException("INVALID TEAM ID: " + TeamID);
+        return TeamID switch
+        {
+            1 => _blueSpawns[0].position + new Vector3(randx, 0, randz),
+            2 => _redSpawns[0].position + new Vector3(randx, 0, randz),
+            _ => throw new NullReferenceException("INVALID TEAM ID: " + TeamID)
+        };
     }
 
     private void GetAllPlayers()
