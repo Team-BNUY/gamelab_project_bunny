@@ -63,7 +63,6 @@ namespace Player
         /// </summary>
         public void Enter(NetworkStudentController currentStudentController)
         {
-            Debug.Log(!_ready + " VS " + _isActive + " VS " + currentStudentController.HasSnowball);
             if (!_ready || _isActive || currentStudentController.HasSnowball) return;
             
             //Initialize key variables
@@ -103,6 +102,8 @@ namespace Player
             }
             
             // Idle animation
+            _currentStudentController.Animator.applyRootMotion = false;
+            _currentStudentController.Animator.transform.localPosition = Vector3.zero;
             _currentStudentController.SetAnimatorParameter("InteractIdle", false);
             _currentStudentController.SetAnimatorParameter("UsingInteractable", false);
 
@@ -169,6 +170,8 @@ namespace Player
             _player = null;
             _currentStudentController.CurrentInteractable = null;
             _currentStudentController.UsingCannon = false;
+            _currentStudentController.Animator.applyRootMotion = false;
+            _currentStudentController.Animator.transform.localPosition = Vector3.zero;
             photonView.RPC(nameof(SetActive), RpcTarget.All, false, default(string));
             
             _cooldownTimer = 0f;
