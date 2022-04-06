@@ -114,6 +114,7 @@ namespace Player
         private bool _isSliding;
         private bool _isKicking;
         private bool _isJerseyNull;
+        private bool _usingCannon;
 
         // List of readonly files. No need for them to have a _ prefix
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
@@ -152,7 +153,12 @@ namespace Player
             get => _isKicking;
             set => _isKicking = value;
         }
-        public bool UsingCannon { get; set; }
+
+        public bool UsingCannon
+        {
+            get => _usingCannon;
+            set => _usingCannon = value;
+        }
 
         [Header("Network")]
         [SerializeField] private TMPro.TMP_Text _nickNameText;
@@ -1286,6 +1292,7 @@ namespace Player
                 stream.SendNext(_isJerseyNull);
                 stream.SendNext(_target);
                 stream.SendNext(_isKicking);
+                stream.SendNext(_usingCannon);
             }
             else
             {
@@ -1307,6 +1314,7 @@ namespace Player
                 _isJerseyNull = (bool) stream.ReceiveNext();
                 _target = (Vector3) stream.ReceiveNext();
                 _isKicking = (bool) stream.ReceiveNext();
+                _usingCannon = (bool) stream.ReceiveNext();
             }
         }
 
