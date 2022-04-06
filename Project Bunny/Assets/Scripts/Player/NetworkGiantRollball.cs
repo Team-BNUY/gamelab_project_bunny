@@ -80,8 +80,7 @@ namespace Player
             photonView.RPC(nameof(SetPusher), RpcTarget.All, pusher.PlayerID);
             Invoke(nameof(StopKicking), 0.5f);
             
-            photonView.RPC(nameof(DisableIsKinematic), RpcTarget.All);
-            _canDamage = true;
+            photonView.RPC(nameof(AllowToDamage), RpcTarget.All);
 
             var distance = _snowballTransform.position - pusher.transform.position;
             distance = distance.normalized;
@@ -95,11 +94,12 @@ namespace Player
         }
 
         [PunRPC]
-        public void DisableIsKinematic()
+        public void AllowToDamage()
         {
             _snowballRigidbody.isKinematic = false;
+            _canDamage = true;
         }
-        
+
         private void StopKicking()
         {
             _pusher.IsKicking = false;
