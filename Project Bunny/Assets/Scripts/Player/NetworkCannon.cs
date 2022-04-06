@@ -33,7 +33,8 @@ namespace Player
         private Vector3 _previousMouseToWorldDirection;
 
         [Header("Snowball")]
-        [SerializeField] [Min(0)] private float _coolDownTime;
+        [SerializeField] [Min(1)] private int _numberOfSnowballs;
+        [SerializeField] [Min(0)] private float _cooldownTime;
         [SerializeField] private float _minForce, _maxForce;
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
         [SerializeField] private float _minAngle, _maxAngle;
@@ -106,7 +107,7 @@ namespace Player
             }
 
             //If there is no cannonball already on the slingshot, then spawn one. 
-            if (_cannonBallObject == null && _coolDownTimer >= _coolDownTime)
+            if (_cannonBallObject == null && _coolDownTimer >= _cooldownTime)
             {
                 SpawnCannonBall();
             }
@@ -192,7 +193,7 @@ namespace Player
             }
 
             //If the cooldown timer is up, then spawn a new cannonball. If not, return. 
-            if (_coolDownTimer < _coolDownTime) return;
+            if (_coolDownTimer < _cooldownTime) return;
 
             SpawnCannonBall();
         }
@@ -236,11 +237,13 @@ namespace Player
         /// </summary>
         private void SpawnCannonBall()
         {
-            _cannonBallObject = PhotonNetwork.Instantiate(ArenaManager.Instance.CannonBall.name, _cannonBallSeat.position, _cannonBallSeat.rotation);
-            _cannonBallObject.transform.SetParent(_cannonBallSeat);
+            for (var i = 0; i < _numberOfSnowballs; i++)
+            {
+                var cannonBall = PhotonNetwork.Instantiate(ArenaManager.Instance.CannonBall.name, _cannonBallSeat.position, _cannonBallSeat.rotation);
+                cannonBall.transform.SetParent(_cannonBallSeat);
+                _cannonballCollection.Add(cannonBall.GetComponent<NetworkSnowball>());
+            }
             
-            // TODO: Object pooling to avoid using GetComponent at Instantiation
-            _cannonballCollection = _cannonBallObject.GetComponentsInChildren<NetworkSnowball>().ToList();
             _cannonballCollection.ForEach(c => c.SetSnowballThrower(_currentStudentController));
             _hasSnowball = true;
             _coolDownTimer = 0f;
