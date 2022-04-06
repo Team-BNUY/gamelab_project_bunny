@@ -214,7 +214,7 @@ public class ScoreManager : MonoBehaviour
         var blueDeaths = 0;
         var redDeaths = 0;
         
-        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+        foreach (var player in PhotonNetwork.PlayerList)
         {
             //WIN CONDITION
             if (!player.CustomProperties.ContainsKey(DEATHS_KEY)) continue;
@@ -249,7 +249,7 @@ public class ScoreManager : MonoBehaviour
             //Debug.Log("how do we handle exact ties? TO BE SOLVED LATER");
         }
 
-        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, winningTeamCode);
+        _view.RPC(nameof(SyncLeadingTeamScore), RpcTarget.AllBuffered, winningTeamCode);
         return winningTeamCode;
     }
     
@@ -309,26 +309,25 @@ public class ScoreManager : MonoBehaviour
     #region RPC
 
     [PunRPC]
-    public void SyncMatchInformation(bool isFirstMatch, int winningTeamCode, string bully, string rebel, string hardWorker, string teachersPet, string glaceFolie, string shoveler, string avalanche, string meetMeInMyOffice, int[] scoreVals)
+    public void SyncMatchInformation(bool isFirst, int winningTeam, string bullyGuy, string rebelGuy, string hardWorkerGuy, string teacherPet, string glaceFolieGuy, string shovelerGuy, string avalancheGuy, string meetMeInMyOfficeGuy)
     {
-        this.isFirstMatch = isFirstMatch;
-        this.winningTeamCode = winningTeamCode;
-        this.bully = bully;
-        this.rebel = rebel;
-        this.hardWorker = hardWorker;
-        this.teachersPet = teachersPet;
-        this.glaceFolie = glaceFolie;
-        this.shoveler = shoveler;
-        this.avalanche = avalanche;
-        this.meetMeInMyOffice = meetMeInMyOffice;
-        this.scores = new string[] { rebel, bully, hardWorker, teachersPet, meetMeInMyOffice, glaceFolie, shoveler, avalanche };
-        this.scoreValues = scoreVals;
+        isFirstMatch = isFirst;
+        winningTeamCode = winningTeam;
+        bully = bullyGuy;
+        rebel = rebelGuy;
+        hardWorker = hardWorkerGuy;
+        teachersPet = teacherPet;
+        glaceFolie = glaceFolieGuy;
+        shoveler = shovelerGuy;
+        avalanche = avalancheGuy;
+        meetMeInMyOffice = meetMeInMyOfficeGuy;
+        scores = new [] { rebelGuy, bullyGuy, hardWorkerGuy, teacherPet, meetMeInMyOfficeGuy, glaceFolieGuy, shovelerGuy, avalancheGuy };
     }
 
     [PunRPC]
     public void SyncLeadingTeamScore(int leadingTeamCode)
     {
-        this.winningTeamCode = leadingTeamCode;
+        winningTeamCode = leadingTeamCode;
     }
     #endregion
 }

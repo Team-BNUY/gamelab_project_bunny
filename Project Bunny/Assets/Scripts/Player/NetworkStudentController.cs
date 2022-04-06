@@ -888,6 +888,12 @@ namespace Player
             _animator.SetTrigger(ThrowSnowball);
         }
 
+        [PunRPC]
+        private void SetLeadingTeamShirtRPC()
+        {
+            
+        }
+
         /// <summary>
         /// Temporary functionality for updating visuals like mesh object and name text colors
         /// Functionality will still be kept for later, but more refined
