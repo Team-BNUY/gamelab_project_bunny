@@ -170,10 +170,10 @@ namespace Player
             _playerVCamSettings.m_CameraDistance = 25;
 
             //Restore key variables to null/default value
+            _cooldownTimer = 0f;
             _playerVCamSettings = null;
             _playerCharController.enabled = true;
             _playerCharController = null;
-            _cooldownTimer = 0f;
         }
         
         /// <summary>
@@ -181,10 +181,8 @@ namespace Player
         /// </summary>
         private void CannonRollBallUpdate()
         {
-            if (_ready || !PhotonNetwork.IsMasterClient) return;
+            if (_ready || _isActive || !PhotonNetwork.IsMasterClient) return;
 
-            Debug.Log("Increasing timer to: " + _cooldownTimer);
-            
             //If there is no cannonball currently loaded, then increase the timer. 
             _cooldownTimer += Time.deltaTime;
 
@@ -250,6 +248,7 @@ namespace Player
                 var playerRollball = FindObjectsOfType<NetworkGiantRollball>().FirstOrDefault(b => b.ID == _id);
                 if (playerRollball)
                 {
+                    _cooldownTimer = 0f;
                     playerRollball.photonView.TransferOwnership(_currentStudentController.photonView.Owner);
                     playerRollball.PushGiantRollball(_currentStudentController);
                 }
