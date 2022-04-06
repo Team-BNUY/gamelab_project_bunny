@@ -170,15 +170,22 @@ namespace Player
             _currentStudentController.CurrentInteractable = null;
             _currentStudentController.UsingCannon = false;
             photonView.RPC(nameof(SetActive), RpcTarget.All, false, default(string));
-                
+            
+            _cooldownTimer = 0f;
+
             //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
-            _playerVCamSettings.m_CameraDistance = 25;
+            if (_playerVCamSettings)
+            {
+                _playerVCamSettings.m_CameraDistance = 25;
+                _playerVCamSettings = null;
+            }
 
             //Restore key variables to null/default value
-            _cooldownTimer = 0f;
-            _playerVCamSettings = null;
-            _playerCharController.enabled = true;
-            _playerCharController = null;
+            if (_playerCharController)
+            {
+                _playerCharController.enabled = true;
+                _playerCharController = null;
+            }
         }
         
         /// <summary>
@@ -238,7 +245,7 @@ namespace Player
         {
             var currentRollball = PhotonNetwork.Instantiate(ArenaManager.Instance.GiantRollballPrefab.name, _rollballSeat.position, _rollballSeat.rotation);
             currentRollball.GetComponent<NetworkGiantRollball>().ID = _id;
-            _ready = true;
+            photonView.RPC(nameof(ReadyUp), RpcTarget.All, true);
             _cooldownTimer = 0f;
         }
 
@@ -258,7 +265,7 @@ namespace Player
                 }
             }
             
-            _ready = false;
+            photonView.RPC(nameof(ReadyUp), RpcTarget.All, false);
         }
 
         #endregion
@@ -268,6 +275,11 @@ namespace Player
         {
             _isActive = value;
             _currentStudentController = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == userId);
+        }
+
+        public void ReadyUp(bool value)
+        {
+            _ready = value;
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
