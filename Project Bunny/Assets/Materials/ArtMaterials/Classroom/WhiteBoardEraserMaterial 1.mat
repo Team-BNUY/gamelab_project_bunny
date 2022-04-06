@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: LockerBootsMaterial
+  m_Name: WhiteBoardEraserMaterial 1
   m_Shader: {fileID: 4800000, guid: 2a230514c860643f69b6a4d1871d3825, type: 3}
   m_ShaderKeywords: _DETAILMAPBLENDINGMODE_MULTIPLY _TEXTUREBLENDINGMODE_MULTIPLY
     _UNITYSHADOW_OCCLUSION
@@ -27,7 +27,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: d6eb6fcc655efce4dba368abbbca4ceb, type: 3}
+        m_Texture: {fileID: 2800000, guid: 056cf1a972e3691489be3e7d0ad06e57, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -55,7 +55,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GradientRamp:
-        m_Texture: {fileID: 4958055834723787612}
+        m_Texture: {fileID: 4414329996358765445}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -118,7 +118,7 @@ Material:
     - _GradientCenterY: 0
     - _GradientEnabled: 0
     - _GradientSize: 10
-    - _LightContribution: 1
+    - _LightContribution: 0
     - _LightmapDirectionPitch: 0
     - _LightmapDirectionYaw: 0
     - _Metallic: 0
@@ -151,7 +151,7 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorGradient: {r: 0.85023, g: 0.85034, b: 0.8504499, a: 0.85056}
-    - _DetailMapColor: {r: 1, g: 1, b: 1, a: 1}
+    - _DetailMapColor: {r: 0.745283, g: 0.35436097, b: 0.35436097, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FlatRimColor: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
     - _FlatSpecularColor: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
@@ -161,13 +161,13 @@ Material:
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
---- !u!28 &4958055834723787612
+--- !u!28 &4414329996358765445
 Texture2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: z__GradientRampTex{"mode":0,"colorKeys":[{"color":{"r":0.838905930519104,"g":0.36674973368644717,"b":0.9622641801834106,"a":1.0},"time":0.1764705926179886},{"color":{"r":1.0,"g":1.0,"b":1.0,"a":1.0},"time":0.9147020578384399}],"alphaKeys":[{"alpha":1.0,"time":0.0},{"alpha":1.0,"time":1.0}]}
+  m_Name: z__GradientRampTex{"mode":0,"colorKeys":[{"color":{"r":0.7207547426223755,"g":1.0,"b":0.7387210726737976,"a":1.0},"time":0.1764705926179886},{"color":{"r":1.0,"g":1.0,"b":1.0,"a":1.0},"time":0.9147020578384399}],"alphaKeys":[{"alpha":1.0,"time":0.0},{"alpha":1.0,"time":1.0}]}
   m_ImageContentsHash:
     serializedVersion: 2
     Hash: 00000000000000000000000000000000
@@ -202,13 +202,13 @@ Texture2D:
   m_ColorSpace: 1
   m_PlatformBlob: 
   image data: 1024
-  _typelessdata: ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ef5ffd65ff5ffd760f6ffd761f6ffd762f6ffd763f6ffd764f6ffd864f6ffd865f6ffd866f6ffd867f6ffd968f6ffd969f6ffd96af6ffd96af6ffd96bf6ffda6cf6ffda6df6ffda6ef6ffda6ff6ffdb70f6ffdb70f7ffdb71f7ffdb72f7ffdb73f7ffdc74f7ffdc75f7ffdc76f7ffdc76f7ffdc77f7ffdd78f7ffdd79f7ffdd7af7ffdd7bf7ffde7cf7ffde7cf7ffde7df7ffde7ef7ffde7ff7ffdf80f7ffdf81f7ffdf82f8ffdf82f8ffe083f8ffe084f8ffe085f8ffe086f8ffe087f8ffe188f8ffe188f8ffe189f8ffe18af8ffe18bf8ffe28cf8ffe28df8ffe28ef8ffe28ef8ffe38ff8ffe390f8ffe391f8ffe392f8ffe393f9ffe494f9ffe494f9ffe495f9ffe496f9ffe597f9ffe598f9ffe599f9ffe59af9ffe59af9ffe69bf9ffe69cf9ffe69df9ffe69ef9ffe79ff9ffe7a0f9ffe7a0f9ffe7a1f9ffe7a2f9ffe8a3faffe8a4faffe8a5faffe8a6faffe8a6faffe9a7faffe9a8faffe9a9faffe9aafaffeaabfaffeaacfaffeaacfaffeaadfaffeaaefaffebaffaffebb0faffebb1faffebb2faffecb2faffecb3faffecb4fbffecb5fbffecb6fbffedb7fbffedb8fbffedb8fbffedb9fbffedbafbffeebbfbffeebcfbffeebdfbffeebefbffefbefbffefbffbffefc0fbffefc1fbffefc2fbfff0c3fbfff0c4fbfff0c4fcfff0c5fcfff1c6fcfff1c7fcfff1c8fcfff1c9fcfff1cafcfff2cafcfff2cbfcfff2ccfcfff2cdfcfff3cefcfff3cffcfff3d0fcfff3d0fcfff3d1fcfff4d2fcfff4d3fcfff4d4fcfff4d5fcfff4d6fdfff5d6fdfff5d7fdfff5d8fdfff5d9fdfff6dafdfff6dbfdfff6dcfdfff6dcfdfff6ddfdfff7defdfff7dffdfff7e0fdfff7e1fdfff8e2fdfff8e2fdfff8e3fdfff8e4fdfff8e5fdfff9e6fefff9e7fefff9e8fefff9e8fefff9e9fefffaeafefffaebfefffaecfefffaedfefffbeefefffbeefefffbeffefffbf0fefffbf1fefffcf2fefffcf3fefffcf4fefffcf4fefffdf5fefffdf6fefffdf7fffffdf8fffffdf9fffffefafffffefafffffefbfffffefcfffffffdfffffffeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+  _typelessdata: ffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbcffb8ffbdffb9ffbdffb9ffbdffb9ffbeffbaffbeffbaffbeffbaffbfffbbffbfffbbffc0ffbcffc0ffbcffc0ffbcffc1ffbdffc1ffbdffc1ffbdffc2ffbeffc2ffbeffc2ffbfffc3ffbfffc3ffbfffc3ffc0ffc4ffc0ffc4ffc0ffc5ffc1ffc5ffc1ffc5ffc2ffc6ffc2ffc6ffc2ffc6ffc3ffc7ffc3ffc7ffc4ffc7ffc4ffc8ffc4ffc8ffc5ffc8ffc5ffc9ffc5ffc9ffc6ffc9ffc6ffcaffc7ffcaffc7ffcbffc7ffcbffc8ffcbffc8ffccffc8ffccffc9ffccffc9ffcdffcaffcdffcaffcdffcaffceffcbffceffcbffceffcbffcfffccffcfffccffcfffcdffd0ffcdffd0ffcdffd1ffceffd1ffceffd1ffceffd2ffcfffd2ffcfffd2ffd0ffd3ffd0ffd3ffd0ffd3ffd1ffd4ffd1ffd4ffd2ffd4ffd2ffd5ffd2ffd5ffd3ffd6ffd3ffd6ffd3ffd6ffd4ffd7ffd4ffd7ffd5ffd7ffd5ffd8ffd5ffd8ffd6ffd8ffd6ffd9ffd6ffd9ffd7ffd9ffd7ffdaffd8ffdaffd8ffdaffd8ffdbffd9ffdbffd9ffdcffd9ffdcffdaffdcffdaffddffdbffddffdbffddffdbffdeffdcffdeffdcffdeffdcffdfffddffdfffddffdfffdeffe0ffdeffe0ffdeffe0ffdfffe1ffdfffe1ffe0ffe2ffe0ffe2ffe0ffe2ffe1ffe3ffe1ffe3ffe1ffe3ffe2ffe4ffe2ffe4ffe3ffe4ffe3ffe5ffe3ffe5ffe4ffe5ffe4ffe6ffe4ffe6ffe5ffe6ffe5ffe7ffe6ffe7ffe6ffe8ffe6ffe8ffe7ffe8ffe7ffe9ffe7ffe9ffe8ffe9ffe8ffeaffe9ffeaffe9ffeaffe9ffebffeaffebffeaffebffeaffecffebffecffebffedffecffedffecffedffecffeeffedffeeffedffeeffeeffefffeeffefffeeffefffeffff0ffeffff0ffeffff0fff0fff1fff0fff1fff1fff1fff1fff2fff1fff2fff2fff3fff2fff3fff2fff3fff3fff4fff3fff4fff4fff4fff4fff5fff4fff5fff5fff5fff5fff6fff5fff6fff6fff6fff6fff7fff7fff7fff7fff7fff7fff8fff8fff8fff8fff9fff8fff9fff9fff9fff9fffafffafffafffafffafffafffbfffbfffbfffbfffbfffcfffcfffcfffcfffcfffcfffdfffdfffdfffdfffdfffdfffefffefffefffeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
   m_StreamData:
     serializedVersion: 2
     offset: 0
     size: 0
     path: 
---- !u!114 &9056680882484555090
+--- !u!114 &5412342203392631697
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
