@@ -106,6 +106,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         _loadingScreen.SetActive(true);
         _leadingTeamShirt.sprite = _teamShirts[0];
         if (!PhotonNetwork.IsMasterClient) return;
+        _leadingTeamShirt.sprite = _teamShirts[0];
 
         _gangs.Clear();
     }

@@ -306,7 +306,7 @@ namespace Player
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.tag.Equals("CameraDeadZone"))
+            if (other.gameObject.tag.Equals("CameraDeadZoneX"))
             {
                 _isInCameraDeadZone = true;
             }
@@ -619,6 +619,7 @@ namespace Player
                 if (photonView.IsMine)
                 {
                     ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.DEATHS_KEY);
+                    ArenaManager.Instance.SetLeadingShirt(ScoreManager.Instance.GetLeadingTeam());
                     Invoke(nameof(Respawn), DEATH_TIME_DELAY);
                 }
                 ArenaManager.Instance.SetLeadingShirt(ScoreManager.Instance.GetLeadingTeam());
@@ -1198,7 +1199,7 @@ namespace Player
         {
             _playerVCam = cam.GetComponentInChildren<CinemachineVirtualCamera>();
             _playerCamera = cam.GetComponentInChildren<Camera>();
-            _cameraStabilizer = cam.GetComponent<CameraStabilizer>();
+            _cameraStabilizer = _playerVCam.GetComponent<CameraStabilizer>();
             _cameraStabilizer.CameraOwner = this;
             _playerVCam.Follow = _studentTransform;
             _playerVCam.Follow = _studentTransform;
