@@ -6730,8 +6730,7 @@ MonoBehaviour:
   _giantRollballPrefab: {fileID: 9027766068581955839, guid: b716dd7179ac88d40908d7d48ddd3404, type: 3}
   _giantRollballBurst: {fileID: 6414252773208847546, guid: 30ea816c583fcf94799b542704a36fef, type: 3}
   _snowmanPrefab: {fileID: 5714933658485935016, guid: 020ee4a79dd45344ba5b59af867346c8, type: 3}
-  _cannon: {fileID: 2021794885}
-  _cannonBall: {fileID: 1791823268317378158, guid: a98db43c166c3fe40aa445f9f76d7b3e, type: 3}
+  _cannonBall: {fileID: 4854422905516743973, guid: 5e62362fc854e2e4588b495334e45b9c, type: 3}
   _studentLayer:
     serializedVersion: 2
     m_Bits: 1536
@@ -22185,17 +22184,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f2cd2d667545cb44aeb032937595ee9, type: 3}
---- !u!114 &2021794885 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7597243257626280, guid: 9f2cd2d667545cb44aeb032937595ee9, type: 3}
-  m_PrefabInstance: {fileID: 2021794884}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 225530d479356d04a957cdd609116799, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2040105486
 PrefabInstance:
   m_ObjectHideFlags: 0
