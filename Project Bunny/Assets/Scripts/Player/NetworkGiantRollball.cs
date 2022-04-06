@@ -50,7 +50,7 @@ namespace Player
         {
             _isGrowing = other.gameObject.layer == LayerMask.NameToLayer("Ground");
 
-            if (_canDamage) return;
+            if (!_canDamage) return;
             
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var player))
             {
