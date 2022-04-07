@@ -19,6 +19,7 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     [SerializeField] private Button _changeCoatColorButton;
     [SerializeField] private Button _changePantColorButton;
     [SerializeField] private Button _changeHairColorButton;
+    [SerializeField] private Button _changeBootsColorButton;
     [SerializeField] private Button _doneButton;
 
     [SerializeField] private Color[] skinColors;
@@ -59,6 +60,7 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
         
         _changePantColorButton.onClick.AddListener(() => currentPlayer.SwitchPantsColor_RPC());
         _changeHairColorButton.onClick.AddListener(() => currentPlayer.SwitchHairColor_RPC());
+        _changeBootsColorButton.onClick.AddListener(() => currentPlayer.SwitchShoesColor_RPC());
         _doneButton.onClick.AddListener((() => Leave()));
         
     }

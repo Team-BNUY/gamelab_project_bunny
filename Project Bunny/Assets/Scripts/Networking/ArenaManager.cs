@@ -294,6 +294,11 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         {
             player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
         }
+        
+        if (playerProperties.ContainsKey("shoesColorIndex"))
+        {
+            player.photonView.RPC("SetShoesColor", RpcTarget.AllBuffered, (int)playerProperties["shoesColorIndex"]);
+        }
 
         player.transform.position = GetPlayerSpawnPoint(player.TeamID);
     }

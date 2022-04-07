@@ -590,6 +590,8 @@ MonoBehaviour:
   - {r: 1, g: 0.4586063, b: 0, a: 1}
   - {r: 0.6757679, g: 0, b: 1, a: 1}
   - {r: 0, g: 0.81066275, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0, g: 0, b: 0, a: 1}
   _movementSpeed: 10
   _movementFriction: 1
   _worldUI: {fileID: 3022509423101349260}
@@ -835,7 +837,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -1898866065923900264, guid: 32703a2fd6af64c47908a32da6c6618b, type: 3}
+  - {fileID: 2100000, guid: ccd28eeef6984eb4d9405e78dc1655e4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
