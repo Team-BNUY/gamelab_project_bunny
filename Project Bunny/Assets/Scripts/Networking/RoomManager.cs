@@ -129,8 +129,7 @@ namespace Networking
 
                     while (randomScoresIndex.Count < displayedScores.Length) {
                         maxLoops--;
-                        Debug.LogError("VERY BAD ERROR");
-                        if (maxLoops <= 0) return;
+                        if (maxLoops <= 0) break;
                         int rand = UnityEngine.Random.Range(0, ScoreManager.Instance.scores.Length);
                         if (!String.IsNullOrEmpty(ScoreManager.Instance.scores[rand]) && !randomScoresIndex.Contains(rand) && ScoreManager.Instance.scoreValues[rand] != 0) {
                             randomScoresIndex.Add(rand);
