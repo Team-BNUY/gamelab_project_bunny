@@ -22,7 +22,6 @@ namespace Player
         [SerializeField] [Min(0)] private float _rotationSpeed;
         [SerializeField] [Range(0f, 2.0f)] private float _pullIncreaseTimeRate;
         [SerializeField] [Min(0)] private float _pullingFactor = 0.75f;
-        private GameObject _cannonBallObject;
         private bool _isActive;
         private GameObject _player;
         private NetworkStudentController _currentStudentController;

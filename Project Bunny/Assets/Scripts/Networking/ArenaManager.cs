@@ -39,7 +39,6 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _snowmanPrefab;
     [SerializeField] private GameObject _cannonBall;
     [SerializeField] private NetworkCannon _cannon;
-    [SerializeField] private NetworkCannonBalls _cannonBall;
     [SerializeField] private Sprite[] _teamShirts = new Sprite[3];
 
     [Header("AI")]
