@@ -632,7 +632,7 @@ namespace Player
                 if (photonView.IsMine)
                 {
                     ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.DEATHS_KEY);
-                    ArenaManager.Instance.SetLeadingShirt(ScoreManager.Instance.GetLeadingTeam());
+                    ArenaManager.Instance.IncrementTeamDeathCount(TeamID);
                     Invoke(nameof(Respawn), DEATH_TIME_DELAY);
                 }
                 ArenaManager.Instance.SetLeadingShirt(ScoreManager.Instance.GetLeadingTeam());
