@@ -91,6 +91,7 @@ namespace Networking
             var go = PhotonNetwork.Instantiate(ArenaManager.Instance.SnowballBurst.name, _snowballTransform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
+            
             PhotonNetwork.Destroy(gameObject);
         }
 
