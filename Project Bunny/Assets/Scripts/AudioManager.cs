@@ -1,9 +1,10 @@
-using System.Collections;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
+
+    [SerializeField] private AudioClip[] woodenFootsteps;
     
     private AudioSource _audioSource;
     private bool _muted;
@@ -31,34 +32,6 @@ public class AudioManager : MonoBehaviour
     {
         if (_muted) return;
         
-        _audioSource.clip = clip;
-        _audioSource.loop = loop;
-        _audioSource.Play();
-    }
-
-    public void PlayFollowedBy(AudioClip firstClip, AudioClip secondClip, bool loop)
-    {
-        if (_muted) return;
-
-        _audioSource.clip = firstClip;
-        _audioSource.loop = false;
-        StartCoroutine(PlaySecondClip(secondClip, loop));
-    }
-
-    public void Stop()
-    {
-        if (_muted) return;
-        
-        _audioSource.Stop();
-    }
-
-    private IEnumerator PlaySecondClip(AudioClip clip, bool loop)
-    {
-        while (_audioSource.isPlaying)
-        {
-            yield return null;
-        }
-
         _audioSource.clip = clip;
         _audioSource.loop = loop;
         _audioSource.Play();

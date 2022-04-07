@@ -44,6 +44,7 @@ namespace Player
         [SerializeField] private GameObject _playerSkin;
         [SerializeField] private Color[] skinColors;
         [SerializeField] private Color[] _colors;
+        [SerializeField] private AudioClip _uiInteractSound;
         private int _skinColorIndex;
 
         private GameObject _currentHat;
@@ -1119,15 +1120,53 @@ namespace Player
                 RoomManager.Instance.SetCustomProperty("shoesColorIndex", _shoesColorIndex);
         }
 
-        public void SwitchHat_RPC() { photonView.RPC("SwitchHat", RpcTarget.AllBuffered); }
-        public void SwitchCoat_RPC() { photonView.RPC("SwitchCoat", RpcTarget.AllBuffered); }
-        public void SwitchPants_RPC() { photonView.RPC("SwitchPants", RpcTarget.AllBuffered); }
-        public void SwitchHair_RPC() { photonView.RPC("SwitchHair", RpcTarget.AllBuffered); }
-        public void SwitchHairColor_RPC() { photonView.RPC("SwitchHairColor", RpcTarget.AllBuffered); }
-        public void SwitchPantsColor_RPC() { photonView.RPC("SwitchPantsColor", RpcTarget.AllBuffered); }
-        public void SwitchCoatColor_RPC() { photonView.RPC("SwitchCoatColor", RpcTarget.AllBuffered); }
-        public void SwitchSkinColor_RPC() { photonView.RPC("SwitchSkinColor", RpcTarget.AllBuffered); }
-        public void SwitchShoesColor_RPC() { photonView.RPC("SwitchShoesColor", RpcTarget.AllBuffered); }
+        public void SwitchHat_RPC()
+        {
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            photonView.RPC("SwitchHat", RpcTarget.AllBuffered);
+        }
+
+        public void SwitchCoat_RPC()
+        {
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            photonView.RPC("SwitchCoat", RpcTarget.AllBuffered);
+        }
+
+        public void SwitchPants_RPC()
+        {
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            photonView.RPC("SwitchPants", RpcTarget.AllBuffered);
+        }
+
+        public void SwitchHair_RPC()
+        {
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            photonView.RPC("SwitchHair", RpcTarget.AllBuffered);
+        }
+
+        public void SwitchHairColor_RPC()
+        {
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            photonView.RPC("SwitchHairColor", RpcTarget.AllBuffered);
+        }
+
+        public void SwitchPantsColor_RPC()
+        {
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            photonView.RPC("SwitchPantsColor", RpcTarget.AllBuffered);
+        }
+
+        public void SwitchCoatColor_RPC()
+        {
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            photonView.RPC("SwitchCoatColor", RpcTarget.AllBuffered);
+        }
+
+        public void SwitchSkinColor_RPC()
+        {
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            photonView.RPC("SwitchSkinColor", RpcTarget.AllBuffered);
+        }
 
         [PunRPC]
         public void SyncIsReady(bool isActive, string userId)

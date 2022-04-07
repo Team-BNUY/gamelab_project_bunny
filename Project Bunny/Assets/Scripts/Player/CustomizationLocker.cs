@@ -21,6 +21,7 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     [SerializeField] private Button _doneButton;
 
     [SerializeField] private AudioClip _interact;
+    [SerializeField] private AudioClip _stopInteract;
 
     [SerializeField] private Color[] skinColors;
     private int skinColorIndex;
@@ -42,12 +43,7 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     /// </summary>
     public void Trigger(NetworkStudentController currentPlayer)
     {
-        if (isActive)
-        {
-            AudioManager.Instance.PlayOneShot(_interact, 0.5f);
-
-            return;
-        }
+        if (isActive) return;
         
         _customizationPanel.SetActive(true);
         isActive = true;
@@ -67,7 +63,7 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
         _changeBootsColorButton.onClick.AddListener(() => currentPlayer.SwitchShoesColor_RPC());
         _doneButton.onClick.AddListener(Leave);
         
-        AudioManager.Instance.PlayOneShot(_interact, 0.5f);
+        AudioManager.Instance.PlayOneShot(_interact, 0.4f);
     }
 
     public void Leave()
@@ -75,6 +71,8 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
         RoomManager.Instance.LocalStudentController.CharacterControllerComponent.enabled = true;
         _customizationPanel.SetActive(false);
         isActive = false;
+        
+        AudioManager.Instance.PlayOneShot(_stopInteract, 0.4f);
     }
 
     public void Enter()
