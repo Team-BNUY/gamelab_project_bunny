@@ -246,9 +246,13 @@ namespace Player
             if (!_isDigging && !_isFrozen)
             {
                 if (!_isBeingControlled)
+                {
                     MoveStudent();
+                }
                 else if (_target != Vector3.zero)
+                {
                     MoveToPoint();
+                }
             }
 
             if (_isAiming && _hasSnowball && !_isFrozen)
@@ -421,12 +425,12 @@ namespace Player
         /// </summary>
         private void MoveToPoint()
         {
-            if (!this._isBeingControlled) return;
+            if (!_isBeingControlled) return;
 
             var gravity = Physics.gravity.y * Time.deltaTime * 100f;
             _playerPosition.y += gravity;
 
-            Vector3 offset = _target - transform.position;
+            var offset = _target - transform.position;
             offset.y = 0;
 
             if (offset.magnitude > .1f)

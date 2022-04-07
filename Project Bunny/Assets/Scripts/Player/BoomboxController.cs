@@ -1,29 +1,13 @@
-using System;
 using Interfaces;
 using Player;
 using UnityEngine;
 
 public class BoomboxController : MonoBehaviour, INetworkTriggerable
 {
-    [SerializeField] public Animator hoverEButtonUI;
-    [SerializeField] public AudioClip[] songs;
-    [SerializeField] public AudioSource source;
+    [SerializeField] private Animator hoverEButtonUI;
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private ParticleSystem _particleSystem;
  
-    private AudioClip _currentSong;
-    private int songIndex;
-
-    private void Awake()
-    {
-        if (songs.Length != 0)
-        {
-            _currentSong = songs[0];
-        }
-
-        songIndex = 0;
-        source.clip = _currentSong;
-        source.Play();
-    }
-
     #region InterfaceMethods
     
     /// <summary>
@@ -31,18 +15,21 @@ public class BoomboxController : MonoBehaviour, INetworkTriggerable
     /// </summary>
     public void Trigger(NetworkStudentController currentPlayer)
     {
-        if (songs.Length == 0) return;
-        
-        source.Stop();
+        var listener = currentPlayer.PlayerCamera.GetComponent<AudioListener>();
+        listener.enabled = !listener.enabled;
 
-        if (songIndex + 1 >= (songs.Length)) songIndex = 0;
-        else songIndex++;
-
-        _currentSong = songs[songIndex];
-        
-        source.clip = _currentSong;
-        source.Play();
-
+        if (listener.enabled)
+        {
+            _audioSource.Play();
+            _particleSystem.Play();
+            FindObjectOfType<AudioManager>().Muted = false;
+        }
+        else
+        {
+            _audioSource.Stop();
+            _particleSystem.Stop();
+            FindObjectOfType<AudioManager>().Muted = true;
+        }
     }
     
     public void Enter()

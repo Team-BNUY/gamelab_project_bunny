@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DontDestroyOnLoad : MonoBehaviour
@@ -10,13 +8,13 @@ public class DontDestroyOnLoad : MonoBehaviour
     {
         if (_instance == null)
         {
-            _instance = this.gameObject;
+            _instance = gameObject;
         }
-        else if (_instance != this.gameObject)
+        else if (_instance != gameObject)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
 
-        DontDestroyOnLoad(this.gameObject);
+        DontDestroyOnLoad(gameObject);
     }
 }

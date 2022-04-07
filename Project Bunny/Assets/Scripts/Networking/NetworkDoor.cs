@@ -13,7 +13,8 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     [SerializeField] private Transform doorPoint;
     [SerializeField] public Animator hoverEButtonUI;
     [SerializeField] public GameObject door;
-
+    [SerializeField] private AudioClip _schoolBell;
+    
     [SerializeField] private Vector3 openPos;
     [SerializeField] private Vector3 openRot;
     [SerializeField] private Vector3 closedPos;
@@ -24,12 +25,10 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     // Start is called before the first frame update
     private void Start()
     {
-        if (door != null)
-        {
-            door.transform.localPosition = closedPos;
-            door.transform.localRotation = Quaternion.Euler(closedRot);
-        }
-
+        if (door == null) return;
+        
+        door.transform.localPosition = closedPos;
+        door.transform.localRotation = Quaternion.Euler(closedRot);
     }
 
     public void Trigger(NetworkStudentController currentStudentController)
@@ -38,8 +37,11 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
 
         if (PhotonNetwork.IsMasterClient)
         {
-            foreach (Photon.Realtime.Player player in PhotonNetwork.CurrentRoom.Players.Values) {
-                if ((!player.CustomProperties.ContainsKey("isReady") || (bool)player.CustomProperties["isReady"] == false) && !player.IsMasterClient) {
+
+            foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
+            {
+                if ((!player.CustomProperties.ContainsKey("isReady") || (bool)player.CustomProperties["isReady"] == false) && !player.IsMasterClient)
+                {
                     return;               
                 }
             }
@@ -68,10 +70,10 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
         }
         else
         {
-            ExitGames.Client.Photon.Hashtable ht = PhotonNetwork.LocalPlayer.CustomProperties;
+            var ht = PhotonNetwork.LocalPlayer.CustomProperties;
             if (ht.ContainsKey("isReady"))
             {
-                bool isReady = (bool)ht["isReady"];
+                var isReady = (bool)ht["isReady"];
                 ht["isReady"] = !isReady;
             }
             else
@@ -103,6 +105,8 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
 
     private IEnumerator ExitClassroom(NetworkStudentController student)
     {
+        AudioManager.Instance.Play(_schoolBell);
+        
         student.SetControlledMovement(Vector3.zero, true);
         yield return new WaitForSeconds(waitTime);
         student.SetControlledMovement(doorPoint.position, true);

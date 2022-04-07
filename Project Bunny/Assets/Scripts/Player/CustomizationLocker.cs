@@ -1,7 +1,5 @@
-using System;
 using Interfaces;
 using Networking;
-using Photon.Pun;
 using Player;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +19,8 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     [SerializeField] private Button _changeHairColorButton;
     [SerializeField] private Button _changeBootsColorButton;
     [SerializeField] private Button _doneButton;
+
+    [SerializeField] private AudioClip _interact;
 
     [SerializeField] private Color[] skinColors;
     private int skinColorIndex;
@@ -42,11 +42,15 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     /// </summary>
     public void Trigger(NetworkStudentController currentPlayer)
     {
-        if (isActive) return;
+        if (isActive)
+        {
+            AudioManager.Instance.PlayOneShot(_interact, 0.5f);
+
+            return;
+        }
         
         _customizationPanel.SetActive(true);
         isActive = true;
-
         
         currentPlayer.CharacterControllerComponent.enabled = false;
         
@@ -61,8 +65,9 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
         _changePantColorButton.onClick.AddListener(() => currentPlayer.SwitchPantsColor_RPC());
         _changeHairColorButton.onClick.AddListener(() => currentPlayer.SwitchHairColor_RPC());
         _changeBootsColorButton.onClick.AddListener(() => currentPlayer.SwitchShoesColor_RPC());
-        _doneButton.onClick.AddListener((() => Leave()));
+        _doneButton.onClick.AddListener(Leave);
         
+        AudioManager.Instance.PlayOneShot(_interact, 0.5f);
     }
 
     public void Leave()
