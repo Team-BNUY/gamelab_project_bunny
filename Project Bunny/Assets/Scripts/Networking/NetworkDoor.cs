@@ -28,40 +28,63 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
             door.transform.localPosition = closedPos;
             door.transform.localRotation = Quaternion.Euler(closedRot);
         }
-        
+
     }
 
     public void Trigger(NetworkStudentController currentStudentController)
     {
-        if (!PhotonNetwork.IsMasterClient) return;
-        
-        if (door != null)
+        if (PhotonNetwork.IsMasterClient)
         {
-            door.transform.localPosition = openPos;
-            door.transform.localRotation = Quaternion.Euler(openRot); 
-        }
 
-        var allPlayers = FindObjectsOfType<NetworkStudentController>();
-        var waitPointIndex = 0;
-        foreach (var student in allPlayers)
+            foreach (Photon.Realtime.Player player in PhotonNetwork.CurrentRoom.Players.Values) {
+                if ((!player.CustomProperties.ContainsKey("isReady") || (bool)player.CustomProperties["isReady"] == false) && !player.IsMasterClient) {
+                    return;               
+                }
+            }
+
+            if (door != null)
+            {
+                door.transform.localPosition = openPos;
+                door.transform.localRotation = Quaternion.Euler(openRot);
+            }
+
+            var allPlayers = FindObjectsOfType<NetworkStudentController>();
+            var waitPointIndex = 0;
+            foreach (var student in allPlayers)
+            {
+                if (student != currentStudentController)
+                {
+                    var coroutine = RegularStudentLeaveClassroom(student, waitPoints[waitPointIndex].position);
+                    StartCoroutine(coroutine);
+                    waitPointIndex++;
+                }
+                else
+                {
+                    StartCoroutine(nameof(ExitClassroom), student);
+                }
+            }
+        }
+        else
         {
-            if (student != currentStudentController)
+            ExitGames.Client.Photon.Hashtable ht = PhotonNetwork.LocalPlayer.CustomProperties;
+            if (ht.ContainsKey("isReady"))
             {
-                var coroutine = RegularStudentLeaveClassroom(student, waitPoints[waitPointIndex].position);
-                StartCoroutine(coroutine);
-                waitPointIndex++;
+                bool isReady = (bool)ht["isReady"];
+                ht["isReady"] = !isReady;
             }
-            else 
+            else
             {
-                StartCoroutine(nameof(ExitClassroom), student);
+                ht.Add("isReady", true);
             }
+
+            PhotonNetwork.LocalPlayer.SetCustomProperties(ht);
         }
     }
 
     public void Enter()
     {
         if (!PhotonNetwork.IsMasterClient) return;
-        
+
         hoverEButtonUI.enabled = true;
         hoverEButtonUI.StartPlayback();
         hoverEButtonUI.gameObject.SetActive(true);
@@ -70,7 +93,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     public void Exit()
     {
         if (!PhotonNetwork.IsMasterClient) return;
-        
+
         hoverEButtonUI.StopPlayback();
         hoverEButtonUI.enabled = false;
         hoverEButtonUI.gameObject.SetActive(false);

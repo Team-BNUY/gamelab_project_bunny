@@ -92,7 +92,7 @@ namespace Networking
             {
                 _customProperties.Add(propertyName, propertyValue);
             }
-            
+
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
         }
 
@@ -103,7 +103,7 @@ namespace Networking
             if (ScoreManager.Instance)
             {
                 this.isFirstRun = ScoreManager.Instance.isFirstMatch;
-                
+
                 foreach (Image img in displayedScores)
                 {
                     img.gameObject.SetActive(false);
@@ -125,16 +125,19 @@ namespace Networking
                     List<int> randomScoresIndex = new List<int>();
                     int maxLoops = 100;
 
-                    while (randomScoresIndex.Count < displayedScores.Length) {
+                    while (randomScoresIndex.Count < displayedScores.Length)
+                    {
                         maxLoops--;
                         if (maxLoops <= 0) break;
                         int rand = UnityEngine.Random.Range(0, ScoreManager.Instance.scores.Length);
-                        if (!String.IsNullOrEmpty(ScoreManager.Instance.scores[rand]) && !randomScoresIndex.Contains(rand) && ScoreManager.Instance.scoreValues[rand] != 0) {
+                        if (!String.IsNullOrEmpty(ScoreManager.Instance.scores[rand]) && !randomScoresIndex.Contains(rand) && ScoreManager.Instance.scoreValues[rand] != 0)
+                        {
                             randomScoresIndex.Add(rand);
                         }
                     }
 
-                    for (int i = 0; i < randomScoresIndex.Count; i++) {
+                    for (int i = 0; i < randomScoresIndex.Count; i++)
+                    {
                         displayedScores[i].gameObject.SetActive(true);
                         displayedScores[i].sprite = scoreSprites[randomScoresIndex[i]];
                         displayedNames[i].text = ScoreManager.Instance.scores[randomScoresIndex[i]];
@@ -162,10 +165,12 @@ namespace Networking
             }
         }
 
-        private string GetWinConText(int score, int index) {
+        private string GetWinConText(int score, int index)
+        {
             // rebel - 0, bully - 1, hardWorker - 2, teachersPet - 3,
             // office - 4, glaceFolie - 5, shoveler - 6, avalance - 7
-            switch (index) {
+            switch (index)
+            {
                 case 0:
                     return $"Hit the teacher {score} times";
                 case 1:
@@ -230,20 +235,6 @@ namespace Networking
             PhotonTeamExtensions.SwitchTeam(PhotonNetwork.LocalPlayer, teamCode);
         }
 
-        private void ReadyUp()
-        {
-            if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("ready"))
-            {
-                _customProperties["ready"] = !((bool)PhotonNetwork.LocalPlayer.CustomProperties["ready"]);
-            }
-            else
-            {
-                _customProperties["ready"] = true;
-            }
-
-            PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
-        }
-
         public void StartGame()
         {
             if (PhotonNetwork.IsMasterClient)
@@ -262,7 +253,7 @@ namespace Networking
         /*public void CorrectNumberOfJerseys()
         {
             if (PhotonNetwork.LocalPlayer.GetPhotonTeam() == null) return;
-            
+
             if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Blue")
             {
                 BlueTeamTable.instance.AddTeamCount_RPC();
@@ -273,11 +264,13 @@ namespace Networking
             }
         }*/
 
-        private void SetAllPlayerSpawns() {
-            NetworkStudentController[] students = FindObjectsOfType<NetworkStudentController>();
+        private void SetAllPlayerSpawns()
+        {
+            NetworkStudentController[] allStudents = FindObjectsOfType<NetworkStudentController>();
 
-            for (int i = 0; i < _playerSpawnPosition.Length; i++) {
-                students[i].transform.position = _playerSpawnPosition[i].position;
+            for (int i = 0; i < _playerSpawnPosition.Length; i++)
+            {
+                allStudents[i].transform.position = _playerSpawnPosition[i].position;
             }
         }
 
@@ -289,12 +282,15 @@ namespace Networking
             PhotonNetwork.LocalPlayer.TagObject = player;
             player.SetCamera(Instantiate(_playerCamera), 40f, 15f, false, 0.374f, 4f);
 
+
             if (isFirstRun)
             {
                 player.transform.position = _playerSpawnPosition[PhotonNetwork.CurrentRoom.PlayerCount].position;
             }
-            else {
-                if (PhotonNetwork.IsMasterClient) {
+            else
+            {
+                if (PhotonNetwork.IsMasterClient)
+                {
                     Invoke(nameof(SetAllPlayerSpawns), 0.1f);
                 }
             }
@@ -313,11 +309,11 @@ namespace Networking
             {
                 player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"]);
             }
-            else
+
+            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId + "hairIndex"))
             {
                 player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], 0);
             }
-        }
 
         if (playerProperties.ContainsKey("pantIndex"))
         {
@@ -325,11 +321,11 @@ namespace Networking
             {
                 player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"]);
             }
-            else
+
+            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId + "coatIndex"))
             {
                 player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], 0);
             }
-        }
 
         if (playerProperties.ContainsKey("coatIndex"))
         {
@@ -389,6 +385,12 @@ namespace Networking
         public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
         {
             base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
+
+
+            if (changedProps.ContainsKey("isReady") && !targetPlayer.IsMasterClient)
+            {
+                _localStudentController.photonView.RPC("SyncIsReady", RpcTarget.AllBuffered, (bool)changedProps["isReady"], targetPlayer.UserId);
+            }
         }
     }
 }
