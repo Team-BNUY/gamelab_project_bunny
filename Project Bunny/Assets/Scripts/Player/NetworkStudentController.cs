@@ -1150,7 +1150,6 @@ namespace Player
             _currentPants.SetActive(true);
             if (colorIndex < 0) return;
             _currentPants.GetComponent<Renderer>().material.color = _colors[colorIndex];
-            
         }
 
         [PunRPC]
