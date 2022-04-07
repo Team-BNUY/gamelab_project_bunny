@@ -7,7 +7,6 @@ public class NetworkDestroyOnStop : MonoBehaviourPunCallbacks
     {
         if (!photonView.IsMine) return;
         
-        Debug.Log("PARTICLE SYSTEM");
         PhotonNetwork.Destroy(gameObject);
     }
 }

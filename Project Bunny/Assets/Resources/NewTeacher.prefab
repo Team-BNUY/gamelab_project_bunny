@@ -201,6 +201,7 @@ Transform:
   - {fileID: 6684997611766211019}
   - {fileID: 5518495420134686062}
   - {fileID: 523005458967444629}
+  - {fileID: 5480473939638348739}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -241,6 +242,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f9dd4dd768aa6794285e64c481cb3302, type: 2}
   - {fileID: 11400000, guid: 243694962ba81454dae29a9db92dfb07, type: 2}
   - {fileID: 11400000, guid: cd9ee3443e2dcc541af00b833e2e6e03, type: 2}
+  _exclamationMarkPosition: {fileID: 5480473939638348739}
   _head: {fileID: 6168305261835024236, guid: cb39b8b28464cc74a8fefb787c555550, type: 3}
   _fieldOfView: 90
   _viewDistance: 20
@@ -934,6 +936,36 @@ Transform:
   - {fileID: 2665716798487248287}
   m_Father: {fileID: 7007289299219594740}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2885741561989716541
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5480473939638348739}
+  m_Layer: 11
+  m_Name: ExclamationMarkPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5480473939638348739
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885741561989716541}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 5.775, z: 0.17}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 197242343445979092}
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2910077663665668988
 GameObject:
