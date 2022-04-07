@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
@@ -25,11 +26,14 @@ namespace Player
         [SerializeField] private Animator _animator;
         [SerializeField] private SkinnedMeshRenderer _jersey;
         [SerializeField] private Collider _playerCollider;
+        
+        [Header("Camera")]
         private Camera _playerCamera;
         private CinemachineVirtualCamera _playerVCam;
         private CharacterController _characterController;
         private CinemachineFramingTransposer _playerVCamFramingTransposer;
-        private CameraStabilizer _cameraStabilizer;
+        private LockCinemachineFollow _lockCinemachineFollow;
+        private float _cameraLockX;
 
         [Header("Clothing")]
         [SerializeField] private GameObject _teamShirt;
@@ -116,7 +120,7 @@ namespace Player
         private bool _isKicking;
         private bool _isJerseyNull;
         private bool _usingCannon;
-        private bool _isInCameraDeadZone; // local, since camera is local
+        private bool _isInFollowZone;
 
         // List of readonly files. No need for them to have a _ prefix
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
@@ -139,7 +143,9 @@ namespace Player
         public Transform PlayerHand => _playerHand;
         public bool HasSnowball => _hasSnowball;
         public bool IsDead => _isDead;
-        public bool IsCameraDeadZone => _isInCameraDeadZone;
+        public bool IsInFollowZone => _isInFollowZone;
+        public bool IsBeingControlled => _isBeingControlled;
+        public float CameraLockX => _cameraLockX;
         public CinemachineFramingTransposer PlayerVCamFramingTransposer => _playerVCamFramingTransposer;
         public Collider PlayerCollider => _playerCollider;
         public Camera PlayerCamera => _playerCamera;
@@ -308,9 +314,8 @@ namespace Player
         {
             if (other.gameObject.tag.Equals("CameraDeadZoneX"))
             {
-                _isInCameraDeadZone = true;
+                _isInFollowZone = true;
             }
-            
             if (other.TryGetComponent(out INetworkTriggerable triggerable))
             {
                 _currentTriggerable ??= triggerable;
@@ -321,13 +326,21 @@ namespace Player
             }
         }
 
+        private void OnTriggerStay(Collider other)
+        {
+            if (other.gameObject.tag.Equals("CameraDeadZoneX") && _isInFollowZone)
+            {
+                _cameraLockX = _playerVCam.State.RawPosition.x;
+            }
+        }
+
         private void OnTriggerExit(Collider other)
         {
-            if (other.gameObject.tag.Equals("CameraDeadZone"))
+            if (other.gameObject.tag.Equals("CameraDeadZoneX"))
             {
-                _isInCameraDeadZone = false;
+                _cameraLockX = _playerVCam.State.RawPosition.x;
+                _isInFollowZone = false;
             }
-            
             if (other.TryGetComponent(out INetworkTriggerable triggerable) && _currentTriggerable == triggerable)
             {
                 if (photonView.IsMine)
@@ -1198,10 +1211,9 @@ namespace Player
         public void SetCamera(GameObject cam, float angle, float distance, bool isInYard, float nameTextHeight, float canvasHeight)
         {
             _playerVCam = cam.GetComponentInChildren<CinemachineVirtualCamera>();
+            _lockCinemachineFollow = _playerVCam.GetComponent<LockCinemachineFollow>();
+            _lockCinemachineFollow.PlayerOwner = this;
             _playerCamera = cam.GetComponentInChildren<Camera>();
-            //_cameraStabilizer = _playerVCam.GetComponent<CameraStabilizer>();
-            //_cameraStabilizer.CameraOwner = this;
-            _playerVCam.Follow = _studentTransform;
             _playerVCam.Follow = _studentTransform;
             _playerVCamFramingTransposer = _playerVCam.GetCinemachineComponent<CinemachineFramingTransposer>();
             SetFrameTransposerProperties(angle, distance, canvasHeight);
@@ -1227,6 +1239,8 @@ namespace Player
             _playerVCam.transform.rotation = Quaternion.Euler(angle, 0f, 0f);
             _canvasTransform.rotation = Quaternion.Euler(angle, 0f, 0f);
             _canvasTransform.localPosition = new Vector3(0f, canvasHeight, 0.23f);
+            _cameraLockX = _playerVCam.State.RawPosition.x;
+            _isInFollowZone = true;
         }
 
         public void LookAtTeacher(bool isTeacher)
