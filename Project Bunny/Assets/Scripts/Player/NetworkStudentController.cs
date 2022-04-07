@@ -25,7 +25,7 @@ namespace Player
         [SerializeField] private Animator _animator;
         [SerializeField] private SkinnedMeshRenderer _jersey;
         [SerializeField] private Collider _playerCollider;
-        
+
         [Header("Camera")]
         private Camera _playerCamera;
         private CinemachineVirtualCamera _playerVCam;
@@ -79,12 +79,13 @@ namespace Player
         private bool _startGame;
         private Vector2 _mousePosition;
 
-        [Header("Player UI")] 
+        [Header("Player UI")]
         [SerializeField] private Canvas _worldUI;
         [SerializeField] private RectTransform _canvasTransform;
         [SerializeField] private RectTransform _healthTransform;
         [SerializeField] private RectTransform _nicknameTransform;
         [SerializeField] private GameObject _hostCrown;
+        [SerializeField] public GameObject _isReadyBubble;
         [SerializeField] private Image[] _hearts;
         [SerializeField] private int _maxHealth;
         private int _currentHealth;
@@ -135,7 +136,7 @@ namespace Player
         private static readonly int HitBack = Animator.StringToHash("HitBack");
         private static readonly int HitLeft = Animator.StringToHash("HitLeft");
         private static readonly int HitRight = Animator.StringToHash("HitRight");
-        
+
         // PROPERTIES (REPLACE PUBLIC GETTERS)
         public CharacterController CharacterControllerComponent => _characterController;
         public Quaternion PlayerRotation => _playerRotation;
@@ -151,19 +152,16 @@ namespace Player
         public Transform PlayerModel => _playerModel;
         public Vector2 MousePosition => _mousePosition;
         public Animator Animator => _animator;
-        public INetworkInteractable CurrentInteractable
-        {
+        public INetworkInteractable CurrentInteractable {
             get => _currentInteractable;
             set => _currentInteractable = value;
         }
-        public bool IsKicking
-        {
+        public bool IsKicking {
             get => _isKicking;
             set => _isKicking = value;
         }
 
-        public bool UsingCannon
-        {
+        public bool UsingCannon {
             get => _usingCannon;
             set => _usingCannon = value;
         }
@@ -215,6 +213,7 @@ namespace Player
 
         private void Start()
         {
+            _isReadyBubble.SetActive(false);
             _isJerseyNull = _jersey == null;
             _throwForce = _minForce;
             _throwAngle = _minAngle;
@@ -269,30 +268,30 @@ namespace Player
         {
             var snowball = collision.gameObject.GetComponent<NetworkSnowball>();
             if (!snowball) return;
-            
+
             // Hit by a snowball
             var thrower = snowball._studentThrower;
             var throwDirection = thrower.transform.position - _playerModel.position;
             var angle = Vector3.SignedAngle(_playerModel.forward, throwDirection, Vector3.up);
-            
+
             if (angle < 0 && angle >= -45f || angle >= 0 && angle < 45f)
             {
-                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All,"HitFront", true);
+                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All, "HitFront", true);
             }
             else if (angle < -45f && angle >= -135f)
             {
-                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All,"HitLeft", true);
+                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All, "HitLeft", true);
             }
             else if (angle >= 45f && angle < 135f)
             {
-                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All,"HitRight", true);
+                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All, "HitRight", true);
             }
             else
             {
-                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All,"HitBack", true);
+                photonView.RPC(nameof(SetBoolRPC), RpcTarget.All, "HitBack", true);
             }
-            
-            photonView.RPC(nameof(SetBoolRPC), RpcTarget.All,"Hit", true);
+
+            photonView.RPC(nameof(SetBoolRPC), RpcTarget.All, "Hit", true);
         }
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
@@ -557,12 +556,12 @@ namespace Player
             _throwForce = _minForce;
             _throwAngle = _minAngle;
         }
-        
+
         public void Unhit()
         {
             _animator.SetBool(Hit, false);
         }
-        
+
         public void UnhitSides()
         {
             _animator.SetBool(HitFront, false);
@@ -696,7 +695,7 @@ namespace Player
         {
             for (var i = 1; i <= _maxHealth; i++)
             {
-                _hearts[i-1].color = Color.white;
+                _hearts[i - 1].color = Color.white;
             }
         }
 
@@ -744,7 +743,7 @@ namespace Player
             var mousePosAngle = Utilities.MousePosToRotationInput(_studentTransform, _playerCamera);
             _playerRotation = Quaternion.Euler(0f, mousePosAngle, 0f);
         }
-        
+
         // ReSharper disable once UnusedMember.Global
         public void OnMousePosition(InputAction.CallbackContext context)
         {
@@ -877,7 +876,7 @@ namespace Player
         [PunRPC]
         public void SetWalkHashBool_RPC(bool walking) { _animator.SetBool(IsWalkingHash, walking); }
         [PunRPC]
-        public void SetDigHashBool_RPC(bool digging){ _animator.SetBool(IsDiggingHash, digging);}
+        public void SetDigHashBool_RPC(bool digging) { _animator.SetBool(IsDiggingHash, digging); }
         [PunRPC]
         public void SetHasSnowballHashBool_RPC(bool hasSnowball) { _animator.SetBool(HasSnowballHash, hasSnowball); }
 
@@ -917,7 +916,7 @@ namespace Player
         [PunRPC]
         private void SetLeadingTeamShirtRPC()
         {
-            
+
         }
 
         /// <summary>
@@ -976,7 +975,7 @@ namespace Player
             _currentHat.SetActive(true);
 
             if (photonView.IsMine)
-            RoomManager.Instance.SetCustomProperty("hatIndex", _hatIndex);
+                RoomManager.Instance.SetCustomProperty("hatIndex", _hatIndex);
         }
 
 
@@ -995,7 +994,7 @@ namespace Player
             _currentPants.GetComponent<Renderer>().material.color = _pantColor;
 
             if (photonView.IsMine)
-            RoomManager.Instance.SetCustomProperty("pantIndex", _pantIndex);
+                RoomManager.Instance.SetCustomProperty("pantIndex", _pantIndex);
         }
 
         [PunRPC]
@@ -1007,7 +1006,7 @@ namespace Player
             _currentPants.GetComponent<Renderer>().material.color = _pantColor;
 
             if (photonView.IsMine)
-            RoomManager.Instance.SetCustomProperty("pantColorIndex", _pantColorIndex);
+                RoomManager.Instance.SetCustomProperty("pantColorIndex", _pantColorIndex);
         }
 
         [PunRPC]
@@ -1024,7 +1023,7 @@ namespace Player
             _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
 
             if (photonView.IsMine)
-            RoomManager.Instance.SetCustomProperty("coatIndex", _coatIndex);
+                RoomManager.Instance.SetCustomProperty("coatIndex", _coatIndex);
         }
 
         [PunRPC]
@@ -1042,7 +1041,7 @@ namespace Player
             _currentCoat.GetComponent<Renderer>().material.color = _coatColor;
 
             if (photonView.IsMine)
-            RoomManager.Instance.SetCustomProperty("coatColorIndex", _coatColorIndex);
+                RoomManager.Instance.SetCustomProperty("coatColorIndex", _coatColorIndex);
         }
 
         [PunRPC]
@@ -1062,7 +1061,7 @@ namespace Player
             _currentHairStyle.GetComponent<Renderer>().material.color = _hairColor;
 
             if (photonView.IsMine)
-            RoomManager.Instance.SetCustomProperty("hairIndex", _hairStyleIndex);
+                RoomManager.Instance.SetCustomProperty("hairIndex", _hairStyleIndex);
         }
 
         [PunRPC]
@@ -1074,13 +1073,13 @@ namespace Player
             _currentHairStyle.GetComponent<Renderer>().material.color = _hairColor;
 
             if (photonView.IsMine)
-            RoomManager.Instance.SetCustomProperty("hairColorIndex", _hairColorIndex);
+                RoomManager.Instance.SetCustomProperty("hairColorIndex", _hairColorIndex);
         }
 
         [PunRPC]
         public void SwitchSkinColor()
         {
-           if (_skinColorIndex + 1 >= skinColors.Length)
+            if (_skinColorIndex + 1 >= skinColors.Length)
             {
                 _skinColorIndex = 0;
             }
@@ -1092,7 +1091,7 @@ namespace Player
             _playerSkin.GetComponent<Renderer>().material.color = skinColors[_skinColorIndex];
 
             if (photonView.IsMine)
-            RoomManager.Instance.SetCustomProperty("skinColorIndex", _skinColorIndex);
+                RoomManager.Instance.SetCustomProperty("skinColorIndex", _skinColorIndex);
         }
 
         public void SwitchHat_RPC() { photonView.RPC("SwitchHat", RpcTarget.AllBuffered); }
@@ -1103,6 +1102,13 @@ namespace Player
         public void SwitchPantsColor_RPC() { photonView.RPC("SwitchPantsColor", RpcTarget.AllBuffered); }
         public void SwitchCoatColor_RPC() { photonView.RPC("SwitchCoatColor", RpcTarget.AllBuffered); }
         public void SwitchSkinColor_RPC() { photonView.RPC("SwitchSkinColor", RpcTarget.AllBuffered); }
+
+        [PunRPC]
+        public void SyncIsReady(bool isActive, string userId)
+        {
+            if (userId == this.PlayerID)
+                this._isReadyBubble.SetActive(isActive);
+        }
 
         [PunRPC]
         public void SetHat(int index)
@@ -1167,7 +1173,7 @@ namespace Player
         {
             photonView.RPC("RestoreTeamlessColors", RpcTarget.AllBuffered);
         }
-        
+
         public void UpdateTeamColors_RPC()
         {
             photonView.RPC(nameof(UpdateTeamColorVisuals), RpcTarget.AllBuffered);
@@ -1216,7 +1222,7 @@ namespace Player
             _playerVCam.Follow = _studentTransform;
             _playerVCamFramingTransposer = _playerVCam.GetCinemachineComponent<CinemachineFramingTransposer>();
             SetFrameTransposerProperties(angle, distance, canvasHeight);
-            
+
             _healthTransform.gameObject.SetActive(isInYard);
             _nicknameTransform.SetBottom(nameTextHeight);
             _nicknameTransform.SetTop(-nameTextHeight);
@@ -1247,7 +1253,7 @@ namespace Player
             _playerVCam.gameObject.SetActive(!isTeacher);
             ArenaManager.Instance.TeacherVirtualCamera.gameObject.SetActive(isTeacher);
             _isAiming = !isTeacher;
-            
+
             if (_animator.GetCurrentAnimatorStateInfo(1).IsName("Prepare Snowball"))
             {
                 _animator.SetTrigger(CancelPrepare);
@@ -1277,15 +1283,15 @@ namespace Player
             {
                 if (hitColliders[i].gameObject.TryGetComponent<INetworkInteractable>(out var interactableObject))
                 {
-                    if(interactableObject.IsActive) continue;
-                    
+                    if (interactableObject.IsActive) continue;
+
                     interactable = interactableObject;
                 }
             }
 
             return interactable;
         }
-        
+
         private void StopControlledMovement()
         {
             _target = Vector3.zero;
@@ -1296,7 +1302,7 @@ namespace Player
                 RoomManager.Instance.StartGame();
             }
         }
-        
+
         /// <summary>
         /// This is a very important method, it basically is entirely responsible for syncing the object on the network.
         /// If (stream.IsWriting) == true, it means that we own the player, so transmit data to everyone else on the network (hence, write)
@@ -1332,25 +1338,25 @@ namespace Player
             }
             else
             {
-                _hasSnowball = (bool) stream.ReceiveNext();
-                _isDigging = (bool) stream.ReceiveNext();
-                _isWalking = (bool) stream.ReceiveNext();
-                _isAiming = (bool) stream.ReceiveNext();
-                _currentHealth = (int) stream.ReceiveNext();
-                _isDead = (bool) stream.ReceiveNext();
-                _isFrozen = (bool) stream.ReceiveNext();
-                _worldUI.gameObject.SetActive((bool) stream.ReceiveNext());
-                _playerModel.gameObject.SetActive((bool) stream.ReceiveNext());
-                _canvasTransform.rotation = (Quaternion) stream.ReceiveNext();
-                _healthTransform.gameObject.SetActive((bool) stream.ReceiveNext());
-                _nicknameTransform.offsetMax = (Vector2) stream.ReceiveNext();
-                _nicknameTransform.offsetMin = (Vector2) stream.ReceiveNext();
-                _hostCrown.gameObject.SetActive((bool) stream.ReceiveNext());
-                _isBeingControlled = (bool) stream.ReceiveNext();
-                _isJerseyNull = (bool) stream.ReceiveNext();
-                _target = (Vector3) stream.ReceiveNext();
-                _isKicking = (bool) stream.ReceiveNext();
-                _usingCannon = (bool) stream.ReceiveNext();
+                _hasSnowball = (bool)stream.ReceiveNext();
+                _isDigging = (bool)stream.ReceiveNext();
+                _isWalking = (bool)stream.ReceiveNext();
+                _isAiming = (bool)stream.ReceiveNext();
+                _currentHealth = (int)stream.ReceiveNext();
+                _isDead = (bool)stream.ReceiveNext();
+                _isFrozen = (bool)stream.ReceiveNext();
+                _worldUI.gameObject.SetActive((bool)stream.ReceiveNext());
+                _playerModel.gameObject.SetActive((bool)stream.ReceiveNext());
+                _canvasTransform.rotation = (Quaternion)stream.ReceiveNext();
+                _healthTransform.gameObject.SetActive((bool)stream.ReceiveNext());
+                _nicknameTransform.offsetMax = (Vector2)stream.ReceiveNext();
+                _nicknameTransform.offsetMin = (Vector2)stream.ReceiveNext();
+                _hostCrown.gameObject.SetActive((bool)stream.ReceiveNext());
+                _isBeingControlled = (bool)stream.ReceiveNext();
+                _isJerseyNull = (bool)stream.ReceiveNext();
+                _target = (Vector3)stream.ReceiveNext();
+                _isKicking = (bool)stream.ReceiveNext();
+                _usingCannon = (bool)stream.ReceiveNext();
             }
         }
 
@@ -1364,7 +1370,7 @@ namespace Player
             _target = target;
             _startGame = startGame;
         }
-        
+
         /// <summary>
         /// Accessed through animation event. Disables Walking animation when necessary
         /// </summary>
@@ -1380,22 +1386,22 @@ namespace Player
         {
             _threwSnowball = value;
         }
-        
+
         public void SetAnimatorParameter(string parameter)
         {
             _animator.SetTrigger(parameter);
         }
-        
+
         public void SetAnimatorParameter(string parameter, bool value)
         {
             _animator.SetBool(parameter, value);
         }
-        
+
         public void SetAnimatorParameter(string parameter, int value)
         {
             _animator.SetInteger(parameter, value);
         }
-        
+
         public void SetAnimatorParameter(string parameter, float value)
         {
             _animator.SetFloat(parameter, value);
