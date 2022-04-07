@@ -219,7 +219,9 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             _startTime = PhotonNetwork.Time;
             hasTimerStarted = true;
             myHashTable.Add(START_TIME_KEY, _startTime);
-            myHashTable.Add("isFirstRun", true);
+            myHashTable.Add("deaths1", 0);
+            myHashTable.Add("deaths2", 0);
+
             PhotonNetwork.CurrentRoom.SetCustomProperties(myHashTable);
         }
     }
@@ -238,58 +240,58 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         }
 
         if (!player.photonView.IsMine) return;
-    
+
         Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
-        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"hatIndex"))
+        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId + "hatIndex"))
         {
-            player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"hatIndex"]);
+            player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId + "hatIndex"]);
         }
 
-        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"hairIndex"))
+        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId + "hairIndex"))
         {
-            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"hairColorIndex"))
+            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId + "hairColorIndex"))
             {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"hairIndex"], (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"hairColorIndex"]);
+                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId + "hairIndex"], (int)playerProperties[PhotonNetwork.LocalPlayer.UserId + "hairColorIndex"]);
             }
             else
             {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"hairIndex"], 0);
+                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId + "hairIndex"], 0);
             }
         }
 
-        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"pantIndex"))
+        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId + "pantIndex"))
         {
-            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"pantColorIndex"))
+            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId + "pantColorIndex"))
             {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"pantIndex"], (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"pantColorIndex"]);
+                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId + "pantIndex"], (int)playerProperties[PhotonNetwork.LocalPlayer.UserId + "pantColorIndex"]);
             }
             else
             {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"pantIndex"], 0);
+                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId + "pantIndex"], 0);
             }
         }
 
-        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"coatIndex"))
+        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId + "coatIndex"))
         {
-            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"coatColorIndex"))
+            if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId + "coatColorIndex"))
             {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"coatIndex"], (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"coatColorIndex"]);
+                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId + "coatIndex"], (int)playerProperties[PhotonNetwork.LocalPlayer.UserId + "coatColorIndex"]);
             }
             else
             {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"coatIndex"], 0);
+                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId + "coatIndex"], 0);
             }
         }
 
-        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId+"skinColorIndex"))
+        if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId + "skinColorIndex"))
         {
-            player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId+"skinColorIndex"]);
+            player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties[PhotonNetwork.LocalPlayer.UserId + "skinColorIndex"]);
         }
 
         player.transform.position = GetPlayerSpawnPoint(player.TeamID);
     }
-    
+
     private void SpawnTeacher()
     {
         if (PhotonNetwork.IsMasterClient)
@@ -322,7 +324,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     {
         ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
         PhotonTeamsManager teamsManager = FindObjectOfType<PhotonTeamsManager>();
-        
+
         /*Hashtable emptyTable = new Hashtable();
         PhotonNetwork.LocalPlayer.CustomProperties = emptyTable;*/
 
@@ -384,18 +386,51 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void IncrementTeamDeathCount(int teamCode)
+    {
+        Hashtable ht = PhotonNetwork.CurrentRoom.CustomProperties;
+        string key = "deaths" + teamCode.ToString();
+
+        if (ht.ContainsKey(key))
+        {
+            int deaths = (int)ht[key];
+            ht[key] = ++deaths;
+        }
+        else
+        {
+            ht.Add(key, 1);
+        }
+
+        PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
+    }
+
     public void SetLeadingShirt(int teamCode)
     {
         _leadingTeamShirt.sprite = _teamShirts[teamCode];
     }
 
-    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable changedProps)
     {
-        base.OnRoomPropertiesUpdate(propertiesThatChanged);
-        if (propertiesThatChanged.ContainsKey(START_TIME_KEY) && !PhotonNetwork.IsMasterClient)
+        base.OnRoomPropertiesUpdate(changedProps);
+        if (changedProps.ContainsKey(START_TIME_KEY) && !PhotonNetwork.IsMasterClient)
         {
             _startTime = double.Parse(PhotonNetwork.CurrentRoom.CustomProperties[START_TIME_KEY].ToString());
             hasTimerStarted = true;
+        }
+
+        if (changedProps.ContainsKey("deaths1") || changedProps.ContainsKey("deaths2"))
+        {
+            int deaths1 = (int)changedProps["deaths1"];
+            int deaths2 = (int)changedProps["deaths2"];
+            if (deaths1 == deaths2)
+            {
+                SetLeadingShirt(0);
+            }
+            else
+            {
+                int winningTeam = (int)changedProps["deaths1"] < (int)changedProps["deaths2"] ? 1 : 2;
+                SetLeadingShirt(winningTeam);
+            }
         }
     }
 
