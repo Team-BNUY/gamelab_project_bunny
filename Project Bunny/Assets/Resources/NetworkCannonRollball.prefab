@@ -118,6 +118,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 4426926764116054813}
+  - {fileID: 3092425030717219870}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -148,8 +149,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2.435331, y: 2.0464826, z: 3.2717066}
-  m_Center: {x: 0.025213717, y: 0.5232413, z: -0.053628206}
+  m_Size: {x: 3.1581826, y: 2.0464826, z: 3.2717066}
+  m_Center: {x: 0.024548113, y: 0.5232413, z: -0.053628206}
 --- !u!114 &3092425030717219870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,6 +166,7 @@ MonoBehaviour:
   _playerSeat: {fileID: 4087691616406083175}
   _rollballSeat: {fileID: 5772685521726217003}
   _aimArrow: {fileID: 6179245846616208240}
+  _id: 0
   _newCameraDistance: 35
   _rotationSpeed: 150
   _coolDownTime: 10

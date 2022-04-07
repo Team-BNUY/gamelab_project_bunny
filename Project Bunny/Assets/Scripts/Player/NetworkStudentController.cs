@@ -114,6 +114,7 @@ namespace Player
         private bool _isSliding;
         private bool _isKicking;
         private bool _isJerseyNull;
+        private bool _usingCannon;
 
         // List of readonly files. No need for them to have a _ prefix
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
@@ -152,7 +153,12 @@ namespace Player
             get => _isKicking;
             set => _isKicking = value;
         }
-        public bool UsingCannon { get; set; }
+
+        public bool UsingCannon
+        {
+            get => _usingCannon;
+            set => _usingCannon = value;
+        }
 
         [Header("Network")]
         [SerializeField] private TMPro.TMP_Text _nickNameText;
@@ -1224,13 +1230,14 @@ namespace Player
         private INetworkInteractable ReturnNearestInteractable()
         {
             INetworkInteractable interactable = null;
-            var maxColliders = 5; //maximum number of objects near to the player that can be looped through
+            var maxColliders = 10; //maximum number of objects near to the player that can be looped through
             var hitColliders = new Collider[maxColliders];
-            var numColliders = Physics.OverlapSphereNonAlloc(_studentTransform.position, 1f, hitColliders);
+            var numColliders = Physics.OverlapSphereNonAlloc(_studentTransform.position, 1.5f, hitColliders);
+            Debug.Log(numColliders);
 
             if (numColliders < 1) return null;
 
-            //Loop through 3 nearest objects and check if any of them are interactables that implement IInteractable
+            //Loop through 10 nearest objects and check if any of them are interactables that implement IInteractable
             for (var i = 0; i < numColliders; i++)
             {
                 if (hitColliders[i].gameObject.TryGetComponent<INetworkInteractable>(out var interactableObject))
@@ -1286,6 +1293,7 @@ namespace Player
                 stream.SendNext(_isJerseyNull);
                 stream.SendNext(_target);
                 stream.SendNext(_isKicking);
+                stream.SendNext(_usingCannon);
             }
             else
             {
@@ -1307,6 +1315,7 @@ namespace Player
                 _isJerseyNull = (bool) stream.ReceiveNext();
                 _target = (Vector3) stream.ReceiveNext();
                 _isKicking = (bool) stream.ReceiveNext();
+                _usingCannon = (bool) stream.ReceiveNext();
             }
         }
 
