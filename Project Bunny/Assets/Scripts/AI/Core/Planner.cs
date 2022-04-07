@@ -6,37 +6,6 @@ namespace AI.Core
 {
     public class Planner
     {
-        private class Node
-        {
-            private Node _parent;
-            private int _cost;
-            private StateSet _states;
-            private Action _action;
-
-            public Node(Node parent, int cost, StateSet allStates, Action action)
-            {
-                _parent = parent;
-                _cost = cost;
-                _states = new StateSet(allStates);
-                _action = action;
-            }
-
-            public Node(Node parent, int cost, StateSet worldStates, StateSet beliefStates, Action action)
-            {
-                _parent = parent;
-                _cost = cost;
-                _states = worldStates.Union(beliefStates);
-                _action = action;
-            }
-            
-            // Properties
-            
-            public Node Parent => _parent;
-            public int Cost => _cost;
-            public StateSet States => _states;
-            public Action Action => _action;
-        }
-        
         /// <summary>
         /// Creates a plan of Action out of the achievable <paramref name="actions"/> to reach the <paramref name="goalStates"/>
         /// </summary>
@@ -49,9 +18,29 @@ namespace AI.Core
             // Adds all achievable actions to the usable actions
             var usableActions = actions.Where(a => a.IsAchievable()).ToList();
 
+            // Debug.LogError("USABLE ACTIONS + AMOUNT: " + actions.Count);
+            // foreach (var action in actions)
+            // {
+            //     Debug.LogError("ACTION: " + action.Name);
+            // }
+            //
+            // Debug.LogError("GOAL STATES + AMOUNT: " + goalStates.States.Count());
+            // foreach (var state in goalStates.States)
+            // {
+            //     Debug.LogError("GOAL STATE: " + state.Key);
+            // }
+            //
+            // Debug.LogError("BELIEF STATES + AMOUNT: " + beliefStates.States.Count());
+            // foreach (var state in beliefStates.States)
+            // {
+            //     Debug.LogError("BELIEF STATE: " + state.Key);
+            // }
+            
             // Initiates the empty list of leaves to pass by reference and the initial node of the graph (tree)
             var leaves = new List<Node>();
             var start = new Node(null, 0, World.Instance.States, beliefStates, null);
+            
+            //Debug.LogError("START NODE EXISTS: " + start.Action);
 
             // Builds the graph, checks whether or not a path is found to the goal state and extracts the leaves if so
             var success = BuildGraph(start, ref leaves, usableActions, goalStates);
@@ -99,6 +88,32 @@ namespace AI.Core
         /// <returns>True if the goal is achievable (if a node with states containing the goal state may be reached within the graph)</returns>
         private bool BuildGraph(Node parent, ref List<Node> leaves, List<Action> usableActions, StateSet goalStates)
         {
+            // Debug.LogError("PASSED PARENT: " + parent.Action);
+            //
+            // Debug.LogError("REFERENCED LEAVES + COUNT: " + leaves.Count);
+            // foreach (var leaf in leaves)
+            // {
+            //     Debug.LogError("REFERENCED LEAF: " + leaf.Action.Name);
+            // }
+            //
+            // Debug.LogError("PASSED USABLE ACTIONS + COUNT: " + usableActions.Count);
+            // foreach (var action in usableActions)
+            // {
+            //     Debug.LogError("PASSED USABLE ACTION: " + action.Name);
+            // }
+            //
+            // Debug.LogError("PASSED GOALS + COUNT: " + goalStates.States.Count());
+            // foreach (var goal in goalStates.States)
+            // {
+            //     Debug.LogError("PASSED GOALS: " + goal.Key);
+            // }
+            //
+            // Debug.LogError("ACHIEVABLE GIVEN TEST");
+            // foreach (var action in usableActions)
+            // {
+            //     Debug.LogError("ACTION " + action.Name + " IS ACHIEVABLE GIVEN? " + action.IsAchievableGiven(parent.States));
+            // }
+            
             var foundPath = false;
             foreach (var action in usableActions.Where(a => a.IsAchievableGiven(parent.States)))
             {
