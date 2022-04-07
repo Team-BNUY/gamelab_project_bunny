@@ -51,7 +51,10 @@ namespace AI.Core
         /// </summary>
         private void LateUpdate()
         {
-            if (!PhotonNetwork.LocalPlayer.IsMasterClient) return;
+            Debug.LogError(PhotonNetwork.IsMasterClient);
+            Debug.LogError(photonView.Owner);
+            
+            if (!PhotonNetwork.IsMasterClient) return;
 
             action = currentAction?.Name;
 
