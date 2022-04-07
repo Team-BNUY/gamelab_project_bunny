@@ -78,7 +78,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AlphaCutoff: 0.5
-    - _AmountSparkle: 0.987
+    - _AmountSparkle: 1
     - _AoIntensity: 1.013
     - _AoIntensityDetail: 0
     - _AoMask: 0
@@ -96,7 +96,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DetailSaturation: 0
     - _DstBlend: 0
-    - _EmissionIntensity: 1
+    - _EmissionIntensity: 0.94
     - _ExcludeMask: 0
     - _FillMask: 1
     - _GlossMapScale: 1
@@ -140,6 +140,7 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DetailColor: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 0.5849056, g: 0.058858383, b: 0.08266701, a: 1}
     - _GlobalXYTilingXYZWOffsetXY: {r: 1, g: 1, b: 0, a: 0}
     - _GlobalXYTilingXYZWOffsetXYSnow: {r: 1, g: 1, b: 0, a: 0}
+  m_BuildTextureStacks: []
