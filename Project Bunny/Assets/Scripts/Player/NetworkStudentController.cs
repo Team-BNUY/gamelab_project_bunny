@@ -1338,6 +1338,7 @@ namespace Player
                 stream.SendNext(_target);
                 stream.SendNext(_isKicking);
                 stream.SendNext(_usingCannon);
+                stream.SendNext(_isInClass);
             }
             else
             {
@@ -1360,6 +1361,7 @@ namespace Player
                 _target = (Vector3)stream.ReceiveNext();
                 _isKicking = (bool)stream.ReceiveNext();
                 _usingCannon = (bool)stream.ReceiveNext();
+                _isInClass = (bool) stream.ReceiveNext();
             }
         }
 
