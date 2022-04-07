@@ -3,6 +3,7 @@ using Player;
 using System.Collections;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 
 public class NetworkDoor : MonoBehaviour, INetworkTriggerable
 {
@@ -35,7 +36,6 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     {
         if (PhotonNetwork.IsMasterClient)
         {
-
             foreach (Photon.Realtime.Player player in PhotonNetwork.CurrentRoom.Players.Values) {
                 if ((!player.CustomProperties.ContainsKey("isReady") || (bool)player.CustomProperties["isReady"] == false) && !player.IsMasterClient) {
                     return;               
@@ -66,6 +66,8 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
         }
         else
         {
+            if (PhotonNetwork.LocalPlayer.GetPhotonTeam() == null) return;
+
             ExitGames.Client.Photon.Hashtable ht = PhotonNetwork.LocalPlayer.CustomProperties;
             if (ht.ContainsKey("isReady"))
             {

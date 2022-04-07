@@ -72,6 +72,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private const string ROOM_SCENE_NAME = "3-Room";
     private const string READY_KEY = "isready";
     private int readyPlayers;
+    [SerializeField] TeamWall[] teamWalls;
 
     private NetworkStudentController _localStudentController;
 
@@ -239,6 +240,12 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         }
 
         if (!player.photonView.IsMine) return;
+
+        foreach (TeamWall wall in teamWalls) {
+            if (_localStudentController.TeamID == wall.AllowedTeam) {
+                wall.collider.enabled = false;
+            }
+        }
 
         Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
