@@ -52,14 +52,11 @@ namespace Networking
         private List<PlayerTile> _tiles;
         private NetworkStudentController _localStudentController;
         public NetworkStudentController LocalStudentController => _localStudentController;
-        private List<NetworkStudentController> _masterStudentList;
 
         public bool isFirstRun = true;
 
         void Start()
         {
-            _tiles = new List<PlayerTile>();
-            _masterStudentList = new List<NetworkStudentController>();
             _customProperties = new Hashtable();
 
             if (PhotonNetwork.LocalPlayer.CustomProperties != null)
@@ -128,8 +125,12 @@ namespace Networking
 
 
                     List<int> randomScoresIndex = new List<int>();
+                    int maxLoops = 100;
 
                     while (randomScoresIndex.Count < displayedScores.Length) {
+                        maxLoops--;
+                        Debug.LogError("VERY BAD ERROR");
+                        if (maxLoops <= 0) return;
                         int rand = UnityEngine.Random.Range(0, ScoreManager.Instance.scores.Length);
                         if (!String.IsNullOrEmpty(ScoreManager.Instance.scores[rand]) && !randomScoresIndex.Contains(rand) && ScoreManager.Instance.scoreValues[rand] != 0) {
                             randomScoresIndex.Add(rand);
