@@ -500,7 +500,7 @@ namespace Player
             photonView.RPC("SetDigHashBool_RPC", RpcTarget.All, false);
             photonView.RPC("SetHasSnowballHashBool_RPC", RpcTarget.All, true);
 
-            if (photonView.IsMine)
+            if (photonView.IsMine && !_isInClass)
             {
                 ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.SHOVELER_KEY);
             }
