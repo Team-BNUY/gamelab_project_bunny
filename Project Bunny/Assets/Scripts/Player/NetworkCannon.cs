@@ -168,10 +168,9 @@ namespace Player
         /// </summary>
         public void Release()
         {
-            if (!_hasSnowball) return;
+            if (!_hasSnowball || !_isAiming) return;
             
             ThrowSnowball();
-            _hasSnowball = false;
         }
 
         #endregion
