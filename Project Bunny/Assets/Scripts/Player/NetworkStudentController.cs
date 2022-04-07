@@ -1294,8 +1294,8 @@ namespace Player
         {
             _isInClass = !isInYard;
             _playerVCam = cam.GetComponentInChildren<CinemachineVirtualCamera>();
-            _lockCinemachineFollow = _playerVCam.GetComponent<LockCinemachineFollow>();
-            _lockCinemachineFollow.PlayerOwner = this;
+            //_lockCinemachineFollow = _playerVCam.GetComponent<LockCinemachineFollow>();
+            //_lockCinemachineFollow.PlayerOwner = this;
             _playerCamera = cam.GetComponentInChildren<Camera>();
             _playerVCam.Follow = _studentTransform;
             _playerVCamFramingTransposer = _playerVCam.GetCinemachineComponent<CinemachineFramingTransposer>();

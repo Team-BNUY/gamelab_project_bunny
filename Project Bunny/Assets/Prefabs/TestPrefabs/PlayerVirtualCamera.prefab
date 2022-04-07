@@ -180,7 +180,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6950638183166109818}
   - component: {fileID: 9032447270515380887}
-  - component: {fileID: 3255684060215565836}
   m_Layer: 0
   m_Name: PlayerVirtualCamera
   m_TagString: Untagged
@@ -232,7 +231,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7777778, y: 1}
+    m_SensorSize: {x: 1.7775551, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -241,18 +240,6 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 3897347655552282772}
---- !u!114 &3255684060215565836
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1743299155226530720}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc7d1e4d04176644f890d703848c452b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2101031302877179985
 GameObject:
   m_ObjectHideFlags: 0
