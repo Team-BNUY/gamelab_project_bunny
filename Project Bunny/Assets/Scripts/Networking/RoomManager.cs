@@ -6,6 +6,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun.UtilityScripts;
 using Player;
 using System;
+using UnityEngine.SceneManagement;
 
 namespace Networking
 {
@@ -13,8 +14,10 @@ namespace Networking
     {
         private static RoomManager _instance;
 
-        public static RoomManager Instance {
-            get {
+        public static RoomManager Instance 
+        {
+            get 
+            {
                 if (_instance == null)
                 {
                     _instance = FindObjectOfType<RoomManager>();
@@ -110,7 +113,7 @@ namespace Networking
 
             if (ScoreManager.Instance)
             {
-                this.isFirstRun = ScoreManager.Instance.isFirstMatch;
+                isFirstRun = ScoreManager.Instance.isFirstMatch;
 
                 foreach (Image img in displayedScores)
                 {
@@ -122,23 +125,22 @@ namespace Networking
                     firstRunWhiteboard.SetActive(false);
                     scoresWhiteboard.SetActive(true);
 
-                    if (ScoreManager.Instance.winningTeamCode == 1)
-                        teamWhoWon.sprite = blueWinSprite;
-                    else if (ScoreManager.Instance.winningTeamCode == 2)
-                        teamWhoWon.sprite = redWinSprite;
-                    else
-                        teamWhoWon.sprite = noContestSprite;
+                    teamWhoWon.sprite = ScoreManager.Instance.winningTeamCode switch
+                    {
+                        1 => blueWinSprite,
+                        2 => redWinSprite,
+                        _ => noContestSprite
+                    };
 
-
-                    List<int> randomScoresIndex = new List<int>();
-                    int maxLoops = 100;
+                    var randomScoresIndex = new List<int>();
+                    var maxLoops = 100;
 
                     while (randomScoresIndex.Count < displayedScores.Length)
                     {
                         maxLoops--;
                         if (maxLoops <= 0) break;
-                        int rand = UnityEngine.Random.Range(0, ScoreManager.Instance.scores.Length);
-                        if (!String.IsNullOrEmpty(ScoreManager.Instance.scores[rand]) && !randomScoresIndex.Contains(rand) && ScoreManager.Instance.scoreValues[rand] != 0)
+                        var rand = UnityEngine.Random.Range(0, ScoreManager.Instance.scores.Length);
+                        if (!string.IsNullOrEmpty(ScoreManager.Instance.scores[rand]) && !randomScoresIndex.Contains(rand) && ScoreManager.Instance.scoreValues[rand] != 0)
                         {
                             randomScoresIndex.Add(rand);
                         }
@@ -156,7 +158,7 @@ namespace Networking
                 {
                     firstRunWhiteboard.SetActive(true);
                     scoresWhiteboard.SetActive(false);
-                    foreach (Image img in displayedScores)
+                    foreach (var img in displayedScores)
                     {
                         img.gameObject.SetActive(false);
                     }
@@ -166,7 +168,7 @@ namespace Networking
             {
                 firstRunWhiteboard.SetActive(true);
                 scoresWhiteboard.SetActive(false);
-                foreach (Image img in displayedScores)
+                foreach (var img in displayedScores)
                 {
                     img.gameObject.SetActive(false);
                 }
@@ -200,7 +202,6 @@ namespace Networking
             }
         }
 
-
         public void PlayerLeaveRoom()
         {
             if (PhotonNetwork.LocalPlayer.GetPhotonTeam() != null)
@@ -223,19 +224,23 @@ namespace Networking
 
         public override void OnLeftRoom()
         {
-            ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
-            PhotonTeamsManager teamsManager = FindObjectOfType<PhotonTeamsManager>();
+            var scoreManager = FindObjectOfType<ScoreManager>();
+            var teamsManager = FindObjectOfType<PhotonTeamsManager>();
 
             /*Hashtable emptyTable = new Hashtable();
             PhotonNetwork.LocalPlayer.CustomProperties = emptyTable;*/
 
             if (scoreManager != null)
-                GameObject.Destroy(scoreManager.gameObject);
+            {
+                Destroy(scoreManager.gameObject);
+            }
 
             if (teamsManager != null)
-                GameObject.Destroy(teamsManager.gameObject);
+            {
+                Destroy(teamsManager.gameObject);
+            }
 
-            UnityEngine.SceneManagement.SceneManager.LoadScene(LOBBY_SCENE_NAME);
+            SceneManager.LoadScene(LOBBY_SCENE_NAME);
         }
 
         private void SwapTeams(byte teamCode)
@@ -274,9 +279,9 @@ namespace Networking
 
         private void SetAllPlayerSpawns()
         {
-            NetworkStudentController[] allStudents = FindObjectsOfType<NetworkStudentController>();
+            var allStudents = FindObjectsOfType<NetworkStudentController>();
 
-            for (int i = 0; i < _playerSpawnPosition.Length; i++)
+            for (var i = 0; i < allStudents.Length; i++)
             {
                 if (allStudents[i])
                 {
@@ -287,7 +292,7 @@ namespace Networking
 
         private void SpawnPlayer()
         {
-            NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, _playerSpawnPosition[0].position, Quaternion.identity).GetComponent<NetworkStudentController>();
+            var player = PhotonNetwork.Instantiate(_playerPrefab.name, _playerSpawnPosition[0].position, Quaternion.identity).GetComponent<NetworkStudentController>();
             _localStudentController = player;
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
             PhotonNetwork.LocalPlayer.TagObject = player;
@@ -315,7 +320,7 @@ namespace Networking
             }
 
 
-            Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
+            var playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
             if (playerProperties.ContainsKey("hatIndex"))
             {
@@ -394,12 +399,11 @@ namespace Networking
             }
 
             base.OnPlayerLeftRoom(newPlayer);
-            if (newPlayer.TagObject != null)
-            {
-                GameObject.Destroy(((NetworkStudentController)newPlayer.TagObject).gameObject);
-                _customProperties.Clear();
-                newPlayer.SetCustomProperties(_customProperties);
-            }
+            if (newPlayer.TagObject == null) return;
+            
+            Destroy(((NetworkStudentController)newPlayer.TagObject).gameObject);
+            _customProperties.Clear();
+            newPlayer.SetCustomProperties(_customProperties);
         }
 
         public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
