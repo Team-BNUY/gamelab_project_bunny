@@ -1,7 +1,4 @@
-using AI.Core;
-using UnityEngine;
-
-namespace AI
+namespace AI.Core
 {
     public class Goal
     {

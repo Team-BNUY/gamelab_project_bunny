@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Photon.Pun;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace AI.Core
 {
@@ -51,9 +49,6 @@ namespace AI.Core
         /// </summary>
         private void LateUpdate()
         {
-            Debug.LogError(PhotonNetwork.IsMasterClient);
-            Debug.LogError(photonView.Owner);
-            
             if (!PhotonNetwork.IsMasterClient) return;
 
             action = currentAction?.Name;
