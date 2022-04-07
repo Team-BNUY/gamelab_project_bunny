@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4622460567622431839}
+  - component: {fileID: 2220671068653381178}
   - component: {fileID: 4654743796071091423}
   - component: {fileID: 7469849442926374043}
   - component: {fileID: 4526159758131504535}
@@ -34,6 +35,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2220671068653381178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6414252773208847546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bad0a479946f30469fa80ec74ddc490, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &4654743796071091423
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -44,7 +57,7 @@ ParticleSystem:
   serializedVersion: 7
   lengthInSec: 10
   simulationSpeed: 1
-  stopAction: 2
+  stopAction: 3
   cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
@@ -4818,7 +4831,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 25d86b0cd8edd4d87acfb2b0e002f97e, type: 2}
+  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
