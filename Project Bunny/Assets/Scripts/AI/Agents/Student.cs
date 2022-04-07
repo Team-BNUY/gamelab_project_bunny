@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using AI.Core;
 using Networking;
@@ -15,9 +14,18 @@ namespace AI.Agents
         private Gang _gang;
         private List<string> _movingActions = new List<string> { "Intimidate", "Join Another Gang", "Cry", "AnimationAction" };
 
+        protected override void Awake()
+        {
+            photonView.OwnershipTransfer = OwnershipOption.Takeover;
+            
+            base.Awake();
+        }
+
         protected override void Start()
         {
             if (!PhotonNetwork.IsMasterClient) return;
+
+            photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
 
             Gang.Found(this);
 

@@ -31,7 +31,7 @@ namespace AI.Core
         /// <summary>
         /// Finds the references
         /// </summary>
-        private void Awake()
+        protected virtual void Awake()
         {
             animator = GetComponent<Animator>();
         }
