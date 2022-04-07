@@ -1,4 +1,5 @@
 using Photon.Pun;
+using UnityEngine;
 
 public class NetworkDestroyOnStop : MonoBehaviourPunCallbacks
 {
@@ -6,6 +7,7 @@ public class NetworkDestroyOnStop : MonoBehaviourPunCallbacks
     {
         if (!photonView.IsMine) return;
         
+        Debug.Log("PARTICLE SYSTEM");
         PhotonNetwork.Destroy(gameObject);
     }
 }
