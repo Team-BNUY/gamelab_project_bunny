@@ -142,7 +142,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         _loadingScreen.SetActive(false);
         StartTimer();
         
-        AudioManager.Instance.Play(_music, 1f, true);
+        //AudioManager.Instance.Play(_music, 1f, true);
     }
 
     private void UpdateTimer()

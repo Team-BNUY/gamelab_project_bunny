@@ -1117,7 +1117,9 @@ namespace Player
             _playerBoots.GetComponent<Renderer>().material.color = _colors[_shoesColorIndex];
 
             if (photonView.IsMine)
+            {
                 RoomManager.Instance.SetCustomProperty("shoesColorIndex", _shoesColorIndex);
+            }
         }
 
         public void SwitchHat_RPC()
@@ -1166,6 +1168,12 @@ namespace Player
         {
             AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
             photonView.RPC("SwitchSkinColor", RpcTarget.AllBuffered);
+        }
+
+        public void SwitchShoesColor_RPC()
+        {
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            photonView.RPC("SwitchShoesColor", RpcTarget.AllBuffered);
         }
 
         [PunRPC]
