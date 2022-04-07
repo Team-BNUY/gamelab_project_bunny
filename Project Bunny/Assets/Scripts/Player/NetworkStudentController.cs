@@ -64,6 +64,8 @@ namespace Player
         private int _coatColorIndex;
         private Color _coatColor;
 
+        private int _shoesColorIndex;
+
         private List<Renderer> _playerHatRenderers;
 
         [Header("Movement")]
@@ -202,6 +204,7 @@ namespace Player
             _coatIndex = 0;
             _hairStyleIndex = 0;
             _pantIndex = 0;
+            _shoesColorIndex = 0;
 
             _pantColorIndex = 0;
             _hairColorIndex = 0;
@@ -943,7 +946,6 @@ namespace Player
                     //TODO: Make this code more efficient so as to not use getComponent a lot and to also not use foreach
                     case 1:
                         _teamShirt.GetComponent<Renderer>().material.color = Color.blue;
-                        _playerBoots.GetComponent<Renderer>().material.color = Color.blue;
                         foreach (var playerHatRenderer in _playerHatRenderers)
                         {
                             playerHatRenderer.material.color = Color.blue;
@@ -952,7 +954,6 @@ namespace Player
                         break;
                     case 2:
                         _teamShirt.GetComponent<Renderer>().material.color = Color.red;
-                        _playerBoots.GetComponent<Renderer>().material.color = Color.red;
                         foreach (var playerHatRenderer in _playerHatRenderers)
                         {
                             playerHatRenderer.material.color = Color.red;
@@ -1095,6 +1096,24 @@ namespace Player
             if (photonView.IsMine)
                 RoomManager.Instance.SetCustomProperty("skinColorIndex", _skinColorIndex);
         }
+        
+        [PunRPC]
+        public void SwitchShoesColor()
+        {
+            if (_shoesColorIndex + 1 >= _colors.Length)
+            {
+                _shoesColorIndex = 0;
+            }
+            else
+            {
+                _shoesColorIndex++;
+            }
+
+            _playerBoots.GetComponent<Renderer>().material.color = _colors[_shoesColorIndex];
+
+            if (photonView.IsMine)
+                RoomManager.Instance.SetCustomProperty("shoesColorIndex", _shoesColorIndex);
+        }
 
         public void SwitchHat_RPC() { photonView.RPC("SwitchHat", RpcTarget.AllBuffered); }
         public void SwitchCoat_RPC() { photonView.RPC("SwitchCoat", RpcTarget.AllBuffered); }
@@ -1104,6 +1123,7 @@ namespace Player
         public void SwitchPantsColor_RPC() { photonView.RPC("SwitchPantsColor", RpcTarget.AllBuffered); }
         public void SwitchCoatColor_RPC() { photonView.RPC("SwitchCoatColor", RpcTarget.AllBuffered); }
         public void SwitchSkinColor_RPC() { photonView.RPC("SwitchSkinColor", RpcTarget.AllBuffered); }
+        public void SwitchShoesColor_RPC() { photonView.RPC("SwitchShoesColor", RpcTarget.AllBuffered); }
 
         [PunRPC]
         public void SyncIsReady(bool isActive, string userId)
@@ -1158,6 +1178,13 @@ namespace Player
             if (colorIndex < 0) return;
             _playerSkin.GetComponent<Renderer>().material.color = skinColors[colorIndex];
         }
+        
+        [PunRPC]
+        public void SetShoesColor(int colorIndex)
+        {
+            if (colorIndex < 0) return;
+            _playerBoots.GetComponent<Renderer>().material.color = _colors[colorIndex];
+        }
 
         /// <summary>
         /// Temporary function for restoring a player's colors to all white to show they are teamless
@@ -1166,7 +1193,6 @@ namespace Player
         public void RestoreTeamlessColors()
         {
             _teamShirt.GetComponent<Renderer>().material.color = Color.white;
-            _playerBoots.GetComponent<Renderer>().material.color = Color.white;
 
             foreach (var playerHatRenderer in _playerHatRenderers)
             {
