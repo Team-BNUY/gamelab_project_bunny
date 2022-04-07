@@ -47,9 +47,10 @@ namespace Networking
         [SerializeField] private Sprite[] scoreSprites;
         [SerializeField] private Sprite blueWinSprite;
         [SerializeField] private Sprite redWinSprite;
+        [SerializeField] private Sprite noContestSprite;
         [SerializeField] private GameObject firstRunWhiteboard;
         [SerializeField] private GameObject scoresWhiteboard;
-        private List<PlayerTile> _tiles;
+
         private NetworkStudentController _localStudentController;
         public NetworkStudentController LocalStudentController => _localStudentController;
 
@@ -121,7 +122,7 @@ namespace Networking
                     else if (ScoreManager.Instance.winningTeamCode == 2)
                         teamWhoWon.sprite = redWinSprite;
                     else
-                        teamWhoWon.gameObject.SetActive(false);
+                        teamWhoWon.sprite = noContestSprite;
 
 
                     List<int> randomScoresIndex = new List<int>();

@@ -204,7 +204,7 @@ public class ScoreManager : MonoBehaviour
         else if (redDeaths < blueDeaths)
             winningTeamCode = 2;
         else
-            Debug.Log("how do we handle exact ties? TO BE SOLVED LATER");
+            winningTeamCode = 0;
 
         _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rebel, hardWorker, teachersPet, glaceFolie, shoveler, avalanche, meetMeInMyOffice, (object)scoreValues);
     }
