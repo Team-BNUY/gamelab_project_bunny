@@ -121,6 +121,7 @@ namespace Player
         private bool _isJerseyNull;
         private bool _usingCannon;
         private bool _isInFollowZone;
+        private bool _isInClass;
 
         // List of readonly files. No need for them to have a _ prefix
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
@@ -146,6 +147,7 @@ namespace Player
         public bool IsInFollowZone => _isInFollowZone;
         public bool IsBeingControlled => _isBeingControlled;
         public float CameraLockX => _cameraLockX;
+        public bool IsInClass => _isInClass;
         public CinemachineFramingTransposer PlayerVCamFramingTransposer => _playerVCamFramingTransposer;
         public Collider PlayerCollider => _playerCollider;
         public Camera PlayerCamera => _playerCamera;
@@ -480,8 +482,8 @@ namespace Player
             }
 
             if (_digSnowballTimer < _digSnowballMaxTime) return;
-
-            var prefabToSpawn = ArenaManager.Instance.SnowballPrefab.name;
+            
+            var prefabToSpawn = _isInClass ? RoomManager.Instance.SnowballPrefab.name : ArenaManager.Instance.SnowballPrefab.name;
             if (_currentStandingGround == LayerMask.NameToLayer("Ice"))
             {
                 prefabToSpawn = ArenaManager.Instance.IceballPrefab.name;
@@ -583,6 +585,8 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void GetDamagedRPC(int damage)
         {
+            if (_isInClass) return;
+            
             if (damage >= _currentHealth)
             {
                 _currentHealth = 0;
@@ -1215,6 +1219,7 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void SetCamera(GameObject cam, float angle, float distance, bool isInYard, float nameTextHeight, float canvasHeight)
         {
+            _isInClass = !isInYard;
             _playerVCam = cam.GetComponentInChildren<CinemachineVirtualCamera>();
             _lockCinemachineFollow = _playerVCam.GetComponent<LockCinemachineFollow>();
             _lockCinemachineFollow.PlayerOwner = this;

@@ -27,6 +27,11 @@ namespace Networking
         private const string LOBBY_SCENE_NAME = "2-Lobby";
         private const string ARENA_SCENE_NAME = "4-Arena";
 
+        [Header("Prefabs")]
+        [SerializeField] private GameObject _snowballPrefab;
+        [SerializeField] private GameObject _snowballBurst;
+        
+
         [Header("Player Instantiation")]
         [SerializeField] private GameObject _playerPrefab;
         [SerializeField] private GameObject _playerCamera;
@@ -47,6 +52,9 @@ namespace Networking
         [SerializeField] private Sprite noContestSprite;
         [SerializeField] private GameObject firstRunWhiteboard;
         [SerializeField] private GameObject scoresWhiteboard;
+
+        public GameObject SnowballPrefab => _snowballPrefab;
+        public GameObject SnowballBurst => _snowballBurst;
 
         private NetworkStudentController _localStudentController;
         public NetworkStudentController LocalStudentController => _localStudentController;

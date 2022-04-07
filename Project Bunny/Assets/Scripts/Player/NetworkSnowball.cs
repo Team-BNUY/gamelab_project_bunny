@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Photon.Pun;
-using Photon.Pun.UtilityScripts;
 using Player;
 using UnityEngine;
 
@@ -26,13 +25,11 @@ namespace Networking
 
         public NetworkStudentController _studentThrower;
         private Transform _holdingPlace;
-        private PhotonView _view;
         private bool _hasCollided;
 
         private void Awake()
         {
             _snowballTransform ??= transform;
-            _view ??= GetComponent<PhotonView>();
             _snowballRigidbody ??= gameObject.GetComponent<Rigidbody>();
             _trajectoryLineRenderer ??= GetComponent<LineRenderer>();
             _sphereCollider ??= GetComponent<SphereCollider>();
@@ -88,7 +85,8 @@ namespace Networking
 
             if (otherStudent && otherStudent == _studentThrower) return;
             
-            var go = PhotonNetwork.Instantiate(ArenaManager.Instance.SnowballBurst.name, _snowballTransform.position, Quaternion.identity);
+            var prefabToSpawn = _studentThrower.IsInClass ? RoomManager.Instance.SnowballBurst.name : ArenaManager.Instance.SnowballBurst.name;
+            var go = PhotonNetwork.Instantiate(prefabToSpawn, _snowballTransform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
             PhotonNetwork.Destroy(gameObject);
