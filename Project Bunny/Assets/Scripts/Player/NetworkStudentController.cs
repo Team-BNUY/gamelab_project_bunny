@@ -585,8 +585,6 @@ namespace Player
         // ReSharper disable once UnusedMember.Global
         public void GetDamagedRPC(int damage)
         {
-            if (_isInClass) return;
-            
             if (damage >= _currentHealth)
             {
                 _currentHealth = 0;

@@ -70,7 +70,7 @@ namespace Networking
                 if (_hasCollided) return;
                 _hasCollided = true;
 
-                if (_studentThrower.photonView.IsMine)
+                if (_studentThrower.photonView.IsMine && !_studentThrower.IsInClass)
                 {
                     ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.HARD_WORKER_KEY);
 
@@ -79,8 +79,12 @@ namespace Networking
                         ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.GLACE_FOLIE_KEY);
                     }
                 }
-                
-                otherStudent.GetDamaged(_damage);
+
+                if (!otherStudent.IsInClass)
+                {
+                    Debug.Log("DAMAGED IN ARENA");
+                    otherStudent.GetDamaged(_damage);
+                }
             }
 
             if (otherStudent && otherStudent == _studentThrower) return;
