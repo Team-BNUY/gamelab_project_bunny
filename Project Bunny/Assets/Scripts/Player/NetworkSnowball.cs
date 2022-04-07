@@ -92,6 +92,7 @@ namespace Networking
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
             
+            Debug.Log("SNOWBALL");
             PhotonNetwork.Destroy(gameObject);
         }
 
