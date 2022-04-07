@@ -20,6 +20,7 @@ namespace Networking
         [SerializeField] private TMP_InputField _nameInput;
         [SerializeField] private Button _createButton;
         [SerializeField] private Button _joinButton;
+        [SerializeField] private Button _leaveButton;
         
         [Header("Audio")]
         [SerializeField] private AudioSource _loginAudioSource;
@@ -35,6 +36,7 @@ namespace Networking
             _createButton.onClick.AddListener(CreateRoom);
             _joinButton.onClick.AddListener(JoinRoom);
             _nameInput.onValueChanged.AddListener(SetName);
+            _leaveButton.onClick.AddListener(LeaveGame);
             SetUpNameInput();
         }
 
@@ -116,6 +118,12 @@ namespace Networking
             _loginAudioSource.loop = false;
             _loginAudioSource.clip = _writingSoundClip;
             _loginAudioSource.Play();
+        }
+
+        private void LeaveGame()
+        {
+            PhotonNetwork.LeaveLobby();
+            Application.Quit();
         }
     }
 }

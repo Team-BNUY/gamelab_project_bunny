@@ -82,7 +82,6 @@ namespace Networking
 
                 if (!otherStudent.IsInClass)
                 {
-                    Debug.Log("DAMAGED IN ARENA");
                     otherStudent.GetDamaged(_damage);
                 }
             }
