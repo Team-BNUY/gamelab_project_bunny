@@ -1269,7 +1269,6 @@ namespace Player
             var maxColliders = 10; //maximum number of objects near to the player that can be looped through
             var hitColliders = new Collider[maxColliders];
             var numColliders = Physics.OverlapSphereNonAlloc(_studentTransform.position, 1.5f, hitColliders);
-            Debug.Log(numColliders);
 
             if (numColliders < 1) return null;
 
