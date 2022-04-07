@@ -309,7 +309,7 @@ public class ScoreManager : MonoBehaviour
     #region RPC
 
     [PunRPC]
-    public void SyncMatchInformation(bool isFirst, int winningTeam, string bullyGuy, string rebelGuy, string hardWorkerGuy, string teacherPet, string glaceFolieGuy, string shovelerGuy, string avalancheGuy, string meetMeInMyOfficeGuy)
+    public void SyncMatchInformation(bool isFirst, int winningTeam, string bullyGuy, string rebelGuy, string hardWorkerGuy, string teacherPet, string glaceFolieGuy, string shovelerGuy, string avalancheGuy, string meetMeInMyOfficeGuy, int[] scoreVals)
     {
         isFirstMatch = isFirst;
         winningTeamCode = winningTeam;
@@ -322,6 +322,7 @@ public class ScoreManager : MonoBehaviour
         avalanche = avalancheGuy;
         meetMeInMyOffice = meetMeInMyOfficeGuy;
         scores = new [] { rebelGuy, bullyGuy, hardWorkerGuy, teacherPet, meetMeInMyOfficeGuy, glaceFolieGuy, shovelerGuy, avalancheGuy };
+        scoreValues = scoreVals;
     }
 
     [PunRPC]
