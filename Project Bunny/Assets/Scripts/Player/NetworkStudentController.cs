@@ -1125,8 +1125,10 @@ namespace Player
         {
             _currentCoat.SetActive(false);
             _currentCoat = _playerCoats[index];
-            _currentCoat.GetComponent<Renderer>().material.color = _colors[colorIndex];
             _currentCoat.SetActive(true);
+            if (colorIndex < 0) return;
+            _currentCoat.GetComponent<Renderer>().material.color = _colors[colorIndex];
+            
         }
 
         [PunRPC]
@@ -1134,8 +1136,10 @@ namespace Player
         {
             _currentHairStyle.SetActive(false);
             _currentHairStyle = _playerHairStyles[index];
-            _currentHairStyle.GetComponent<Renderer>().material.color = _colors[colorIndex];
             _currentHairStyle.SetActive(true);
+            if (colorIndex < 0) return;
+            _currentHairStyle.GetComponent<Renderer>().material.color = _colors[colorIndex];
+            
         }
 
         [PunRPC]
@@ -1143,13 +1147,16 @@ namespace Player
         {
             _currentPants.SetActive(false);
             _currentPants = _playerPants[index];
-            _currentPants.GetComponent<Renderer>().material.color = _colors[colorIndex];
             _currentPants.SetActive(true);
+            if (colorIndex < 0) return;
+            _currentPants.GetComponent<Renderer>().material.color = _colors[colorIndex];
+            
         }
 
         [PunRPC]
         public void SetSkinColor(int colorIndex)
         {
+            if (colorIndex < 0) return;
             _playerSkin.GetComponent<Renderer>().material.color = skinColors[colorIndex];
         }
 

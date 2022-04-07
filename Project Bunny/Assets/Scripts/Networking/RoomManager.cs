@@ -278,7 +278,10 @@ namespace Networking
 
             for (int i = 0; i < _playerSpawnPosition.Length; i++)
             {
-                allStudents[i].transform.position = _playerSpawnPosition[i].position;
+                if (allStudents[i])
+                {
+                    allStudents[i].transform.position = _playerSpawnPosition[i].position;
+                }
             }
         }
 
@@ -323,13 +326,11 @@ namespace Networking
             {
                 if (playerProperties.ContainsKey("hairColorIndex"))
                 {
-                    player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int) playerProperties["hairIndex"],
-                        (int) playerProperties["hairColorIndex"]);
+                    player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"]);
                 }
-
-                if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId + "hairIndex"))
+                else
                 {
-                    player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int) playerProperties["hairIndex"], 0);
+                    player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], -1);
                 }
             }
 
@@ -337,13 +338,11 @@ namespace Networking
             {
                 if (playerProperties.ContainsKey("pantColorIndex"))
                 {
-                    player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int) playerProperties["pantIndex"],
-                        (int) playerProperties["pantColorIndex"]);
+                    player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"]);
                 }
-
-                if (playerProperties.ContainsKey(PhotonNetwork.LocalPlayer.UserId + "coatIndex"))
+                else
                 {
-                    player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int) playerProperties["pantIndex"], 0);
+                    player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], -1);
                 }
             }
 
@@ -355,7 +354,7 @@ namespace Networking
                 }
                 else
                 {
-                    player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], 0);
+                    player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], -1);
                 }
             }
 
@@ -363,6 +362,7 @@ namespace Networking
             {
                 player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
             }
+            
             player.RestoreTeamlessColors_RPC();    
             //CorrectNumberOfJerseys();
         }

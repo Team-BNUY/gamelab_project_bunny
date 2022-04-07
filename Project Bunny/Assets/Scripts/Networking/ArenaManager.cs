@@ -253,7 +253,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             }
             else
             {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], 0);
+                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], -1);
             }
         }
 
@@ -265,7 +265,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             }
             else
             {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], 0);
+                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], -1);
             }
         }
 
@@ -277,7 +277,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             }
             else
             {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], 0);
+                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], -1);
             }
         }
 
