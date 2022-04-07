@@ -51,6 +51,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private Transform _teacherSpawn;
     [SerializeField] private Waypoint[] _teacherWaypoints;
     [SerializeField] private CinemachineVirtualCamera _teacherVirtualCamera;
+    [SerializeField] private ExclamationMark _exclamationMark;
     private NetworkStudentController[] _allPlayers;
     private List<Gang> _gangs = new List<Gang>();
 
@@ -93,6 +94,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     public Waypoint[] TeacherWaypoints => _teacherWaypoints;
     public float TeacherPreparationTime => _teacherPreparationTime;
     public CinemachineVirtualCamera TeacherVirtualCamera => _teacherVirtualCamera;
+    public ExclamationMark ExclamationMark => _exclamationMark;
 
     [Header("Other Spawns")]
     [SerializeField] private Transform[] _redSpawns;

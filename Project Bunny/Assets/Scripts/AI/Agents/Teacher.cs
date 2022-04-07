@@ -16,6 +16,10 @@ namespace AI.Agents
         public static event PlayerInteraction OnFoundBadStudent;
         public static event PlayerInteraction OnLostBadStudent;
         
+        // References
+        [Header("References")]
+        [SerializeField] private Transform _exclamationMarkPosition;
+        
         // View parameters
         [Header("View parameters")]
         [SerializeField] private Transform _head; 
@@ -306,6 +310,11 @@ namespace AI.Agents
         /// <param name="student">The student found</param>
         private void FindStudent(NetworkStudentController student)
         {
+            if (student != _targetStudent)
+            {
+                photonView.RPC(nameof(SetExclamationMark), student.photonView.Owner, true);
+            }
+            
             beliefStates.AddState("seesBadStudent", 1);
             
             if (currentAction is {Name: "Investigate"} || currentAction is {Name: "SurveilAfterHit"})
@@ -320,6 +329,8 @@ namespace AI.Agents
         /// <param name="student">The new bad student that has been seen</param>
         private void SeeNewStudent(NetworkStudentController student)
         {
+            photonView.RPC(nameof(SetExclamationMark), student.photonView.Owner, true);
+            
             beliefStates.AddState("seesBadStudent", 1);
             RememberStudent(student);
             
@@ -344,6 +355,11 @@ namespace AI.Agents
         /// <param name="student">The student that has just been lost</param>
         private void LoseStudent(NetworkStudentController student)
         {
+            if (student)
+            {
+                photonView.RPC(nameof(SetExclamationMark), student.photonView.Owner, false);
+            }
+
             beliefStates.RemoveState("seesBadStudent");
 
             if (currentAction is {Name: "Chase Student"})
@@ -352,6 +368,28 @@ namespace AI.Agents
             }
         }
         
+        private void EnableExclamationMark()
+        {
+            ArenaManager.Instance.ExclamationMark.gameObject.SetActive(true);
+            Invoke(nameof(DisableExclamationMark), 2f);
+        }
+        
+        private void DisableExclamationMark()
+        {
+            ArenaManager.Instance.ExclamationMark.gameObject.SetActive(false);
+        }
+        
+        [PunRPC]
+        private void SetExclamationMark(bool active)
+        {
+            DisableExclamationMark();
+
+            if (active)
+            {
+                Invoke(nameof(EnableExclamationMark), 0.1f);
+            }
+        }
+
         [PunRPC]
         private void Stun()
         {
@@ -418,6 +456,11 @@ namespace AI.Agents
         public Vector3 HitDirection
         {
             get => _hitDirection;
+        }
+
+        public Transform ExclamationMarkPosition
+        {
+            get => _exclamationMarkPosition;
         }
     }
 }
