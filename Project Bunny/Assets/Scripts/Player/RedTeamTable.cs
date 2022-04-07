@@ -9,11 +9,11 @@ namespace Player
     {
         public static RedTeamTable instance;
 
-        [Header("Orange Table Instantiation")] 
-        
+        [Header("Orange Table Instantiation")]
         [SerializeField] private GameObject[] _jerseys;
+        [SerializeField] private AudioClip _shitWear;
+        [SerializeField] private AudioClip _shitTakeOff;
         [SerializeField] public Animator hoverEButtonUI;
-
 
         private int _teamCount = -1;
         private const int _teamMaxSize = 4;
@@ -21,9 +21,12 @@ namespace Player
    
     
         private void Awake() {
-            if (instance != null) {
+            if (instance != null)
+            {
                 Destroy(gameObject);
-            } else{
+            }
+            else
+            {
                 instance = this;
             }
             
@@ -49,18 +52,21 @@ namespace Player
                     PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
                     _view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
                     currentPlayer.RestoreTeamlessColors_RPC();
+                    AudioManager.Instance.PlayOneShot(_shitTakeOff, 0.5f);
                 }
                 else
                 {
                     PhotonNetwork.LocalPlayer.SwitchTeam(2);
                     BlueTeamTable.instance.SubtractTeamCount_RPC();
                     _view.RPC("AddTeamCount", RpcTarget.AllBuffered);
+                    AudioManager.Instance.PlayOneShot(_shitWear, 0.5f);
                 }
             }
             else
             {
                 PhotonNetwork.LocalPlayer.JoinTeam(2);
                 _view.RPC("AddTeamCount", RpcTarget.AllBuffered);
+                AudioManager.Instance.PlayOneShot(_shitWear, 0.5f);
             }
         }
         

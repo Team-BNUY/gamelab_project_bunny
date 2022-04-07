@@ -17,8 +17,10 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 {
     private static ArenaManager _instance;
 
-    public static ArenaManager Instance {
-        get {
+    public static ArenaManager Instance 
+    {
+        get 
+        {
             if (_instance == null)
             {
                 _instance = FindObjectOfType<ArenaManager>();
@@ -40,6 +42,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _cannonBall;
     [SerializeField] private NetworkCannon _cannon;
     [SerializeField] private Sprite[] _teamShirts = new Sprite[3];
+    private NetworkStudentController _localStudentController;
 
     [Header("AI")]
     [SerializeField] private LayerMask _studentLayer;
@@ -74,7 +77,9 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private int readyPlayers;
     [SerializeField] TeamWall[] teamWalls;
 
-    private NetworkStudentController _localStudentController;
+    [Header("Audio")]
+    [SerializeField] private AudioClip _music;
+    [SerializeField] private AudioClip _schoolBell;
 
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
@@ -107,13 +112,14 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     {
         _loadingScreen.SetActive(true);
         _leadingTeamShirt.sprite = _teamShirts[0];
+        
         if (!PhotonNetwork.IsMasterClient) return;
+        
         _leadingTeamShirt.sprite = _teamShirts[0];
-
         _gangs.Clear();
     }
 
-    void Start()
+    private void Start()
     {
         SetIsReady(false);
         _loadingScreen.SetActive(true);
@@ -121,7 +127,6 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
         ScoreManager.Instance.ClearPropertyCounters();
 
-        //Invoke(nameof(StartMatch), 1f);
         SetIsReady(true);
     }
 
@@ -136,6 +141,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         Invoke(nameof(SpawnTeacher), _teacherSpawnTime);
         _loadingScreen.SetActive(false);
         StartTimer();
+        
+        AudioManager.Instance.Play(_music, 1f, true);
     }
 
     private void UpdateTimer()

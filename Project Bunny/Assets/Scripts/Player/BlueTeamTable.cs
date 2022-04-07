@@ -11,7 +11,8 @@ namespace Player
     
         [Header("Blue Table Instantiation")]
         [SerializeField] private GameObject[] _jerseys;
-
+        [SerializeField] private AudioClip _shitWear;
+        [SerializeField] private AudioClip _shitTakeOff;
 
         private int _teamCount = -1;
         private const int _teamMaxSize = 4;
@@ -19,10 +20,14 @@ namespace Player
         [SerializeField] public Animator hoverEButtonUI;
    
     
-        private void Awake() {
-            if (instance != null) {
+        private void Awake() 
+        {
+            if (instance != null)
+            {
                 Destroy(gameObject);
-            } else{
+            } 
+            else
+            {
                 instance = this;
             }
             
@@ -39,29 +44,30 @@ namespace Player
         /// </summary>
         public void Trigger(NetworkStudentController currentPlayer)
         {
-            if (_teamCount >= (_teamMaxSize-1)) return;
+            if (_teamCount >= _teamMaxSize - 1) return;
             
             if (PhotonNetwork.LocalPlayer.GetPhotonTeam() != null)
             {
                 if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Blue")
                 {
                     PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
-                   _view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
-                   currentPlayer.RestoreTeamlessColors_RPC();
+                    _view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
+                    currentPlayer.RestoreTeamlessColors_RPC();
+                    AudioManager.Instance.PlayOneShot(_shitTakeOff, 0.5f);
                 }
                 else
                 {
                     PhotonNetwork.LocalPlayer.SwitchTeam(1);
                     RedTeamTable.instance.SubtractTeamCount_RPC();
                     _view.RPC("AddTeamCount", RpcTarget.AllBuffered);
-                    
+                    AudioManager.Instance.PlayOneShot(_shitWear, 0.5f);
                 }
             }
             else
             {
                 PhotonNetwork.LocalPlayer.JoinTeam(1);
                 _view.RPC("AddTeamCount", RpcTarget.AllBuffered);
-                
+                AudioManager.Instance.PlayOneShot(_shitWear, 0.5f);
             }
         }
         
@@ -70,8 +76,6 @@ namespace Player
             hoverEButtonUI.enabled = true;
             hoverEButtonUI.StartPlayback();
             hoverEButtonUI.gameObject.SetActive(true);
-            
-            if (!PhotonNetwork.IsMasterClient) return;
         }
 
         public void Exit()

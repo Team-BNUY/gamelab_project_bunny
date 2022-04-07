@@ -79,9 +79,10 @@ namespace Networking
             Instantiate(_photonTeamsManager);
 
             if (PhotonNetwork.IsMasterClient)
+            {
                 PhotonNetwork.Instantiate(_scoreManager.name, Vector3.zero, Quaternion.identity);
-
-
+            }
+            
             PhotonNetwork.LoadLevel(ROOM_SCENE_NAME);
         }
 
@@ -114,10 +115,7 @@ namespace Networking
 
         private void SetWrittingSound()
         {
-            _loginAudioSource.playOnAwake = false;
-            _loginAudioSource.loop = false;
-            _loginAudioSource.clip = _writingSoundClip;
-            _loginAudioSource.Play();
+            _loginAudioSource.PlayOneShot(_writingSoundClip);
         }
 
         private void LeaveGame()
