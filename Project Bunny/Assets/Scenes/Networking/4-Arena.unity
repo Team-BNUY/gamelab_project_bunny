@@ -962,6 +962,42 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9141053910444028709, guid: c48d3640d860fdf4fae51bc95d63367a, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -69
+      objectReference: {fileID: 0}
+    - target: {fileID: 9141053910444028709, guid: c48d3640d860fdf4fae51bc95d63367a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -133
+      objectReference: {fileID: 0}
+    - target: {fileID: 9141053910444028710, guid: c48d3640d860fdf4fae51bc95d63367a, type: 3}
+      propertyPath: m_text
+      value: 99:99
+      objectReference: {fileID: 0}
+    - target: {fileID: 9141053910444028710, guid: c48d3640d860fdf4fae51bc95d63367a, type: 3}
+      propertyPath: m_fontSize
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 9141053910444028710, guid: c48d3640d860fdf4fae51bc95d63367a, type: 3}
+      propertyPath: m_margin.x
+      value: 152.15178
+      objectReference: {fileID: 0}
+    - target: {fileID: 9141053910444028710, guid: c48d3640d860fdf4fae51bc95d63367a, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: be688dcf5fdb32e4794b85b175597de5, type: 2}
+    - target: {fileID: 9141053910444028710, guid: c48d3640d860fdf4fae51bc95d63367a, type: 3}
+      propertyPath: m_fontStyle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9141053910444028710, guid: c48d3640d860fdf4fae51bc95d63367a, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 9141053910444028710, guid: c48d3640d860fdf4fae51bc95d63367a, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 7389103242153493169, guid: be688dcf5fdb32e4794b85b175597de5, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c48d3640d860fdf4fae51bc95d63367a, type: 3}
 --- !u!114 &76301253 stripped
@@ -6963,7 +6999,6 @@ MonoBehaviour:
   _snowmanPrefab: {fileID: 5714933658485935016, guid: 020ee4a79dd45344ba5b59af867346c8, type: 3}
   _cannonBall: {fileID: 4854422905516743973, guid: 5e62362fc854e2e4588b495334e45b9c, type: 3}
   _cannon: {fileID: 2021794885}
-  _cannonBall: {fileID: 1791823268317378158, guid: a98db43c166c3fe40aa445f9f76d7b3e, type: 3}
   _teamShirts:
   - {fileID: 21300000, guid: fa685be921d8cc94e89474bd4680504e, type: 3}
   - {fileID: 21300000, guid: b4bbc9ea578b9bd4193afb60fcc06f48, type: 3}
