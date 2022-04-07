@@ -312,7 +312,7 @@ namespace Player
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.tag.Equals("CameraDeadZoneX"))
+            if (other.gameObject.tag.Equals("CameraDeadZoneX") && _playerVCam)
             {
                 _isInFollowZone = true;
             }
@@ -328,7 +328,7 @@ namespace Player
 
         private void OnTriggerStay(Collider other)
         {
-            if (other.gameObject.tag.Equals("CameraDeadZoneX") && _isInFollowZone)
+            if (other.gameObject.tag.Equals("CameraDeadZoneX") && _isInFollowZone && _playerVCam)
             {
                 _cameraLockX = _playerVCam.State.RawPosition.x;
             }
@@ -336,7 +336,7 @@ namespace Player
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.gameObject.tag.Equals("CameraDeadZoneX"))
+            if (other.gameObject.tag.Equals("CameraDeadZoneX") && _playerVCam)
             {
                 _cameraLockX = _playerVCam.State.RawPosition.x;
                 _isInFollowZone = false;
