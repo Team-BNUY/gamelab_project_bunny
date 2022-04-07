@@ -293,6 +293,14 @@ namespace Networking
                 {
                     Invoke(nameof(SetAllPlayerSpawns), 0.1f);
                 }
+                else {
+                    if (_customProperties.ContainsKey("isReady"))
+                        _customProperties["isReady"] = false;
+                    else {
+                        _customProperties.Add("isReady", false);
+                    }
+                    PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
+                }
             }
 
 
