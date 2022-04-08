@@ -2,13 +2,15 @@ using System;
 using Interfaces;
 using Player;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class BoomboxController : MonoBehaviour, INetworkTriggerable
 {
     [SerializeField] private Animator hoverEButtonUI;
-    [SerializeField] private AudioSource _audioSource;
     [SerializeField] private ParticleSystem _particleSystem;
- 
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip[] _clicSounds;
+  
     #region InterfaceMethods
     
     /// <summary>
@@ -52,6 +54,13 @@ public class BoomboxController : MonoBehaviour, INetworkTriggerable
             _audioSource.volume = 1.0f;
             AudioManager.Instance.Volume = 1.0f;
             AudioManager.Instance.Muted = false;
+        }
+        
+        if (_clicSounds.Length > 0)
+        {
+            var random = Random.Range(0, _clicSounds.Length);
+            var clip = _clicSounds[random];
+            AudioManager.Instance.PlayOneShot(clip);
         }
 
         if (_audioSource.isPlaying) return;
