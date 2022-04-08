@@ -1398,18 +1398,6 @@ namespace Player
         
         private void PlayHitAudio(int ballType)
         {
-            Debug.Log("Yo");
-            if (photonView.IsMine)
-            {
-                photonView.RPC(nameof(PlayHitAudioRpc), RpcTarget.All, ballType);
-            }
-        }
-
-        [PunRPC]
-        private void PlayHitAudioRpc(int ballType)
-        {
-            Debug.Log(ballType);
-            
             switch (ballType)
             {
                 case 0:
