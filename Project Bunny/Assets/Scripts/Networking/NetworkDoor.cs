@@ -112,7 +112,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
 
     private IEnumerator ExitClassroom(NetworkStudentController student)
     {
-        AudioManager.Instance.PlaySync(_schoolBellClipId, 0.35f);
+        AudioManager.Instance.PlaySync(_schoolBellClipId, 0.25f);
         
         student.SetControlledMovement(Vector3.zero, true);
         yield return new WaitForSeconds(waitTime);
