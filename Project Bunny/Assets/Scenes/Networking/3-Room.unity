@@ -10349,6 +10349,10 @@ PrefabInstance:
       value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 7403493283848230232, guid: 42e0b723152553f479e64fa189aed262, type: 3}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7403493283848230232, guid: 42e0b723152553f479e64fa189aed262, type: 3}
       propertyPath: rolloffCustomCurve.m_Curve.Array.data[0].inSlope
       value: -50.01992
       objectReference: {fileID: 0}
@@ -24505,7 +24509,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40ebd887f53846e4a80d045714064e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  woodenFootsteps: []
+  syncClips:
+  - {fileID: 8300000, guid: fede597fa5689e84eacb6e4dbeee8d25, type: 3}
 --- !u!82 &1642807435
 AudioSource:
   m_ObjectHideFlags: 0
