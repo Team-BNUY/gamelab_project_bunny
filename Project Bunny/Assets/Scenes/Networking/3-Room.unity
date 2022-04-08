@@ -1950,6 +1950,42 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 700639854384108613, guid: 83ed18c6392bd0147b207b8c59530e7f, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 83ed18c6392bd0147b207b8c59530e7f, type: 3}
+--- !u!1 &137960147 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7858298835629736729, guid: 83ed18c6392bd0147b207b8c59530e7f, type: 3}
+  m_PrefabInstance: {fileID: 137960146}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &137960148
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137960147}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!95 &137960149 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 1257404428941261548, guid: 83ed18c6392bd0147b207b8c59530e7f, type: 3}
+  m_PrefabInstance: {fileID: 137960146}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &137960150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137960147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 028f0ac5f2e13a44aaf313b8816b5ccc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverEButtonUI: {fileID: 137960149}
 --- !u!1001 &138475519
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6730,6 +6766,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 6ef23dda707cf1c46b79f798b44b4ded, type: 3}
+    - target: {fileID: 1137960364599053857, guid: 7c258f7d305c8b7448ada0cb37f536fe, type: 3}
+      propertyPath: sceneViewId
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 1436382266694410168, guid: 7c258f7d305c8b7448ada0cb37f536fe, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
@@ -9511,7 +9551,7 @@ MonoBehaviour:
   hoverEButtonUI: {fileID: 504348502}
   doorPrefab: {fileID: 7044511635641529283, guid: 409aeea967ad1f946bf18d096c1f8e7f, type: 3}
   doorParent: {fileID: 504348506}
-  _schoolBell: {fileID: 8300000, guid: fede597fa5689e84eacb6e4dbeee8d25, type: 3}
+  _schoolBellClipId: 0
   openPos: {x: -1, y: 0, z: -1}
   openRot: {x: -90, y: 0, z: 90}
   closedPos: {x: 0, y: 0, z: 0}
@@ -16883,6 +16923,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1287726724}
     m_Modifications:
+    - target: {fileID: 3879236538809267, guid: bc2e296941794f345b214a79c12b387b, type: 3}
+      propertyPath: sceneViewId
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 570587329281820164, guid: bc2e296941794f345b214a79c12b387b, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0
@@ -34881,7 +34925,6 @@ MonoBehaviour:
   - {fileID: 425744046}
   - {fileID: 1786365128}
   - {fileID: 1803293677}
-  _leaveRoomBtn: {fileID: 0}
   loadingScreen: {fileID: 54669433}
   displayedScores:
   - {fileID: 1250748868}
