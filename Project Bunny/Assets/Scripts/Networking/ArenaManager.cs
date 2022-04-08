@@ -350,6 +350,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
         PhotonTeamsManager teamsManager = FindObjectOfType<PhotonTeamsManager>();
 
+        PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
+
         /*Hashtable emptyTable = new Hashtable();
         PhotonNetwork.LocalPlayer.CustomProperties = emptyTable;*/
 
@@ -360,6 +362,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             Destroy(teamsManager.gameObject);
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(LOBBY_SCENE_NAME);
+        
     }
 
     public Vector3 GetPlayerSpawnPoint(byte TeamID)

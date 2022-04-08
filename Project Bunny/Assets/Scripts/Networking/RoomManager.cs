@@ -225,9 +225,23 @@ namespace Networking
         {
             var scoreManager = FindObjectOfType<ScoreManager>();
             var teamsManager = FindObjectOfType<PhotonTeamsManager>();
+            
+            if (PhotonNetwork.LocalPlayer.GetPhotonTeam() != null)
+            {
+                if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Blue")
+                {
+                    BlueTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
+                    PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
 
-            /*Hashtable emptyTable = new Hashtable();
-            PhotonNetwork.LocalPlayer.CustomProperties = emptyTable;*/
+                }
+                else if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Red")
+                {
+                    RedTeamTable.instance._view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
+                    PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
+                }
+            }
+            
+            PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
 
             if (scoreManager != null)
             {
@@ -261,20 +275,6 @@ namespace Networking
                 loadingScreen.SetActive(true);
             }
         }
-
-        /*public void CorrectNumberOfJerseys()
-        {
-            if (PhotonNetwork.LocalPlayer.GetPhotonTeam() == null) return;
-
-            if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Blue")
-            {
-                BlueTeamTable.instance.AddTeamCount_RPC();
-            }
-            else if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Red")
-            {
-                RedTeamTable.instance.AddTeamCount_RPC();
-            }
-        }*/
 
         private void SetAllPlayerSpawns()
         {
@@ -372,8 +372,7 @@ namespace Networking
                 player.photonView.RPC("SetShoesColor", RpcTarget.AllBuffered, (int)playerProperties["shoesColorIndex"]);
             }
             
-            player.RestoreTeamlessColors_RPC();    
-            //CorrectNumberOfJerseys();
+            _localStudentController.RestoreTeamlessColors_RPC();
         }
 
         public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
