@@ -3515,8 +3515,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf80e5d8501d3a249b297b71c7662ead, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AllowedTeam: 2
-  collider: {fileID: 468161636}
+  _allowedTeam: 2
+  _collider: {fileID: 468161636}
 --- !u!65 &468161636
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -40036,6 +40036,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2135267382}
     m_Modifications:
+    - target: {fileID: 7349100941806003840, guid: 3f94bc014bbb27f4990b0b2eb25e3427, type: 3}
+      propertyPath: _collider
+      value: 
+      objectReference: {fileID: 7349100943449700093}
+    - target: {fileID: 7349100941806003840, guid: 3f94bc014bbb27f4990b0b2eb25e3427, type: 3}
+      propertyPath: _allowedTeam
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7349100941806003846, guid: 3f94bc014bbb27f4990b0b2eb25e3427, type: 3}
       propertyPath: m_Name
       value: TeamWall
@@ -40086,6 +40094,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f94bc014bbb27f4990b0b2eb25e3427, type: 3}
+--- !u!65 &7349100943449700093 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 7349100941806003841, guid: 3f94bc014bbb27f4990b0b2eb25e3427, type: 3}
+  m_PrefabInstance: {fileID: 7349100943449700092}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7495013110659921814
 PrefabInstance:
   m_ObjectHideFlags: 0

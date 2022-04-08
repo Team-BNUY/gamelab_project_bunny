@@ -157,11 +157,11 @@ MonoBehaviour:
   _aimArrow: {fileID: 6216757504754598155}
   _bone: {fileID: 3480561047914550886}
   _newCameraDistance: 35
-  _rotationSpeed: 150
+  _rotationSpeed: 250
   _pullIncreaseTimeRate: 0.06
   _pullingFactor: 7
   _numberOfSnowballs: 10
-  _cooldownTime: 5
+  _cooldownTime: 4
   _minForce: 0.7
   _maxForce: 1.3
   _forceIncreaseTimeRate: 0.7
@@ -365,7 +365,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6216757504754598155}
   m_LocalRotation: {x: -0, y: 0.6937272, z: -0, w: 0.7202379}
-  m_LocalPosition: {x: 1.9650004, y: -0.28, z: 0.106000066}
+  m_LocalPosition: {x: 1.187, y: -0.28, z: 0.077}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7715814720135413087}
@@ -565,7 +565,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2300891343326065117, guid: f5043fe97fc505d4b849c1b9393b85c7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1.086
       objectReference: {fileID: 0}
     - target: {fileID: 2300891343326065117, guid: f5043fe97fc505d4b849c1b9393b85c7, type: 3}
       propertyPath: m_LocalRotation.w

@@ -245,6 +245,7 @@ namespace Player
                 var cannonBall = PhotonNetwork.Instantiate(ArenaManager.Instance.CannonBall.name, _cannonBallSeat.position, _cannonBallSeat.rotation);
                 var snowball = cannonBall.GetComponent<NetworkSnowball>();
                 snowball.photonView.RPC("SetParent", RpcTarget.All, true);
+                snowball.SetRandomCannonPlacement();
                 _cannonballCollection.Add(snowball);
             }
             
