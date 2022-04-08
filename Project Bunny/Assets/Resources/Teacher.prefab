@@ -55,7 +55,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 541639667703898844}
-  m_LocalRotation: {x: -0, y: -0.56211036, z: -0, w: -0.8270623}
+  m_LocalRotation: {x: -0.0000000037252903, y: 0.52181673, z: -0, w: 0.8530577}
   m_LocalPosition: {x: -1.7053564e-13, y: 0.26479322, z: 0.008902924}
   m_LocalScale: {x: 1, y: 0.9999999, z: 0.9999999}
   m_Children:
@@ -1331,7 +1331,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1032
   _stunDuration: 4
-  _hitSound: {fileID: 0}
+  _hitBySnowballSound: {fileID: 0}
+  _hitByIceballSound: {fileID: 0}
+  _hitByRollballSound: {fileID: 0}
   _stunSound: {fileID: 0}
 --- !u!136 &3163279942283406589
 CapsuleCollider:

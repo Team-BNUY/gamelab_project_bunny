@@ -10679,7 +10679,8 @@ PrefabInstance:
       propertyPath: rolloffCustomCurve.m_Curve.Array.data[1].outWeight
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1803244811030137325, guid: 42e0b723152553f479e64fa189aed262, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 42e0b723152553f479e64fa189aed262, type: 3}
 --- !u!4 &717057670 stripped
 Transform:
@@ -10691,6 +10692,25 @@ AudioSource:
   m_CorrespondingSourceObject: {fileID: 7403493283848230232, guid: 42e0b723152553f479e64fa189aed262, type: 3}
   m_PrefabInstance: {fileID: 717057669}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &717057672 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6126853662581807143, guid: 42e0b723152553f479e64fa189aed262, type: 3}
+  m_PrefabInstance: {fileID: 717057669}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &717057673
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 717057672}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 2.2152321
+  m_Height: 6.6134067
+  m_Direction: 1
+  m_Center: {x: 0.0027909158, y: -1.0411732, z: 0.7622988}
 --- !u!1001 &717367988
 PrefabInstance:
   m_ObjectHideFlags: 0

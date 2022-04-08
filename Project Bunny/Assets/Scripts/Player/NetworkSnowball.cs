@@ -16,6 +16,7 @@ namespace Networking
         [SerializeField] private int _damage;
         [SerializeField] private bool _isCannonUsable;
         [SerializeField] private float _cannonOffsetPlacement;
+        [SerializeField] private bool _isIceBall;
 
         private bool _isDestroyable;
         private float _throwForce;
@@ -27,6 +28,8 @@ namespace Networking
         public NetworkStudentController _studentThrower;
         private Transform _holdingPlace;
         private bool _hasCollided;
+
+        public bool IsIceBall => _isIceBall;
 
         private void Awake()
         {

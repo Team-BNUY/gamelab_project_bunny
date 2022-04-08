@@ -17,7 +17,10 @@ namespace Player
         // TODO: Implement damage system once game loop is complete
         [SerializeField] private int _damage;
         [SerializeField] private float _growthFactor;
-
+        [SerializeField] private AudioClip _rollSound;
+        [SerializeField] private float _volumeIncreaseTimeRate = 0.1f;
+        private AudioSource _audioSource;
+        
         private NetworkStudentController _pusher;
         private bool _isGrowing;
         private bool _canDamage;
@@ -38,6 +41,7 @@ namespace Player
             
             _snowballRigidbody ??= gameObject.GetComponent<Rigidbody>();
             _snowballTransform ??= transform;
+            _audioSource ??= GetComponent<AudioSource>();
         }
 
         private void FixedUpdate()
@@ -77,6 +81,10 @@ namespace Player
         /// <param name="pusherTransform"></param>
         public void PushGiantRollball(NetworkStudentController pusher)
         {
+            _audioSource.clip = _rollSound;
+            _audioSource.volume = 0.0f;
+            _audioSource.Play();
+            pusher.PlayKickAudio();
             photonView.RPC(nameof(SetPusher), RpcTarget.All, pusher.PlayerID);
             Invoke(nameof(StopKicking), 0.5f);
             
@@ -122,11 +130,11 @@ namespace Player
             {
                 BreakRollball();
             }
+
+            if (!_isGrowing) return;
             
-            if (_isGrowing)
-            {
-                _snowballTransform.localScale += Vector3.one * (_growthFactor * _snowballRigidbody.velocity.magnitude * Time.fixedDeltaTime);
-            }
+            _audioSource.volume += Time.deltaTime * _volumeIncreaseTimeRate;
+            _snowballTransform.localScale += Vector3.one * (_growthFactor * _snowballRigidbody.velocity.magnitude * Time.fixedDeltaTime);
         }
 
         /// <summary>

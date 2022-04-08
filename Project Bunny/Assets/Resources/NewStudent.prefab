@@ -3347,7 +3347,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6dc492a092cdb404eb8fb758091c45b5, type: 2}
   - {fileID: 11400000, guid: 1ee39a59ff0f33e438673d662fb87462, type: 2}
   pushForce: 40
-  _hitSound: {fileID: 8300000, guid: 456c9a9f1d1217b4f8552b86830ec9f8, type: 3}
+  _hitBySnowballSound: {fileID: 8300000, guid: b178571a3cfedff43b29e0beae26d73d, type: 3}
+  _hitByIceballSound: {fileID: 8300000, guid: db18c3d5c94f5d64892b45b728c49b30, type: 3}
+  _hitByRollballSound: {fileID: 8300000, guid: 3d4874660189e634593bfd78c83f664f, type: 3}
+  _hurtSound: {fileID: 8300000, guid: bbc5ce81e16e633498c85999561396da, type: 3}
 --- !u!114 &-6166062190661382646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3510,7 +3513,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.99
+      value: 0.995
       inSlope: 0
       outSlope: 0
       tangentMode: 0

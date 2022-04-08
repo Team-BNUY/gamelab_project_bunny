@@ -70,17 +70,19 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private double _startTime;
     private bool _returnToLobbyHasRun;
     private const float TEACHER_CAMERA_PAN_TIME = 4f;
-    private const int TIMER_DURATION = 7 * 60;
+    private const int TIMER_DURATION = 10;
     private const string START_TIME_KEY = "StartTime";
     private const string LOBBY_SCENE_NAME = "2-Lobby";
     private const string ROOM_SCENE_NAME = "3-Room";
     private const string READY_KEY = "isready";
     private int readyPlayers;
+    private bool _over;
     [SerializeField] TeamWall[] teamWalls;
 
     [Header("Audio")]
     [SerializeField] private AudioClip _music;
     [SerializeField] private AudioClip _teacherSpawnSound;
+    [SerializeField] private AudioClip _schoolBellSound;
 
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
@@ -139,6 +141,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private void StartMatch()
     {
+        _over = false;
         InjectInitialStudentStates();
         Invoke(nameof(SpawnTeacher), _teacherSpawnTime);
         _loadingScreen.SetActive(false);
@@ -174,11 +177,11 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             }
         }
 
-        if (_timeElapsed >= TIMER_DURATION)
-        {
-            Debug.Log("Timer completed.");
-            ReturnToLobby();
-        }
+        if (_timeElapsed < TIMER_DURATION || _over) return;
+        _over = true;
+        
+        AudioManager.Instance.PlayOneShot(_schoolBellSound, 0.5f);
+        Invoke(nameof(ReturnToLobby), 2f);
     }
 
     private void InjectInitialStudentStates()

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using AI.Core;
 using Networking;
 using Photon.Pun;
+using Player;
 using UnityEngine;
 
 namespace AI.Agents
@@ -14,7 +15,10 @@ namespace AI.Agents
         private List<string> _movingActions = new List<string> { "Intimidate", "Join Another Gang", "Cry", "AnimationAction" };
         
         [Header("Audio")]
-        [SerializeField] private AudioClip _hitSound;
+        [SerializeField] private AudioClip _hitBySnowballSound;
+        [SerializeField] private AudioClip _hitByIceballSound;
+        [SerializeField] private AudioClip _hitByRollballSound;
+        [SerializeField] private AudioClip _hurtSound;
         private AudioSource _audioSource;
 
         protected override void Awake()
@@ -78,7 +82,13 @@ namespace AI.Agents
                     ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.BULLY_KEY);
                 }
             }
-            
+
+            if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var rollball) && rollball.CanDamage)
+            {
+                PlayHitAudio(2);
+                return;
+            }
+
             var snowball = collision.gameObject.GetComponent<NetworkSnowball>();
             if (!snowball) return;
             
@@ -104,7 +114,7 @@ namespace AI.Agents
             }
 
             SetAnimatorParameter("Hit", true, true);
-            PlayHitAudio();
+            PlayHitAudio(snowball.IsIceBall ? 1 : 0);
         }
 
         private void OnCollisionStay(Collision collision)
@@ -129,18 +139,35 @@ namespace AI.Agents
             SetAnimatorParameter("HitRight", false, true);
         }
         
-        private void PlayHitAudio()
+        private void PlayHitAudio(int ballType)
         {
             if (photonView.IsMine)
             {
-                photonView.RPC(nameof(PlayHitAudioRpc), RpcTarget.All);
+                photonView.RPC(nameof(PlayHitAudioRpc), RpcTarget.All, ballType);
             }
         }
 
         [PunRPC]
-        private void PlayHitAudioRpc()
+        private void PlayHitAudioRpc(int ballType)
         {
-            _audioSource.PlayOneShot(_hitSound, 2f * AudioManager.Instance.Volume);
+            switch (ballType)
+            {
+                case 0:
+                    _audioSource.PlayOneShot(_hitBySnowballSound, 2f * AudioManager.Instance.Volume);
+                    break;
+                case 1:
+                    _audioSource.PlayOneShot(_hitByIceballSound, 2f * AudioManager.Instance.Volume);
+                    break;
+                default:
+                    _audioSource.PlayOneShot(_hitByRollballSound, 2f * AudioManager.Instance.Volume);
+                    break;
+            }
+
+            var randomPitch = Random.Range(-0.15f, 0.15f);
+            _audioSource.clip = _hurtSound;
+            _audioSource.volume = AudioManager.Instance.Volume * 0.5f;
+            _audioSource.pitch =  1f + randomPitch;
+            _audioSource.Play();
         }
 
         [PunRPC]

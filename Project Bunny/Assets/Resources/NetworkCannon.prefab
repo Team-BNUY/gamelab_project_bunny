@@ -167,7 +167,9 @@ MonoBehaviour:
   _forceIncreaseTimeRate: 0.7
   _minAngle: -0.1
   _maxAngle: 0.5
-  _shootSound: {fileID: 8300000, guid: f69f4b0a37f6dda469ebdc7ac75fb425, type: 3}
+  _shootSounds:
+  - {fileID: 8300000, guid: 5c3e64395f58b0e4188bace2f6d00ac7, type: 3}
+  - {fileID: 8300000, guid: 6ab6b5d2555fedc45877299b0f9314ba, type: 3}
   _reloadSound: {fileID: 8300000, guid: 2d73069659acb0540abb26ba6ee59f4a, type: 3}
 --- !u!114 &-7237814118755616007
 MonoBehaviour:
@@ -267,7 +269,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.95
+      value: 0.92
       inSlope: 0
       outSlope: 0
       tangentMode: 0
