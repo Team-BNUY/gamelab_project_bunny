@@ -43,7 +43,7 @@ namespace Player
         private float _coolDownTimer;
 
         [Header("Audio")]
-        [SerializeField] private AudioClip _shootSound;
+        [SerializeField] private AudioClip[] _shootSounds;
         [SerializeField] private AudioClip _reloadSound;
         private AudioSource _audioSource;
         
@@ -141,6 +141,8 @@ namespace Player
             {
                 _cannonballCollection.ForEach(b => b.DestroySnowball());
                 _cannonballCollection.Clear();
+                _bone.transform.localPosition = _initialBonePosition;
+                _cannonBallSeat.transform.localPosition = _initialSnowballSeatPosition;
             }
             
             _coolDownTimer = 0.0f;
@@ -292,7 +294,8 @@ namespace Player
                     cannonBall.ThrowBurstSnowballs(_minForce, _maxForce, _minAngle, _maxAngle);
                     
                     _audioSource.Stop();
-                    PlaySoundOneShot(_shootSound);
+                    var random = Random.Range(0, _shootSounds.Length);
+                    PlaySoundOneShot(_shootSounds[random]);
                 }
 
                 _bone.transform.localPosition = _initialBonePosition;

@@ -16,7 +16,9 @@ public class NetworkBallonPoire : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
 
         if (PhotonNetwork.LocalPlayer.IsMasterClient)
+        {
             _view.TransferOwnership(PhotonNetwork.LocalPlayer);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -33,8 +35,5 @@ public class NetworkBallonPoire : MonoBehaviour
             Vector3 dir = (collision.transform.position - transform.position).normalized;
             _rb.AddForce(15 * dir, ForceMode.Impulse);
         }
-
-
-        Debug.Log(collision.gameObject.name);
     }
 }

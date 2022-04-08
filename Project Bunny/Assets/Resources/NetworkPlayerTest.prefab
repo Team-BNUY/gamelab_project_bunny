@@ -612,11 +612,16 @@ MonoBehaviour:
   _maxForce: 1.5
   _forceIncreaseTimeRate: 0.7
   _minAngle: -0.5
-  _maxAngle: 0.1
+  _maxAngle: 0.09
   _angleIncreaseTimeRate: 1.75
   _uiInteractSound: {fileID: 8300000, guid: d89d87becb8c2b84b954261cc46ee318, type: 3}
-  _snowballThrowSound: {fileID: 8300000, guid: b6122844ca0ce6642804c757aebd0bd1, type: 3}
-  _hitBySnowballSound: {fileID: 8300000, guid: 456c9a9f1d1217b4f8552b86830ec9f8, type: 3}
+  _snowballThrowSound: {fileID: 8300000, guid: 93d1dfffecd824b499f78be5015ebc37, type: 3}
+  _hitBySnowballSound: {fileID: 8300000, guid: b178571a3cfedff43b29e0beae26d73d, type: 3}
+  _hitByIceballSound: {fileID: 8300000, guid: db18c3d5c94f5d64892b45b728c49b30, type: 3}
+  _hitByRollballSound: {fileID: 8300000, guid: 3d4874660189e634593bfd78c83f664f, type: 3}
+  _kickSound: {fileID: 8300000, guid: 456c9a9f1d1217b4f8552b86830ec9f8, type: 3}
+  _deathSound: {fileID: 8300000, guid: 5ab13a6bd104905408387f00b800b98e, type: 3}
+  _diggingSound: {fileID: 8300000, guid: e84c17e69c3c30c46b177b4a9dafb3d5, type: 3}
   _nickNameText: {fileID: 2305372050092757957}
 --- !u!114 &4226020307260982628
 MonoBehaviour:

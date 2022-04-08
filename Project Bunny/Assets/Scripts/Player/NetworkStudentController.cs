@@ -114,6 +114,11 @@ namespace Player
         [SerializeField] private AudioClip _uiInteractSound;
         [SerializeField] private AudioClip _snowballThrowSound;
         [SerializeField] private AudioClip _hitBySnowballSound;
+        [SerializeField] private AudioClip _hitByIceballSound;
+        [SerializeField] private AudioClip _hitByRollballSound;
+        [SerializeField] private AudioClip _kickSound;
+        [SerializeField] private AudioClip _deathSound;
+        [SerializeField] private AudioClip _diggingSound;
         private AudioSource _audioSource;
 
         [Header("Booleans")]
@@ -162,16 +167,19 @@ namespace Player
         public Transform PlayerModel => _playerModel;
         public Vector2 MousePosition => _mousePosition;
         public Animator Animator => _animator;
-        public INetworkInteractable CurrentInteractable {
+        public INetworkInteractable CurrentInteractable
+        {
             get => _currentInteractable;
             set => _currentInteractable = value;
         }
-        public bool IsKicking {
+        public bool IsKicking 
+        {
             get => _isKicking;
             set => _isKicking = value;
         }
 
-        public bool UsingCannon {
+        public bool UsingCannon
+        {
             get => _usingCannon;
             set => _usingCannon = value;
         }
@@ -282,6 +290,12 @@ namespace Player
 
         private void OnCollisionEnter(Collision collision)
         {
+            var rollball = collision.gameObject.GetComponent<NetworkGiantRollball>();
+            if (rollball && rollball.CanDamage)
+            {
+                PlayHitAudio(2);
+            }
+            
             var snowball = collision.gameObject.GetComponent<NetworkSnowball>();
             if (!snowball) return;
 
@@ -308,7 +322,7 @@ namespace Player
             }
 
             photonView.RPC(nameof(SetBoolRPC), RpcTarget.All, "Hit", true);
-            PlayHitAudio();
+            PlayHitAudio(snowball.IsIceBall ? 1 : 0);
         }
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
@@ -452,36 +466,12 @@ namespace Player
                 StopControlledMovement();
                 _isWalking = false;
                 photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
-
             }
 
             _playerRotation = Quaternion.LookRotation(offset.normalized);
             _playerModel.rotation = _playerRotation;
-
-            var moveAngle = Vector2.SignedAngle(offset.normalized, new Vector2(0, 1));
-            if (moveAngle < 0)
-            {
-                moveAngle = 360f + moveAngle;
-            }
-
-            var rotationAngle = _playerModel.eulerAngles.y;
-            if (rotationAngle < 0)
-            {
-                rotationAngle = 360f + rotationAngle;
-            }
-
-            var deltaDegrees = moveAngle - rotationAngle;
-            if (deltaDegrees < 0)
-            {
-                deltaDegrees = 360f + deltaDegrees;
-            }
-
-            var deltaRadians = Mathf.Deg2Rad * deltaDegrees;
-            var deltaVector = new Vector2(Mathf.Sin(deltaRadians), Mathf.Cos(deltaRadians));
-            _deltaVector = Vector2.Lerp(_deltaVector, deltaVector, 20f * Time.deltaTime);
-
-            _animator.SetFloat(DeltaX, _deltaVector.x);
-            _animator.SetFloat(DeltaY, _deltaVector.y);
+            
+            _animator.SetFloat(DeltaY, 1f);
         }
 
         /// <summary>
@@ -622,6 +612,9 @@ namespace Player
                 // Resets the current interactable
                 if (photonView.IsMine)
                 {
+                    _audioSource.pitch = 1f;
+                    _audioSource.Stop();
+                    AudioManager.Instance.PlayOneShot(_deathSound);
                     _currentInteractable?.Exit();
                     _currentInteractable = null;
                 }
@@ -650,6 +643,7 @@ namespace Player
                     ArenaManager.Instance.IncrementTeamDeathCount(TeamID);
                     Invoke(nameof(Respawn), DEATH_TIME_DELAY);
                 }
+                
                 ArenaManager.Instance.SetLeadingShirt(ScoreManager.Instance.GetLeadingTeam());
             }
         }
@@ -794,6 +788,7 @@ namespace Player
             if (context.performed)
             {
                 _isDigging = true;
+                
                 if (photonView.IsMine)
                 {
                     photonView.RPC("SetDigHashBool_RPC", RpcTarget.All, true);
@@ -847,7 +842,7 @@ namespace Player
                 //If player has a snowball, then throw it. Otherwise call the Interactable's Release method.
                 if (photonView.IsMine && _hasSnowball)
                 {
-                    AudioManager.Instance.PlayOneShot(_snowballThrowSound, 2f);
+                    AudioManager.Instance.PlayOneShot(_snowballThrowSound, _isInClass ? 0.5f : 2f);
                     photonView.RPC(nameof(PlaySnowballThrowAnimation), RpcTarget.All);
                     _threwSnowball = true;
                     _animator.SetBool(PrepareThrow, false);
@@ -1251,11 +1246,11 @@ namespace Player
         [PunRPC]
         public void RestoreTeamlessColors()
         {
-           foreach (var playerHatRenderer in _playerHatRenderers)
+            foreach (var playerHatRenderer in _playerHatRenderers)
             {
                 playerHatRenderer.material.color = Color.white;
             }
-           _nickNameText.color = Color.white;
+            _nickNameText.color = Color.white;
             _teamShirt.SetActive(false);
         }
 
@@ -1394,18 +1389,43 @@ namespace Player
             }
         }
 
-        private void PlayHitAudio()
+        public void PlayKickAudio()
         {
             if (photonView.IsMine)
             {
-                photonView.RPC(nameof(PlayHitAudioRpc), RpcTarget.All);
+                photonView.RPC(nameof(PlayKickAudioRpc), RpcTarget.All);
+            }
+        }
+        
+        private void PlayHitAudio(int ballType)
+        {
+            if (photonView.IsMine)
+            {
+                photonView.RPC(nameof(PlayHitAudioRpc), RpcTarget.All, ballType);
             }
         }
 
         [PunRPC]
-        private void PlayHitAudioRpc()
+        private void PlayHitAudioRpc(int ballType)
         {
-            _audioSource.PlayOneShot(_hitBySnowballSound, 2f * AudioManager.Instance.Volume);
+            switch (ballType)
+            {
+                case 0:
+                    _audioSource.PlayOneShot(_hitBySnowballSound, 2f * AudioManager.Instance.Volume);
+                    break;
+                case 1:
+                    _audioSource.PlayOneShot(_hitByIceballSound, 2f * AudioManager.Instance.Volume);
+                    break;
+                default:
+                    _audioSource.PlayOneShot(_hitByRollballSound, 2f * AudioManager.Instance.Volume);
+                    break;
+            }
+        }
+
+        [PunRPC]
+        private void PlayKickAudioRpc()
+        {
+            _audioSource.PlayOneShot(_kickSound, 2f * AudioManager.Instance.Volume);
         }
 
         /// <summary>
