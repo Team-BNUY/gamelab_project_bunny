@@ -40,14 +40,14 @@ public class AudioManager : MonoBehaviourPunCallbacks
         _volume = PlayerPrefs.HasKey(PLAYER_PREF_VOLUME_KEY) ? PlayerPrefs.GetFloat(PLAYER_PREF_VOLUME_KEY) : 1f;
     }
 
-    public void PlayOneShot(AudioClip clip)
+    public void PlayOneShot(AudioClip clip, float volume = 1f)
     {
         if (_muted) return;
         
-        _audioSource.PlayOneShot(clip, _volume);
+        _audioSource.PlayOneShot(clip, _volume * volume);
     }
 
-    public void Play(AudioClip clip, float volume = 1.0f, bool loop = false)
+    public void Play(AudioClip clip, float volume = 1f, bool loop = false)
     {
         if (_muted) return;
         

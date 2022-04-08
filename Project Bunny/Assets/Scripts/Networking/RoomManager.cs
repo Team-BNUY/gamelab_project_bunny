@@ -43,7 +43,6 @@ namespace Networking
 
         [Space(10)]
         [Header("UI")]
-        [SerializeField] private Button _leaveRoomBtn;
         [SerializeField] private GameObject loadingScreen;
         [SerializeField] private Image[] displayedScores;
         [SerializeField] private Image teamWhoWon;

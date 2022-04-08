@@ -44,7 +44,6 @@ namespace Player
         [SerializeField] private GameObject _playerSkin;
         [SerializeField] private Color[] skinColors;
         [SerializeField] private Color[] _colors;
-        [SerializeField] private AudioClip _uiInteractSound;
         private int _skinColorIndex;
 
         private GameObject _currentHat;
@@ -110,6 +109,12 @@ namespace Player
         private float _throwForce;
         private float _throwAngle;
         private float _digSnowballTimer;
+
+        [Header("Audio")] 
+        [SerializeField] private AudioClip _uiInteractSound;
+        [SerializeField] private AudioClip _snowballThrowSound;
+        [SerializeField] private AudioClip _hitBySnowballSound;
+        private AudioSource _audioSource;
 
         [Header("Booleans")]
         private bool _isWalking;
@@ -185,6 +190,7 @@ namespace Player
             _characterController ??= GetComponent<CharacterController>();
             _animator ??= gameObject.GetComponent<Animator>();
             _playerInput ??= GetComponent<PlayerInput>();
+            _audioSource ??= GetComponent<AudioSource>();
 
             _playerInput.actionEvents[0].AddListener(OnMove);
             _playerInput.actionEvents[1].AddListener(OnLook);
@@ -302,6 +308,7 @@ namespace Player
             }
 
             photonView.RPC(nameof(SetBoolRPC), RpcTarget.All, "Hit", true);
+            PlayAudio(_hitBySnowballSound);
         }
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
@@ -840,6 +847,7 @@ namespace Player
                 //If player has a snowball, then throw it. Otherwise call the Interactable's Release method.
                 if (photonView.IsMine && _hasSnowball)
                 {
+                    AudioManager.Instance.PlayOneShot(_snowballThrowSound, 1.5f);
                     photonView.RPC(nameof(PlaySnowballThrowAnimation), RpcTarget.All);
                     _threwSnowball = true;
                     _animator.SetBool(PrepareThrow, false);
@@ -1124,55 +1132,55 @@ namespace Player
 
         public void SwitchHat_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.5f);
             photonView.RPC("SwitchHat", RpcTarget.AllBuffered);
         }
 
         public void SwitchCoat_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.5f);
             photonView.RPC("SwitchCoat", RpcTarget.AllBuffered);
         }
 
         public void SwitchPants_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.5f);
             photonView.RPC("SwitchPants", RpcTarget.AllBuffered);
         }
 
         public void SwitchHair_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.5f);
             photonView.RPC("SwitchHair", RpcTarget.AllBuffered);
         }
 
         public void SwitchHairColor_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.5f);
             photonView.RPC("SwitchHairColor", RpcTarget.AllBuffered);
         }
 
         public void SwitchPantsColor_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.5f);
             photonView.RPC("SwitchPantsColor", RpcTarget.AllBuffered);
         }
 
         public void SwitchCoatColor_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.5f);
             photonView.RPC("SwitchCoatColor", RpcTarget.AllBuffered);
         }
 
         public void SwitchSkinColor_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.5f);
             photonView.RPC("SwitchSkinColor", RpcTarget.AllBuffered);
         }
 
         public void SwitchShoesColor_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.5f);
             photonView.RPC("SwitchShoesColor", RpcTarget.AllBuffered);
         }
 
@@ -1387,6 +1395,11 @@ namespace Player
                 _startGame = false;
                 RoomManager.Instance.StartGame();
             }
+        }
+
+        private void PlayAudio(AudioClip clip)
+        {
+            _audioSource.PlayOneShot(clip, 1.5f * AudioManager.Instance.Volume);
         }
 
         /// <summary>

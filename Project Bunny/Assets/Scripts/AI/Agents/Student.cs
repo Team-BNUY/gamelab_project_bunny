@@ -10,13 +10,17 @@ namespace AI.Agents
     {
         [Header("Individual")]
         [SerializeField] [Min(0f)] private float pushForce = 10f;
-
         private Gang _gang;
         private List<string> _movingActions = new List<string> { "Intimidate", "Join Another Gang", "Cry", "AnimationAction" };
+        
+        [Header("Audio")]
+        [SerializeField] private AudioClip hitSound;
+        private AudioSource _audioSource;
 
         protected override void Awake()
         {
             photonView.OwnershipTransfer = OwnershipOption.Takeover;
+            _audioSource = GetComponent<AudioSource>();
             
             base.Awake();
         }
@@ -100,6 +104,7 @@ namespace AI.Agents
             }
 
             SetAnimatorParameter("Hit", true, true);
+            PlayAudio(hitSound);
         }
 
         private void OnCollisionStay(Collision collision)
@@ -122,6 +127,11 @@ namespace AI.Agents
             SetAnimatorParameter("HitBack", false, true);
             SetAnimatorParameter("HitLeft", false, true);
             SetAnimatorParameter("HitRight", false, true);
+        }
+        
+        private void PlayAudio(AudioClip clip)
+        {
+            _audioSource.PlayOneShot(clip, 1.5f * AudioManager.Instance.Volume);
         }
 
         [PunRPC]
