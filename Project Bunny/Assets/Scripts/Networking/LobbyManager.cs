@@ -82,7 +82,8 @@ namespace Networking
             {
                 PhotonNetwork.Instantiate(_scoreManager.name, Vector3.zero, Quaternion.identity);
             }
-            
+            PhotonNetwork.NickName = _nameInput.text;
+            PlayerPrefs.SetString(PLAYER_PREF_NAME_KEY, _nameInput.text);
             PhotonNetwork.LoadLevel(ROOM_SCENE_NAME);
         }
 
