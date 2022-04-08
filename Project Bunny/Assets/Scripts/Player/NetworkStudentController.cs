@@ -1251,14 +1251,11 @@ namespace Player
         [PunRPC]
         public void RestoreTeamlessColors()
         {
-            _teamShirt.GetComponent<Renderer>().material.color = Color.white;
-
-            foreach (var playerHatRenderer in _playerHatRenderers)
+           foreach (var playerHatRenderer in _playerHatRenderers)
             {
                 playerHatRenderer.material.color = Color.white;
             }
-
-            _nickNameText.color = Color.white;
+           _nickNameText.color = Color.white;
             _teamShirt.SetActive(false);
         }
 

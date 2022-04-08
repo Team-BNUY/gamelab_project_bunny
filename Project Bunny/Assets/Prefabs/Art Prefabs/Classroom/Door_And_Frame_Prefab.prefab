@@ -72,7 +72,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 3896253803039956792, guid: 88b5e73c5306d274ea52e42fd37db496, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6ef23dda707cf1c46b79f798b44b4ded, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -165,8 +165,9 @@ MonoBehaviour:
   waitPoints: []
   doorPoint: {fileID: 0}
   hoverEButtonUI: {fileID: 1257404428941261548}
-  door: {fileID: 0}
-  _schoolBell: {fileID: 0}
+  doorPrefab: {fileID: 0}
+  doorParent: {fileID: 0}
+  _schoolBellClipId: 0
   openPos: {x: 0, y: 0, z: 0}
   openRot: {x: 0, y: 0, z: 0}
   closedPos: {x: 0, y: 0, z: 0}
