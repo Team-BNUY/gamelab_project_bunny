@@ -30,7 +30,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            door = PhotonNetwork.Instantiate(doorPrefab.name, new Vector3(-16.05f, 1.51f, 2.42f), Quaternion.Euler(-90,0,0));
+            door = PhotonNetwork.Instantiate(doorPrefab.name, new Vector3(-15.97f, 1.58f, 2.42f), Quaternion.Euler(-90,0,0));
             door.transform.position = new Vector3(-15.97f, 1.58f, 2.42f);
             door.transform.rotation = Quaternion.Euler(-90, 0, 0);
         }
@@ -41,7 +41,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     {
         if (!PhotonNetwork.IsMasterClient) return;
         
-        door.transform.position = new Vector3(-16.05f, 1.51f, 2.42f);
+        door.transform.position = new Vector3(-15.97f, 1.58f, 2.42f);
         door.transform.rotation = Quaternion.Euler(-90, 0, 0);
     }
 
