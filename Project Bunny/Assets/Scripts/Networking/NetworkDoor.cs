@@ -12,7 +12,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
 
     [SerializeField] private Transform[] waitPoints;
     [SerializeField] public Transform doorPoint;
-    [SerializeField] public Animator hoverEButtonUI;
+    [SerializeField] public GameObject hoverEButtonUI;
     [SerializeField] public GameObject doorPrefab;
     [SerializeField] public Transform doorParent;
     [SerializeField] private int _schoolBellClipId;
@@ -99,18 +99,14 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
-        hoverEButtonUI.enabled = true;
-        hoverEButtonUI.StartPlayback();
-        hoverEButtonUI.gameObject.SetActive(true);
+        hoverEButtonUI.SetActive(true);
     }
 
     public void Exit()
     {
         if (!PhotonNetwork.IsMasterClient) return;
-
-        hoverEButtonUI.StopPlayback();
-        hoverEButtonUI.enabled = false;
-        hoverEButtonUI.gameObject.SetActive(false);
+        
+        hoverEButtonUI.SetActive(false);
     }
 
     private IEnumerator ExitClassroom(NetworkStudentController student)

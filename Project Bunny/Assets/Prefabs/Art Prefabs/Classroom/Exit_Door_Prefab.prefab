@@ -105,7 +105,6 @@ GameObject:
   m_Component:
   - component: {fileID: 570587329281820164}
   - component: {fileID: 327528807350383309}
-  - component: {fileID: 1257404428941261548}
   m_Layer: 0
   m_Name: EInteractableSpriteSheet_0
   m_TagString: Untagged
@@ -167,7 +166,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 3896253803039956792, guid: 88b5e73c5306d274ea52e42fd37db496, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 378a16554ff72df449c7ea2d39b0b45b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -178,25 +177,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &1257404428941261548
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7037091347961973919}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: fb76b1ce6d1c5b94e89da084f712588e, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &7858298835629736729
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,8 +240,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waitPoints: []
   doorPoint: {fileID: 0}
-  hoverEButtonUI: {fileID: 1257404428941261548}
-  door: {fileID: 0}
+  hoverEButtonUI: {fileID: 0}
+  doorPrefab: {fileID: 0}
+  doorParent: {fileID: 0}
+  _schoolBellClipId: 0
+  _openDoorSoundId: 0
   openPos: {x: 0, y: 0, z: 0}
   openRot: {x: 0, y: 0, z: 0}
   closedPos: {x: 0, y: 0, z: 0}

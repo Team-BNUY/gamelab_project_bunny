@@ -1,18 +1,47 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
+using Interfaces;
+using Player;
 using UnityEngine;
 
-public class TutorialBoard : MonoBehaviour
+public class TutorialBoard : MonoBehaviour, INetworkTriggerable
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] public Animator hoverEButtonUI;
+    [SerializeField] public GameObject canvasImage;
+
+    private bool isActive;
+
+    private void Awake()
     {
-        
+        isActive = false;
     }
 
-    // Update is called once per frame
-    void Update()
+    #region InterfaceMethods
+    
+    /// <summary>
+    /// Method that runs when you trigger this Credits Board
+    /// </summary>
+    public void Trigger(NetworkStudentController currentPlayer)
     {
-        
+        isActive = !isActive;
+        canvasImage.SetActive(isActive);
     }
+    
+    public void Enter()
+    {
+        hoverEButtonUI.enabled = true;
+        hoverEButtonUI.StartPlayback();
+        hoverEButtonUI.gameObject.SetActive(true);
+    }
+
+    public void Exit()
+    {
+        hoverEButtonUI.StopPlayback();
+        hoverEButtonUI.enabled = false;
+        hoverEButtonUI.gameObject.SetActive(false);
+        
+        isActive = false;
+        canvasImage.SetActive(isActive);
+    }
+    
+    #endregion
 }
