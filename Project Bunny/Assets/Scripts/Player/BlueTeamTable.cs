@@ -53,21 +53,21 @@ namespace Player
                     PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
                     _view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
                     currentPlayer.RestoreTeamlessColors_RPC();
-                    AudioManager.Instance.PlayOneShot(_shitTakeOff);
+                    AudioManager.Instance.PlayOneShot(_shitTakeOff, 0.5f);
                 }
                 else
                 {
                     PhotonNetwork.LocalPlayer.SwitchTeam(1);
                     RedTeamTable.instance.SubtractTeamCount_RPC();
                     _view.RPC("AddTeamCount", RpcTarget.AllBuffered);
-                    AudioManager.Instance.PlayOneShot(_shitWear);
+                    AudioManager.Instance.PlayOneShot(_shitWear, 0.5f);
                 }
             }
             else
             {
                 PhotonNetwork.LocalPlayer.JoinTeam(1);
                 _view.RPC("AddTeamCount", RpcTarget.AllBuffered);
-                AudioManager.Instance.PlayOneShot(_shitWear);
+                AudioManager.Instance.PlayOneShot(_shitWear, 0.5f);
             }
         }
         

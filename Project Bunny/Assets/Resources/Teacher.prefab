@@ -55,7 +55,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 541639667703898844}
-  m_LocalRotation: {x: -0, y: -0.98796165, z: 0.0000000018626449, w: 0.15469895}
+  m_LocalRotation: {x: -9.3132246e-10, y: -0.92177016, z: 0.0000000018626449, w: -0.38773665}
   m_LocalPosition: {x: -1.7053564e-13, y: 0.26479322, z: 0.008902924}
   m_LocalScale: {x: 1, y: 0.9999999, z: 0.9999999}
   m_Children:
@@ -1331,6 +1331,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1032
   _stunDuration: 4
+  _stunSound: {fileID: 0}
 --- !u!136 &3163279942283406589
 CapsuleCollider:
   m_ObjectHideFlags: 0

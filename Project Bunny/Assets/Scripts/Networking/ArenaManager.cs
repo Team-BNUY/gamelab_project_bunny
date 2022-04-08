@@ -80,6 +80,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [Header("Audio")]
     [SerializeField] private AudioClip _music;
 
+    [SerializeField] private AudioClip _teacherSpawnSound;
+
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
     public GameObject SnowballBurst => _snowballBurst;
@@ -141,7 +143,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         _loadingScreen.SetActive(false);
         StartTimer();
         
-        AudioManager.Instance.Play(_music, 0.4f, true);
+        AudioManager.Instance.Play(_music, 0.15f, true);
     }
 
     private void UpdateTimer()
@@ -311,6 +313,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private void SpawnTeacher()
     {
+        AudioManager.Instance.PlayOneShot(_teacherSpawnSound, 1.5f);
+        
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.Instantiate(_teacherPrefab.name, _teacherSpawn.position, _teacherSpawn.rotation);

@@ -32,6 +32,7 @@ namespace AI.Agents
         
         // Stun parameters
         [SerializeField] private float _stunDuration = 2f;
+        [SerializeField] private AudioClip _stunSound;
         private Vector3 _hitDirection;
         private bool _stunned;
 
@@ -461,6 +462,11 @@ namespace AI.Agents
         public Transform ExclamationMarkPosition
         {
             get => _exclamationMarkPosition;
+        }
+
+        public AudioClip StunAudio
+        {
+            get => _stunSound;
         }
     }
 }
