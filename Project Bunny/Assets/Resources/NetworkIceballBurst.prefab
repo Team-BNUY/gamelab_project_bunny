@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5404749840915584467}
   - component: {fileID: -2949402657088382540}
   m_Layer: 0
-  m_Name: NetworkSnowballBurst
+  m_Name: NetworkIceballBurst
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -299,7 +299,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.3
+      scalar: 0.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -990,7 +990,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 50
+        scalar: 30
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -4831,7 +4831,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 54ada29216178ab4dac3d82082080c0b, type: 2}
+  - {fileID: 2100000, guid: 53ba3962205b8d045b84d1b7a107c3f3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
