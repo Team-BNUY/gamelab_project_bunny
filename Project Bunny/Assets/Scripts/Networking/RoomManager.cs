@@ -64,7 +64,7 @@ namespace Networking
 
         public bool isFirstRun = true;
 
-        void Start()
+        private void Start()
         {
             _customProperties = new Hashtable();
 
