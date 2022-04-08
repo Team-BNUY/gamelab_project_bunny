@@ -32,9 +32,14 @@ namespace AI.Agents
         
         // Stun parameters
         [SerializeField] private float _stunDuration = 2f;
-        [SerializeField] private AudioClip _stunSound;
         private Vector3 _hitDirection;
         private bool _stunned;
+        
+        // Audio
+        [Header("Audio")]
+        [SerializeField] private AudioClip _hitSound;
+        [SerializeField] private AudioClip _stunSound;
+        private AudioSource _audioSource;
 
         // Students references
         private NetworkStudentController _targetStudent;
@@ -49,6 +54,8 @@ namespace AI.Agents
         /// </summary>
         protected override void Start()
         {
+            _audioSource ??= GetComponent<AudioSource>();
+            
             if (!PhotonNetwork.IsMasterClient) return;
             
             // Goals
@@ -115,20 +122,21 @@ namespace AI.Agents
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (_stunned) return;
-            
             var projectile = collision.gameObject.CompareTag("Projectile");
             if (!projectile) return;
             
             if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !giantRollball.CanDamage) return;
-            
-            photonView.RPC(nameof(Stun), RpcTarget.All);
-            
-            if (collision.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
+
+            if (!_stunned)
             {
-                if (ball._studentThrower.photonView.IsMine)
+                photonView.RPC(nameof(Stun), RpcTarget.All);
+                
+                if (collision.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
                 {
-                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.REBEL_KEY);
+                    if (ball._studentThrower.photonView.IsMine)
+                    {
+                        ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.REBEL_KEY);
+                    }
                 }
             }
             
@@ -140,9 +148,13 @@ namespace AI.Agents
             var adjustedThrowerPosition = new Vector3(throwerPosition.x, transform.position.y, throwerPosition.z);
             var hitDirection = adjustedThrowerPosition - transform.position;
             var angle = Vector3.SignedAngle(transform.forward, _hitDirection, Vector3.up);
+
+            if (!_stunned)
+            {
+                photonView.RPC(nameof(GetHitByProjectile), RpcTarget.All);
+            }
             
             photonView.RPC(nameof(SyncHitDirection), RpcTarget.All, hitDirection);
-            photonView.RPC(nameof(GetHitByProjectile), RpcTarget.All);
             
             SetAnimatorParameter("Hit", true, true);
             if (angle < 0 && angle >= -45f || angle >= 0 && angle < 45f)
@@ -161,6 +173,8 @@ namespace AI.Agents
             {
                 SetAnimatorParameter("HitBack", true, true);
             }
+            
+            PlayAudio(_hitSound);
         }
 
         /// <summary>
@@ -237,6 +251,11 @@ namespace AI.Agents
         {
             _stunned = false;
             animator.SetBool(LookingAround, false);
+        }
+        
+        private void PlayAudio(AudioClip clip)
+        {
+            _audioSource.PlayOneShot(clip, 1.5f * AudioManager.Instance.Volume);
         }
 
         /// <summary>
