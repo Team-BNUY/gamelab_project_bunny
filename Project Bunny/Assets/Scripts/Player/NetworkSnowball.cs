@@ -16,7 +16,8 @@ namespace Networking
         [SerializeField] private int _damage;
         [SerializeField] private bool _isCannonUsable;
         [SerializeField] private AudioClip _hitSound;
-        
+        [SerializeField] private float _cannonOffsetPlacement;
+
         private bool _isDestroyable;
         private float _throwForce;
         private float _throwAngle;
@@ -137,6 +138,11 @@ namespace Networking
         public void SetSnowballAngle(float angle)
         {
             _throwAngle = angle;
+        }
+
+        public void SetRandomCannonPlacement()
+        {
+            _snowballTransform.localPosition = new Vector3(Random.Range(-_cannonOffsetPlacement, _cannonOffsetPlacement), Random.Range(-_cannonOffsetPlacement, _cannonOffsetPlacement), Random.Range(0, _cannonOffsetPlacement));
         }
 
         /// <summary>

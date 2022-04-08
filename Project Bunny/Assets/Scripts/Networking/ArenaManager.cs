@@ -249,8 +249,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         if (!player.photonView.IsMine) return;
 
         foreach (TeamWall wall in teamWalls) {
-            if (_localStudentController.TeamID == wall.AllowedTeam) {
-                wall.collider.enabled = false;
+            if (_localStudentController.TeamID == wall._allowedTeam) {
+                wall._collider.enabled = false;
             }
         }
 

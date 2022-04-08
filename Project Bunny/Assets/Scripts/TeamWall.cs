@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class TeamWall : MonoBehaviour
 {
-    [SerializeField] public int AllowedTeam = 0;
-    [SerializeField] public BoxCollider collider;
+    [SerializeField] public int _allowedTeam = 0;
+    [SerializeField] public BoxCollider _collider;
 
     private void Start()
     {
