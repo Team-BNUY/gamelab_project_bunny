@@ -15,7 +15,8 @@ namespace Networking
         [SerializeField] private LineRenderer _trajectoryLineRenderer;
         [SerializeField] private int _damage;
         [SerializeField] private bool _isCannonUsable;
-
+        [SerializeField] private AudioClip _hitSound;
+        
         private bool _isDestroyable;
         private float _throwForce;
         private float _throwAngle;
@@ -49,7 +50,6 @@ namespace Networking
 
         private void OnCollisionEnter(Collision other)
         {
-            //if (!_view.IsMine) return;
             if (!_isDestroyable) return;
 
             if (other.gameObject.TryGetComponent<NetworkSnowball>(out var otherSnowball))
@@ -92,8 +92,11 @@ namespace Networking
             var go = PhotonNetwork.Instantiate(prefabToSpawn, _snowballTransform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();
-            
-            PhotonNetwork.Destroy(gameObject);
+
+            if (photonView.IsMine)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
 
         /// <summary>

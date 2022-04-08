@@ -41,6 +41,10 @@ namespace Player
         private float _throwForce;
         private bool _hasSnowball, _isAiming;
         private float _coolDownTimer;
+
+        [Header("Audio")]
+        [SerializeField] private AudioClip _shoootSound;
+        private AudioSource _audioSource;
         
         public bool IsActive => _isActive;
 
@@ -49,6 +53,7 @@ namespace Player
         private void Awake()
         {
             photonView.OwnershipTransfer = OwnershipOption.Takeover;
+            _audioSource ??= GetComponent<AudioSource>();
         }
 
         private void Start()
@@ -281,6 +286,7 @@ namespace Player
                     cannonBall.SetHoldingPlace(_cannonBallSeat);
                     cannonBall.photonView.RPC("SetParent", RpcTarget.All, false);
                     cannonBall.ThrowBurstSnowballs(_minForce, _maxForce, _minAngle, _maxAngle);
+                    PlaySound(_shoootSound);
                 }
 
                 _bone.transform.localPosition = _initialBonePosition;
@@ -302,6 +308,11 @@ namespace Player
             {
                 _isActive = (bool) stream.ReceiveNext();
             }
+        }
+        
+        private void PlaySound(AudioClip clip)
+        {
+            _audioSource.PlayOneShot(clip, AudioManager.Instance.Volume * 2f);
         }
 
         [PunRPC]

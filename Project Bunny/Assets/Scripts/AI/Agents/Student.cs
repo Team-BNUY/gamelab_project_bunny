@@ -14,7 +14,7 @@ namespace AI.Agents
         private List<string> _movingActions = new List<string> { "Intimidate", "Join Another Gang", "Cry", "AnimationAction" };
         
         [Header("Audio")]
-        [SerializeField] private AudioClip hitSound;
+        [SerializeField] private AudioClip _hitSound;
         private AudioSource _audioSource;
 
         protected override void Awake()
@@ -104,7 +104,7 @@ namespace AI.Agents
             }
 
             SetAnimatorParameter("Hit", true, true);
-            PlayAudio(hitSound);
+            PlayHitAudio();
         }
 
         private void OnCollisionStay(Collision collision)
@@ -129,9 +129,18 @@ namespace AI.Agents
             SetAnimatorParameter("HitRight", false, true);
         }
         
-        private void PlayAudio(AudioClip clip)
+        private void PlayHitAudio()
         {
-            _audioSource.PlayOneShot(clip, 1.5f * AudioManager.Instance.Volume);
+            if (photonView.IsMine)
+            {
+                photonView.RPC(nameof(PlayHitAudioRpc), RpcTarget.All);
+            }
+        }
+
+        [PunRPC]
+        private void PlayHitAudioRpc()
+        {
+            _audioSource.PlayOneShot(_hitSound, 2f * AudioManager.Instance.Volume);
         }
 
         [PunRPC]
