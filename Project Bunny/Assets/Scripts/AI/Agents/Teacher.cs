@@ -174,7 +174,7 @@ namespace AI.Agents
                 SetAnimatorParameter("HitBack", true, true);
             }
             
-            PlayAudio(_hitSound);
+            PlayHitAudio();
         }
 
         /// <summary>
@@ -251,11 +251,6 @@ namespace AI.Agents
         {
             _stunned = false;
             animator.SetBool(LookingAround, false);
-        }
-        
-        private void PlayAudio(AudioClip clip)
-        {
-            _audioSource.PlayOneShot(clip, 1.5f * AudioManager.Instance.Volume);
         }
 
         /// <summary>
@@ -397,6 +392,20 @@ namespace AI.Agents
         private void DisableExclamationMark()
         {
             ArenaManager.Instance.ExclamationMark.gameObject.SetActive(false);
+        }
+        
+        private void PlayHitAudio()
+        {
+            if (photonView.IsMine)
+            {
+                photonView.RPC(nameof(PlayHitAudioRpc), RpcTarget.All);
+            }
+        }
+
+        [PunRPC]
+        private void PlayHitAudioRpc()
+        {
+            _audioSource.PlayOneShot(_hitSound, 2f * AudioManager.Instance.Volume);
         }
         
         [PunRPC]

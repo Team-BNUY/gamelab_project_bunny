@@ -308,7 +308,7 @@ namespace Player
             }
 
             photonView.RPC(nameof(SetBoolRPC), RpcTarget.All, "Hit", true);
-            PlayAudio(_hitBySnowballSound);
+            PlayHitAudio();
         }
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
@@ -1397,9 +1397,18 @@ namespace Player
             }
         }
 
-        private void PlayAudio(AudioClip clip)
+        private void PlayHitAudio()
         {
-            _audioSource.PlayOneShot(clip, 1.5f * AudioManager.Instance.Volume);
+            if (photonView.IsMine)
+            {
+                photonView.RPC(nameof(PlayHitAudioRpc), RpcTarget.All);
+            }
+        }
+
+        [PunRPC]
+        private void PlayHitAudioRpc()
+        {
+            _audioSource.PlayOneShot(_hitBySnowballSound, 2f * AudioManager.Instance.Volume);
         }
 
         /// <summary>

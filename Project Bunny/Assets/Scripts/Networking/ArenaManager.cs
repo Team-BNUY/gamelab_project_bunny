@@ -79,7 +79,6 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     [Header("Audio")]
     [SerializeField] private AudioClip _music;
-
     [SerializeField] private AudioClip _teacherSpawnSound;
 
     public GameObject SnowballPrefab => _snowballPrefab;
@@ -313,7 +312,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private void SpawnTeacher()
     {
-        AudioManager.Instance.PlayOneShot(_teacherSpawnSound, 1.5f);
+        AudioManager.Instance.PlayOneShot(_teacherSpawnSound, 2.5f);
         
         if (PhotonNetwork.IsMasterClient)
         {
