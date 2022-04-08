@@ -8,7 +8,7 @@ using Photon.Pun;
 public class LeaveRoomDoor : MonoBehaviour, INetworkTriggerable
 {
     
-    [SerializeField] public Animator hoverEButtonUI;
+    [SerializeField] public GameObject hoverEButtonUI;
 
     public void Trigger(NetworkStudentController currentStudentController)
     {
@@ -20,16 +20,12 @@ public class LeaveRoomDoor : MonoBehaviour, INetworkTriggerable
 
     public void Enter()
     {
-        hoverEButtonUI.enabled = true;
-        hoverEButtonUI.StartPlayback();
-        hoverEButtonUI.gameObject.SetActive(true);
+        hoverEButtonUI.SetActive(true);
     }
 
     public void Exit()
     {
-        hoverEButtonUI.StopPlayback();
-        hoverEButtonUI.enabled = false;
-        hoverEButtonUI.gameObject.SetActive(false);
+        hoverEButtonUI.SetActive(false);
     }
     
 }
