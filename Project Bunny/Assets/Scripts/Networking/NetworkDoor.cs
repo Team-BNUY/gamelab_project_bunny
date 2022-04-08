@@ -97,16 +97,12 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
 
     public void Enter()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
-
         hoverEButtonUI.SetActive(true);
     }
 
     public void Exit()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
-        
-        hoverEButtonUI.SetActive(false);
+       hoverEButtonUI.SetActive(false);
     }
 
     private IEnumerator ExitClassroom(NetworkStudentController student)
