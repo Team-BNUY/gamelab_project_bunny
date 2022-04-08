@@ -70,7 +70,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private double _startTime;
     private bool _returnToLobbyHasRun;
     private const float TEACHER_CAMERA_PAN_TIME = 4f;
-    private const int TIMER_DURATION = 10;
+    private const int TIMER_DURATION = 7 * 60;
     private const string START_TIME_KEY = "StartTime";
     private const string LOBBY_SCENE_NAME = "2-Lobby";
     private const string ROOM_SCENE_NAME = "3-Room";
