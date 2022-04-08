@@ -270,6 +270,7 @@ namespace Player
             _cannonBallSeat.transform.localPosition = newPosition;
             
             _throwForce += Time.deltaTime * _forceIncreaseTimeRate;
+            _aimArrow.transform.localScale += new Vector3(0f, 0f, Time.deltaTime * _forceIncreaseTimeRate);
             _cannonballCollection.ForEach(c => c.SetSnowballForce(_throwForce));
         }
 
@@ -297,7 +298,8 @@ namespace Player
                 _bone.transform.localPosition = _initialBonePosition;
                 _cannonBallSeat.transform.localPosition = _initialSnowballSeatPosition;
             }
-            
+
+            _aimArrow.transform.localScale = Vector3.one;
             _cannonballCollection.Clear();
         }
 

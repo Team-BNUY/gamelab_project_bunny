@@ -148,9 +148,14 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     private void UpdateTimer()
     {
         if (!hasTimerStarted) return;
-        
+
         _oldTimeElapsed = _timeElapsed;
         _timeElapsed = (int)(PhotonNetwork.Time - _startTime);
+
+        if (_timeElapsed <= 0)
+        {
+            _timeElapsed = 0;
+        }
 
         if (_timeElapsed > _oldTimeElapsed)
         {
