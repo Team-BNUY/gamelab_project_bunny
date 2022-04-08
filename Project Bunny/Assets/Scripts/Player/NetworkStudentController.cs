@@ -1124,55 +1124,55 @@ namespace Player
 
         public void SwitchHat_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound);
             photonView.RPC("SwitchHat", RpcTarget.AllBuffered);
         }
 
         public void SwitchCoat_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound);
             photonView.RPC("SwitchCoat", RpcTarget.AllBuffered);
         }
 
         public void SwitchPants_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound);
             photonView.RPC("SwitchPants", RpcTarget.AllBuffered);
         }
 
         public void SwitchHair_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound);
             photonView.RPC("SwitchHair", RpcTarget.AllBuffered);
         }
 
         public void SwitchHairColor_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound);
             photonView.RPC("SwitchHairColor", RpcTarget.AllBuffered);
         }
 
         public void SwitchPantsColor_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound);
             photonView.RPC("SwitchPantsColor", RpcTarget.AllBuffered);
         }
 
         public void SwitchCoatColor_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound);
             photonView.RPC("SwitchCoatColor", RpcTarget.AllBuffered);
         }
 
         public void SwitchSkinColor_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound);
             photonView.RPC("SwitchSkinColor", RpcTarget.AllBuffered);
         }
 
         public void SwitchShoesColor_RPC()
         {
-            AudioManager.Instance.PlayOneShot(_uiInteractSound, 0.3f);
+            AudioManager.Instance.PlayOneShot(_uiInteractSound);
             photonView.RPC("SwitchShoesColor", RpcTarget.AllBuffered);
         }
 
