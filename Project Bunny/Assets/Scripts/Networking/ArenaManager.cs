@@ -36,6 +36,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _snowballPrefab;
     [SerializeField] private GameObject _iceballPrefab;
     [SerializeField] private GameObject _snowballBurst;
+    [SerializeField] private GameObject _iceballBurst;
     [SerializeField] private GameObject _giantRollballPrefab;
     [SerializeField] private GameObject _giantRollballBurst;
     [SerializeField] private GameObject _snowmanPrefab;
@@ -84,6 +85,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
     public GameObject SnowballBurst => _snowballBurst;
+    public GameObject IceballBurst => _iceballBurst;
     public GameObject GiantRollballBurst => _giantRollballBurst;
     public GameObject GiantRollballPrefab => _giantRollballPrefab;
     public GameObject CannonBall => _cannonBall;
