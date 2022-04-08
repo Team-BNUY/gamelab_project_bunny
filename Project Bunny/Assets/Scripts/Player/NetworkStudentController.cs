@@ -118,7 +118,6 @@ namespace Player
         [SerializeField] private AudioClip _hitByRollballSound;
         [SerializeField] private AudioClip _kickSound;
         [SerializeField] private AudioClip _deathSound;
-        [SerializeField] private AudioClip _diggingSound;
         private AudioSource _audioSource;
 
         [Header("Booleans")]
@@ -1399,6 +1398,7 @@ namespace Player
         
         private void PlayHitAudio(int ballType)
         {
+            Debug.Log("Yo");
             if (photonView.IsMine)
             {
                 photonView.RPC(nameof(PlayHitAudioRpc), RpcTarget.All, ballType);
@@ -1408,6 +1408,8 @@ namespace Player
         [PunRPC]
         private void PlayHitAudioRpc(int ballType)
         {
+            Debug.Log(ballType);
+            
             switch (ballType)
             {
                 case 0:
