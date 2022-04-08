@@ -847,7 +847,7 @@ namespace Player
                 //If player has a snowball, then throw it. Otherwise call the Interactable's Release method.
                 if (photonView.IsMine && _hasSnowball)
                 {
-                    AudioManager.Instance.PlayOneShot(_snowballThrowSound, 1.5f);
+                    AudioManager.Instance.PlayOneShot(_snowballThrowSound, 2f);
                     photonView.RPC(nameof(PlaySnowballThrowAnimation), RpcTarget.All);
                     _threwSnowball = true;
                     _animator.SetBool(PrepareThrow, false);
