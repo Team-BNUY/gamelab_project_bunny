@@ -10,25 +10,36 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     private const string ARENA_SCENE_NAME = "4-Arena";
 
     [SerializeField] private Transform[] waitPoints;
-    [SerializeField] private Transform doorPoint;
+    [SerializeField] public Transform doorPoint;
     [SerializeField] public Animator hoverEButtonUI;
-    [SerializeField] public GameObject door;
+    [SerializeField] public GameObject doorPrefab;
+    [SerializeField] public Transform doorParent;
     [SerializeField] private AudioClip _schoolBell;
-    
+
     [SerializeField] private Vector3 openPos;
     [SerializeField] private Vector3 openRot;
     [SerializeField] private Vector3 closedPos;
     [SerializeField] private Vector3 closedRot;
 
     private readonly float waitTime = 5f;
+    private GameObject door;
 
     // Start is called before the first frame update
     private void Start()
     {
-        if (door == null) return;
-        
-        door.transform.localPosition = closedPos;
-        door.transform.localRotation = Quaternion.Euler(closedRot);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            door = PhotonNetwork.Instantiate(doorPrefab.name, new Vector3(-16.05f, 1.51f, 2.42f), Quaternion.Euler(-90,0,0));
+            door.transform.position = new Vector3(-16.05f, 1.51f, 2.42f);
+            door.transform.rotation = Quaternion.Euler(-90, 0, 0);
+        }
+        Invoke(nameof(SetDoorPosition), 0.1f);
+    }
+
+    public void SetDoorPosition() {
+        if (!PhotonNetwork.IsMasterClient) return;
+        door.transform.position = new Vector3(-16.05f, 1.51f, 2.42f);
+        door.transform.rotation = Quaternion.Euler(-90, 0, 0);
     }
 
     public void Trigger(NetworkStudentController currentStudentController)
@@ -37,20 +48,16 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
 
         if (PhotonNetwork.IsMasterClient)
         {
-
             foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
             {
                 if ((!player.CustomProperties.ContainsKey("isReady") || (bool)player.CustomProperties["isReady"] == false) && !player.IsMasterClient)
                 {
-                    return;               
+                    return;
                 }
             }
 
-            if (door != null)
-            {
-                door.transform.localPosition = openPos;
-                door.transform.localRotation = Quaternion.Euler(openRot);
-            }
+            door.transform.position = new Vector3(-15, 1.7f, 3.2f);
+            door.transform.rotation = new Quaternion(-0.5f, -0.5f, -0.5f, 0.5f);
 
             var allPlayers = FindObjectsOfType<NetworkStudentController>();
             var waitPointIndex = 0;
@@ -70,6 +77,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
         }
         else
         {
+
             var ht = PhotonNetwork.LocalPlayer.CustomProperties;
             if (ht.ContainsKey("isReady"))
             {
@@ -106,7 +114,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     private IEnumerator ExitClassroom(NetworkStudentController student)
     {
         AudioManager.Instance.Play(_schoolBell, 0.5f);
-        
+
         student.SetControlledMovement(Vector3.zero, true);
         yield return new WaitForSeconds(waitTime);
         student.SetControlledMovement(doorPoint.position, true);
