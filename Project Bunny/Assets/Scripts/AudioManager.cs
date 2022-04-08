@@ -7,6 +7,8 @@ public class AudioManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private AudioClip[] syncClips;
     
+    private const string PLAYER_PREF_VOLUME_KEY = "PlayerVolume";
+
     private AudioSource _audioSource;
     private bool _muted;
     private float _volume = 1.0f;
@@ -19,7 +21,11 @@ public class AudioManager : MonoBehaviourPunCallbacks
     public float Volume
     {
         get => _volume;
-        set => _volume = value;
+        set
+        {
+            _volume = value;
+            PlayerPrefs.SetFloat(PLAYER_PREF_VOLUME_KEY, _volume);
+        }
     }
 
     private void Awake()
@@ -29,14 +35,19 @@ public class AudioManager : MonoBehaviourPunCallbacks
         _audioSource = GetComponent<AudioSource>();
     }
 
-    public void PlayOneShot(AudioClip clip, float volume = 1f)
+    private void Start()
+    {
+        _volume = PlayerPrefs.HasKey(PLAYER_PREF_VOLUME_KEY) ? PlayerPrefs.GetFloat(PLAYER_PREF_VOLUME_KEY) : 1f;
+    }
+
+    public void PlayOneShot(AudioClip clip)
     {
         if (_muted) return;
         
-        _audioSource.PlayOneShot(clip, _volume * volume);
+        _audioSource.PlayOneShot(clip, _volume);
     }
 
-    public void Play(AudioClip clip, float volume = 1f, bool loop = false)
+    public void Play(AudioClip clip, float volume = 1.0f, bool loop = false)
     {
         if (_muted) return;
         
@@ -59,10 +70,10 @@ public class AudioManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    private void PlaySyncRPC(int clipID, int volume)
+    private void PlaySyncRPC(int clipID, float volume)
     {
         var clip = syncClips[clipID];
         _audioSource.volume = _volume * volume;
-        PlayOneShot(clip, volume);
+        PlayOneShot(clip);
     }
 }

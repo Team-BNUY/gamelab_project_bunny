@@ -63,7 +63,7 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
         _changeBootsColorButton.onClick.AddListener(() => currentPlayer.SwitchShoesColor_RPC());
         _doneButton.onClick.AddListener(Leave);
         
-        AudioManager.Instance.PlayOneShot(_interact, 0.4f);
+        AudioManager.Instance.PlayOneShot(_interact);
     }
 
     public void Leave()
@@ -72,7 +72,7 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
         _customizationPanel.SetActive(false);
         isActive = false;
         
-        AudioManager.Instance.PlayOneShot(_stopInteract, 0.4f);
+        AudioManager.Instance.PlayOneShot(_stopInteract);
     }
 
     public void Enter()

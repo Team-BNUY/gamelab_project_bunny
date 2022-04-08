@@ -79,7 +79,6 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     [Header("Audio")]
     [SerializeField] private AudioClip _music;
-    [SerializeField] private AudioClip _schoolBell;
 
     public GameObject SnowballPrefab => _snowballPrefab;
     public GameObject IceballPrefab => _iceballPrefab;
@@ -142,7 +141,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         _loadingScreen.SetActive(false);
         StartTimer();
         
-        //AudioManager.Instance.Play(_music, 1f, true);
+        AudioManager.Instance.Play(_music, 0.4f, true);
     }
 
     private void UpdateTimer()
