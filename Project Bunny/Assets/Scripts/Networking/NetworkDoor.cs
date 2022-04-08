@@ -14,8 +14,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     [SerializeField] public Animator hoverEButtonUI;
     [SerializeField] public GameObject doorPrefab;
     [SerializeField] public Transform doorParent;
-    [SerializeField] private AudioClip _schoolBell;
-
+    [SerializeField] private int _schoolBellClipId;
     [SerializeField] private Vector3 openPos;
     [SerializeField] private Vector3 openRot;
     [SerializeField] private Vector3 closedPos;
@@ -113,8 +112,8 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
 
     private IEnumerator ExitClassroom(NetworkStudentController student)
     {
-        AudioManager.Instance.Play(_schoolBell, 0.5f);
-
+        AudioManager.Instance.PlaySync(_schoolBellClipId, 0.5f);
+        
         student.SetControlledMovement(Vector3.zero, true);
         yield return new WaitForSeconds(waitTime);
         student.SetControlledMovement(doorPoint.position, true);

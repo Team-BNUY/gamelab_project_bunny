@@ -1,3 +1,4 @@
+using System;
 using Interfaces;
 using Player;
 using UnityEngine;
@@ -15,21 +16,48 @@ public class BoomboxController : MonoBehaviour, INetworkTriggerable
     /// </summary>
     public void Trigger(NetworkStudentController currentPlayer)
     {
-        var listener = currentPlayer.PlayerCamera.GetComponent<AudioListener>();
-        listener.enabled = !listener.enabled;
-
-        if (listener.enabled)
+        var volume = AudioManager.Instance.Volume;
+        if (Math.Abs(volume - 1f) < 0.01f)
         {
-            _audioSource.Play();
-            _particleSystem.Play();
-            FindObjectOfType<AudioManager>().Muted = false;
+            _audioSource.volume = 0.75f;
+            AudioManager.Instance.Volume = 0.75f;
+            AudioManager.Instance.Muted = false;
+        }
+        else if (Mathf.Abs(volume - 0.75f) < 0.01f)
+        {
+            _audioSource.volume = 0.5f;
+            AudioManager.Instance.Volume = 0.5f;
+            AudioManager.Instance.Muted = false;
+        }
+        else if (Mathf.Abs(volume - 0.5f) < 0.01f)
+        {
+
+            _audioSource.volume = 0.25f;
+            AudioManager.Instance.Volume = 0.25f;
+            AudioManager.Instance.Muted = false;
+        }
+        else if (Mathf.Abs(volume - 0.25f) < 0.01f)
+        {
+            AudioManager.Instance.Volume = 0.0f;
+            AudioManager.Instance.Muted = true;
+            AudioManager.Instance.Stop();
+            _audioSource.volume = 0.0f;
+            _audioSource.Stop();
+            _particleSystem.Stop();
+            
+            return;
         }
         else
         {
-            _audioSource.Stop();
-            _particleSystem.Stop();
-            FindObjectOfType<AudioManager>().Muted = true;
+            _audioSource.volume = 1.0f;
+            AudioManager.Instance.Volume = 1.0f;
+            AudioManager.Instance.Muted = false;
         }
+
+        if (_audioSource.isPlaying) return;
+        
+        _audioSource.Play();
+        _particleSystem.Play();
     }
     
     public void Enter()
