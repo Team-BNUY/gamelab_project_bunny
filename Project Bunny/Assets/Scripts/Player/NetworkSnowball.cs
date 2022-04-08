@@ -15,7 +15,6 @@ namespace Networking
         [SerializeField] private LineRenderer _trajectoryLineRenderer;
         [SerializeField] private int _damage;
         [SerializeField] private bool _isCannonUsable;
-        [SerializeField] private AudioClip _hitSound;
         [SerializeField] private float _cannonOffsetPlacement;
 
         private bool _isDestroyable;
