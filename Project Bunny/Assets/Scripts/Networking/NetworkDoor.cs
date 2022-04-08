@@ -1,3 +1,4 @@
+using System;
 using Interfaces;
 using Player;
 using System.Collections;
@@ -15,6 +16,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     [SerializeField] public GameObject doorPrefab;
     [SerializeField] public Transform doorParent;
     [SerializeField] private int _schoolBellClipId;
+    [SerializeField] private int _openDoorSoundId;
     [SerializeField] private Vector3 openPos;
     [SerializeField] private Vector3 openRot;
     [SerializeField] private Vector3 closedPos;
@@ -35,8 +37,10 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
         Invoke(nameof(SetDoorPosition), 0.1f);
     }
 
-    public void SetDoorPosition() {
+    public void SetDoorPosition() 
+    {
         if (!PhotonNetwork.IsMasterClient) return;
+        
         door.transform.position = new Vector3(-16.05f, 1.51f, 2.42f);
         door.transform.rotation = Quaternion.Euler(-90, 0, 0);
     }
@@ -76,7 +80,6 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
         }
         else
         {
-
             var ht = PhotonNetwork.LocalPlayer.CustomProperties;
             if (ht.ContainsKey("isReady"))
             {
@@ -112,6 +115,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
 
     private IEnumerator ExitClassroom(NetworkStudentController student)
     {
+        AudioManager.Instance.PlaySync(_openDoorSoundId, 1f);
         AudioManager.Instance.PlaySync(_schoolBellClipId, 0.25f);
         
         student.SetControlledMovement(Vector3.zero, true);
