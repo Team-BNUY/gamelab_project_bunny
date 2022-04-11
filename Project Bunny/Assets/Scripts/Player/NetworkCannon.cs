@@ -169,6 +169,7 @@ namespace Player
             if (!_hasSnowball) return;
             
             PlaySound(_reloadSound);
+            _currentStudentController.SetAnimatorParameter("Pulling", true);
             _isAiming = true;
         }
 
@@ -179,6 +180,7 @@ namespace Player
         {
             if (!_hasSnowball || !_isAiming) return;
             
+            _currentStudentController.SetAnimatorParameter("Pulling", false);
             ThrowSnowball();
         }
 
