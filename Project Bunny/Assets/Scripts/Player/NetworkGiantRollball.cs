@@ -13,11 +13,10 @@ namespace Player
         [SerializeField, Min(0.0f)] private float _sizeThreshold;
         [SerializeField, Min(0.0f)] private float _pushForce;
 
-        // ReSharper disable once NotAccessedField.Local
-        // TODO: Implement damage system once game loop is complete
         [SerializeField] private int _damage;
         [SerializeField] private float _growthFactor;
         [SerializeField] private AudioClip _rollSound;
+        [SerializeField] private AudioClip _destroySound;
         [SerializeField] private float _volumeIncreaseTimeRate = 0.1f;
         private AudioSource _audioSource;
         
@@ -72,24 +71,29 @@ namespace Player
             else if (IsInLayerMask(other.gameObject))
             {
                 BreakRollball();
+                
+                // Play destroy sound
+                AudioManager.Instance.PlayClipAt(_destroySound, transform.position);
             }
         }
 
         /// <summary>
         /// Let student push the giant snowball
         /// </summary>
-        /// <param name="pusherTransform"></param>
+        /// <param name="pusher">The player pushing the roll ball</param>
         public void PushGiantRollball(NetworkStudentController pusher)
         {
+            // Play the kick sound
             _audioSource.clip = _rollSound;
             _audioSource.volume = 0.0f;
             _audioSource.Play();
             pusher.PlayKickAudio();
+            
+            // Allow to damage and prevent self damage on initial kick
             photonView.RPC(nameof(SetPusher), RpcTarget.All, pusher.PlayerID);
             Invoke(nameof(StopKicking), 0.5f);
-            
-            photonView.RPC(nameof(AllowToDamage), RpcTarget.All);
 
+            // Add force to the roll ball
             var distance = _snowballTransform.position - pusher.transform.position;
             distance = distance.normalized;
             _snowballRigidbody.AddForce(distance * _pushForce, ForceMode.Impulse);
@@ -99,11 +103,6 @@ namespace Player
         public void SetPusher(string playerID)
         {
             _pusher = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == playerID);
-        }
-
-        [PunRPC]
-        public void AllowToDamage()
-        {
             _snowballRigidbody.isKinematic = false;
             _canDamage = true;
         }
@@ -147,11 +146,16 @@ namespace Player
             return (_hitLayers.value & (1 << obj.layer)) > 0;
         }
         
+        /// <summary>
+        /// Destroy the roll ball
+        /// </summary>
         private void BreakRollball()
         {
+            // Play the particle effect
             var go = Instantiate(ArenaManager.Instance.GiantRollballBurst, transform.position, Quaternion.identity);
             go.GetComponent<ParticleSystem>().Play();
 
+            // Destroy the roll ball
             if (photonView.IsMine)
             {
                 PhotonNetwork.Destroy(gameObject);

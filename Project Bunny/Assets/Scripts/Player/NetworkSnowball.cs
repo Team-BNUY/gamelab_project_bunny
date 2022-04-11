@@ -9,6 +9,7 @@ namespace Networking
     [RequireComponent(typeof(Rigidbody))]
     public class NetworkSnowball : MonoBehaviourPunCallbacks, IPunObservable
     {
+        [Header("General")]
         [SerializeField] private Rigidbody _snowballRigidbody;
         [SerializeField] private SphereCollider _sphereCollider;
         [SerializeField] private Transform _snowballTransform;
@@ -18,6 +19,10 @@ namespace Networking
         [SerializeField] private float _cannonOffsetPlacement;
         [SerializeField] private bool _isIceBall;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip _snowHitSound;
+        [SerializeField] private AudioClip _iceHitSound;
+        
         private bool _isDestroyable;
         private float _throwForce;
         private float _throwAngle;
@@ -88,9 +93,16 @@ namespace Networking
                     otherStudent.GetDamaged(_damage);
                 }
             }
-
-            if (otherStudent && otherStudent == _studentThrower) return;
             
+            if (otherStudent && otherStudent == _studentThrower) return;
+
+            if (!otherStudent)
+            {
+                // Play destroy sound
+                AudioManager.Instance.PlayClipAt(_isIceBall ? _iceHitSound : _snowHitSound, transform.position);
+            }
+            
+            // Play particle effect
             var prefabToSpawn = _studentThrower.IsInClass ? RoomManager.Instance.SnowballBurst.name : ArenaManager.Instance.SnowballBurst.name;
             var go = PhotonNetwork.Instantiate(prefabToSpawn, _snowballTransform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);

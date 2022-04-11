@@ -56,6 +56,26 @@ public class AudioManager : MonoBehaviourPunCallbacks
         _audioSource.loop = loop;
         _audioSource.Play();
     }
+    
+    public void PlayClipAt(AudioClip clip, Vector3 pos)
+    {
+        var tmp = new GameObject("TempAudio")
+        {
+            transform =
+            {
+                position = pos
+            }
+        };
+
+        var newSource = tmp.AddComponent<AudioSource>();
+        newSource.clip = clip;
+        newSource.volume = _volume;
+        newSource.spatialBlend = 0.99f;
+        newSource.maxDistance = 100f;
+
+        newSource.Play();
+        Destroy(tmp, clip.length);
+    }
 
     public void Stop()
     {
