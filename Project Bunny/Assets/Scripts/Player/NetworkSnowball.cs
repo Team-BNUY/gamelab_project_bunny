@@ -104,6 +104,10 @@ namespace Networking
             
             // Play particle effect
             var prefabToSpawn = _studentThrower.IsInClass ? RoomManager.Instance.SnowballBurst.name : ArenaManager.Instance.SnowballBurst.name;
+            if (_studentThrower.CurrentStandingGround == LayerMask.NameToLayer("Ice"))
+            {
+                prefabToSpawn = ArenaManager.Instance.IceballBurst.name;
+            }
             var go = PhotonNetwork.Instantiate(prefabToSpawn, _snowballTransform.position, Quaternion.identity);
             go.transform.rotation = Quaternion.LookRotation(other.contacts[0].normal);
             go.GetComponent<ParticleSystem>().Play();

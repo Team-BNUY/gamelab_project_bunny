@@ -15497,8 +15497,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 0.8581372}
-  m_Center: {x: 0, y: 0, z: -0.0709313}
+  m_Size: {x: 1, y: 1, z: 0.895365}
+  m_Center: {x: 0, y: 0, z: -0.052317362}
 --- !u!23 &1008665566
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -16787,6 +16787,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 422951310}
     m_Modifications:
+    - target: {fileID: 1114574568, guid: 96ba51578a83a814988f600b313e764e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2968708306502074780, guid: 96ba51578a83a814988f600b313e764e, type: 3}
       propertyPath: m_RootOrder
       value: 9
@@ -16839,7 +16843,8 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5205956437895682265, guid: 96ba51578a83a814988f600b313e764e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 96ba51578a83a814988f600b313e764e, type: 3}
 --- !u!4 &1114574563 stripped
 Transform:

@@ -166,6 +166,7 @@ namespace Player
         public Transform PlayerModel => _playerModel;
         public Vector2 MousePosition => _mousePosition;
         public Animator Animator => _animator;
+        public int CurrentStandingGround => _currentStandingGround;
         public INetworkInteractable CurrentInteractable
         {
             get => _currentInteractable;
