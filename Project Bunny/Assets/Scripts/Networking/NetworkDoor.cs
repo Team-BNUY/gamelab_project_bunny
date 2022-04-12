@@ -45,7 +45,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
         door.transform.rotation = Quaternion.Euler(-90, 0, 0);
     }
 
-    public void Trigger(NetworkStudentController currentStudentController)
+    public void TriggerableTrigger(NetworkStudentController currentStudentController)
     {
         if (PhotonNetwork.LocalPlayer.GetPhotonTeam() == null) return;
 
@@ -95,12 +95,12 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
         }
     }
 
-    public void Enter()
+    public void TriggerableEnter()
     {
         hoverEButtonUI.SetActive(true);
     }
 
-    public void Exit()
+    public void TriggerableExit()
     {
        hoverEButtonUI.SetActive(false);
     }

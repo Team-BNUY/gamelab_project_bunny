@@ -7,9 +7,10 @@ using Random = UnityEngine.Random;
 
 namespace Player
 {
-    public class NetworkRollballThrow : MonoBehaviourPunCallbacks, INetworkInteractable, IPunObservable
+    public class NetworkRollballThrow : MonoBehaviourPunCallbacks, INetworkInteractable, IPunObservable, INetworkTriggerable
     {
         [Header("Components")]
+        [SerializeField] private Animator _hoverButton;
         [SerializeField] private Transform _playerSeat;
         [SerializeField] private Transform _rollballSeat;
         [SerializeField] private GameObject _aimArrow;
@@ -65,6 +66,10 @@ namespace Player
         {
             if (!_ready || _isActive || currentStudentController.HasSnowball) return;
             
+            _hoverButton.StopPlayback();
+            _hoverButton.enabled = false;
+            _hoverButton.gameObject.SetActive(false);
+            
             //Initialize key variables
             photonView.RPC(nameof(SetActive), RpcTarget.All, true, currentStudentController.PlayerID);
             photonView.TransferOwnership(_currentStudentController.photonView.Owner);
@@ -100,6 +105,10 @@ namespace Player
             {
                 _aimArrow.SetActive(false);
             }
+            
+            _hoverButton.enabled = true;
+            _hoverButton.StartPlayback();
+            _hoverButton.gameObject.SetActive(true);
             
             // Idle animation
             _currentStudentController.Animator.applyRootMotion = false;
@@ -140,6 +149,10 @@ namespace Player
             {
                 _aimArrow.SetActive(false);
             }
+            
+            _hoverButton.enabled = true;
+            _hoverButton.StartPlayback();
+            _hoverButton.gameObject.SetActive(true);
 
             _currentStudentController.IsKicking = true;
                 
@@ -298,6 +311,28 @@ namespace Player
                 _isActive = (bool) stream.ReceiveNext();
                 _ready = (bool) stream.ReceiveNext();
             }
+        }
+
+        public void TriggerableTrigger(NetworkStudentController currentStudentController)
+        {
+            
+        }
+
+        public void TriggerableEnter()
+        {
+            if (!_isActive)
+            {
+                _hoverButton.enabled = true;
+                _hoverButton.StartPlayback();
+                _hoverButton.gameObject.SetActive(true);
+            }
+        }
+
+        public void TriggerableExit()
+        {
+            _hoverButton.StopPlayback();
+            _hoverButton.enabled = false;
+            _hoverButton.gameObject.SetActive(false);
         }
     }
 }

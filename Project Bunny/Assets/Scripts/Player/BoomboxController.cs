@@ -16,7 +16,7 @@ public class BoomboxController : MonoBehaviour, INetworkTriggerable
     /// <summary>
     /// Method that runs when you trigger this boombox
     /// </summary>
-    public void Trigger(NetworkStudentController currentPlayer)
+    public void TriggerableTrigger(NetworkStudentController currentPlayer)
     {
         var volume = AudioManager.Instance.Volume;
         if (Math.Abs(volume - 1f) < 0.01f)
@@ -69,14 +69,14 @@ public class BoomboxController : MonoBehaviour, INetworkTriggerable
         _particleSystem.Play();
     }
     
-    public void Enter()
+    public void TriggerableEnter()
     {
         hoverEButtonUI.enabled = true;
         hoverEButtonUI.StartPlayback();
         hoverEButtonUI.gameObject.SetActive(true);
     }
 
-    public void Exit()
+    public void TriggerableExit()
     {
         hoverEButtonUI.StopPlayback();
         hoverEButtonUI.enabled = false;

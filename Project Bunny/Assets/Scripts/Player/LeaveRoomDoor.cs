@@ -10,7 +10,7 @@ public class LeaveRoomDoor : MonoBehaviour, INetworkTriggerable
     
     [SerializeField] public GameObject hoverEButtonUI;
 
-    public void Trigger(NetworkStudentController currentStudentController)
+    public void TriggerableTrigger(NetworkStudentController currentStudentController)
     {
         if (RoomManager.Instance != null)
         {
@@ -18,12 +18,12 @@ public class LeaveRoomDoor : MonoBehaviour, INetworkTriggerable
         }
     }
 
-    public void Enter()
+    public void TriggerableEnter()
     {
         hoverEButtonUI.SetActive(true);
     }
 
-    public void Exit()
+    public void TriggerableExit()
     {
         hoverEButtonUI.SetActive(false);
     }

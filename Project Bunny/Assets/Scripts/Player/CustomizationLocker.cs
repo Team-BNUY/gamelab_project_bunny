@@ -41,7 +41,7 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     /// <summary>
     /// Method that runs when you trigger this customization menu
     /// </summary>
-    public void Trigger(NetworkStudentController currentPlayer)
+    public void TriggerableTrigger(NetworkStudentController currentPlayer)
     {
         if (isActive) return;
         
@@ -75,14 +75,14 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
         AudioManager.Instance.PlayOneShot(_stopInteract, 0.5f);
     }
 
-    public void Enter()
+    public void TriggerableEnter()
     {
         hoverEButtonUI.enabled = true;
         hoverEButtonUI.StartPlayback();
         hoverEButtonUI.gameObject.SetActive(true);
     }
 
-    public void Exit()
+    public void TriggerableExit()
     {
         hoverEButtonUI.StopPlayback();
         hoverEButtonUI.enabled = false;

@@ -11,19 +11,19 @@ public class OptionsBoard : MonoBehaviour, INetworkTriggerable
     /// <summary>
     /// Method that runs when you trigger this Options Board
     /// </summary>
-    public void Trigger(NetworkStudentController currentPlayer)
+    public void TriggerableTrigger(NetworkStudentController currentPlayer)
     {
         Debug.Log("You just triggered the Options Board!");
     }
     
-    public void Enter()
+    public void TriggerableEnter()
     {
         hoverEButtonUI.enabled = true;
         hoverEButtonUI.StartPlayback();
         hoverEButtonUI.gameObject.SetActive(true);
     }
 
-    public void Exit()
+    public void TriggerableExit()
     {
         hoverEButtonUI.StopPlayback();
         hoverEButtonUI.enabled = false;

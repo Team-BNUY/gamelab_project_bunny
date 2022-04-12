@@ -20,20 +20,20 @@ public class CreditsBoard : MonoBehaviour, INetworkTriggerable
     /// <summary>
     /// Method that runs when you trigger this Credits Board
     /// </summary>
-    public void Trigger(NetworkStudentController currentPlayer)
+    public void TriggerableTrigger(NetworkStudentController currentPlayer)
     {
         isActive = !isActive;
         canvasImage.SetActive(isActive);
     }
     
-    public void Enter()
+    public void TriggerableEnter()
     {
         hoverEButtonUI.enabled = true;
         hoverEButtonUI.StartPlayback();
         hoverEButtonUI.gameObject.SetActive(true);
     }
 
-    public void Exit()
+    public void TriggerableExit()
     {
         hoverEButtonUI.StopPlayback();
         hoverEButtonUI.enabled = false;

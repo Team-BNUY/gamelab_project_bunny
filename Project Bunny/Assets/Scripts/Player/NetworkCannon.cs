@@ -8,9 +8,10 @@ using Photon.Pun;
 
 namespace Player
 {
-    public class NetworkCannon : MonoBehaviourPunCallbacks, INetworkInteractable, IPunObservable
+    public class NetworkCannon : MonoBehaviourPunCallbacks, INetworkInteractable, IPunObservable, INetworkTriggerable
     {
         [Header("Components")]
+        [SerializeField] private Animator _hoverButton;
         [SerializeField] private Transform _playerSeat;
         [SerializeField] private Transform _cannonBallSeat;
         [SerializeField] private GameObject _aimArrow;
@@ -88,6 +89,10 @@ namespace Player
         /// </summary>
         public void Enter(NetworkStudentController currentStudentController)
         {
+            _hoverButton.StopPlayback();
+            _hoverButton.enabled = false;
+            _hoverButton.gameObject.SetActive(false);
+            
             //Initialize key variables
             photonView.RPC(nameof(SetActive), RpcTarget.All, true, currentStudentController.PlayerID);
             photonView.TransferOwnership(_currentStudentController.photonView.Owner);
@@ -127,6 +132,9 @@ namespace Player
             {
                 _aimArrow.SetActive(false);
             }
+            _hoverButton.enabled = true;
+            _hoverButton.StartPlayback();
+            _hoverButton.gameObject.SetActive(true);
             
             // Idle animation
             _currentStudentController.SetAnimatorParameter("InteractIdle", false);
@@ -339,6 +347,28 @@ namespace Player
         {
             _isActive = value;
             _currentStudentController = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == userId);
+        }
+
+        public void TriggerableTrigger(NetworkStudentController currentStudentController)
+        {
+            
+        }
+
+        public void TriggerableEnter()
+        {
+            if (!_isActive)
+            {
+                _hoverButton.enabled = true;
+                _hoverButton.StartPlayback();
+                _hoverButton.gameObject.SetActive(true);
+            }
+        }
+
+        public void TriggerableExit()
+        {
+            _hoverButton.StopPlayback();
+            _hoverButton.enabled = false;
+            _hoverButton.gameObject.SetActive(false);
         }
     }
 }

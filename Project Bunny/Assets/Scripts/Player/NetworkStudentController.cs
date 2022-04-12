@@ -350,7 +350,7 @@ namespace Player
                 _currentTriggerable ??= triggerable;
                 if (photonView.IsMine)
                 {
-                    _currentTriggerable?.Enter();
+                    _currentTriggerable?.TriggerableEnter();
                 }
             }
         }
@@ -374,7 +374,7 @@ namespace Player
             {
                 if (photonView.IsMine)
                 {
-                    _currentTriggerable?.Exit();
+                    _currentTriggerable?.TriggerableExit();
                 }
                 _currentTriggerable = null;
             }
@@ -862,7 +862,7 @@ namespace Player
         {
             if (!photonView.IsMine || !context.performed || _isFrozen) return;
 
-            _currentTriggerable?.Trigger(this);
+            _currentTriggerable?.TriggerableTrigger(this);
 
             if (_hasSnowball || _isDead) return; //Don't interact with interactables if the player already has a snowball. 
 

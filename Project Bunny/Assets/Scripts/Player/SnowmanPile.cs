@@ -11,19 +11,19 @@ public class SnowmanPile : MonoBehaviour, INetworkTriggerable
     /// <summary>
     /// Method that runs when you trigger this blackboard
     /// </summary>
-    public void Trigger(NetworkStudentController currentPlayer)
+    public void TriggerableTrigger(NetworkStudentController currentPlayer)
     {
         
     }
     
-    public void Enter()
+    public void TriggerableEnter()
     {
         _hoverEButtonUI.enabled = true;
         _hoverEButtonUI.StartPlayback();
         _hoverEButtonUI.gameObject.SetActive(true);
     }
 
-    public void Exit()
+    public void TriggerableExit()
     {
         _hoverEButtonUI.StopPlayback();
         _hoverEButtonUI.enabled = false;
