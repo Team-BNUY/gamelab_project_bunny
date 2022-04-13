@@ -104,7 +104,7 @@ namespace Networking
             
             // Play particle effect
             var prefabToSpawn = _studentThrower.IsInClass ? RoomManager.Instance.SnowballBurst.name : ArenaManager.Instance.SnowballBurst.name;
-            if (_studentThrower.CurrentStandingGround == LayerMask.NameToLayer("Ice"))
+            if (_isIceBall)
             {
                 prefabToSpawn = ArenaManager.Instance.IceballBurst.name;
             }
