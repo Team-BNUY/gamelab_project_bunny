@@ -64,7 +64,13 @@ namespace Player
         /// </summary>
         public void Enter(NetworkStudentController currentStudentController)
         {
-            if (!_ready || _isActive || currentStudentController.HasSnowball) return;
+            if (!_ready)
+            {
+                currentStudentController.CurrentInteractable = null;
+                return;
+            }
+            
+            if (_isActive || currentStudentController.HasSnowball) return;
             
             _hoverButton.StopPlayback();
             _hoverButton.enabled = false;
@@ -105,11 +111,7 @@ namespace Player
             {
                 _aimArrow.SetActive(false);
             }
-            
-            _hoverButton.enabled = true;
-            _hoverButton.StartPlayback();
-            _hoverButton.gameObject.SetActive(true);
-            
+
             // Idle animation
             _currentStudentController.Animator.applyRootMotion = false;
             _currentStudentController.Animator.transform.localPosition = Vector3.zero;
@@ -150,10 +152,10 @@ namespace Player
                 _aimArrow.SetActive(false);
             }
             
-            _hoverButton.enabled = true;
-            _hoverButton.StartPlayback();
-            _hoverButton.gameObject.SetActive(true);
-
+            _hoverButton.StopPlayback();
+            _hoverButton.enabled = false;
+            _hoverButton.gameObject.SetActive(false);
+            
             _currentStudentController.IsKicking = true;
                 
             // Idle animation
@@ -320,12 +322,11 @@ namespace Player
 
         public void TriggerableEnter()
         {
-            if (!_isActive)
-            {
-                _hoverButton.enabled = true;
-                _hoverButton.StartPlayback();
-                _hoverButton.gameObject.SetActive(true);
-            }
+            if (_isActive || !_ready) return;
+            
+            _hoverButton.enabled = true;
+            _hoverButton.StartPlayback();
+            _hoverButton.gameObject.SetActive(true);
         }
 
         public void TriggerableExit()
