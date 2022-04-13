@@ -89,6 +89,12 @@ namespace Player
         /// </summary>
         public void Enter(NetworkStudentController currentStudentController)
         {
+            if (_isActive)
+            {
+                currentStudentController.CurrentInteractable = null;
+                return;
+            }
+            
             _hoverButton.StopPlayback();
             _hoverButton.enabled = false;
             _hoverButton.gameObject.SetActive(false);
