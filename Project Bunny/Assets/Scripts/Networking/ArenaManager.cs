@@ -134,7 +134,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         SetIsReady(true);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         UpdateTimer();
     }
