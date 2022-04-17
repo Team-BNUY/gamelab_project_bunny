@@ -1442,6 +1442,7 @@ namespace Player
                 stream.SendNext(_worldUI.gameObject.activeSelf);
                 stream.SendNext(_playerModel.gameObject.activeSelf);
                 stream.SendNext(_canvasTransform.rotation);
+                stream.SendNext(_canvasTransform.localPosition);
                 stream.SendNext(_healthTransform.gameObject.activeSelf);
                 stream.SendNext(_nicknameTransform.offsetMax);
                 stream.SendNext(_nicknameTransform.offsetMin);
@@ -1465,6 +1466,7 @@ namespace Player
                 _worldUI.gameObject.SetActive((bool)stream.ReceiveNext());
                 _playerModel.gameObject.SetActive((bool)stream.ReceiveNext());
                 _canvasTransform.rotation = (Quaternion)stream.ReceiveNext();
+                _canvasTransform.localPosition = (Vector3)stream.ReceiveNext();
                 _healthTransform.gameObject.SetActive((bool)stream.ReceiveNext());
                 _nicknameTransform.offsetMax = (Vector2)stream.ReceiveNext();
                 _nicknameTransform.offsetMin = (Vector2)stream.ReceiveNext();
