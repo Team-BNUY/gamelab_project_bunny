@@ -173,7 +173,14 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             }
             else
             {
-                timerDisplay.text = timeLeft.ToString();
+                if (timeLeft >= 0f)
+                {
+                    timerDisplay.text = timeLeft.ToString();
+                }
+                else
+                {
+                    timerDisplay.text = 0.ToString();
+                }
             }
         }
 
