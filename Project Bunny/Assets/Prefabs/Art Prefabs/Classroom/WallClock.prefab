@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2910300886749076676}
+  - component: {fileID: 6985964975531137162}
   m_Layer: 0
   m_Name: WallClock
   m_TagString: Untagged
@@ -31,6 +32,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &6985964975531137162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4371666802271463592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e73004f962ca46b4a80c5c5c9df5b08a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hourHand: {fileID: 7939982932780582669}
+  _minuteHand: {fileID: 457295540576377510}
+  _secondHand: {fileID: 2347167459131744168}
 --- !u!1001 &4895485495071015823
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -261,3 +277,36 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d81c5df83ade6a049bd4bd94c29d9012, type: 3}
   m_PrefabInstance: {fileID: 4895485495071015823}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3617620809236253125 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -1025663018108745142, guid: d81c5df83ade6a049bd4bd94c29d9012, type: 3}
+  m_PrefabInstance: {fileID: 4895485495071015823}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2347167459131744168 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -2061924873303860185, guid: d81c5df83ade6a049bd4bd94c29d9012, type: 3}
+  m_PrefabInstance: {fileID: 4895485495071015823}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &457295540576377510 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5019510007467989289, guid: d81c5df83ade6a049bd4bd94c29d9012, type: 3}
+  m_PrefabInstance: {fileID: 4895485495071015823}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7939982932780582669 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -5926668432962222974, guid: d81c5df83ade6a049bd4bd94c29d9012, type: 3}
+  m_PrefabInstance: {fileID: 4895485495071015823}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &553679695329843004
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3617620809236253125}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.009740368, y: 0.009740367, z: 0.0011503529}
+  m_Center: {x: 0.0000000037252903, y: 0, z: -0.000115173316}
