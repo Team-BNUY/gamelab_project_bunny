@@ -10,6 +10,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
 {
     private const string ARENA_SCENE_NAME = "4-Arena";
 
+    [SerializeField] private Bell _bellObject;
     [SerializeField] private Transform[] waitPoints;
     [SerializeField] public Transform doorPoint;
     [SerializeField] public GameObject hoverEButtonUI;
@@ -109,6 +110,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     {
         AudioManager.Instance.PlaySync(_openDoorSoundId, 1f);
         AudioManager.Instance.PlaySync(_schoolBellClipId, 0.25f);
+        StartCoroutine(_bellObject.RingBell());
         
         student.SetControlledMovement(Vector3.zero, true);
         yield return new WaitForSeconds(waitTime);
