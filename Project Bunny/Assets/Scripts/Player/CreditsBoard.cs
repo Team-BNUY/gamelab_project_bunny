@@ -29,13 +29,12 @@ public class CreditsBoard : MonoBehaviour, INetworkTriggerable
     public void TriggerableEnter()
     {
         hoverEButtonUI.enabled = true;
-        hoverEButtonUI.StartPlayback();
+        hoverEButtonUI.Play("EInteract");
         hoverEButtonUI.gameObject.SetActive(true);
     }
 
     public void TriggerableExit()
     {
-        hoverEButtonUI.StopPlayback();
         hoverEButtonUI.enabled = false;
         hoverEButtonUI.gameObject.SetActive(false);
         

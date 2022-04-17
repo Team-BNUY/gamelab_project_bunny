@@ -72,7 +72,6 @@ namespace Player
             
             if (_isActive || currentStudentController.HasSnowball) return;
             
-            _hoverButton.StopPlayback();
             _hoverButton.enabled = false;
             _hoverButton.gameObject.SetActive(false);
             
@@ -152,7 +151,6 @@ namespace Player
                 _aimArrow.SetActive(false);
             }
             
-            _hoverButton.StopPlayback();
             _hoverButton.enabled = false;
             _hoverButton.gameObject.SetActive(false);
             
@@ -325,13 +323,12 @@ namespace Player
             if (_isActive || !_ready) return;
             
             _hoverButton.enabled = true;
-            _hoverButton.StartPlayback();
+            _hoverButton.Play("EInteract");
             _hoverButton.gameObject.SetActive(true);
         }
 
         public void TriggerableExit()
         {
-            _hoverButton.StopPlayback();
             _hoverButton.enabled = false;
             _hoverButton.gameObject.SetActive(false);
         }

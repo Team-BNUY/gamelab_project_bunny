@@ -19,13 +19,12 @@ public class SnowmanPile : MonoBehaviour, INetworkTriggerable
     public void TriggerableEnter()
     {
         _hoverEButtonUI.enabled = true;
-        _hoverEButtonUI.StartPlayback();
+        _hoverEButtonUI.Play("Click Interact");
         _hoverEButtonUI.gameObject.SetActive(true);
     }
 
     public void TriggerableExit()
     {
-        _hoverEButtonUI.StopPlayback();
         _hoverEButtonUI.enabled = false;
         _hoverEButtonUI.gameObject.SetActive(false);
     }

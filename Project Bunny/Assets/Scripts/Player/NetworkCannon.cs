@@ -95,7 +95,6 @@ namespace Player
                 return;
             }
             
-            _hoverButton.StopPlayback();
             _hoverButton.enabled = false;
             _hoverButton.gameObject.SetActive(false);
             
@@ -139,7 +138,7 @@ namespace Player
                 _aimArrow.SetActive(false);
             }
             _hoverButton.enabled = true;
-            _hoverButton.StartPlayback();
+            _hoverButton.Play("EInteract");
             _hoverButton.gameObject.SetActive(true);
             
             // Idle animation
@@ -365,14 +364,13 @@ namespace Player
             if (!_isActive)
             {
                 _hoverButton.enabled = true;
-                _hoverButton.StartPlayback();
+                _hoverButton.Play("EInteract");
                 _hoverButton.gameObject.SetActive(true);
             }
         }
 
         public void TriggerableExit()
         {
-            _hoverButton.StopPlayback();
             _hoverButton.enabled = false;
             _hoverButton.gameObject.SetActive(false);
         }
