@@ -7,8 +7,8 @@ public class Bell : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private ParticleSystem _ringWaves;
-    
-    public void RingBellRPC()
+
+    public void RingBellSync()
     {
         StartCoroutine(RingBell());
     }

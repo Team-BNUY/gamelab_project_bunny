@@ -7,6 +7,7 @@ public class WallClock : MonoBehaviour
     [SerializeField] private Transform _hourHand;
     [SerializeField] private Transform _minuteHand;
     [SerializeField] private Transform _secondHand;
+    [SerializeField] private AudioSource _clockTickSource;
 
     private float _timer;
     private float _secondDegrees = 6f;
@@ -37,5 +38,9 @@ public class WallClock : MonoBehaviour
         _secondHand.rotation *= Quaternion.Euler(0f, 0f, _secondDegrees);
         _minuteHand.rotation *= Quaternion.Euler(0f, 0f, _minuteDegrees);
         _hourHand.rotation *= Quaternion.Euler(0f, 0f, _hourDegrees);
+        _clockTickSource.mute = AudioManager.Instance.Muted;
+        _clockTickSource.volume = AudioManager.Instance.InitializeVolume();
+        _clockTickSource.pitch = Random.Range(0.95f, 1.0f);
+        _clockTickSource.Play();
     }
 }

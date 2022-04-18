@@ -15,6 +15,7 @@ public class AudioManager : MonoBehaviourPunCallbacks
 
     public bool Muted
     {
+        get => _muted;
         set => _muted = value;
     }
 
@@ -37,13 +38,19 @@ public class AudioManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        _volume = PlayerPrefs.HasKey(PLAYER_PREF_VOLUME_KEY) ? PlayerPrefs.GetFloat(PLAYER_PREF_VOLUME_KEY) : 1f;
+        _volume = InitializeVolume();
     }
 
-    public void PlayOneShot(AudioClip clip, float volume = 1f)
+    public float InitializeVolume()
+    {
+        return PlayerPrefs.HasKey(PLAYER_PREF_VOLUME_KEY) ? PlayerPrefs.GetFloat(PLAYER_PREF_VOLUME_KEY) : 1f;
+    }
+
+    public void PlayOneShot(AudioClip clip, float volume = 1f, float pitch = 1f)
     {
         if (_muted) return;
-        
+
+        _audioSource.pitch = pitch;
         _audioSource.PlayOneShot(clip, _volume * volume);
     }
 
@@ -93,7 +100,7 @@ public class AudioManager : MonoBehaviourPunCallbacks
     private void PlaySyncRPC(int clipID, float volume)
     {
         var bell = FindObjectOfType<Bell>();
-        bell.RingBellRPC();
+        bell.RingBellSync();
         var clip = syncClips[clipID];
         _audioSource.volume = _volume * volume;
         PlayOneShot(clip);
