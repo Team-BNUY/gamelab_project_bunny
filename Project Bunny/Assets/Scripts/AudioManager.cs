@@ -92,6 +92,8 @@ public class AudioManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void PlaySyncRPC(int clipID, float volume)
     {
+        var bell = FindObjectOfType<Bell>();
+        bell.RingBellRPC();
         var clip = syncClips[clipID];
         _audioSource.volume = _volume * volume;
         PlayOneShot(clip);

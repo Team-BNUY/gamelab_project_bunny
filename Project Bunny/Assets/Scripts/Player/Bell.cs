@@ -1,13 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
 public class Bell : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private ParticleSystem _ringWaves;
-
-    public IEnumerator RingBell()
+    
+    public void RingBellRPC()
+    {
+        StartCoroutine(RingBell());
+    }
+    
+    private IEnumerator RingBell()
     {
         _animator.enabled = true;
         _animator.Play("Ring");

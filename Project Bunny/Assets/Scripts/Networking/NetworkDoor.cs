@@ -110,7 +110,7 @@ public class NetworkDoor : MonoBehaviour, INetworkTriggerable
     {
         AudioManager.Instance.PlaySync(_openDoorSoundId, 1f);
         AudioManager.Instance.PlaySync(_schoolBellClipId, 0.25f);
-        StartCoroutine(_bellObject.RingBell());
+        
         
         student.SetControlledMovement(Vector3.zero, true);
         yield return new WaitForSeconds(waitTime);
