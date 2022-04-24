@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Player
 {
-    public class PlayerCustomization : MonoBehaviourPunCallbacks
+    public class PlayerCustomization : MonoBehaviourPunCallbacks, IPunObservable
     {
         // Jersey/shirt
         [SerializeField] private GameObject _teamShirt;
@@ -507,5 +507,26 @@ namespace Player
         }
 
         #endregion
+        
+        /// <summary>
+        /// This is a very important method, it basically is entirely responsible for syncing the object on the network.
+        /// If (stream.IsWriting) == true, it means that we own the player, so transmit data to everyone else on the network (hence, write)
+        /// Else, we read information based on the current position and rotation.
+        /// Note, that position and rotation are already transmitted because of the network transform.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(_isJerseyNull);
+            }
+            else
+            {
+                _isJerseyNull = (bool)stream.ReceiveNext();
+            }
+        }
     }
 }

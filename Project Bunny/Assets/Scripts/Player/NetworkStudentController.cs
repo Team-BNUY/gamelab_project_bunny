@@ -91,7 +91,8 @@ namespace Player
         private GameObject _currentObjectInHand;
         private INetworkInteractable _currentInteractable;
         private INetworkTriggerable _currentTriggerable;
-
+        
+        // Audio
         [Header("Audio")] 
         [SerializeField] private AudioClip _snowballThrowSound;
         [SerializeField] private AudioClip _hitBySnowballSound;
