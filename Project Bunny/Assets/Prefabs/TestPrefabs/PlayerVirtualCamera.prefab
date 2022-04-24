@@ -103,7 +103,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: 0
+  m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -169,7 +169,7 @@ MonoBehaviour:
   priority: 0
   blendDistance: 0
   weight: 1
-  sharedProfile: {fileID: 11400000, guid: d943f6eb8c11f774f87bca1125e410fb, type: 2}
+  sharedProfile: {fileID: 11400000, guid: a0da22415e5e2d4449bb25fb2e9c062b, type: 2}
 --- !u!1 &1743299155226530720
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,7 +231,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7775551, y: 1}
+    m_SensorSize: {x: 1.7777778, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
