@@ -78,7 +78,7 @@ namespace Player
             //Initialize key variables
             photonView.RPC(nameof(SetActive), RpcTarget.All, true, currentStudentController.PlayerID);
             photonView.TransferOwnership(_currentStudentController.photonView.Owner);
-            _currentStudentController.UsingCannon = true;
+            _currentStudentController.IsUsingCannon = true;
             _player = _currentStudentController.transform.gameObject;
 
             // Idle animation
@@ -122,7 +122,7 @@ namespace Player
 
             //Restore key variables to null/default value
             _player = null;
-            _currentStudentController.UsingCannon = false;
+            _currentStudentController.IsUsingCannon = false;
             photonView.RPC(nameof(SetActive), RpcTarget.All, false, default(string));
 
             //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
@@ -182,7 +182,7 @@ namespace Player
             ThrowSnowball();
             _player = null;
             _currentStudentController.CurrentInteractable = null;
-            _currentStudentController.UsingCannon = false;
+            _currentStudentController.IsUsingCannon = false;
             _currentStudentController.Animator.applyRootMotion = false;
             _currentStudentController.Animator.transform.localPosition = Vector3.zero;
             photonView.RPC(nameof(SetActive), RpcTarget.All, false, default(string));

@@ -15,25 +15,36 @@ namespace Player
     [RequireComponent(typeof(PlayerInput))]
     public class NetworkStudentController : MonoBehaviourPunCallbacks, IPunObservable
     {
-        private const float DEATH_TIME_DELAY = 3f;
-
+        // General components
         [Header("Components")]
         [SerializeField] private Transform _playerModel;
         [SerializeField] private Collider _playerCollider;
+        [SerializeField] private Transform _playerHand;
         private Transform _playerTransform;
         private PlayerInput _playerInput;
         private Animator _animator;
         private PlayerCustomization _playerCustomization;
 
-        [Header("Camera")]
+        // Camera
         private Camera _playerCamera;
         private CinemachineVirtualCamera _playerVCam;
         private CharacterController _characterController;
         private CinemachineFramingTransposer _playerVCamFramingTransposer;
-        private LockCinemachineFollow _lockCinemachineFollow;
         private float _cameraLockX;
-
-        [Header("Movement")]
+        
+        // Gameplay parameters
+        [Header("Gameplay Parameters")]
+        [SerializeField] private float _deathTimeDelay = 3f;
+        private bool _isDead;
+        private bool _isFrozen;
+        private bool _isSliding;
+        private bool _isKicking;
+        private bool _isIsUsingCannon;
+        private bool _isInFollowZone;
+        private bool _isInClass;
+        
+        // Movement parameters
+        [Header("Movement Parameters")]
         [SerializeField] [Min(0)] private float _movementSpeed;
         [SerializeField] [Range(0f, 1f)] private float _movementFriction;
         private Vector3 _playerCurrentVelocity;
@@ -41,11 +52,32 @@ namespace Player
         private Quaternion _playerRotation;
         private Vector2 _inputMovement;
         private Vector2 _deltaVector;
-        private bool _isBeingControlled;
         private Vector3 _target = Vector3.zero;
-        private bool _startGame;
         private Vector2 _mousePosition;
+        private bool _isBeingControlled;
+        private bool _startGame;
+        private bool _isWalking;
+        
+        // Snowball throw parameters
+        [Header("Throw Parameters")]
+        [SerializeField] [Min(0)] private float _digSnowballMaxTime;
+        [SerializeField] private float _minForce;
+        [SerializeField] private float _maxForce;
+        [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
+        [SerializeField] private float _minAngle;
+        [SerializeField] private float _maxAngle;
+        [SerializeField] [Range(0f, 8.0f)] private float _angleIncreaseTimeRate;
+        private NetworkSnowball _playerSnowball;
+        private int _currentStandingGround;
+        private float _throwForce;
+        private float _throwAngle;
+        private float _digSnowballTimer;
+        private bool _isAiming;
+        private bool _threwSnowball;
+        private bool _isDigging;
+        private bool _hasSnowball;
 
+        // UI
         [Header("UI")]
         [SerializeField] private Canvas _worldUI;
         [SerializeField] private RectTransform _canvasTransform;
@@ -60,21 +92,6 @@ namespace Player
         private INetworkInteractable _currentInteractable;
         private INetworkTriggerable _currentTriggerable;
 
-        [Header("Snowball Throw")]
-        [SerializeField] private Transform _playerHand;
-        [SerializeField] [Min(0)] private float _digSnowballMaxTime;
-        [SerializeField] private float _minForce;
-        [SerializeField] private float _maxForce;
-        [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
-        [SerializeField] private float _minAngle;
-        [SerializeField] private float _maxAngle;
-        [SerializeField] [Range(0f, 8.0f)] private float _angleIncreaseTimeRate;
-        private NetworkSnowball _playerSnowball;
-        private int _currentStandingGround;
-        private float _throwForce;
-        private float _throwAngle;
-        private float _digSnowballTimer;
-
         [Header("Audio")] 
         [SerializeField] private AudioClip _snowballThrowSound;
         [SerializeField] private AudioClip _hitBySnowballSound;
@@ -84,21 +101,7 @@ namespace Player
         [SerializeField] private AudioClip _deathSound;
         private AudioSource _audioSource;
 
-        [Header("Booleans")]
-        private bool _isWalking;
-        private bool _isDigging;
-        private bool _hasSnowball;
-        private bool _isDead;
-        private bool _isFrozen;
-        private bool _isAiming;
-        private bool _threwSnowball;
-        private bool _isSliding;
-        private bool _isKicking;
-        private bool _usingCannon;
-        private bool _isInFollowZone;
-        private bool _isInClass;
-
-        // List of readonly files. No need for them to have a _ prefix
+        // Readonly animator parameter hashes
         private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
         private static readonly int IsDiggingHash = Animator.StringToHash("isDigging");
         private static readonly int HasSnowballHash = Animator.StringToHash("hasSnowball");
@@ -113,7 +116,8 @@ namespace Player
         private static readonly int HitLeft = Animator.StringToHash("HitLeft");
         private static readonly int HitRight = Animator.StringToHash("HitRight");
 
-        // Properties
+        #region Properties
+
         public CharacterController CharacterControllerComponent => _characterController;
         public Quaternion PlayerRotation => _playerRotation;
         public Transform PlayerHand => _playerHand;
@@ -142,12 +146,13 @@ namespace Player
             get => _isKicking;
             set => _isKicking = value;
         }
-
-        public bool UsingCannon
+        public bool IsUsingCannon
         {
-            get => _usingCannon;
-            set => _usingCannon = value;
+            get => _isIsUsingCannon;
+            set => _isIsUsingCannon = value;
         }
+
+        #endregion
 
         #region Callbacks
 
@@ -159,9 +164,6 @@ namespace Player
             _playerInput = GetComponent<PlayerInput>();
             _playerCustomization = GetComponent<PlayerCustomization>();
             _audioSource = GetComponent<AudioSource>();
-
-            _playerInput.actionEvents[0].AddListener(OnMove);
-            _playerInput.actionEvents[1].AddListener(OnLook);
         }
 
         private void Start()
@@ -221,11 +223,29 @@ namespace Player
 
             DigSnowball();
         }
+        
+        protected override void OnEnable()
+        {
+            PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
+            _playerInput.actionEvents[0].AddListener(OnMove);
+            _playerInput.actionEvents[1].AddListener(OnLook);
+            
+            base.OnEnable();
+        }
+        
+        protected override void OnDisable()
+        {
+            PhotonTeamsManager.PlayerJoinedTeam -= OnPlayerJoinedTeam;
+            _playerInput.actionEvents[0].RemoveListener(OnMove);
+            _playerInput.actionEvents[1].RemoveListener(OnLook);
+            
+            base.OnDisable();
+        }
 
         private void OnCollisionEnter(Collision collision)
         {
-            var rollball = collision.gameObject.GetComponent<NetworkGiantRollball>();
-            if (rollball && rollball.CanDamage)
+            var rollBall = collision.gameObject.GetComponent<NetworkGiantRollball>();
+            if (rollBall && rollBall.CanDamage)
             {
                 PlayHitAudio(2);
             }
@@ -258,6 +278,47 @@ namespace Player
             photonView.RPC(nameof(SetBoolRPC), RpcTarget.All, "Hit", true);
             PlayHitAudio(snowball.IsIceBall ? 1 : 0);
         }
+        
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.gameObject.tag.Equals("CameraDeadZoneX") && _playerVCam)
+            {
+                _isInFollowZone = true;
+            }
+
+            if (!other.TryGetComponent(out INetworkTriggerable triggerable)) return;
+            
+            _currentTriggerable ??= triggerable;
+            if (photonView.IsMine)
+            {
+                _currentTriggerable?.TriggerableEnter();
+            }
+        }
+
+        private void OnTriggerStay(Collider other)
+        {
+            if (!other.gameObject.tag.Equals("CameraDeadZoneX") || !_isInFollowZone || !_playerVCam) return;
+            
+            _cameraLockX = _playerVCam.State.RawPosition.x;
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.gameObject.tag.Equals("CameraDeadZoneX") && _playerVCam)
+            {
+                _cameraLockX = _playerVCam.State.RawPosition.x;
+                _isInFollowZone = false;
+            }
+
+            if (!other.TryGetComponent(out INetworkTriggerable triggerable) || _currentTriggerable != triggerable) return;
+            
+            if (photonView.IsMine)
+            {
+                _currentTriggerable?.TriggerableExit();
+            }
+
+            _currentTriggerable = null;
+        }
 
         private void OnPlayerJoinedTeam(Photon.Realtime.Player player, PhotonTeam team)
         {
@@ -272,69 +333,70 @@ namespace Player
             
             _playerCustomization.RestoreTeamlessColors();
         }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.gameObject.tag.Equals("CameraDeadZoneX") && _playerVCam)
-            {
-                _isInFollowZone = true;
-            }
-            if (other.TryGetComponent(out INetworkTriggerable triggerable))
-            {
-                _currentTriggerable ??= triggerable;
-                if (photonView.IsMine)
-                {
-                    _currentTriggerable?.TriggerableEnter();
-                }
-            }
-        }
-
-        private void OnTriggerStay(Collider other)
-        {
-            if (other.gameObject.tag.Equals("CameraDeadZoneX") && _isInFollowZone && _playerVCam)
-            {
-                _cameraLockX = _playerVCam.State.RawPosition.x;
-            }
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            if (other.gameObject.tag.Equals("CameraDeadZoneX") && _playerVCam)
-            {
-                _cameraLockX = _playerVCam.State.RawPosition.x;
-                _isInFollowZone = false;
-            }
-
-            if (other.TryGetComponent(out INetworkTriggerable triggerable) && _currentTriggerable == triggerable)
-            {
-                if (photonView.IsMine)
-                {
-                    _currentTriggerable?.TriggerableExit();
-                }
-
-                _currentTriggerable = null;
-            }
-        }
-
-        protected override void OnEnable()
-        {
-            PhotonTeamsManager.PlayerJoinedTeam += OnPlayerJoinedTeam;
-            
-            base.OnEnable();
-        }
         
-        protected override void OnDisable()
+        /// <summary>
+        /// This is a very important method, it basically is entirely responsible for syncing the object on the network.
+        /// If (stream.IsWriting) == true, it means that we own the player, so transmit data to everyone else on the network (hence, write)
+        /// Else, we read information based on the current position and rotation.
+        /// Note, that position and rotation are already transmitted because of the network transform.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
-            PhotonTeamsManager.PlayerJoinedTeam -= OnPlayerJoinedTeam;
-            
-            base.OnDisable();
+            if (stream.IsWriting)
+            {
+                stream.SendNext(_hasSnowball);
+                stream.SendNext(_isDigging);
+                stream.SendNext(_isWalking);
+                stream.SendNext(_isAiming);
+                stream.SendNext(_currentHealth);
+                stream.SendNext(_isDead);
+                stream.SendNext(_isFrozen);
+                stream.SendNext(_worldUI.gameObject.activeSelf);
+                stream.SendNext(_playerModel.gameObject.activeSelf);
+                stream.SendNext(_canvasTransform.rotation);
+                stream.SendNext(_canvasTransform.localPosition);
+                stream.SendNext(_healthTransform.gameObject.activeSelf);
+                stream.SendNext(_nicknameTransform.offsetMax);
+                stream.SendNext(_nicknameTransform.offsetMin);
+                stream.SendNext(_hostCrown.gameObject.activeSelf);
+                stream.SendNext(_isBeingControlled);
+                stream.SendNext(_target);
+                stream.SendNext(_isKicking);
+                stream.SendNext(_isIsUsingCannon);
+                stream.SendNext(_isInClass);
+            }
+            else
+            {
+                _hasSnowball = (bool)stream.ReceiveNext();
+                _isDigging = (bool)stream.ReceiveNext();
+                _isWalking = (bool)stream.ReceiveNext();
+                _isAiming = (bool)stream.ReceiveNext();
+                _currentHealth = (int)stream.ReceiveNext();
+                _isDead = (bool)stream.ReceiveNext();
+                _isFrozen = (bool)stream.ReceiveNext();
+                _worldUI.gameObject.SetActive((bool)stream.ReceiveNext());
+                _playerModel.gameObject.SetActive((bool)stream.ReceiveNext());
+                _canvasTransform.rotation = (Quaternion)stream.ReceiveNext();
+                _canvasTransform.localPosition = (Vector3)stream.ReceiveNext();
+                _healthTransform.gameObject.SetActive((bool)stream.ReceiveNext());
+                _nicknameTransform.offsetMax = (Vector2)stream.ReceiveNext();
+                _nicknameTransform.offsetMin = (Vector2)stream.ReceiveNext();
+                _hostCrown.gameObject.SetActive((bool)stream.ReceiveNext());
+                _isBeingControlled = (bool)stream.ReceiveNext();
+                _target = (Vector3)stream.ReceiveNext();
+                _isKicking = (bool)stream.ReceiveNext();
+                _isIsUsingCannon = (bool)stream.ReceiveNext();
+                _isInClass = (bool) stream.ReceiveNext();
+            }
         }
 
         #endregion
 
         #region Actions
-
-
+        
         /// <summary>
         /// Change player's position and orientation in global axes using Character Controller
         /// </summary>
@@ -362,35 +424,7 @@ namespace Player
                 SetPlayerRotation(_playerRotation);
             }
 
-            var moveAngle = Vector2.SignedAngle(_inputMovement, new Vector2(0, 1));
-            if (moveAngle < 0)
-            {
-                moveAngle = 360f + moveAngle;
-            }
-
-            var rotationAngle = _playerModel.eulerAngles.y;
-            if (rotationAngle < 0)
-            {
-                rotationAngle = 360f + rotationAngle;
-            }
-
-            var deltaDegrees = moveAngle - rotationAngle;
-            if (deltaDegrees < 0)
-            {
-                deltaDegrees = 360f + deltaDegrees;
-            }
-
-            var deltaRadians = Mathf.Deg2Rad * deltaDegrees;
-            var deltaVector = new Vector2(Mathf.Sin(deltaRadians), Mathf.Cos(deltaRadians));
-            _deltaVector = Vector2.Lerp(_deltaVector, deltaVector, 20f * Time.deltaTime);
-
-            _animator.SetFloat(DeltaX, _deltaVector.x);
-            _animator.SetFloat(DeltaY, _deltaVector.y);
-        }
-
-        public void SetPlayerRotation(Quaternion rotation)
-        {
-            _playerModel.rotation = rotation;
+            ComputeWalkAnimation();
         }
 
         /// <summary>
@@ -409,14 +443,14 @@ namespace Player
             if (offset.magnitude > .1f)
             {
                 _isWalking = true;
-                photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, true);
+                photonView.RPC(nameof(SetWalkHashBool_RPC), RpcTarget.All, true);
                 _characterController.Move(offset.normalized * (_movementSpeed * Time.deltaTime));
             }
             else
             {
                 StopControlledMovement();
                 _isWalking = false;
-                photonView.RPC("SetWalkHashBool_RPC", RpcTarget.All, false);
+                photonView.RPC(nameof(SetWalkHashBool_RPC), RpcTarget.All, false);
             }
 
             _playerRotation = Quaternion.LookRotation(offset.normalized);
@@ -453,28 +487,13 @@ namespace Player
             _hasSnowball = true;
             _isDigging = false;
             _digSnowballTimer = 0.0f;
-            photonView.RPC("SetDigHashBool_RPC", RpcTarget.All, false);
-            photonView.RPC("SetHasSnowballHashBool_RPC", RpcTarget.All, true);
+            photonView.RPC(nameof(SetDigHashBool_RPC), RpcTarget.All, false);
+            photonView.RPC(nameof(SetHasSnowballHashBool_RPC), RpcTarget.All, true);
 
             if (photonView.IsMine && !_isInClass)
             {
                 ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.SHOVELER_KEY);
             }
-        }
-
-        /// <summary>
-        /// Increase throw force every frame when aiming snowball
-        /// </summary>
-        private void IncreaseThrowForce()
-        {
-            _throwForce += Time.deltaTime * _forceIncreaseTimeRate;
-            _playerSnowball.SetSnowballForce(_throwForce);
-        }
-
-        private void IncreaseThrowAngle()
-        {
-            _throwAngle += Time.deltaTime * _angleIncreaseTimeRate;
-            _playerSnowball.SetSnowballAngle(_throwAngle);
         }
 
         /// <summary>
@@ -499,165 +518,6 @@ namespace Player
             if (photonView.IsMine)
             {
                 ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.TEACHERS_PET_KEY);
-            }
-        }
-
-        /// <summary>
-        /// Sets the isFrozen boolean
-        /// Can also be used to add additional things to be disabled/enabled
-        /// </summary>
-        /// <param name="isFrozen"></param>
-        public void SetStudentFreezeState(bool isFrozen)
-        {
-            _isFrozen = isFrozen;
-            _isAiming = false;
-            _throwForce = _minForce;
-            _throwAngle = _minAngle;
-        }
-
-        public void Unhit()
-        {
-            _animator.SetBool(Hit, false);
-        }
-
-        public void UnhitSides()
-        {
-            _animator.SetBool(HitFront, false);
-            _animator.SetBool(HitBack, false);
-            _animator.SetBool(HitLeft, false);
-            _animator.SetBool(HitRight, false);
-        }
-
-        public void GetDamaged(int damage)
-        {
-            photonView.RPC(nameof(GetDamagedRPC), RpcTarget.AllBuffered, damage);
-        }
-
-        /// <summary>
-        /// Student gets damaged when snowball or combat item is thrown at them successfully
-        /// </summary>
-        /// <param name="damage"></param>
-        [PunRPC]
-        // ReSharper disable once UnusedMember.Global
-        public void GetDamagedRPC(int damage)
-        {
-            if (damage >= _currentHealth)
-            {
-                _currentHealth = 0;
-            }
-            else
-            {
-                _currentHealth -= damage;
-            }
-            SetHeartsVisibility();
-
-            if (_currentHealth <= 0)
-            {
-                // Resetting general settings
-                _isDead = true;
-                _isWalking = false;
-                _characterController.enabled = false;
-                _worldUI.gameObject.SetActive(false);
-                _playerModel.gameObject.SetActive(false);
-
-                // Resets the current interactable
-                if (photonView.IsMine)
-                {
-                    _audioSource.pitch = 1f;
-                    _audioSource.Stop();
-                    AudioManager.Instance.PlayOneShot(_deathSound);
-                    _currentInteractable?.Exit();
-                    _currentInteractable = null;
-                }
-
-                // Resetting throwing settings
-                if (_hasSnowball && _playerSnowball != null)
-                {
-                    _playerSnowball.DisableLineRenderer();
-                    _isAiming = false;
-                    _throwForce = _minForce;
-                    _throwAngle = _minAngle;
-                    _currentObjectInHand = null;
-                    _playerSnowball.DestroySnowball();
-                    _playerSnowball = null;
-                    _hasSnowball = false;
-                    _animator.SetBool(HasSnowballHash, false);
-                }
-
-                // Spawns the snowman
-                var snowMan = Instantiate(ArenaManager.Instance.SnowmanPrefab, _playerTransform.position, _playerTransform.rotation);
-                StartCoroutine(DestroySnowman(snowMan));
-
-                if (photonView.IsMine)
-                {
-                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.DEATHS_KEY);
-                    ArenaManager.Instance.IncrementTeamDeathCount(TeamID);
-                    Invoke(nameof(Respawn), DEATH_TIME_DELAY);
-                }
-                
-                ArenaManager.Instance.SetLeadingShirt(ScoreManager.Instance.GetLeadingTeam());
-            }
-        }
-
-        /// <summary>
-        /// Simulate snowman melting by changing transform
-        /// and destroy it when time's up
-        /// NOTE: This function is called on an RPC method
-        /// </summary>
-        /// <param name="snowGuy"></param>
-        /// <returns></returns>
-        private IEnumerator DestroySnowman(GameObject snowGuy)
-        {
-            var timer = ArenaManager.Instance.SnowmanTimer;
-
-            while (timer > 0f)
-            {
-                snowGuy.transform.Translate(Vector3.down * Time.deltaTime / 2f, Space.World);
-                timer -= Time.deltaTime;
-
-                yield return null;
-            }
-
-            Destroy(snowGuy);
-        }
-
-        /// <summary>
-        /// Respawn player after death delay
-        /// NOTE: This function is called on an RPC method
-        /// </summary>
-        private void Respawn()
-        {
-            _playerModel.gameObject.SetActive(true);
-            _worldUI.gameObject.SetActive(true);
-            _currentHealth = _maxHealth;
-            _playerTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(TeamID);
-            _characterController.enabled = true;
-            _isDead = false;
-            photonView.RPC(nameof(ResetHeartsVisibilityRPC), RpcTarget.All);
-        }
-
-        /// <summary>
-        /// Set the visibility of the hearts according to the player's health
-        /// NOTE: This function is called on an RPC method
-        /// </summary>
-        private void SetHeartsVisibility()
-        {
-            for (var i = 1; i <= _maxHealth; i++)
-            {
-                _hearts[i - 1].color = i <= _currentHealth ? Color.white : new Color(1f, 1f, 1f, 0.0f);
-            }
-        }
-
-        /// <summary>
-        /// RPC version of the method above
-        /// Used on a different call
-        /// </summary>
-        [PunRPC]
-        private void ResetHeartsVisibilityRPC()
-        {
-            for (var i = 1; i <= _maxHealth; i++)
-            {
-                _hearts[i - 1].color = Color.white;
             }
         }
 
@@ -835,132 +695,39 @@ namespace Player
 
         #endregion
 
-        #region AnimationRPCs
-
-        [PunRPC]
-        public void SetWalkHashBool_RPC(bool walking)
-        {
-            _animator.SetBool(IsWalkingHash, walking);
-        }
-
-        [PunRPC]
-        public void SetDigHashBool_RPC(bool digging)
-        {
-            _animator.SetBool(IsDiggingHash, digging);
-        }
-
-        [PunRPC]
-        public void SetHasSnowballHashBool_RPC(bool hasSnowball)
-        {
-            _animator.SetBool(HasSnowballHash, hasSnowball);
-        }
-
-        #endregion
-
-        #region RPC
-
-        [PunRPC]
-        private void SyncPlayerInfo(string playerID, byte teamID)
-        {
-            PlayerID = playerID;
-            TeamID = teamID;
-        }
-
-        [PunRPC]
-        private void SyncIsControlled(bool isBeingControlled, Vector3 target)
-        {
-            _isBeingControlled = isBeingControlled;
-            _target = target;
-        }
-
-        [PunRPC]
-        private void SetBoolRPC(string boolean, bool value)
-        {
-            _animator.SetBool(boolean, value);
-        }
-
-        //[PunRPC]
-
-        [PunRPC]
-        // ReSharper disable once UnusedMember.Local
-        private void PlaySnowballThrowAnimation()
-        {
-            _animator.SetTrigger(ThrowSnowball);
-        }
-
-        [PunRPC]
-        public void SyncIsReady(bool isActive, string userId)
-        {
-            if (userId == PlayerID)
-            {
-                _isReadyBubble.SetActive(isActive);
-            }
-        }
-
-        #endregion
-
-        #region Utilities
+        #region PublicCalls
+        
         /// <summary>
-        /// Track the layer of the object the player is standing on
+        /// Sets the isFrozen boolean
+        /// Can also be used to add additional things to be disabled/enabled
         /// </summary>
-        private void SetStandingGround()
+        /// <param name="isFrozen"></param>
+        public void SetStudentFreezeState(bool isFrozen)
         {
-            if (!Physics.Raycast(_playerTransform.position, _playerTransform.TransformDirection(Vector3.down), out var hit, 1.0f)) return;
-            
-            _currentStandingGround = hit.collider.gameObject.layer;
-            if (!_isSliding)
-            {
-                _playerCurrentVelocity = _characterController.velocity;
-            }
-            _isSliding = _currentStandingGround == LayerMask.NameToLayer("Ice");
+            _isFrozen = isFrozen;
+            _isAiming = false;
+            _throwForce = _minForce;
+            _throwAngle = _minAngle;
         }
 
-        /// <summary>
-        /// Attach unique instantiated camera with player
-        /// </summary>
-        /// <param name="cam"></param>
-        /// <param name="angle"></param>
-        /// <param name="distance"></param>
-        /// <param name="isInYard"></param>
-        /// <param name="nameTextHeight"></param>
-        /// <param name="canvasHeight"></param>
-        // ReSharper disable once UnusedMember.Global
-        public void SetCamera(GameObject cam, float angle, float distance, bool isInYard, float nameTextHeight, float canvasHeight)
+        public void Unhit()
         {
-            _isInClass = !isInYard;
-            _playerVCam = cam.GetComponentInChildren<CinemachineVirtualCamera>();
-            //_lockCinemachineFollow = _playerVCam.GetComponent<LockCinemachineFollow>();
-            //_lockCinemachineFollow.PlayerOwner = this;
-            _playerCamera = cam.GetComponentInChildren<Camera>();
-            _playerVCam.Follow = _playerTransform;
-            _playerVCamFramingTransposer = _playerVCam.GetCinemachineComponent<CinemachineFramingTransposer>();
-            SetFrameTransposerProperties(angle, distance, canvasHeight);
-
-            _healthTransform.gameObject.SetActive(isInYard);
-            _nicknameTransform.SetBottom(nameTextHeight);
-            _nicknameTransform.SetTop(-nameTextHeight);
-            _hostCrown.SetActive(!isInYard && PhotonNetwork.IsMasterClient);
+            _animator.SetBool(Hit, false);
         }
 
-        /// <summary>
-        /// Set VCam's FrameTransposer properties
-        /// Put it in separate function to modify at any time
-        /// If you want to tweak more properties, add more arguments to this function
-        /// and the SetCamera(...) above
-        /// </summary>
-        /// <param name="angle"></param>
-        /// <param name="distance"></param>
-        /// <param name="canvasHeight"></param>
-        private void SetFrameTransposerProperties(float angle, float distance, float canvasHeight)
+        public void UnhitSides()
         {
-            _playerVCamFramingTransposer.m_CameraDistance = distance;
-            _playerVCam.transform.rotation = Quaternion.Euler(angle, 0f, 0f);
-            _canvasTransform.rotation = Quaternion.Euler(angle, 0f, 0f);
-            _canvasTransform.localPosition = new Vector3(0f, canvasHeight, 0.23f);
-            _cameraLockX = _playerVCam.State.RawPosition.x;
-            _isInFollowZone = true;
+            _animator.SetBool(HitFront, false);
+            _animator.SetBool(HitBack, false);
+            _animator.SetBool(HitLeft, false);
+            _animator.SetBool(HitRight, false);
         }
 
+        public void GetDamaged(int damage)
+        {
+            photonView.RPC(nameof(GetDamaged_RPC), RpcTarget.AllBuffered, damage);
+        }
+        
         public void LookAtTeacher(bool isTeacher)
         {
             _playerVCam.gameObject.SetActive(!isTeacher);
@@ -977,132 +744,33 @@ namespace Player
                 _playerSnowball.DisableLineRenderer();
             }
         }
-
+        
         /// <summary>
-        /// Utility function that returns the nearest interactable to the player
+        /// Attach unique instantiated camera with player
         /// </summary>
-        /// <returns></returns>
-        private INetworkInteractable ReturnNearestInteractable()
+        /// <param name="cam"></param>
+        /// <param name="angle"></param>
+        /// <param name="distance"></param>
+        /// <param name="isInYard"></param>
+        /// <param name="nameTextHeight"></param>
+        /// <param name="canvasHeight"></param>
+        public void SetCamera(GameObject cam, float angle, float distance, bool isInYard, float nameTextHeight, float canvasHeight)
         {
-            INetworkInteractable interactable = null;
-            const int maxColliders = 10; //maximum number of objects near to the player that can be looped through
-            var hitColliders = new Collider[maxColliders];
-            var numColliders = Physics.OverlapSphereNonAlloc(_playerTransform.position, 1.5f, hitColliders);
+            _isInClass = !isInYard;
+            _playerVCam = cam.GetComponentInChildren<CinemachineVirtualCamera>();
+            //_lockCinemachineFollow = _playerVCam.GetComponent<LockCinemachineFollow>();
+            //_lockCinemachineFollow.PlayerOwner = this;
+            _playerCamera = cam.GetComponentInChildren<Camera>();
+            _playerVCam.Follow = _playerTransform;
+            _playerVCamFramingTransposer = _playerVCam.GetCinemachineComponent<CinemachineFramingTransposer>();
+            SetFrameTransposerProperties(angle, distance, canvasHeight);
 
-            if (numColliders < 1) return null;
-
-            //Loop through 10 nearest objects and check if any of them are interactables that implement IInteractable
-            for (var i = 0; i < numColliders; i++)
-            {
-                if (!hitColliders[i].gameObject.TryGetComponent<INetworkInteractable>(out var interactableObject) || interactableObject.IsActive) continue;
-
-                interactable = interactableObject;
-            }
-
-            return interactable;
-        }
-
-        private void StopControlledMovement()
-        {
-            _target = Vector3.zero;
-
-            if (!_startGame) return;
-            
-            _startGame = false;
-            RoomManager.Instance.StartGame();
-        }
-
-        public void PlayKickAudio()
-        {
-            if (!photonView.IsMine) return;
-            
-            photonView.RPC(nameof(PlayKickAudioRpc), RpcTarget.All);
+            _healthTransform.gameObject.SetActive(isInYard);
+            _nicknameTransform.SetBottom(nameTextHeight);
+            _nicknameTransform.SetTop(-nameTextHeight);
+            _hostCrown.SetActive(!isInYard && PhotonNetwork.IsMasterClient);
         }
         
-        private void PlayHitAudio(int ballType)
-        {
-            switch (ballType)
-            {
-                case 0:
-                    _audioSource.PlayOneShot(_hitBySnowballSound, 2f * AudioManager.Instance.Volume);
-                    break;
-                case 1:
-                    _audioSource.PlayOneShot(_hitByIceballSound, 2f * AudioManager.Instance.Volume);
-                    break;
-                default:
-                    _audioSource.PlayOneShot(_hitByRollballSound, 2f * AudioManager.Instance.Volume);
-                    break;
-            }
-        }
-
-        [PunRPC]
-        private void PlayKickAudioRpc()
-        {
-            _audioSource.PlayOneShot(_kickSound, 2f * AudioManager.Instance.Volume);
-        }
-
-        /// <summary>
-        /// This is a very important method, it basically is entirely responsible for syncing the object on the network.
-        /// If (stream.IsWriting) == true, it means that we own the player, so transmit data to everyone else on the network (hence, write)
-        /// Else, we read information based on the current position and rotation.
-        /// Note, that position and rotation are already transmitted because of the network transform.
-        /// </summary>
-        /// <param name="stream"></param>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        {
-            if (stream.IsWriting)
-            {
-                stream.SendNext(_hasSnowball);
-                stream.SendNext(_isDigging);
-                stream.SendNext(_isWalking);
-                stream.SendNext(_isAiming);
-                stream.SendNext(_currentHealth);
-                stream.SendNext(_isDead);
-                stream.SendNext(_isFrozen);
-                stream.SendNext(_worldUI.gameObject.activeSelf);
-                stream.SendNext(_playerModel.gameObject.activeSelf);
-                stream.SendNext(_canvasTransform.rotation);
-                stream.SendNext(_canvasTransform.localPosition);
-                stream.SendNext(_healthTransform.gameObject.activeSelf);
-                stream.SendNext(_nicknameTransform.offsetMax);
-                stream.SendNext(_nicknameTransform.offsetMin);
-                stream.SendNext(_hostCrown.gameObject.activeSelf);
-                stream.SendNext(_isBeingControlled);
-                stream.SendNext(_target);
-                stream.SendNext(_isKicking);
-                stream.SendNext(_usingCannon);
-                stream.SendNext(_isInClass);
-            }
-            else
-            {
-                _hasSnowball = (bool)stream.ReceiveNext();
-                _isDigging = (bool)stream.ReceiveNext();
-                _isWalking = (bool)stream.ReceiveNext();
-                _isAiming = (bool)stream.ReceiveNext();
-                _currentHealth = (int)stream.ReceiveNext();
-                _isDead = (bool)stream.ReceiveNext();
-                _isFrozen = (bool)stream.ReceiveNext();
-                _worldUI.gameObject.SetActive((bool)stream.ReceiveNext());
-                _playerModel.gameObject.SetActive((bool)stream.ReceiveNext());
-                _canvasTransform.rotation = (Quaternion)stream.ReceiveNext();
-                _canvasTransform.localPosition = (Vector3)stream.ReceiveNext();
-                _healthTransform.gameObject.SetActive((bool)stream.ReceiveNext());
-                _nicknameTransform.offsetMax = (Vector2)stream.ReceiveNext();
-                _nicknameTransform.offsetMin = (Vector2)stream.ReceiveNext();
-                _hostCrown.gameObject.SetActive((bool)stream.ReceiveNext());
-                _isBeingControlled = (bool)stream.ReceiveNext();
-                _target = (Vector3)stream.ReceiveNext();
-                _isKicking = (bool)stream.ReceiveNext();
-                _usingCannon = (bool)stream.ReceiveNext();
-                _isInClass = (bool) stream.ReceiveNext();
-            }
-        }
-
-        #endregion
-
-        #region PublicCalls
         public void SetControlledMovement(Vector3 target, bool startGame)
         {
             photonView.RPC(nameof(SyncIsControlled), RpcTarget.AllBuffered, true, target);
@@ -1110,16 +778,32 @@ namespace Player
             _target = target;
             _startGame = startGame;
         }
-
-        /// <summary>
-        /// Accessed through animation event. Disables Walking animation when necessary
-        /// </summary>
-        public void SetWalkingAnimator()
+        
+        public void PlayKickAudio()
         {
-            if (photonView.IsMine)
-            {
-                _animator.SetBool(IsWalkingHash, _isWalking);
-            }
+            if (!photonView.IsMine) return;
+            
+            photonView.RPC(nameof(PlayKickAudio_RPC), RpcTarget.All);
+        }
+
+        // /// <summary>
+        // /// Accessed through animation event. Disables Walking animation when necessary
+        // /// </summary>
+        // public void SetWalkingAnimator()
+        // {
+        //     if (!photonView.IsMine) return;
+        //     
+        //     _animator.SetBool(IsWalkingHash, _isWalking);
+        // }
+
+        public void SyncIsReady(bool isActive, string userId)
+        {
+            photonView.RPC(nameof(SyncIsReady_RPC), RpcTarget.AllBuffered, isActive, userId);
+        }
+        
+        public void SetPlayerRotation(Quaternion rotation)
+        {
+            _playerModel.rotation = rotation;
         }
 
         public void SetThrewSnowball(bool value)
@@ -1145,6 +829,322 @@ namespace Player
         public void SetAnimatorParameter(string parameter, float value)
         {
             _animator.SetFloat(parameter, value);
+        }
+
+        #endregion
+        
+        #region Utilities
+        
+        /// <summary>
+        /// Track the layer of the object the player is standing on
+        /// </summary>
+        private void SetStandingGround()
+        {
+            if (!Physics.Raycast(_playerTransform.position, _playerTransform.TransformDirection(Vector3.down), out var hit, 1.0f)) return;
+            
+            _currentStandingGround = hit.collider.gameObject.layer;
+            if (!_isSliding)
+            {
+                _playerCurrentVelocity = _characterController.velocity;
+            }
+            _isSliding = _currentStandingGround == LayerMask.NameToLayer("Ice");
+        }
+
+        /// <summary>
+        /// Set VCam's FrameTransposer properties
+        /// Put it in separate function to modify at any time
+        /// If you want to tweak more properties, add more arguments to this function
+        /// and the SetCamera(...) above
+        /// </summary>
+        /// <param name="angle"></param>
+        /// <param name="distance"></param>
+        /// <param name="canvasHeight"></param>
+        private void SetFrameTransposerProperties(float angle, float distance, float canvasHeight)
+        {
+            _playerVCamFramingTransposer.m_CameraDistance = distance;
+            _playerVCam.transform.rotation = Quaternion.Euler(angle, 0f, 0f);
+            _canvasTransform.rotation = Quaternion.Euler(angle, 0f, 0f);
+            _canvasTransform.localPosition = new Vector3(0f, canvasHeight, 0.23f);
+            _cameraLockX = _playerVCam.State.RawPosition.x;
+            _isInFollowZone = true;
+        }
+
+        /// <summary>
+        /// Utility function that returns the nearest interactable to the player
+        /// </summary>
+        /// <returns></returns>
+        private INetworkInteractable ReturnNearestInteractable()
+        {
+            INetworkInteractable interactable = null;
+            const int maxColliders = 10; //maximum number of objects near to the player that can be looped through
+            var hitColliders = new Collider[maxColliders];
+            var numColliders = Physics.OverlapSphereNonAlloc(_playerTransform.position, 1.5f, hitColliders);
+
+            if (numColliders < 1) return null;
+
+            //Loop through 10 nearest objects and check if any of them are interactables that implement IInteractable
+            for (var i = 0; i < numColliders; i++)
+            {
+                if (!hitColliders[i].gameObject.TryGetComponent<INetworkInteractable>(out var interactableObject) || interactableObject.IsActive) continue;
+
+                interactable = interactableObject;
+            }
+
+            return interactable;
+        }
+        
+        /// <summary>
+        /// Respawn player after death delay
+        /// </summary>
+        private void Respawn()
+        {
+            _playerModel.gameObject.SetActive(true);
+            _worldUI.gameObject.SetActive(true);
+            _currentHealth = _maxHealth;
+            _playerTransform.position = ArenaManager.Instance.GetPlayerSpawnPoint(TeamID);
+            _characterController.enabled = true;
+            _isDead = false;
+            photonView.RPC(nameof(ResetHeartsVisibility_RPC), RpcTarget.All);
+        }
+        
+        /// <summary>
+        /// Increase throw force every frame when aiming snowball
+        /// </summary>
+        private void IncreaseThrowForce()
+        {
+            _throwForce += Time.deltaTime * _forceIncreaseTimeRate;
+            _playerSnowball.SetSnowballForce(_throwForce);
+        }
+
+        private void IncreaseThrowAngle()
+        {
+            _throwAngle += Time.deltaTime * _angleIncreaseTimeRate;
+            _playerSnowball.SetSnowballAngle(_throwAngle);
+        }
+        
+        /// <summary>
+        /// Computes the animator parameters for the walk animations blend tree
+        /// </summary>
+        private void ComputeWalkAnimation()
+        {
+            var moveAngle = Vector2.SignedAngle(_inputMovement, new Vector2(0, 1));
+            if (moveAngle < 0)
+            {
+                moveAngle = 360f + moveAngle;
+            }
+
+            var rotationAngle = _playerModel.eulerAngles.y;
+            if (rotationAngle < 0)
+            {
+                rotationAngle = 360f + rotationAngle;
+            }
+
+            var deltaDegrees = moveAngle - rotationAngle;
+            if (deltaDegrees < 0)
+            {
+                deltaDegrees = 360f + deltaDegrees;
+            }
+
+            var deltaRadians = Mathf.Deg2Rad * deltaDegrees;
+            var deltaVector = new Vector2(Mathf.Sin(deltaRadians), Mathf.Cos(deltaRadians));
+            _deltaVector = Vector2.Lerp(_deltaVector, deltaVector, 20f * Time.deltaTime);
+
+            _animator.SetFloat(DeltaX, _deltaVector.x);
+            _animator.SetFloat(DeltaY, _deltaVector.y);
+        }
+        
+        /// <summary>
+        /// Simulate snowman melting by changing transform
+        /// and destroy it when time's up
+        /// NOTE: This function is called on an RPC method
+        /// </summary>
+        /// <param name="snowGuy"></param>
+        private static IEnumerator DestroySnowman(GameObject snowGuy)
+        {
+            var timer = ArenaManager.Instance.SnowmanTimer;
+
+            while (timer > 0f)
+            {
+                snowGuy.transform.Translate(Vector3.down * Time.deltaTime / 2f, Space.World);
+                timer -= Time.deltaTime;
+
+                yield return null;
+            }
+
+            Destroy(snowGuy);
+        }
+
+        /// <summary>
+        /// Set the visibility of the hearts according to the player's health
+        /// NOTE: This function is called on an RPC method
+        /// </summary>
+        private void SetHeartsVisibility()
+        {
+            for (var i = 1; i <= _maxHealth; i++)
+            {
+                _hearts[i - 1].color = i <= _currentHealth ? Color.white : new Color(1f, 1f, 1f, 0.0f);
+            }
+        }
+        
+        private void StopControlledMovement()
+        {
+            _target = Vector3.zero;
+
+            if (!_startGame) return;
+            
+            _startGame = false;
+            RoomManager.Instance.StartGame();
+        }
+
+        private void PlayHitAudio(int ballType)
+        {
+            switch (ballType)
+            {
+                case 0:
+                    _audioSource.PlayOneShot(_hitBySnowballSound, 2f * AudioManager.Instance.Volume);
+                    break;
+                case 1:
+                    _audioSource.PlayOneShot(_hitByIceballSound, 2f * AudioManager.Instance.Volume);
+                    break;
+                default:
+                    _audioSource.PlayOneShot(_hitByRollballSound, 2f * AudioManager.Instance.Volume);
+                    break;
+            }
+        }
+
+        #endregion
+        
+        #region RPCs
+        
+        /// <summary>
+        /// Student gets damaged when snowball or combat item is thrown at them successfully
+        /// </summary>
+        /// <param name="damage"></param>
+        [PunRPC]
+        private void GetDamaged_RPC(int damage)
+        {
+            if (damage >= _currentHealth)
+            {
+                _currentHealth = 0;
+            }
+            else
+            {
+                _currentHealth -= damage;
+            }
+            SetHeartsVisibility();
+
+            if (_currentHealth > 0) return;
+            
+            // Resetting general settings
+            _isDead = true;
+            _isWalking = false;
+            _characterController.enabled = false;
+            _worldUI.gameObject.SetActive(false);
+            _playerModel.gameObject.SetActive(false);
+
+            // Resets the current interactable
+            if (photonView.IsMine)
+            {
+                _audioSource.pitch = 1f;
+                _audioSource.Stop();
+                AudioManager.Instance.PlayOneShot(_deathSound);
+                _currentInteractable?.Exit();
+                _currentInteractable = null;
+            }
+
+            // Resetting throwing settings
+            if (_hasSnowball && _playerSnowball != null)
+            {
+                _playerSnowball.DisableLineRenderer();
+                _isAiming = false;
+                _throwForce = _minForce;
+                _throwAngle = _minAngle;
+                _currentObjectInHand = null;
+                _playerSnowball.DestroySnowball();
+                _playerSnowball = null;
+                _hasSnowball = false;
+                _animator.SetBool(HasSnowballHash, false);
+            }
+
+            // Spawns the snowman
+            var snowMan = Instantiate(ArenaManager.Instance.SnowmanPrefab, _playerTransform.position, _playerTransform.rotation);
+            StartCoroutine(DestroySnowman(snowMan));
+
+            if (photonView.IsMine)
+            {
+                ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.DEATHS_KEY);
+                ArenaManager.Instance.IncrementTeamDeathCount(TeamID);
+                Invoke(nameof(Respawn), _deathTimeDelay);
+            }
+                
+            ArenaManager.Instance.SetLeadingShirt(ScoreManager.Instance.GetLeadingTeam());
+        }
+
+        [PunRPC]
+        private void ResetHeartsVisibility_RPC()
+        {
+            for (var i = 1; i <= _maxHealth; i++)
+            {
+                _hearts[i - 1].color = Color.white;
+            }
+        }
+        
+        [PunRPC]
+        private void SetWalkHashBool_RPC(bool walking)
+        {
+            _animator.SetBool(IsWalkingHash, walking);
+        }
+
+        [PunRPC]
+        private void SetDigHashBool_RPC(bool digging)
+        {
+            _animator.SetBool(IsDiggingHash, digging);
+        }
+
+        [PunRPC]
+        private void SetHasSnowballHashBool_RPC(bool hasSnowball)
+        {
+            _animator.SetBool(HasSnowballHash, hasSnowball);
+        }
+        
+        [PunRPC]
+        private void SyncPlayerInfo(string playerID, byte teamID)
+        {
+            PlayerID = playerID;
+            TeamID = teamID;
+        }
+
+        [PunRPC]
+        private void SyncIsControlled(bool isBeingControlled, Vector3 target)
+        {
+            _isBeingControlled = isBeingControlled;
+            _target = target;
+        }
+
+        [PunRPC]
+        private void SetBoolRPC(string boolean, bool value)
+        {
+            _animator.SetBool(boolean, value);
+        }
+
+        [PunRPC]
+        private void PlaySnowballThrowAnimation()
+        {
+            _animator.SetTrigger(ThrowSnowball);
+        }
+
+        [PunRPC]
+        private void SyncIsReady_RPC(bool isActive, string userId)
+        {
+            if (userId != PlayerID) return;
+            
+            _isReadyBubble.SetActive(isActive);
+        }
+        
+        [PunRPC]
+        private void PlayKickAudio_RPC()
+        {
+            _audioSource.PlayOneShot(_kickSound, 2f * AudioManager.Instance.Volume);
         }
 
         #endregion

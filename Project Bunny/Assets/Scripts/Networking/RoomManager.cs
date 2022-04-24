@@ -359,12 +359,9 @@ namespace Networking
         public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
         {
             base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
-
-
-            if (changedProps.ContainsKey("isReady") && !targetPlayer.IsMasterClient)
-            {
-                _localStudentController.photonView.RPC("SyncIsReady", RpcTarget.AllBuffered, (bool)changedProps["isReady"], targetPlayer.UserId);
-            }
+            if (!changedProps.ContainsKey("isReady") || targetPlayer.IsMasterClient) return;
+            
+            _localStudentController.SyncIsReady((bool)changedProps["isReady"], targetPlayer.UserId);
         }
     }
 }

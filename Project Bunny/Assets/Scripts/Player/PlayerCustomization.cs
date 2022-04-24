@@ -97,55 +97,55 @@ namespace Player
         public void SwitchHat()
         {
             PlayUIInteractSound();
-            photonView.RPC(nameof(SwitchHatRPC), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(SwitchHat_RPC), RpcTarget.AllBuffered);
         }
 
         public void SwitchCoat()
         {
             PlayUIInteractSound();
-            photonView.RPC(nameof(SwitchCoatRPC), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(SwitchCoat_RPC), RpcTarget.AllBuffered);
         }
 
         public void SwitchPants()
         {
             PlayUIInteractSound();
-            photonView.RPC(nameof(SwitchPantsRPC), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(SwitchPants_RPC), RpcTarget.AllBuffered);
         }
 
         public void SwitchHair()
         {
             PlayUIInteractSound();
-            photonView.RPC(nameof(SwitchHairRPC), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(SwitchHair_RPC), RpcTarget.AllBuffered);
         }
 
         public void SwitchHairColor()
         {
             PlayUIInteractSound();
-            photonView.RPC(nameof(SwitchHairColorRPC), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(SwitchHairColor_RPC), RpcTarget.AllBuffered);
         }
 
         public void SwitchPantsColor()
         {
             PlayUIInteractSound();
-            photonView.RPC(nameof(SwitchPantsColorRPC), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(SwitchPantsColor_RPC), RpcTarget.AllBuffered);
         }
 
         public void SwitchCoatColor()
         {
             PlayUIInteractSound();
-            photonView.RPC(nameof(SwitchCoatColorRPC), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(SwitchCoatColor_RPC), RpcTarget.AllBuffered);
         }
 
         public void SwitchSkinColor()
         {
             PlayUIInteractSound();
-            photonView.RPC(nameof(SwitchSkinColorRPC), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(SwitchSkinColor_RPC), RpcTarget.AllBuffered);
         }
 
         public void SwitchShoesColor()
         {
             PlayUIInteractSound();
-            photonView.RPC(nameof(SwitchShoesColorRPC), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(SwitchShoesColor_RPC), RpcTarget.AllBuffered);
         }
 
         public void SetVisualCustomProperties()
@@ -154,18 +154,18 @@ namespace Player
 
             if (playerProperties.ContainsKey("hatIndex"))
             {
-                photonView.RPC(nameof(SetHat), RpcTarget.AllBuffered, (int)playerProperties["hatIndex"]);
+                photonView.RPC(nameof(SetHat_RPC), RpcTarget.AllBuffered, (int)playerProperties["hatIndex"]);
             }
 
             if (playerProperties.ContainsKey("hairIndex"))
             {
                 if (playerProperties.ContainsKey("hairColorIndex"))
                 {
-                    photonView.RPC(nameof(SetHair), RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"]);
+                    photonView.RPC(nameof(SetHair_RPC), RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"]);
                 }
                 else
                 {
-                    photonView.RPC(nameof(SetHair), RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], -1);
+                    photonView.RPC(nameof(SetHair_RPC), RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], -1);
                 }
             }
 
@@ -173,11 +173,11 @@ namespace Player
             {
                 if (playerProperties.ContainsKey("pantColorIndex"))
                 {
-                    photonView.RPC(nameof(SetPants), RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"]);
+                    photonView.RPC(nameof(SetPants_RPC), RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"]);
                 }
                 else
                 {
-                    photonView.RPC(nameof(SetPants), RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], -1);
+                    photonView.RPC(nameof(SetPants_RPC), RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], -1);
                 }
             }
 
@@ -185,33 +185,33 @@ namespace Player
             {
                 if (playerProperties.ContainsKey("coatColorIndex"))
                 {
-                    photonView.RPC(nameof(SetCoat), RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], (int)playerProperties["coatColorIndex"]);
+                    photonView.RPC(nameof(SetCoat_RPC), RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], (int)playerProperties["coatColorIndex"]);
                 }
                 else
                 {
-                    photonView.RPC(nameof(SetCoat), RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], -1);
+                    photonView.RPC(nameof(SetCoat_RPC), RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], -1);
                 }
             }
 
             if (playerProperties.ContainsKey("skinColorIndex"))
             {
-                photonView.RPC(nameof(SetSkinColor), RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
+                photonView.RPC(nameof(SetSkinColor_RPC), RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
             }
             
             if (playerProperties.ContainsKey("shoesColorIndex"))
             {
-                photonView.RPC(nameof(SetShoesColor), RpcTarget.AllBuffered, (int)playerProperties["shoesColorIndex"]);
+                photonView.RPC(nameof(SetShoesColor_RPC), RpcTarget.AllBuffered, (int)playerProperties["shoesColorIndex"]);
             }
         }
 
         public void UpdateTeamColorVisuals()
         {
-            photonView.RPC(nameof(UpdateTeamColorVisualsRPC), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(UpdateTeamColorVisuals_RPC), RpcTarget.AllBuffered);
         }
         
         public void RestoreTeamlessColors()
         {
-            photonView.RPC(nameof(RestoreTeamlessColorsRPC), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(RestoreTeamlessColors_RPC), RpcTarget.AllBuffered);
         }
     
         private void SetNameText()
@@ -231,7 +231,7 @@ namespace Player
         /// Functionality will still be kept for later, but more refined
         /// </summary>
         [PunRPC]
-        private void UpdateTeamColorVisualsRPC()
+        private void UpdateTeamColorVisuals_RPC()
         {
             if (_isJerseyNull)
             {
@@ -273,7 +273,7 @@ namespace Player
         /// Temporary function for restoring a player's colors to all white to show they are teamless
         /// </summary>
         [PunRPC]
-        private void RestoreTeamlessColorsRPC()
+        private void RestoreTeamlessColors_RPC()
         {
             foreach (var playerHatRenderer in _playerHatRenderers)
             {
@@ -284,7 +284,7 @@ namespace Player
         }
 
         [PunRPC]
-        private void SwitchHatRPC()
+        private void SwitchHat_RPC()
         {
             _currentHat.SetActive(false);
             if (_hatIndex + 1 >= _playerHats.Length)
@@ -304,7 +304,7 @@ namespace Player
 
 
         [PunRPC]
-        private void SwitchPantsRPC()
+        private void SwitchPants_RPC()
         {
             _currentPants.SetActive(false);
             if (_pantIndex + 1 >= _playerPants.Length)
@@ -324,7 +324,7 @@ namespace Player
         }
 
         [PunRPC]
-        private void SwitchPantsColorRPC()
+        private void SwitchPantsColor_RPC()
         {
             if (_pantColorIndex + 1 >= _colors.Length) _pantColorIndex = 0;
             else _pantColorIndex++;
@@ -338,7 +338,7 @@ namespace Player
         }
 
         [PunRPC]
-        private void SwitchCoatRPC()
+        private void SwitchCoat_RPC()
         {
             _currentCoat.SetActive(false);
             if (_coatIndex + 1 >= _playerCoats.Length)
@@ -357,7 +357,7 @@ namespace Player
         }
 
         [PunRPC]
-        private void SwitchCoatColorRPC()
+        private void SwitchCoatColor_RPC()
         {
             if (_coatColorIndex + 1 >= _colors.Length)
             {
@@ -377,7 +377,7 @@ namespace Player
         }
 
         [PunRPC]
-        private void SwitchHairRPC()
+        private void SwitchHair_RPC()
         {
             _currentHairStyle.SetActive(false);
             if (_hairStyleIndex + 1 >= _playerHairStyles.Length)
@@ -399,7 +399,7 @@ namespace Player
         }
 
         [PunRPC]
-        private void SwitchHairColorRPC()
+        private void SwitchHairColor_RPC()
         {
             if (_hairColorIndex + 1 >= _colors.Length) _hairColorIndex = 0;
             else _hairColorIndex++;
@@ -413,7 +413,7 @@ namespace Player
         }
 
         [PunRPC]
-        private void SwitchSkinColorRPC()
+        private void SwitchSkinColor_RPC()
         {
             if (_skinColorIndex + 1 >= skinColors.Length)
             {
@@ -433,7 +433,7 @@ namespace Player
         }
     
         [PunRPC]
-        private void SwitchShoesColorRPC()
+        private void SwitchShoesColor_RPC()
         {
             if (_shoesColorIndex + 1 >= _colors.Length)
             {
@@ -453,7 +453,7 @@ namespace Player
         }
     
         [PunRPC]
-        private void SetHat(int index)
+        private void SetHat_RPC(int index)
         {
             _currentHat.SetActive(false);
             _currentHat = _playerHats[index];
@@ -461,7 +461,7 @@ namespace Player
         }
 
         [PunRPC]
-        private void SetCoat(int index, int colorIndex)
+        private void SetCoat_RPC(int index, int colorIndex)
         {
             _currentCoat.SetActive(false);
             _currentCoat = _playerCoats[index];
@@ -472,7 +472,7 @@ namespace Player
         }
 
         [PunRPC]
-        private void SetHair(int index, int colorIndex)
+        private void SetHair_RPC(int index, int colorIndex)
         {
             _currentHairStyle.SetActive(false);
             _currentHairStyle = _playerHairStyles[index];
@@ -483,7 +483,7 @@ namespace Player
         }
 
         [PunRPC]
-        private void SetPants(int index, int colorIndex)
+        private void SetPants_RPC(int index, int colorIndex)
         {
             _currentPants.SetActive(false);
             _currentPants = _playerPants[index];
@@ -493,14 +493,14 @@ namespace Player
         }
 
         [PunRPC]
-        private void SetSkinColor(int colorIndex)
+        private void SetSkinColor_RPC(int colorIndex)
         {
             if (colorIndex < 0) return;
             _playerSkin.GetComponent<Renderer>().material.color = skinColors[colorIndex];
         }
         
         [PunRPC]
-        private void SetShoesColor(int colorIndex)
+        private void SetShoesColor_RPC(int colorIndex)
         {
             if (colorIndex < 0) return;
             _playerBoots.GetComponent<Renderer>().material.color = _colors[colorIndex];
