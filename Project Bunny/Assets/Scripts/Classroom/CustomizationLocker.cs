@@ -26,13 +26,13 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     [SerializeField] private Color[] skinColors;
     private int skinColorIndex;
 
-    private bool isActive;
+    private bool _isActive;
     
     [SerializeField] public Animator hoverEButtonUI;
 
     private void Awake()
     {
-        isActive = false;
+        _isActive = false;
         skinColorIndex = 0;
     }
 
@@ -41,26 +41,26 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     /// <summary>
     /// Method that runs when you trigger this customization menu
     /// </summary>
-    public void TriggerableTrigger(NetworkStudentController currentPlayer)
+    public void TriggerableTrigger(NetworkStudentController currentStudentController)
     {
-        if (isActive) return;
+        if (_isActive) return;
+        _isActive = true;
         
+        currentStudentController.CharacterControllerComponent.enabled = false;
         _customizationPanel.SetActive(true);
-        isActive = true;
+
+        var playerCustomization = currentStudentController.GetComponent<PlayerCustomization>();
+        _changeHatButton.onClick.AddListener(() => playerCustomization.SwitchHat());
+        _changeCoatButton.onClick.AddListener(() => playerCustomization.SwitchCoat());
+        _changePantsButton.onClick.AddListener(() => playerCustomization.SwitchPants());
+        _changeHairButton.onClick.AddListener(() => playerCustomization.SwitchHair());
         
-        currentPlayer.CharacterControllerComponent.enabled = false;
+        _changeSkinColorButton.onClick.AddListener(() => playerCustomization.SwitchSkinColor());
+        _changeCoatColorButton.onClick.AddListener(() => playerCustomization.SwitchCoatColor());
         
-        _changeHatButton.onClick.AddListener(() => currentPlayer.SwitchHat_RPC());
-        _changeCoatButton.onClick.AddListener(() => currentPlayer.SwitchCoat_RPC());
-        _changePantsButton.onClick.AddListener(() => currentPlayer.SwitchPants_RPC());
-        _changeHairButton.onClick.AddListener(() => currentPlayer.SwitchHair_RPC());
-        
-        _changeSkinColorButton.onClick.AddListener(() => currentPlayer.SwitchSkinColor_RPC());
-        _changeCoatColorButton.onClick.AddListener(() => currentPlayer.SwitchCoatColor_RPC());
-        
-        _changePantColorButton.onClick.AddListener(() => currentPlayer.SwitchPantsColor_RPC());
-        _changeHairColorButton.onClick.AddListener(() => currentPlayer.SwitchHairColor_RPC());
-        _changeBootsColorButton.onClick.AddListener(() => currentPlayer.SwitchShoesColor_RPC());
+        _changePantColorButton.onClick.AddListener(() => playerCustomization.SwitchPantsColor());
+        _changeHairColorButton.onClick.AddListener(() => playerCustomization.SwitchHairColor());
+        _changeBootsColorButton.onClick.AddListener(() => playerCustomization.SwitchShoesColor());
         _doneButton.onClick.AddListener(Leave);
         
         AudioManager.Instance.PlayOneShot(_interact, 0.5f);
@@ -70,7 +70,7 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     {
         RoomManager.Instance.LocalStudentController.CharacterControllerComponent.enabled = true;
         _customizationPanel.SetActive(false);
-        isActive = false;
+        _isActive = false;
         
         AudioManager.Instance.PlayOneShot(_stopInteract, 0.5f);
     }
@@ -78,8 +78,8 @@ public class CustomizationLocker : MonoBehaviour, INetworkTriggerable
     public void TriggerableEnter()
     {
         hoverEButtonUI.enabled = true;
-        hoverEButtonUI.Play("EInteract");
         hoverEButtonUI.gameObject.SetActive(true);
+        hoverEButtonUI.Play("EInteract");
     }
 
     public void TriggerableExit()

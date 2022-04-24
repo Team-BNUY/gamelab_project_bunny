@@ -323,8 +323,8 @@ namespace Player
             if (_isActive || !_ready) return;
             
             _hoverButton.enabled = true;
-            _hoverButton.Play("EInteract");
             _hoverButton.gameObject.SetActive(true);
+            _hoverButton.Play("EInteract");
         }
 
         public void TriggerableExit()

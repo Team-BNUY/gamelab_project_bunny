@@ -11,7 +11,7 @@ public class SnowmanPile : MonoBehaviour, INetworkTriggerable
     /// <summary>
     /// Method that runs when you trigger this blackboard
     /// </summary>
-    public void TriggerableTrigger(NetworkStudentController currentPlayer)
+    public void TriggerableTrigger(NetworkStudentController currentStudentController)
     {
         
     }
@@ -19,8 +19,8 @@ public class SnowmanPile : MonoBehaviour, INetworkTriggerable
     public void TriggerableEnter()
     {
         _hoverEButtonUI.enabled = true;
-        _hoverEButtonUI.Play("Click Interact");
         _hoverEButtonUI.gameObject.SetActive(true);
+        _hoverEButtonUI.Play("Click Interact");
     }
 
     public void TriggerableExit()

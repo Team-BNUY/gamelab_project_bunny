@@ -2,18 +2,18 @@ using Interfaces;
 using Player;
 using UnityEngine;
 
-public class OptionsBoard : MonoBehaviour, INetworkTriggerable
+public class Blackboard : MonoBehaviour, INetworkTriggerable
 {
     [SerializeField] public Animator hoverEButtonUI;
     
     #region InterfaceMethods
     
     /// <summary>
-    /// Method that runs when you trigger this Options Board
+    /// Method that runs when you trigger this blackboard
     /// </summary>
-    public void TriggerableTrigger(NetworkStudentController currentPlayer)
+    public void TriggerableTrigger(NetworkStudentController currentStudentController)
     {
-        Debug.Log("You just triggered the Options Board!");
+        Debug.Log("You just triggered the Blackboard!");
     }
     
     public void TriggerableEnter()

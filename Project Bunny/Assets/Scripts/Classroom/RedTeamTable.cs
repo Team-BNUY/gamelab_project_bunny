@@ -40,7 +40,7 @@ namespace Player
         /// <summary>
         /// Method that runs when you trigger this blackboard
         /// </summary>
-        public void TriggerableTrigger(NetworkStudentController currentPlayer)
+        public void TriggerableTrigger(NetworkStudentController currentStudentController)
         {
             if (_teamCount >= _teamMaxSize - 1) return;
             
@@ -50,7 +50,7 @@ namespace Player
                 {
                     PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
                     _view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
-                    currentPlayer.RestoreTeamlessColors_RPC();
+                    currentStudentController.GetComponent<PlayerCustomization>().RestoreTeamlessColors();
                     AudioManager.Instance.PlayOneShot(_shitTakeOff, 0.5f);
                 }
                 else
@@ -72,8 +72,8 @@ namespace Player
         public void TriggerableEnter()
         {
             hoverEButtonUI.enabled = true;
-            hoverEButtonUI.Play("EInteract");
             hoverEButtonUI.gameObject.SetActive(true);
+            hoverEButtonUI.Play("EInteract");
         }
         
         public void TriggerableExit()
