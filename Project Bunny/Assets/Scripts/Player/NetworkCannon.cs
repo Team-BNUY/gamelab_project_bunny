@@ -137,10 +137,11 @@ namespace Player
             {
                 _aimArrow.SetActive(false);
             }
-            _hoverButton.enabled = true;
-            _hoverButton.Play("EInteract");
-            _hoverButton.gameObject.SetActive(true);
             
+            _hoverButton.enabled = true;
+            _hoverButton.gameObject.SetActive(true);
+            _hoverButton.Play("EInteract");
+
             // Idle animation
             _currentStudentController.SetAnimatorParameter("InteractIdle", false);
             _currentStudentController.SetAnimatorParameter("UsingInteractable", false);
@@ -361,12 +362,11 @@ namespace Player
 
         public void TriggerableEnter()
         {
-            if (!_isActive)
-            {
-                _hoverButton.enabled = true;
-                _hoverButton.Play("EInteract");
-                _hoverButton.gameObject.SetActive(true);
-            }
+            if (_isActive) return;
+            
+            _hoverButton.enabled = true;
+            _hoverButton.gameObject.SetActive(true);
+            _hoverButton.Play("EInteract");
         }
 
         public void TriggerableExit()

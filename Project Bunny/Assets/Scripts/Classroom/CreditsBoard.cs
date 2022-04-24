@@ -3,7 +3,7 @@ using Interfaces;
 using Player;
 using UnityEngine;
 
-public class TutorialBoard : MonoBehaviour, INetworkTriggerable
+public class CreditsBoard : MonoBehaviour, INetworkTriggerable
 {
     [SerializeField] public Animator hoverEButtonUI;
     [SerializeField] public GameObject canvasImage;
@@ -20,7 +20,7 @@ public class TutorialBoard : MonoBehaviour, INetworkTriggerable
     /// <summary>
     /// Method that runs when you trigger this Credits Board
     /// </summary>
-    public void TriggerableTrigger(NetworkStudentController currentPlayer)
+    public void TriggerableTrigger(NetworkStudentController currentStudentController)
     {
         isActive = !isActive;
         canvasImage.SetActive(isActive);
@@ -29,8 +29,8 @@ public class TutorialBoard : MonoBehaviour, INetworkTriggerable
     public void TriggerableEnter()
     {
         hoverEButtonUI.enabled = true;
-        hoverEButtonUI.Play("EInteract");
         hoverEButtonUI.gameObject.SetActive(true);
+        hoverEButtonUI.Play("EInteract");
     }
 
     public void TriggerableExit()
