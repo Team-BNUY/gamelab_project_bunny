@@ -375,8 +375,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerModel: {fileID: 915986518499220109}
   _playerCollider: {fileID: 4628316411523467240}
+  _playerHand: {fileID: 9017658241444261637}
+  _deathTimeDelay: 3
   _movementSpeed: 10
   _movementFriction: 1
+  _digSnowballMaxTime: 2
+  _minForce: 0.9
+  _maxForce: 1.5
+  _forceIncreaseTimeRate: 0.7
+  _minAngle: -0.5
+  _maxAngle: 0.09
+  _angleIncreaseTimeRate: 1.75
   _worldUI: {fileID: 3022509423101349260}
   _canvasTransform: {fileID: 7255256224324992369}
   _healthTransform: {fileID: 9179265068772327162}
@@ -388,14 +397,6 @@ MonoBehaviour:
   - {fileID: 7034697134042574081}
   - {fileID: 8134371766543452161}
   _maxHealth: 3
-  _playerHand: {fileID: 9017658241444261637}
-  _digSnowballMaxTime: 2
-  _minForce: 0.9
-  _maxForce: 1.5
-  _forceIncreaseTimeRate: 0.7
-  _minAngle: -0.5
-  _maxAngle: 0.09
-  _angleIncreaseTimeRate: 1.75
   _snowballThrowSound: {fileID: 8300000, guid: 93d1dfffecd824b499f78be5015ebc37, type: 3}
   _hitBySnowballSound: {fileID: 8300000, guid: b178571a3cfedff43b29e0beae26d73d, type: 3}
   _hitByIceballSound: {fileID: 8300000, guid: db18c3d5c94f5d64892b45b728c49b30, type: 3}
