@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AI.Core;
+using Arena;
 using Networking;
 using Photon.Pun;
 using Player;

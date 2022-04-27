@@ -3,6 +3,7 @@ using System.Linq;
 using AI;
 using AI.Agents;
 using AI.Core;
+using Arena;
 using UnityEngine;
 
 public class Surveil : Action

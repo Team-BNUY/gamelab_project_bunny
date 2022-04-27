@@ -1,6 +1,7 @@
 using System.Linq;
 using AI.Agents;
 using AI.Core;
+using Arena;
 using UnityEngine;
 
 namespace AI.Actions.StudentActions

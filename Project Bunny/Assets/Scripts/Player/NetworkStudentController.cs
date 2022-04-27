@@ -1,4 +1,5 @@
 using System.Collections;
+using Arena;
 using Cinemachine;
 using Interfaces;
 using Networking;

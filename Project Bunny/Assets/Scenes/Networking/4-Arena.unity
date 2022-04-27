@@ -7742,6 +7742,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: fa685be921d8cc94e89474bd4680504e, type: 3}
   - {fileID: 21300000, guid: b4bbc9ea578b9bd4193afb60fcc06f48, type: 3}
   - {fileID: 21300000, guid: dddbed2b30d96c245a40951237c2de82, type: 3}
+  _teamWalls:
+  - {fileID: 7349100943449700094}
+  - {fileID: 468161635}
   _studentLayer:
     serializedVersion: 2
     m_Bits: 1536
@@ -7787,9 +7790,6 @@ MonoBehaviour:
   timerDisplay: {fileID: 76301253}
   hasTimerStarted: 0
   snowmanTimer: 10
-  teamWalls:
-  - {fileID: 2115719292}
-  - {fileID: 468161635}
   _music: {fileID: 8300000, guid: 4533ff65849730347b2cad6eb65547c0, type: 3}
   _teacherSpawnSound: {fileID: 8300000, guid: 808a36ba99585c14c858a9464bd40c7b, type: 3}
   _schoolBellSound: {fileID: 8300000, guid: fede597fa5689e84eacb6e4dbeee8d25, type: 3}
@@ -24794,17 +24794,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7349100941806003847, guid: 3f94bc014bbb27f4990b0b2eb25e3427, type: 3}
   m_PrefabInstance: {fileID: 7349100943449700092}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2115719292 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7349100941806003840, guid: 3f94bc014bbb27f4990b0b2eb25e3427, type: 3}
-  m_PrefabInstance: {fileID: 7349100943449700092}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf80e5d8501d3a249b297b71c7662ead, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2129889819
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28902,22 +28891,6 @@ PrefabInstance:
     - target: {fileID: 414173610267771670, guid: 905363ccc74129c41bd9f4dc044aa191, type: 3}
       propertyPath: sceneViewId
       value: 31
-      objectReference: {fileID: 0}
-    - target: {fileID: 2175641987613047277, guid: 905363ccc74129c41bd9f4dc044aa191, type: 3}
-      propertyPath: m_Size.x
-      value: 3.0891376
-      objectReference: {fileID: 0}
-    - target: {fileID: 2175641987613047277, guid: 905363ccc74129c41bd9f4dc044aa191, type: 3}
-      propertyPath: m_Center.x
-      value: 0.09827548
-      objectReference: {fileID: 0}
-    - target: {fileID: 2175641987613047277, guid: 905363ccc74129c41bd9f4dc044aa191, type: 3}
-      propertyPath: m_Center.z
-      value: -0.053628206
-      objectReference: {fileID: 0}
-    - target: {fileID: 3092425030717219870, guid: 905363ccc74129c41bd9f4dc044aa191, type: 3}
-      propertyPath: _id
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3092425030717219870, guid: 905363ccc74129c41bd9f4dc044aa191, type: 3}
       propertyPath: _hoverButton
@@ -41329,6 +41302,17 @@ BoxCollider:
   m_CorrespondingSourceObject: {fileID: 7349100941806003841, guid: 3f94bc014bbb27f4990b0b2eb25e3427, type: 3}
   m_PrefabInstance: {fileID: 7349100943449700092}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7349100943449700094 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7349100941806003840, guid: 3f94bc014bbb27f4990b0b2eb25e3427, type: 3}
+  m_PrefabInstance: {fileID: 7349100943449700092}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf80e5d8501d3a249b297b71c7662ead, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7495013110659921814
 PrefabInstance:
   m_ObjectHideFlags: 0
