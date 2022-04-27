@@ -128,7 +128,7 @@ namespace AI.Agents
             var projectile = collision.gameObject.CompareTag("Projectile");
             if (!projectile) return;
             
-            if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollball) && !giantRollball.CanDamage) return;
+            if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var giantRollBall) && !giantRollBall.CanDamage) return;
 
             if (!_stunned)
             {
@@ -143,7 +143,7 @@ namespace AI.Agents
                 }
             }
 
-            if (giantRollball)
+            if (giantRollBall)
             {
                 PlayHitAudio(2);
                 return;
@@ -158,11 +158,6 @@ namespace AI.Agents
             var hitDirection = adjustedThrowerPosition - transform.position;
             var angle = Vector3.SignedAngle(transform.forward, _hitDirection, Vector3.up);
 
-            if (!_stunned)
-            {
-                photonView.RPC(nameof(GetHitByProjectile), RpcTarget.All);
-            }
-            
             photonView.RPC(nameof(SyncHitDirection), RpcTarget.All, hitDirection);
             
             SetAnimatorParameter("Hit", true, true);
@@ -443,6 +438,7 @@ namespace AI.Agents
         private void Stun()
         {
             _stunned = true;
+            beliefStates.AddState("hitByProjectile", 1);
             InterruptGoal();
             animationState = AnimationState.Idle;
             SetAnimatorParameters();
@@ -455,13 +451,7 @@ namespace AI.Agents
         {
             _hitDirection = hitDirection;
         }
-        
-        [PunRPC]
-        private void GetHitByProjectile()
-        {
-            beliefStates.AddState("hitByProjectile", 1);
-        }
-        
+
         [PunRPC]
         private void SetBoolRPC(string boolean, bool value)
         {
