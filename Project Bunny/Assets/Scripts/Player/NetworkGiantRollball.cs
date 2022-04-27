@@ -65,7 +65,7 @@ namespace Player
                     ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.AVALANCHE_KEY);
                 }
 
-                player.photonView.RPC("GetDamagedRPC", RpcTarget.All, _damage);
+                player.GetDamaged(_damage);
                 BreakRollball();
             }
             else if (IsInLayerMask(other.gameObject))

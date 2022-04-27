@@ -11,16 +11,16 @@ namespace AI.Actions.TeacherActions
     {
         private Teacher _teacher;
         private float _speed;
-        private float _fieldfOfView;
+        private float _fieldOfView;
         
         private NetworkStudentController _target;
         
-        public ChaseStudent(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher teacher, bool hasTarget, float speed, float fieldfOfView)
+        public ChaseStudent(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Teacher teacher, bool hasTarget, float speed, float fieldOfView)
              : base(name, cost, preconditionStates, afterEffectStates, teacher, hasTarget)
         {
             _teacher = teacher;
             _speed = speed;
-            _fieldfOfView = fieldfOfView;
+            _fieldOfView = fieldOfView;
         }
 
         public override bool IsAchievable()
@@ -59,7 +59,7 @@ namespace AI.Actions.TeacherActions
             var teacherPosition = _teacher.transform.position;
             var onYPlaneTargetPosition = new Vector3(targetPosition.x, teacherPosition.y, targetPosition.z);
             _teacher.LookAtDirection(onYPlaneTargetPosition - teacherPosition);
-            _teacher.FieldOfView = _fieldfOfView;
+            _teacher.FieldOfView = _fieldOfView;
             
             navMeshAgent.speed = _speed;
             navMeshAgent.SetDestination(targetPosition);
@@ -68,14 +68,15 @@ namespace AI.Actions.TeacherActions
             
             if (Vector3.Distance(_target.transform.position, _teacher.transform.position) > 2f || _target.IsDead) return;
             
-            _target.photonView.RPC("GetDamagedRPC", RpcTarget.All, 3);
+            _target.GetDamaged(3);
 
             var targetPlayer = PhotonNetwork.CurrentRoom.Players.FirstOrDefault(x => x.Value.UserId == _target.PlayerID).Value;
             if (targetPlayer != null)
             {
                 ScoreManager.Instance.IncrementPropertyCounter(targetPlayer, ScoreManager.MEET_IN_OFFICE_KEY);
             }
-            else {
+            else 
+            {
                 Debug.LogError("Attempt to get target player for score failed.");
             }
 

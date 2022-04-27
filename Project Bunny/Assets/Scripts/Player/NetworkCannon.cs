@@ -16,7 +16,6 @@ namespace Player
         [SerializeField] private Transform _cannonBallSeat;
         [SerializeField] private GameObject _aimArrow;
         [SerializeField] private Transform _bone;
-        public Transform CannonBallSeat => _cannonBallSeat;
 
         [Header("Properties")]
         [SerializeField] private float _newCameraDistance;
@@ -38,7 +37,7 @@ namespace Player
         [SerializeField] private float _minForce, _maxForce;
         [SerializeField] [Range(0f, 2.0f)] private float _forceIncreaseTimeRate;
         [SerializeField] private float _minAngle, _maxAngle;
-        private List<NetworkSnowball> _cannonballCollection = new List<NetworkSnowball>();
+        private readonly List<NetworkSnowball> _cannonballCollection = new List<NetworkSnowball>();
         private float _throwForce;
         private bool _hasSnowball, _isAiming;
         private float _coolDownTimer;
@@ -49,7 +48,8 @@ namespace Player
         private AudioSource _audioSource;
         
         public bool IsActive => _isActive;
-
+        public Transform CannonBallSeat => _cannonBallSeat;
+        
         #region Callbacks
 
         private void Awake()
@@ -77,6 +77,18 @@ namespace Player
             if (_throwForce < _maxForce)
             {
                 IncreaseThrowForce();
+            }
+        }
+        
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(_isActive);
+            }
+            else
+            {
+                _isActive = (bool) stream.ReceiveNext();
             }
         }
 
@@ -277,15 +289,17 @@ namespace Player
         /// </summary>
         private void IncreaseThrowForce()
         {
-            var position = _bone.transform.localPosition;
+            var boneTransform = _bone.transform;
+            var position = boneTransform.localPosition;
             var nextOnAxis = position.y - Time.deltaTime * _pullIncreaseTimeRate;
             var newPosition = new Vector3(position.x, nextOnAxis, position.z);
-            _bone.transform.localPosition = newPosition;
-            
-            position = _cannonBallSeat.transform.localPosition;
+            boneTransform.localPosition = newPosition;
+
+            var seatTransform = _cannonBallSeat.transform;
+            position = seatTransform.localPosition;
             nextOnAxis = position.x - Time.deltaTime * _pullIncreaseTimeRate * _pullingFactor;
             newPosition = new Vector3(nextOnAxis, position.y, position.z);
-            _cannonBallSeat.transform.localPosition = newPosition;
+            seatTransform.localPosition = newPosition;
             
             _throwForce += Time.deltaTime * _forceIncreaseTimeRate;
             _aimArrow.transform.localScale += new Vector3(0f, 0f, Time.deltaTime * _forceIncreaseTimeRate);
@@ -324,36 +338,7 @@ namespace Player
 
         #endregion
 
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        {
-            if (stream.IsWriting)
-            {
-                stream.SendNext(_isActive);
-            }
-            else
-            {
-                _isActive = (bool) stream.ReceiveNext();
-            }
-        }
-        
-        private void PlaySoundOneShot(AudioClip clip)
-        {
-            _audioSource.PlayOneShot(clip, AudioManager.Instance.Volume * 2f);
-        }
-
-        private void PlaySound(AudioClip clip)
-        {
-            _audioSource.clip = clip;
-            _audioSource.volume = AudioManager.Instance.Volume * 2f;
-            _audioSource.Play();
-        }
-
-        [PunRPC]
-        public void SetActive(bool value, string userId)
-        {
-            _isActive = value;
-            _currentStudentController = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == userId);
-        }
+        #region Triggerable
 
         public void TriggerableTrigger(NetworkStudentController currentStudentController)
         {
@@ -374,5 +359,34 @@ namespace Player
             _hoverButton.enabled = false;
             _hoverButton.gameObject.SetActive(false);
         }
+
+        #endregion
+        
+        #region Utilities
+
+        private void PlaySoundOneShot(AudioClip clip)
+        {
+            _audioSource.PlayOneShot(clip, AudioManager.Instance.Volume * 2f);
+        }
+
+        private void PlaySound(AudioClip clip)
+        {
+            _audioSource.clip = clip;
+            _audioSource.volume = AudioManager.Instance.Volume * 2f;
+            _audioSource.Play();
+        }
+
+        #endregion
+
+        #region RPCs
+
+        [PunRPC]
+        private void SetActive(bool value, string userId)
+        {
+            _isActive = value;
+            _currentStudentController = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == userId);
+        }
+
+        #endregion
     }
 }
