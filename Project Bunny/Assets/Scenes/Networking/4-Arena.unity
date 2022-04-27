@@ -7745,6 +7745,18 @@ MonoBehaviour:
   _teamWalls:
   - {fileID: 7349100943449700094}
   - {fileID: 468161635}
+  _redSpawns:
+  - {fileID: 524699105}
+  - {fileID: 1266713088}
+  - {fileID: 71133654}
+  - {fileID: 820964745}
+  _blueSpawns:
+  - {fileID: 374579298}
+  - {fileID: 2075747523}
+  - {fileID: 796284376}
+  - {fileID: 794364104}
+  _loadingScreen: {fileID: 1990687413}
+  _leadingTeamShirt: {fileID: 76301255}
   _studentLayer:
     serializedVersion: 2
     m_Bits: 1536
@@ -7785,6 +7797,7 @@ MonoBehaviour:
   - {fileID: 689303241}
   _teacherVirtualCamera: {fileID: 488402739}
   _exclamationMark: {fileID: 557743425}
+  _gameDuration: 20
   _teacherSpawnTime: 120
   _teacherPreparationTime: 4
   timerDisplay: {fileID: 76301253}
@@ -7793,18 +7806,6 @@ MonoBehaviour:
   _music: {fileID: 8300000, guid: 4533ff65849730347b2cad6eb65547c0, type: 3}
   _teacherSpawnSound: {fileID: 8300000, guid: 808a36ba99585c14c858a9464bd40c7b, type: 3}
   _schoolBellSound: {fileID: 8300000, guid: fede597fa5689e84eacb6e4dbeee8d25, type: 3}
-  _redSpawns:
-  - {fileID: 524699105}
-  - {fileID: 1266713088}
-  - {fileID: 71133654}
-  - {fileID: 820964745}
-  _blueSpawns:
-  - {fileID: 374579298}
-  - {fileID: 2075747523}
-  - {fileID: 796284376}
-  - {fileID: 794364104}
-  _loadingScreen: {fileID: 1990687413}
-  _leadingTeamShirt: {fileID: 76301255}
 --- !u!4 &602910349
 Transform:
   m_ObjectHideFlags: 0

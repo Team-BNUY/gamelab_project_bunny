@@ -69,17 +69,17 @@ namespace Arena
         private List<Gang> _gangs = new List<Gang>();
 
         [Header("Timers")]
+        [SerializeField] private int _gameDuration = 7 * 60;
         [SerializeField] private float _teacherSpawnTime;
-        [SerializeField] private float _teacherPreparationTime;
+        [SerializeField] private float _teacherPreparationTime = 4f;
         [SerializeField] private TMP_Text timerDisplay;
         [SerializeField] private bool hasTimerStarted;
         [SerializeField] private float snowmanTimer;
+        
         private int _timeElapsed;
         private int _oldTimeElapsed;
         private double _startTime;
         private bool _returnToLobbyHasRun;
-        private const float TeacherCameraPanTime = 4f;
-        private const int TimerDuration = 7 * 60;
         private int _readyPlayers;
         private bool _over;
         private const string StartTimeKey = "StartTime";
@@ -244,7 +244,7 @@ namespace Arena
 
             if (_timeElapsed > _oldTimeElapsed)
             {
-                var timeLeft = TimerDuration - _timeElapsed;
+                var timeLeft = _gameDuration - _timeElapsed;
 
                 //Integer increment, update UI
                 if (timeLeft > 60)
@@ -257,7 +257,7 @@ namespace Arena
                 }
             }
 
-            if (_timeElapsed < TimerDuration || _over) return;
+            if (_timeElapsed < _gameDuration || _over) return;
             _over = true;
         
             AudioManager.Instance.PlayOneShot(_schoolBellSound, 0.5f);
@@ -308,7 +308,7 @@ namespace Arena
 
         private void StartTimer()
         {
-            timerDisplay.text = $"{(TimerDuration - _timeElapsed) / 60}:{((TimerDuration - _timeElapsed) % 60).ToString("00")}";
+            timerDisplay.text = $"{(_gameDuration - _timeElapsed) / 60}:{((_gameDuration - _timeElapsed) % 60).ToString("00")}";
 
             if (!PhotonNetwork.IsMasterClient) return;
         
@@ -370,7 +370,7 @@ namespace Arena
         {
             _localStudentController.LookAtTeacher(true);
             _localStudentController.SetStudentFreezeState(true);
-            yield return new WaitForSeconds(TeacherCameraPanTime);
+            yield return new WaitForSeconds(_teacherPreparationTime);
             _localStudentController.LookAtTeacher(false);
             _localStudentController.SetStudentFreezeState(false);
         }
