@@ -169,18 +169,11 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             //Integer increment, update UI
             if (timeLeft > 60)
             {
-                timerDisplay.text = $"{timeLeft / 60}:{(timeLeft % 60).ToString("00")}";
+                timerDisplay.text = $"{timeLeft / 60}:{timeLeft % 60:00}";
             }
             else
             {
-                if (timeLeft >= 0f)
-                {
-                    timerDisplay.text = timeLeft.ToString();
-                }
-                else
-                {
-                    timerDisplay.text = 0.ToString();
-                }
+                timerDisplay.text = timeLeft >= 0f ? timeLeft.ToString() : "0";
             }
         }
 
@@ -206,7 +199,7 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private void SetIsReady(bool isReady)
     {
-        Hashtable props = PhotonNetwork.LocalPlayer.CustomProperties;
+        var props = PhotonNetwork.LocalPlayer.CustomProperties;
         if (props.ContainsKey(READY_KEY))
         {
             props[READY_KEY] = isReady;
@@ -237,22 +230,21 @@ public class ArenaManager : MonoBehaviourPunCallbacks
     {
         timerDisplay.text = $"{(TIMER_DURATION - _timeElapsed) / 60}:{((TIMER_DURATION - _timeElapsed) % 60).ToString("00")}";
 
-        if (PhotonNetwork.IsMasterClient)
-        {
-            var myHashTable = new ExitGames.Client.Photon.Hashtable();
-            _startTime = PhotonNetwork.Time;
-            hasTimerStarted = true;
-            myHashTable.Add(START_TIME_KEY, _startTime);
-            myHashTable.Add("deaths1", 0);
-            myHashTable.Add("deaths2", 0);
+        if (!PhotonNetwork.IsMasterClient) return;
+        
+        var myHashTable = new Hashtable();
+        _startTime = PhotonNetwork.Time;
+        hasTimerStarted = true;
+        myHashTable.Add(START_TIME_KEY, _startTime);
+        myHashTable.Add("deaths1", 0);
+        myHashTable.Add("deaths2", 0);
 
-            PhotonNetwork.CurrentRoom.SetCustomProperties(myHashTable);
-        }
+        PhotonNetwork.CurrentRoom.SetCustomProperties(myHashTable);
     }
 
     private void SpawnPlayer()
     {
-        NetworkStudentController player = PhotonNetwork.Instantiate(_playerPrefab.name, GetPlayerSpawnPoint(PhotonNetwork.LocalPlayer.GetPhotonTeam().Code), Quaternion.identity).GetComponent<NetworkStudentController>();
+        var player = PhotonNetwork.Instantiate(_playerPrefab.name, GetPlayerSpawnPoint(PhotonNetwork.LocalPlayer.GetPhotonTeam().Code), Quaternion.identity).GetComponent<NetworkStudentController>();
         if (player.photonView.IsMine)
         {
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
@@ -265,65 +257,17 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
         if (!player.photonView.IsMine) return;
 
-        foreach (TeamWall wall in teamWalls) {
-            if (_localStudentController.TeamID == wall._allowedTeam) {
+        foreach (var wall in teamWalls)
+        {
+            if (_localStudentController.TeamID == wall._allowedTeam)
+            {
                 wall._collider.enabled = false;
             }
         }
-
-        Hashtable playerProperties = PhotonNetwork.LocalPlayer.CustomProperties;
-
-        if (playerProperties.ContainsKey("hatIndex"))
-        {
-            player.photonView.RPC("SetHat", RpcTarget.AllBuffered, (int)playerProperties["hatIndex"]);
-        }
-
-        if (playerProperties.ContainsKey("hairIndex"))
-        {
-            if (playerProperties.ContainsKey("hairColorIndex"))
-            {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], (int)playerProperties["hairColorIndex"]);
-            }
-            else
-            {
-                player.photonView.RPC("SetHair", RpcTarget.AllBuffered, (int)playerProperties["hairIndex"], -1);
-            }
-        }
-
-        if (playerProperties.ContainsKey("pantIndex"))
-        {
-            if (playerProperties.ContainsKey("pantColorIndex"))
-            {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], (int)playerProperties["pantColorIndex"]);
-            }
-            else
-            {
-                player.photonView.RPC("SetPants", RpcTarget.AllBuffered, (int)playerProperties["pantIndex"], -1);
-            }
-        }
-
-        if (playerProperties.ContainsKey("coatIndex"))
-        {
-            if (playerProperties.ContainsKey("coatColorIndex"))
-            {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], (int)playerProperties["coatColorIndex"]);
-            }
-            else
-            {
-                player.photonView.RPC("SetCoat", RpcTarget.AllBuffered, (int)playerProperties["coatIndex"], -1);
-            }
-        }
-
-        if (playerProperties.ContainsKey("skinColorIndex"))
-        {
-            player.photonView.RPC("SetSkinColor", RpcTarget.AllBuffered, (int)playerProperties["skinColorIndex"]);
-        }
         
-        if (playerProperties.ContainsKey("shoesColorIndex"))
-        {
-            player.photonView.RPC("SetShoesColor", RpcTarget.AllBuffered, (int)playerProperties["shoesColorIndex"]);
-        }
-
+        var playerCustomization = _localStudentController.PlayerCustomization;
+        playerCustomization.SetVisualCustomProperties();
+        
         player.transform.position = GetPlayerSpawnPoint(player.TeamID);
     }
 
@@ -359,8 +303,8 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
-        ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
-        PhotonTeamsManager teamsManager = FindObjectOfType<PhotonTeamsManager>();
+        var scoreManager = FindObjectOfType<ScoreManager>();
+        var teamsManager = FindObjectOfType<PhotonTeamsManager>();
 
         PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
 
@@ -368,10 +312,14 @@ public class ArenaManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LocalPlayer.CustomProperties = emptyTable;*/
 
         if (scoreManager != null)
+        {
             Destroy(scoreManager.gameObject);
+        }
 
         if (teamsManager != null)
+        {
             Destroy(teamsManager.gameObject);
+        }
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(LOBBY_SCENE_NAME);
         
@@ -379,15 +327,14 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     public Vector3 GetPlayerSpawnPoint(byte TeamID)
     {
-        var spawnRadius = 1f;
-        float randx, randz;
-        randx = Random.Range(-spawnRadius, spawnRadius);
-        randz = Random.Range(-spawnRadius, spawnRadius);
+        const float spawnRadius = 1f;
+        var randX = Random.Range(-spawnRadius, spawnRadius);
+        var randZ = Random.Range(-spawnRadius, spawnRadius);
 
         return TeamID switch
         {
-            1 => _blueSpawns[0].position + new Vector3(randx, 0, randz),
-            2 => _redSpawns[0].position + new Vector3(randx, 0, randz),
+            1 => _blueSpawns[0].position + new Vector3(randX, 0, randZ),
+            2 => _redSpawns[0].position + new Vector3(randX, 0, randZ),
             _ => throw new NullReferenceException("INVALID TEAM ID: " + TeamID)
         };
     }
@@ -404,36 +351,35 @@ public class ArenaManager : MonoBehaviourPunCallbacks
 
     private void SetSpawnPoints()
     {
-        Photon.Realtime.Player[] players = PhotonNetwork.PlayerList;
-        int blueSpawns = 0;
-        int redSpawns = 0;
-        foreach (NetworkStudentController student in _allPlayers)
+        var blueSpawns = 0;
+        var redSpawns = 0;
+        foreach (var student in _allPlayers)
         {
-            if (student.TeamID == 1)
+            switch (student.TeamID)
             {
-                student.transform.position = _blueSpawns[blueSpawns].position;
-                blueSpawns++;
-            }
-            else if (student.TeamID == 2)
-            {
-                student.transform.position = _redSpawns[redSpawns].position;
-                redSpawns++;
-            }
-            else
-            {
-                Debug.LogError("PROBLEM");
+                case 1:
+                    student.transform.position = _blueSpawns[blueSpawns].position;
+                    blueSpawns++;
+                    break;
+                case 2:
+                    student.transform.position = _redSpawns[redSpawns].position;
+                    redSpawns++;
+                    break;
+                default:
+                    Debug.LogError("PROBLEM");
+                    break;
             }
         }
     }
 
     public void IncrementTeamDeathCount(int teamCode)
     {
-        Hashtable ht = PhotonNetwork.CurrentRoom.CustomProperties;
-        string key = "deaths" + teamCode.ToString();
+        var ht = PhotonNetwork.CurrentRoom.CustomProperties;
+        var key = "deaths" + teamCode;
 
         if (ht.ContainsKey(key))
         {
-            int deaths = (int)ht[key];
+            var deaths = (int)ht[key];
             ht[key] = ++deaths;
         }
         else
@@ -458,19 +404,18 @@ public class ArenaManager : MonoBehaviourPunCallbacks
             hasTimerStarted = true;
         }
 
-        if (changedProps.ContainsKey("deaths1") || changedProps.ContainsKey("deaths2"))
+        if (!changedProps.ContainsKey("deaths1") && !changedProps.ContainsKey("deaths2")) return;
+        
+        var deaths1 = (int)changedProps["deaths1"];
+        var deaths2 = (int)changedProps["deaths2"];
+        if (deaths1 == deaths2)
         {
-            int deaths1 = (int)changedProps["deaths1"];
-            int deaths2 = (int)changedProps["deaths2"];
-            if (deaths1 == deaths2)
-            {
-                SetLeadingShirt(0);
-            }
-            else
-            {
-                int winningTeam = (int)changedProps["deaths1"] < (int)changedProps["deaths2"] ? 1 : 2;
-                SetLeadingShirt(winningTeam);
-            }
+            SetLeadingShirt(0);
+        }
+        else
+        {
+            var winningTeam = (int)changedProps["deaths1"] < (int)changedProps["deaths2"] ? 1 : 2;
+            SetLeadingShirt(winningTeam);
         }
     }
 
@@ -482,11 +427,10 @@ public class ArenaManager : MonoBehaviourPunCallbacks
                 readyPlayers++;
         }
 
-        if (readyPlayers == PhotonNetwork.CurrentRoom.PlayerCount)
-        {
-            _allPlayers = Array.Empty<NetworkStudentController>();
-            Invoke(nameof(GetAllPlayers), 0.1f);
-            StartMatch();
-        }
+        if (readyPlayers != PhotonNetwork.CurrentRoom.PlayerCount) return;
+        
+        _allPlayers = Array.Empty<NetworkStudentController>();
+        Invoke(nameof(GetAllPlayers), 0.1f);
+        StartMatch();
     }
 }
