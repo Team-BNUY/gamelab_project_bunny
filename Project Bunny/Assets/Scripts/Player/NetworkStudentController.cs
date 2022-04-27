@@ -459,6 +459,7 @@ namespace Player
             _playerModel.rotation = _playerRotation;
             
             _animator.SetFloat(DeltaY, 1f);
+            _animator.SetFloat(DeltaX, 0f);
         }
 
         /// <summary>
