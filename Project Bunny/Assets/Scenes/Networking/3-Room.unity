@@ -11762,6 +11762,16 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1651394389090970291, guid: 50797293b5d3de64699ee8344fed93c1, type: 3}
   m_PrefabInstance: {fileID: 1250748852}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1250748854 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1015076971377101174, guid: 50797293b5d3de64699ee8344fed93c1, type: 3}
+  m_PrefabInstance: {fileID: 1250748852}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1250748855 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1015076971127371827, guid: 50797293b5d3de64699ee8344fed93c1, type: 3}
+  m_PrefabInstance: {fileID: 1250748852}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1250748856 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1015076972418586550, guid: 50797293b5d3de64699ee8344fed93c1, type: 3}
@@ -25732,15 +25742,15 @@ MonoBehaviour:
   - {fileID: 1250748865}
   _teamWhoWon: {fileID: 1250748864}
   _displayedNames:
-  - {fileID: 1250748859}
-  - {fileID: 1250748858}
-  - {fileID: 1250748857}
-  - {fileID: 1250748856}
-  _displayedWinCons:
   - {fileID: 1250748863}
   - {fileID: 1250748862}
   - {fileID: 1250748861}
   - {fileID: 1250748860}
+  _displayedWinCons:
+  - {fileID: 1250748859}
+  - {fileID: 1250748858}
+  - {fileID: 1250748857}
+  - {fileID: 1250748856}
   _scoreSprites:
   - {fileID: 21300000, guid: c88e5514e43cc3544ab761366ca74580, type: 3}
   - {fileID: 21300000, guid: ae878ec183ed0e24b85fdfbea98df7e4, type: 3}
@@ -25753,8 +25763,8 @@ MonoBehaviour:
   _blueWinSprite: {fileID: 21300000, guid: 73d8dc193882a274cad9434fd5d75304, type: 3}
   _redWinSprite: {fileID: 21300000, guid: 59b97805b3188624da04b29106b7cad2, type: 3}
   _noContestSprite: {fileID: 21300000, guid: 0bd102ef4f10b534c9adb46cd1f853b2, type: 3}
-  _firstRunWhiteboard: {fileID: 262447765}
-  _scoresWhiteboard: {fileID: 262447765}
+  _firstRunWhiteboard: {fileID: 1250748854}
+  _scoresWhiteboard: {fileID: 1250748855}
 --- !u!4 &2083699760
 Transform:
   m_ObjectHideFlags: 0

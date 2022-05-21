@@ -44,7 +44,7 @@ namespace Classroom
         public void TriggerableTrigger(NetworkStudentController currentStudentController)
         {
             if (PhotonNetwork.LocalPlayer.GetPhotonTeam() == null || _triggered) return;
-            
+
             if (PhotonNetwork.IsMasterClient)
             {
                 foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)

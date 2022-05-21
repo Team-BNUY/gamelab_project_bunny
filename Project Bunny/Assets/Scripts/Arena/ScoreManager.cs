@@ -1,8 +1,9 @@
+using System;
 using System.Globalization;
-using System.Linq;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
+using Random = UnityEngine.Random;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -47,9 +48,14 @@ public class ScoreManager : MonoBehaviour
     public string shoveler = string.Empty;
     public string avalanche = string.Empty;
 
-    public PhotonView view;
-
+    private PhotonView _view;
+    
     public int[] RandomNumbers { get; } = new int[100];
+
+    private void Awake()
+    {
+        _view = GetComponent<PhotonView>();
+    }
 
     #region PublicMethods
     
@@ -59,7 +65,7 @@ public class ScoreManager : MonoBehaviour
         if (PhotonNetwork.IsMasterClient)
         {
             var randomNumbers = GenerateRandomNumbers();
-            view.RPC(nameof(SyncRandomNumbers), RpcTarget.AllBuffered, randomNumbers);
+            _view.RPC(nameof(SyncRandomNumbers), RpcTarget.AllBuffered, randomNumbers);
         }
         
         isFirstMatch = false;
@@ -222,7 +228,7 @@ public class ScoreManager : MonoBehaviour
             winningTeamCode = 0;
         }
 
-        view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rebel, hardWorker, teachersPet, glaceFolie, shoveler, avalanche, meetMeInMyOffice, scoreValues);
+        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rebel, hardWorker, teachersPet, glaceFolie, shoveler, avalanche, meetMeInMyOffice, scoreValues);
     }
 
     public int GetLeadingTeam()
@@ -265,7 +271,7 @@ public class ScoreManager : MonoBehaviour
             //Debug.Log("how do we handle exact ties? TO BE SOLVED LATER");
         }
 
-        view.RPC(nameof(SyncLeadingTeamScore), RpcTarget.AllBuffered, winningTeamCode);
+        _view.RPC(nameof(SyncLeadingTeamScore), RpcTarget.AllBuffered, winningTeamCode);
         return winningTeamCode;
     }
     
