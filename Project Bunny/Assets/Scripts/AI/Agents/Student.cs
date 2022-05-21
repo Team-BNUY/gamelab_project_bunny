@@ -79,7 +79,7 @@ namespace AI.Agents
             {
                 if (ball._studentThrower.photonView.IsMine)
                 {
-                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.BULLY_KEY);
+                    ScoreManager.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.BullyKey);
                 }
             }
 

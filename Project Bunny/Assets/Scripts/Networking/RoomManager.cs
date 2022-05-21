@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using Photon.Pun.UtilityScripts;
 using Player;
-using System;
 using UnityEngine.SceneManagement;
 
 namespace Networking
@@ -13,7 +12,6 @@ namespace Networking
     public class RoomManager : MonoBehaviourPunCallbacks
     {
         private static RoomManager _instance;
-
         public static RoomManager Instance 
         {
             get 
@@ -27,13 +25,13 @@ namespace Networking
             }
         }
 
-        private const string LOBBY_SCENE_NAME = "2-Lobby";
-        private const string ARENA_SCENE_NAME = "4-Arena";
+        private static bool _isFirstRun = true;
+        private const string LobbySceneName = "2-Lobby";
+        private const string ArenaSceneName = "4-Arena";
 
         [Header("Prefabs")]
         [SerializeField] private GameObject _snowballPrefab;
         [SerializeField] private GameObject _snowballBurst;
-        
 
         [Header("Player Instantiation")]
         [SerializeField] private GameObject _playerPrefab;
@@ -43,42 +41,28 @@ namespace Networking
 
         [Space(10)]
         [Header("UI")]
-        [SerializeField] private GameObject loadingScreen;
-        [SerializeField] private Image[] displayedScores;
-        [SerializeField] private Image teamWhoWon;
-        [SerializeField] private TMPro.TMP_Text[] displayedNames;
-        [SerializeField] private TMPro.TMP_Text[] displayedWinCons;
-        [SerializeField] private Sprite[] scoreSprites;
-        [SerializeField] private Sprite blueWinSprite;
-        [SerializeField] private Sprite redWinSprite;
-        [SerializeField] private Sprite noContestSprite;
-        [SerializeField] private GameObject firstRunWhiteboard;
-        [SerializeField] private GameObject scoresWhiteboard;
+        [SerializeField] private GameObject _loadingScreen;
+        [SerializeField] private Image[] _displayedScores;
+        [SerializeField] private Image _teamWhoWon;
+        [SerializeField] private TMPro.TMP_Text[] _displayedNames;
+        [SerializeField] private TMPro.TMP_Text[] _displayedWinCons;
+        [SerializeField] private Sprite[] _scoreSprites;
+        [SerializeField] private Sprite _blueWinSprite;
+        [SerializeField] private Sprite _redWinSprite;
+        [SerializeField] private Sprite _noContestSprite;
+        [SerializeField] private GameObject _firstRunWhiteboard;
+        [SerializeField] private GameObject _scoresWhiteboard;
 
         public GameObject SnowballPrefab => _snowballPrefab;
         public GameObject SnowballBurst => _snowballBurst;
-
-        private NetworkStudentController _localStudentController;
-        public NetworkStudentController LocalStudentController => _localStudentController;
-
-        public bool isFirstRun = true;
+        public NetworkStudentController LocalStudentController { get; private set; }
 
         private void Start()
         {
             _customProperties = new Hashtable();
 
-            /*if (PhotonNetwork.LocalPlayer.CustomProperties != null)
-            { 
-                _customProperties = PhotonNetwork.LocalPlayer.CustomProperties;
-            }
-            else _customProperties = new Hashtable();*/
-
             InitialiseUI();
             SpawnPlayer();
-
-            //Code that automatically removes the appropriate number of jerseys from the table when
-            //we come back to the Classroom after a match.
-            //Will Uncomment if needed. Right now everyone loses their teams and team colors when they come back from a match.
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
         }
@@ -87,9 +71,9 @@ namespace Networking
         public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
         {
             PhotonNetwork.DestroyPlayerObjects(newMasterClient);
-            //Kick everyone from the room if the master client changed (too many bugs to deal with otherwise)
+            
+            // Kick everyone from the room if the master client changed (too many bugs to deal with otherwise)
             PhotonNetwork.LeaveRoom();
-
         }
 
         public void SetCustomProperty(string propertyName, int propertyValue)
@@ -108,56 +92,60 @@ namespace Networking
 
         private void InitialiseUI()
         {
-            loadingScreen.SetActive(false);
+            _loadingScreen.SetActive(false);
 
             if (ScoreManager.Instance)
             {
-                isFirstRun = ScoreManager.Instance.isFirstMatch;
+                _isFirstRun = ScoreManager.Instance.isFirstMatch;
 
-                foreach (Image img in displayedScores)
+                foreach (var img in _displayedScores)
                 {
                     img.gameObject.SetActive(false);
                 }
 
-                if (!isFirstRun)
+                if (!_isFirstRun)
                 {
-                    firstRunWhiteboard.SetActive(false);
-                    scoresWhiteboard.SetActive(true);
+                    _firstRunWhiteboard.SetActive(false);
+                    _scoresWhiteboard.SetActive(true);
 
-                    teamWhoWon.sprite = ScoreManager.Instance.winningTeamCode switch
+                    _teamWhoWon.sprite = ScoreManager.Instance.winningTeamCode switch
                     {
-                        1 => blueWinSprite,
-                        2 => redWinSprite,
-                        _ => noContestSprite
+                        1 => _blueWinSprite,
+                        2 => _redWinSprite,
+                        _ => _noContestSprite
                     };
 
                     var randomScoresIndex = new List<int>();
                     var maxLoops = 100;
-
-                    while (randomScoresIndex.Count < displayedScores.Length)
+                    var randomNumberIndex = 0;
+                    while (randomScoresIndex.Count < _displayedScores.Length)
                     {
                         maxLoops--;
+                        
                         if (maxLoops <= 0) break;
-                        var rand = UnityEngine.Random.Range(0, ScoreManager.Instance.scores.Length);
+                        
+                        var rand = ScoreManager.Instance.RandomNumbers[randomNumberIndex];
+                        randomNumberIndex++;
+                        
                         if (!string.IsNullOrEmpty(ScoreManager.Instance.scores[rand]) && !randomScoresIndex.Contains(rand) && ScoreManager.Instance.scoreValues[rand] != 0)
                         {
                             randomScoresIndex.Add(rand);
                         }
                     }
 
-                    for (int i = 0; i < randomScoresIndex.Count; i++)
+                    for (var i = 0; i < randomScoresIndex.Count; i++)
                     {
-                        displayedScores[i].gameObject.SetActive(true);
-                        displayedScores[i].sprite = scoreSprites[randomScoresIndex[i]];
-                        displayedNames[i].text = ScoreManager.Instance.scores[randomScoresIndex[i]];
-                        displayedWinCons[i].text = GetWinConText(ScoreManager.Instance.scoreValues[randomScoresIndex[i]], randomScoresIndex[i]);
+                        _displayedScores[i].gameObject.SetActive(true);
+                        _displayedScores[i].sprite = _scoreSprites[randomScoresIndex[i]];
+                        _displayedNames[i].text = ScoreManager.Instance.scores[randomScoresIndex[i]];
+                        _displayedWinCons[i].text = GetWinConText(ScoreManager.Instance.scoreValues[randomScoresIndex[i]], randomScoresIndex[i]);
                     }
                 }
                 else
                 {
-                    firstRunWhiteboard.SetActive(true);
-                    scoresWhiteboard.SetActive(false);
-                    foreach (var img in displayedScores)
+                    _firstRunWhiteboard.SetActive(true);
+                    _scoresWhiteboard.SetActive(false);
+                    foreach (var img in _displayedScores)
                     {
                         img.gameObject.SetActive(false);
                     }
@@ -165,9 +153,9 @@ namespace Networking
             }
             else
             {
-                firstRunWhiteboard.SetActive(true);
-                scoresWhiteboard.SetActive(false);
-                foreach (var img in displayedScores)
+                _firstRunWhiteboard.SetActive(true);
+                _scoresWhiteboard.SetActive(false);
+                foreach (var img in _displayedScores)
                 {
                     img.gameObject.SetActive(false);
                 }
@@ -253,7 +241,7 @@ namespace Networking
                 Destroy(teamsManager.gameObject);
             }
 
-            SceneManager.LoadScene(LOBBY_SCENE_NAME);
+            SceneManager.LoadScene(LobbySceneName);
         }
 
         private void SwapTeams(byte teamCode)
@@ -267,12 +255,12 @@ namespace Networking
             {
                 PhotonNetwork.CurrentRoom.IsOpen = false;
                 PhotonNetwork.CurrentRoom.IsVisible = false;
-                PhotonNetwork.LoadLevel(ARENA_SCENE_NAME);
+                PhotonNetwork.LoadLevel(ArenaSceneName);
             }
 
             if (PhotonNetwork.LevelLoadingProgress > 0 && PhotonNetwork.LevelLoadingProgress < 1)
             {
-                loadingScreen.SetActive(true);
+                _loadingScreen.SetActive(true);
             }
         }
 
@@ -292,12 +280,12 @@ namespace Networking
         private void SpawnPlayer()
         {
             var player = PhotonNetwork.Instantiate(_playerPrefab.name, _playerSpawnPosition[0].position, Quaternion.identity).GetComponent<NetworkStudentController>();
-            _localStudentController = player;
+            LocalStudentController = player;
             player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
             PhotonNetwork.LocalPlayer.TagObject = player;
             player.SetCamera(Instantiate(_playerCamera), 40f, 15f, false, 0.374f, 4f);
 
-            if (isFirstRun)
+            if (_isFirstRun)
             {
                 player.transform.position = _playerSpawnPosition[PhotonNetwork.CurrentRoom.PlayerCount].position;
             }
@@ -317,7 +305,7 @@ namespace Networking
                 }
             }
             
-            var playerCustomization = _localStudentController.PlayerCustomization;
+            var playerCustomization = LocalStudentController.PlayerCustomization;
             playerCustomization.SetVisualCustomProperties();
             playerCustomization.RestoreTeamlessColors();
         }
@@ -359,9 +347,10 @@ namespace Networking
         public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
         {
             base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
+            
             if (!changedProps.ContainsKey("isReady") || targetPlayer.IsMasterClient) return;
             
-            _localStudentController.SyncIsReady((bool)changedProps["isReady"], targetPlayer.UserId);
+            LocalStudentController.SyncIsReady((bool)changedProps["isReady"], targetPlayer.UserId);
         }
     }
 }

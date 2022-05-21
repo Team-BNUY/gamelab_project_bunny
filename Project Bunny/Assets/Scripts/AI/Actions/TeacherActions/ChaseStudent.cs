@@ -73,7 +73,7 @@ namespace AI.Actions.TeacherActions
             var targetPlayer = PhotonNetwork.CurrentRoom.Players.FirstOrDefault(x => x.Value.UserId == _target.PlayerID).Value;
             if (targetPlayer != null)
             {
-                ScoreManager.Instance.IncrementPropertyCounter(targetPlayer, ScoreManager.MEET_IN_OFFICE_KEY);
+                ScoreManager.IncrementPropertyCounter(targetPlayer, ScoreManager.MeetInOfficeKey);
             }
             else 
             {

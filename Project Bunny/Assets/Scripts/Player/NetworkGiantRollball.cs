@@ -63,7 +63,7 @@ namespace Player
 
                 if (player.photonView.IsMine)
                 {
-                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.AVALANCHE_KEY);
+                    ScoreManager.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.AvalancheKey);
                 }
 
                 player.GetDamaged(_damage);

@@ -1,5 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
@@ -7,9 +7,10 @@ using Photon.Pun.UtilityScripts;
 public class ScoreManager : MonoBehaviour
 {
     private static ScoreManager _instance;
-
-    public static ScoreManager Instance {
-        get {
+    public static ScoreManager Instance 
+    {
+        get 
+        {
             if (_instance == null)
             {
                 _instance = FindObjectOfType<ScoreManager>();
@@ -18,20 +19,21 @@ public class ScoreManager : MonoBehaviour
             return _instance;
         }
     }
+    
     [Header("PROPERTY KEYS")]
-    public const string DEATHS_KEY = "deaths";
-    public const string REBEL_KEY = "rebelHits";
-    public const string BULLY_KEY = "bullyHits";
-    public const string HARD_WORKER_KEY = "hitsLanded";
-    public const string TEACHERS_PET_KEY = "ballsThrown";
-    public const string MEET_IN_OFFICE_KEY = "caughtByTeacher";
-    public const string GLACE_FOLIE_KEY = "iceHitsLanded";
-    public const string SHOVELER_KEY = "snowballsDug";
-    public const string AVALANCHE_KEY = "giantRollballHits";
+    public const string DeathsKey = "deaths";
+    public const string RebelKey = "rebelHits";
+    public const string BullyKey = "bullyHits";
+    public const string HardWorkerKey = "hitsLanded";
+    public const string TeachersPetKey = "ballsThrown";
+    public const string MeetInOfficeKey = "caughtByTeacher";
+    public const string GlaceFolieKey = "iceHitsLanded";
+    public const string ShovelerKey = "snowballsDug";
+    public const string AvalancheKey = "giantRollballHits";
 
     [Header("Match Information")]
     public bool isFirstMatch = true;
-    public int winningTeamCode = 0;
+    public int winningTeamCode;
     
     public string[] scores = new string[8];
     public int[] scoreValues = new int[8];
@@ -45,35 +47,43 @@ public class ScoreManager : MonoBehaviour
     public string shoveler = string.Empty;
     public string avalanche = string.Empty;
 
+    public PhotonView view;
 
-    public PhotonView _view;
+    public int[] RandomNumbers { get; } = new int[100];
 
     #region PublicMethods
+    
     public void CalculateScore()
     {
+        // Syncing random numbers to all clients so that they can all have the same board after a match
+        if (PhotonNetwork.IsMasterClient)
+        {
+            var randomNumbers = GenerateRandomNumbers();
+            view.RPC(nameof(SyncRandomNumbers), RpcTarget.AllBuffered, randomNumbers);
+        }
+        
         isFirstMatch = false;
 
-        int blueDeaths = 0;
-        int redDeaths = 0;
-        int mostBullyHits = 0;
-        int mostRascalHits = 0;
-        int mostHits = 0;
-        int leastThrows = 9999;
-        int mostCaught = 0;
-        int mostIceHits = 0;
-        int mostSnowballsDug = 0;
-        int mostRollballsHits = 0;
+        var blueDeaths = 0;
+        var redDeaths = 0;
+        var mostBullyHits = 0;
+        var mostRascalHits = 0;
+        var mostHits = 0;
+        var leastThrows = 9999;
+        var mostCaught = 0;
+        var mostIceHits = 0;
+        var mostSnowballsDug = 0;
+        var mostRollballsHits = 0;
 
-        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+        foreach (var player in PhotonNetwork.PlayerList)
         {
-
             //WIN CONDITION
-            if (player.CustomProperties.ContainsKey(DEATHS_KEY))
+            if (player.CustomProperties.ContainsKey(DeathsKey))
             {
-                PhotonTeam team = player.GetPhotonTeam();
+                var team = player.GetPhotonTeam(); // TODO Check why we are retrieving a player's team right after leaving it
                 if (team != null)
                 {
-                    int deaths = (int)player.CustomProperties[DEATHS_KEY];
+                    var deaths = (int)player.CustomProperties[DeathsKey];
 
                     if (team.Code == 1)
                     {
@@ -87,126 +97,132 @@ public class ScoreManager : MonoBehaviour
             }
 
             //HARD WORKER
-            if (player.CustomProperties.ContainsKey(HARD_WORKER_KEY))
+            if (player.CustomProperties.ContainsKey(HardWorkerKey))
             {
-                int hits = (int)player.CustomProperties[HARD_WORKER_KEY];
+                var hits = (int)player.CustomProperties[HardWorkerKey];
 
                 if (hits > mostHits)
                 {
                     mostHits = hits;
                     scores[2] = player.NickName;
-                    this.hardWorker = player.NickName;
+                    hardWorker = player.NickName;
                     scoreValues[2] = mostHits;
                 }
             }
 
             //TEACHER'S PET
-            if (player.CustomProperties.ContainsKey(TEACHERS_PET_KEY))
+            if (player.CustomProperties.ContainsKey(TeachersPetKey))
             {
-                int throws = (int)player.CustomProperties[TEACHERS_PET_KEY];
+                var throws = (int)player.CustomProperties[TeachersPetKey];
 
                 if (throws < leastThrows)
                 {
                     leastThrows = throws;
                     scores[3] = player.NickName;
-                    this.teachersPet = player.NickName;
+                    teachersPet = player.NickName;
                     scoreValues[3] = leastThrows;
                 }
             }
 
             //BULLY
-            if (player.CustomProperties.ContainsKey(BULLY_KEY))
+            if (player.CustomProperties.ContainsKey(BullyKey))
             {
-                int hits = (int)player.CustomProperties[BULLY_KEY];
+                var hits = (int)player.CustomProperties[BullyKey];
 
                 if (hits > mostBullyHits)
                 {
                     mostBullyHits = hits;
                     scores[1] = player.NickName;
-                    this.bully = player.NickName;
+                    bully = player.NickName;
                     scoreValues[1] = mostBullyHits;
                 }
             }
 
             //RASCAL
-            if (player.CustomProperties.ContainsKey(REBEL_KEY))
+            if (player.CustomProperties.ContainsKey(RebelKey))
             {
-                int hits = (int)player.CustomProperties[REBEL_KEY];
+                var hits = (int)player.CustomProperties[RebelKey];
 
                 if (hits > mostRascalHits)
                 {
                     mostRascalHits = hits;
                     scores[0] = player.NickName;
-                    this.rebel = player.NickName; 
+                    rebel = player.NickName; 
                     scoreValues[0] = mostRascalHits;
                 }
             }
 
             //MEET ME IN MY OFFICE
-            if (player.CustomProperties.ContainsKey(MEET_IN_OFFICE_KEY))
+            if (player.CustomProperties.ContainsKey(MeetInOfficeKey))
             {
-                int caught = (int)player.CustomProperties[MEET_IN_OFFICE_KEY];
+                var caught = (int)player.CustomProperties[MeetInOfficeKey];
 
                 if (caught > mostCaught)
                 {
                     mostCaught = caught;
                     scores[4] = player.NickName;
-                    this.meetMeInMyOffice = player.NickName;
+                    meetMeInMyOffice = player.NickName;
                     scoreValues[4] = mostCaught;
                 }
             }
 
             //GLACE FOLIE
-            if (player.CustomProperties.ContainsKey(GLACE_FOLIE_KEY))
+            if (player.CustomProperties.ContainsKey(GlaceFolieKey))
             {
-                int iceHits = (int)player.CustomProperties[GLACE_FOLIE_KEY];
+                var iceHits = (int)player.CustomProperties[GlaceFolieKey];
 
                 if (iceHits > mostIceHits)
                 {
                     mostIceHits = iceHits;
                     scores[5] = player.NickName;
-                    this.glaceFolie = player.NickName;
+                    glaceFolie = player.NickName;
                     scoreValues[6] = mostIceHits;
                 }
             }
 
             //SHOVELER
-            if (player.CustomProperties.ContainsKey(SHOVELER_KEY))
+            if (player.CustomProperties.ContainsKey(ShovelerKey))
             {
-                int snowballsDug = (int)player.CustomProperties[SHOVELER_KEY];
+                var snowballsDug = (int)player.CustomProperties[ShovelerKey];
 
                 if (snowballsDug > mostSnowballsDug)
                 {
                     mostSnowballsDug = snowballsDug;
                     scores[6] = player.NickName;
-                    this.shoveler = player.NickName;
+                    shoveler = player.NickName;
                     scoreValues[6] = mostSnowballsDug;
                 }
             }
 
             //AVALANCHE
-            if (player.CustomProperties.ContainsKey(AVALANCHE_KEY))
+            if (player.CustomProperties.ContainsKey(AvalancheKey))
             {
-                int rollballHits = (int)player.CustomProperties[AVALANCHE_KEY];
+                var rollballHits = (int)player.CustomProperties[AvalancheKey];
 
                 if (rollballHits > mostRollballsHits)
                 {
                     mostRollballsHits = rollballHits;
                     scores[7] = player.NickName;
-                    this.avalanche = player.NickName;
+                    avalanche = player.NickName;
                     scoreValues[7] = mostRollballsHits;
                 }
             }
         }
 
         if (blueDeaths < redDeaths)
+        {
             winningTeamCode = 1;
+        }
         else if (redDeaths < blueDeaths)
+        {
             winningTeamCode = 2;
+        }
         else
+        {
             winningTeamCode = 0;
+        }
 
-        _view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rebel, hardWorker, teachersPet, glaceFolie, shoveler, avalanche, meetMeInMyOffice, (object)scoreValues);
+        view.RPC(nameof(SyncMatchInformation), RpcTarget.AllBuffered, isFirstMatch, winningTeamCode, bully, rebel, hardWorker, teachersPet, glaceFolie, shoveler, avalanche, meetMeInMyOffice, scoreValues);
     }
 
     public int GetLeadingTeam()
@@ -217,12 +233,12 @@ public class ScoreManager : MonoBehaviour
         foreach (var player in PhotonNetwork.PlayerList)
         {
             //WIN CONDITION
-            if (!player.CustomProperties.ContainsKey(DEATHS_KEY)) continue;
+            if (!player.CustomProperties.ContainsKey(DeathsKey)) continue;
             
             var team = player.GetPhotonTeam();
             if (team == null) continue;
             
-            var deaths = (int) player.CustomProperties[DEATHS_KEY];
+            var deaths = (int) player.CustomProperties[DeathsKey];
 
             switch (team.Code)
             {
@@ -249,39 +265,41 @@ public class ScoreManager : MonoBehaviour
             //Debug.Log("how do we handle exact ties? TO BE SOLVED LATER");
         }
 
-        _view.RPC(nameof(SyncLeadingTeamScore), RpcTarget.AllBuffered, winningTeamCode);
+        view.RPC(nameof(SyncLeadingTeamScore), RpcTarget.AllBuffered, winningTeamCode);
         return winningTeamCode;
     }
     
-
-    public void IncrementPropertyCounter(Photon.Realtime.Player player, string code)
+    public static void IncrementPropertyCounter(Photon.Realtime.Player player, string code)
     {
-        ExitGames.Client.Photon.Hashtable props = player.CustomProperties;
+        var props = player.CustomProperties;
         if (props.ContainsKey(code))
         {
-            int count = (int)props[code];
+            var count = (int)props[code];
             props[code] = ++count;
         }
         else
         {
             props.Add(code, 1); //if property does not exist, we assume it's zero.
         }
+        
         player.SetCustomProperties(props);
-
     }
 
     public void ClearPropertyCounters()
     {
-        ExitGames.Client.Photon.Hashtable props = PhotonNetwork.LocalPlayer.CustomProperties;
+        var props = PhotonNetwork.LocalPlayer.CustomProperties;
+        var keys = new [] { DeathsKey, RebelKey, BullyKey, HardWorkerKey, TeachersPetKey, MeetInOfficeKey, GlaceFolieKey, ShovelerKey, AvalancheKey };
 
-        string[] keys = new string[] { DEATHS_KEY, REBEL_KEY, BULLY_KEY, HARD_WORKER_KEY, TEACHERS_PET_KEY, MEET_IN_OFFICE_KEY, GLACE_FOLIE_KEY, SHOVELER_KEY, AVALANCHE_KEY };
-
-        foreach (string key in keys)
+        foreach (var key in keys)
         {
             if (props.ContainsKey(key))
+            {
                 props[key] = 0;
+            }
             else
+            {
                 props.Add(key, 0);
+            }
         }
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
@@ -291,17 +309,29 @@ public class ScoreManager : MonoBehaviour
 
     private void ResetStats()
     {
-        this.winningTeamCode = 0;
-        this.bully = string.Empty;
-        this.rebel = string.Empty;
-        this.hardWorker = string.Empty;
-        this.teachersPet = string.Empty;
-        this.glaceFolie = string.Empty;
-        this.shoveler = string.Empty;
-        this.avalanche = string.Empty;
-        this.meetMeInMyOffice = string.Empty;
-        this.scores = new string[8];
-        this.scoreValues = new int[8];
+        winningTeamCode = 0;
+        bully = string.Empty;
+        rebel = string.Empty;
+        hardWorker = string.Empty;
+        teachersPet = string.Empty;
+        glaceFolie = string.Empty;
+        shoveler = string.Empty;
+        avalanche = string.Empty;
+        meetMeInMyOffice = string.Empty;
+        scores = new string[8];
+        scoreValues = new int[8];
+    }
+
+    private string GenerateRandomNumbers()
+    {
+        var randomNumbers = string.Empty;
+        for (var i = 0; i < 100; i++)
+        {
+            var rand = Random.Range(0, scores.Length);
+            randomNumbers += i == 0 ? rand.ToString(CultureInfo.InvariantCulture) : " " + rand.ToString(CultureInfo.InvariantCulture);
+        }
+        
+        return randomNumbers;
     }
 
     #endregion
@@ -309,7 +339,7 @@ public class ScoreManager : MonoBehaviour
     #region RPC
 
     [PunRPC]
-    public void SyncMatchInformation(bool isFirst, int winningTeam, string bullyGuy, string rebelGuy, string hardWorkerGuy, string teacherPet, string glaceFolieGuy, string shovelerGuy, string avalancheGuy, string meetMeInMyOfficeGuy, int[] scoreVals)
+    private void SyncMatchInformation(bool isFirst, int winningTeam, string bullyGuy, string rebelGuy, string hardWorkerGuy, string teacherPet, string glaceFolieGuy, string shovelerGuy, string avalancheGuy, string meetMeInMyOfficeGuy, int[] scoreVals)
     {
         isFirstMatch = isFirst;
         winningTeamCode = winningTeam;
@@ -326,9 +356,20 @@ public class ScoreManager : MonoBehaviour
     }
 
     [PunRPC]
-    public void SyncLeadingTeamScore(int leadingTeamCode)
+    private void SyncLeadingTeamScore(int leadingTeamCode)
     {
         winningTeamCode = leadingTeamCode;
     }
+
+    [PunRPC]
+    private void SyncRandomNumbers(string randomNumbers)
+    {
+        for (var i = 0; i < randomNumbers.Split(' ').Length; i++)
+        {
+            var randomNumber = randomNumbers.Split(' ')[i];
+            RandomNumbers[i] = int.Parse(randomNumber);
+        }
+    }
+
     #endregion
 }

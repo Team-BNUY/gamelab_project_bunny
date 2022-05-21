@@ -482,7 +482,6 @@ namespace Player
                 prefabToSpawn = ArenaManager.Instance.IceballPrefab.name;
             }
             _currentObjectInHand = PhotonNetwork.Instantiate(prefabToSpawn, _playerHand.position, _playerHand.rotation * Quaternion.Euler(0f, -90f, 0f));
-            //_currentObjectInHand.transform.parent = _playerHand;
             // TODO: Object pooling to avoid using GetComponent at Instantiation
             _playerSnowball = _currentObjectInHand.GetComponent<NetworkSnowball>();
             _playerSnowball.SetSnowballThrower(this);
@@ -495,7 +494,7 @@ namespace Player
 
             if (photonView.IsMine && !_isInClass)
             {
-                ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.SHOVELER_KEY);
+                ScoreManager.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.ShovelerKey);
             }
         }
 
@@ -515,12 +514,11 @@ namespace Player
             _hasSnowball = false;
             _currentObjectInHand = null;
             _playerSnowball = null;
-            photonView.RPC("SetHasSnowballHashBool_RPC", RpcTarget.All, false);
-            //_animator.SetBool(HasSnowballHash, false);
+            photonView.RPC(nameof(SetHasSnowballHashBool_RPC), RpcTarget.All, false);
 
             if (photonView.IsMine)
             {
-                ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.TEACHERS_PET_KEY);
+                ScoreManager.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.TeachersPetKey);
             }
         }
 
@@ -1075,7 +1073,7 @@ namespace Player
 
             if (photonView.IsMine)
             {
-                ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.DEATHS_KEY);
+                ScoreManager.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.DeathsKey);
                 ArenaManager.Instance.IncrementTeamDeathCount(TeamID);
                 Invoke(nameof(Respawn), _deathTimeDelay);
             }

@@ -81,11 +81,11 @@ namespace Networking
 
                 if (_studentThrower.photonView.IsMine && !_studentThrower.IsInClass)
                 {
-                    ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.HARD_WORKER_KEY);
+                    ScoreManager.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.HardWorkerKey);
 
                     if (_damage == 3)
                     {
-                        ScoreManager.Instance.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.GLACE_FOLIE_KEY);
+                        ScoreManager.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.GlaceFolieKey);
                     }
                 }
 
