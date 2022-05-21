@@ -44,18 +44,22 @@ namespace Player
         {
             if (_teamCount >= _teamMaxSize - 1) return;
             
-            if (PhotonNetwork.LocalPlayer.GetPhotonTeam() != null)
+            var localPlayer = PhotonNetwork.LocalPlayer;
+            
+            if (localPlayer.CustomProperties.ContainsKey("isReady")) return;
+            
+            if (localPlayer.GetPhotonTeam() != null)
             {
-                if (PhotonNetwork.LocalPlayer.GetPhotonTeam().Name == "Red")
+                if (localPlayer.GetPhotonTeam().Name == "Red")
                 {
-                    PhotonNetwork.LocalPlayer.LeaveCurrentTeam();
+                    localPlayer.LeaveCurrentTeam();
                     _view.RPC("SubtractTeamCount", RpcTarget.AllBuffered);
                     currentStudentController.GetComponent<PlayerCustomization>().RestoreTeamlessColors();
                     AudioManager.Instance.PlayOneShot(_shitTakeOff, 0.5f);
                 }
                 else
                 {
-                    PhotonNetwork.LocalPlayer.SwitchTeam(2);
+                    localPlayer.SwitchTeam(2);
                     BlueTeamTable.instance.SubtractTeamCount_RPC();
                     _view.RPC("AddTeamCount", RpcTarget.AllBuffered);
                     AudioManager.Instance.PlayOneShot(_shitWear, 0.5f);
@@ -63,7 +67,7 @@ namespace Player
             }
             else
             {
-                PhotonNetwork.LocalPlayer.JoinTeam(2);
+                localPlayer.JoinTeam(2);
                 _view.RPC("AddTeamCount", RpcTarget.AllBuffered);
                 AudioManager.Instance.PlayOneShot(_shitWear, 0.5f);
             }
