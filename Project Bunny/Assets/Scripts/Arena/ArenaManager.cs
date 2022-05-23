@@ -81,7 +81,8 @@ namespace Arena
         private double _startTime;
         private bool _returnToLobbyHasRun;
         private int _readyPlayers;
-        private bool _over;
+        private bool _gameOver;
+        private bool _teacherSpawned;
         private const string StartTimeKey = "StartTime";
         private const string ReadyKey = "isready";
         
@@ -221,9 +222,8 @@ namespace Arena
         
         private void StartMatch()
         {
-            _over = false;
+            _gameOver = false;
             InjectInitialStudentStates();
-            Invoke(nameof(SpawnTeacher), _teacherSpawnTime);
             _loadingScreen.SetActive(false);
             _localStudentController.IsFrozen = false;
             StartTimer();
@@ -258,8 +258,14 @@ namespace Arena
                 }
             }
 
-            if (_timeElapsed < _gameDuration || _over) return;
-            _over = true;
+            if (_timeElapsed > _teacherSpawnTime && !_teacherSpawned)
+            {
+                _teacherSpawned = true;
+                SpawnTeacher();
+            }
+
+            if (_timeElapsed < _gameDuration || _gameOver) return;
+            _gameOver = true;
         
             AudioManager.Instance.PlayOneShot(_schoolBellSound, 0.5f);
             Invoke(nameof(ReturnToLobby), 2f);
