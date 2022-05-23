@@ -225,8 +225,9 @@ namespace Arena
             InjectInitialStudentStates();
             Invoke(nameof(SpawnTeacher), _teacherSpawnTime);
             _loadingScreen.SetActive(false);
+            _localStudentController.IsFrozen = false;
             StartTimer();
-        
+
             AudioManager.Instance.Play(_music, 0.15f, true);
         }
 
@@ -288,6 +289,7 @@ namespace Arena
             {
                 props.Add(ReadyKey, isReady);
             }
+            
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);
         }
     
@@ -308,7 +310,7 @@ namespace Arena
 
         private void StartTimer()
         {
-            timerDisplay.text = $"{(_gameDuration - _timeElapsed) / 60}:{((_gameDuration - _timeElapsed) % 60).ToString("00")}";
+            timerDisplay.text = $"{(_gameDuration - _timeElapsed) / 60}:{(_gameDuration - _timeElapsed) % 60:00}";
 
             if (!PhotonNetwork.IsMasterClient) return;
         
@@ -325,17 +327,16 @@ namespace Arena
         private void SpawnPlayer()
         {
             var player = PhotonNetwork.Instantiate(_playerPrefab.name, GetPlayerSpawnPoint(PhotonNetwork.LocalPlayer.GetPhotonTeam().Code), Quaternion.identity).GetComponent<NetworkStudentController>();
-            if (player.photonView.IsMine)
-            {
-                player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
-                player.TeamID = PhotonNetwork.LocalPlayer.GetPhotonTeam().Code;
-                PhotonNetwork.LocalPlayer.TagObject = player;
-                _localStudentController = player;
-                player.SetCamera(Instantiate(_playerCamera), 60f, 25f, true, 0.7f, 5f);
-                player.photonView.RPC("SyncPlayerInfo", RpcTarget.AllBuffered, player.PlayerID, player.TeamID);
-            }
-
+            
             if (!player.photonView.IsMine) return;
+            
+            player.PlayerID = PhotonNetwork.LocalPlayer.UserId;
+            player.TeamID = PhotonNetwork.LocalPlayer.GetPhotonTeam().Code;
+            PhotonNetwork.LocalPlayer.TagObject = player;
+            player.IsFrozen = true;
+            _localStudentController = player;
+            player.SetCamera(Instantiate(_playerCamera), 60f, 25f, true, 0.7f, 5f);
+            player.photonView.RPC("SyncPlayerInfo", RpcTarget.AllBuffered, player.PlayerID, player.TeamID);
 
             foreach (var wall in _teamWalls)
             {
