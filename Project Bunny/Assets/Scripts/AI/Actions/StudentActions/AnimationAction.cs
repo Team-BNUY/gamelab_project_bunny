@@ -9,14 +9,14 @@ namespace AI.Actions.StudentActions
 {
     public class AnimationAction : Action
     {
-        private Student _student;
+        private readonly Student _student;
 
-        private float _runningSpeed;
+        private readonly float _runningSpeed;
+        private readonly ActionSpotType _actionSpotType;
         private ActionSpot _actionSpot;
-        private ActionSpotType _actionSpotType;
-        
-        private string _animationTrigger;
-        private int _animationVariants;
+
+        private readonly string _animationTrigger;
+        private readonly int _animationVariants;
         
         public AnimationAction(string name, int cost, StateSet preconditionStates, StateSet afterEffectStates, Student agent, bool hasTarget, float runningSpeed, ActionSpotType actionSpotType, string animationTrigger, int animationVariants)
             : base(name, cost, preconditionStates, afterEffectStates, agent, hasTarget)

@@ -11,16 +11,20 @@ namespace AI.Agents
     {
         [Header("Individual")]
         [SerializeField] [Min(0f)] private float pushForce = 10f;
-        private Gang _gang;
-        private List<string> _movingActions = new List<string> { "Intimidate", "Join Another Gang", "Cry", "AnimationAction" };
+        [SerializeField] private Collider _physicsCollider;
+        private readonly List<string> _movingActions = new List<string> { "Intimidate", "Join Another Gang", "Cry", "AnimationAction" };
         
         [Header("Audio")]
         [SerializeField] private AudioClip _hitBySnowballSound;
-        [SerializeField] private AudioClip _hitByIceballSound;
-        [SerializeField] private AudioClip _hitByRollballSound;
+        [SerializeField] private AudioClip _hitByIceBallSound;
+        [SerializeField] private AudioClip _hitByRollBallSound;
         [SerializeField] private AudioClip _hurtSound;
         private AudioSource _audioSource;
-
+        
+        public Gang Gang { get; set; }
+        public bool Occupied => Gang.Occupied;
+        public Collider PhysicsCollider => _physicsCollider;
+        
         protected override void Awake()
         {
             photonView.OwnershipTransfer = OwnershipOption.Takeover;
@@ -62,6 +66,11 @@ namespace AI.Agents
             states = new StateSet(state);
             goal = new Goal(states, false);
             goals.Add(goal, 5);
+            
+            state = new State("stoodUp", 1);
+            states = new StateSet(state);
+            goal = new Goal(states, false);
+            goals.Add(goal, 6);
 
             // Creating actions
             base.Start();
@@ -72,25 +81,24 @@ namespace AI.Agents
             var projectile = collision.gameObject.CompareTag("Projectile");
             if (!projectile) return;
             
-            // Hit by any projectile
-            photonView.RPC("GetHitByProjectile", RpcTarget.All);
-            
-            if (collision.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
+            if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var rollBall) && rollBall.CanDamage)
             {
-                if (ball.StudentThrower.photonView.IsMine)
-                {
-                    ScoreManager.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.BullyKey);
-                }
-            }
-
-            if (collision.gameObject.TryGetComponent<NetworkGiantRollball>(out var rollball) && rollball.CanDamage)
-            {
+                photonView.RPC(nameof(GetHitByGiantRollBall), RpcTarget.All);
                 PlayHitAudio(2);
+                
                 return;
             }
-
+            
+            // Hit by any projectile
+            photonView.RPC(nameof(GetHitByProjectile), RpcTarget.All);
+            
             var snowball = collision.gameObject.GetComponent<NetworkSnowball>();
             if (!snowball) return;
+            
+            if (snowball.StudentThrower.photonView.IsMine)
+            {
+                ScoreManager.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.BullyKey);
+            }
             
             // Hit by a snowball
             var thrower = snowball.StudentThrower;
@@ -129,6 +137,7 @@ namespace AI.Agents
         public void Unhit()
         {
             SetAnimatorParameter("Hit", false, true);
+            SetAnimatorParameter("KnockedDown", false, true);
         }
 
         public void UnhitSides()
@@ -156,10 +165,10 @@ namespace AI.Agents
                     _audioSource.PlayOneShot(_hitBySnowballSound, 2f * AudioManager.Instance.Volume);
                     break;
                 case 1:
-                    _audioSource.PlayOneShot(_hitByIceballSound, 2f * AudioManager.Instance.Volume);
+                    _audioSource.PlayOneShot(_hitByIceBallSound, 2f * AudioManager.Instance.Volume);
                     break;
                 default:
-                    _audioSource.PlayOneShot(_hitByRollballSound, 2f * AudioManager.Instance.Volume);
+                    _audioSource.PlayOneShot(_hitByRollBallSound, 2f * AudioManager.Instance.Volume);
                     break;
             }
 
@@ -176,6 +185,15 @@ namespace AI.Agents
             beliefStates.AddState("hitByProjectile", 1);
             InterruptGoal();
         }
+        
+        [PunRPC]
+        private void GetHitByGiantRollBall()
+        {
+            _physicsCollider.enabled = false;
+            SetAnimatorParameter("KnockedDown", true, true);
+            beliefStates.AddState("hitByRollBall", 1);
+            InterruptGoal();
+        }
 
         [PunRPC]
         private void SetTriggerRPC(string trigger)
@@ -187,17 +205,6 @@ namespace AI.Agents
         private void SetBoolRPC(string boolean, bool value)
         {
             animator.SetBool(boolean, value);
-        }
-        
-        public Gang Gang 
-        {
-            get => _gang;
-            set => _gang = value;
-        }
-
-        public bool Occupied 
-        {
-            get => _gang.Occupied;
         }
     }
 }

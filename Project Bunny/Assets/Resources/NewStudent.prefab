@@ -3189,12 +3189,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8097171052423435671}
+  - component: {fileID: 4673339638654878056}
   - component: {fileID: 2791883221304578029}
   - component: {fileID: 3809514915690028133}
   - component: {fileID: -4833780054038130751}
   - component: {fileID: 5050253939288623368}
   - component: {fileID: 5017220120332626921}
-  - component: {fileID: 4673339638654878056}
   - component: {fileID: -6166062190661382646}
   - component: {fileID: 7170845644775075947}
   - component: {fileID: 448328591560329702}
@@ -3238,6 +3238,36 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4673339638654878056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8869063792663072557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5cc67ff504e65046a83753f65e58ed9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  action: 
+  _actionsData:
+  - {fileID: 11400000, guid: 3ebf143787e858041826effe26e8d499, type: 2}
+  - {fileID: 11400000, guid: 1da747ebeabf23544910ddc855373109, type: 2}
+  - {fileID: 11400000, guid: ac9c36291bbb08f459dcc3d06398438e, type: 2}
+  - {fileID: 11400000, guid: 75e2d0783928c494a8a1d4e1c8b5408f, type: 2}
+  - {fileID: 11400000, guid: 0b5affab3264d3d41ace96d7b826531a, type: 2}
+  - {fileID: 11400000, guid: f75db9cf2b8088447b9e4ce30dd87d09, type: 2}
+  - {fileID: 11400000, guid: 031ab291b0fe0c9459ce7e39c318eb3f, type: 2}
+  - {fileID: 11400000, guid: 6dc492a092cdb404eb8fb758091c45b5, type: 2}
+  - {fileID: 11400000, guid: 1ee39a59ff0f33e438673d662fb87462, type: 2}
+  - {fileID: 11400000, guid: 1e1ee687b69450742a870c05198e1c2c, type: 2}
+  pushForce: 40
+  _physicsCollider: {fileID: -4833780054038130751}
+  _hitBySnowballSound: {fileID: 8300000, guid: b178571a3cfedff43b29e0beae26d73d, type: 3}
+  _hitByIceBallSound: {fileID: 8300000, guid: db18c3d5c94f5d64892b45b728c49b30, type: 3}
+  _hitByRollBallSound: {fileID: 8300000, guid: b178571a3cfedff43b29e0beae26d73d, type: 3}
+  _hurtSound: {fileID: 8300000, guid: bbc5ce81e16e633498c85999561396da, type: 3}
 --- !u!95 &2791883221304578029
 Animator:
   serializedVersion: 3
@@ -3323,34 +3353,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &4673339638654878056
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8869063792663072557}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5cc67ff504e65046a83753f65e58ed9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  action: 
-  _actionsData:
-  - {fileID: 11400000, guid: 3ebf143787e858041826effe26e8d499, type: 2}
-  - {fileID: 11400000, guid: 1da747ebeabf23544910ddc855373109, type: 2}
-  - {fileID: 11400000, guid: ac9c36291bbb08f459dcc3d06398438e, type: 2}
-  - {fileID: 11400000, guid: 75e2d0783928c494a8a1d4e1c8b5408f, type: 2}
-  - {fileID: 11400000, guid: 0b5affab3264d3d41ace96d7b826531a, type: 2}
-  - {fileID: 11400000, guid: f75db9cf2b8088447b9e4ce30dd87d09, type: 2}
-  - {fileID: 11400000, guid: 031ab291b0fe0c9459ce7e39c318eb3f, type: 2}
-  - {fileID: 11400000, guid: 6dc492a092cdb404eb8fb758091c45b5, type: 2}
-  - {fileID: 11400000, guid: 1ee39a59ff0f33e438673d662fb87462, type: 2}
-  pushForce: 40
-  _hitBySnowballSound: {fileID: 8300000, guid: b178571a3cfedff43b29e0beae26d73d, type: 3}
-  _hitByIceballSound: {fileID: 8300000, guid: db18c3d5c94f5d64892b45b728c49b30, type: 3}
-  _hitByRollballSound: {fileID: 8300000, guid: 3d4874660189e634593bfd78c83f664f, type: 3}
-  _hurtSound: {fileID: 8300000, guid: bbc5ce81e16e633498c85999561396da, type: 3}
 --- !u!114 &-6166062190661382646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3454,6 +3456,12 @@ MonoBehaviour:
   - Type: 9
     SynchronizeType: 1
     Name: HitBack
+  - Type: 4
+    SynchronizeType: 1
+    Name: KnockedDown
+  - Type: 4
+    SynchronizeType: 1
+    Name: GetUp
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
