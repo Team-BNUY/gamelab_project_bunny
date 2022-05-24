@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5548079061548076500}
+  - component: {fileID: -1507739266704330185}
   - component: {fileID: 4948471680394295724}
   - component: {fileID: 5465331304403063007}
   - component: {fileID: 4813863054407201053}
   - component: {fileID: -152660347859332919}
-  - component: {fileID: -1507739266704330185}
   - component: {fileID: 593892945959538631}
   - component: {fileID: -3006674947755084028}
   - component: {fileID: 5372060593901265294}
@@ -38,6 +38,31 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-1507739266704330185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9027766068581955839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dad3b8a571cac834799b75ee2dc731fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _snowballRigidbody: {fileID: -152660347859332919}
+  _snowballTransform: {fileID: 5548079061548076500}
+  _hitLayers:
+    serializedVersion: 2
+    m_Bits: 7168
+  _sizeThreshold: 20
+  _pushForce: 50
+  _damage: 3
+  _growthFactor: 0.1
+  _rollSound: {fileID: 8300000, guid: e84c17e69c3c30c46b177b4a9dafb3d5, type: 3}
+  _destroySound: {fileID: 8300000, guid: 3d4874660189e634593bfd78c83f664f, type: 3}
+  _volumeIncreaseTimeRate: 0.3
+  _id: 0
 --- !u!33 &4948471680394295724
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -116,31 +141,6 @@ Rigidbody:
   m_Interpolate: 2
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-1507739266704330185
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9027766068581955839}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dad3b8a571cac834799b75ee2dc731fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _snowballRigidbody: {fileID: -152660347859332919}
-  _snowballTransform: {fileID: 5548079061548076500}
-  _hitLayers:
-    serializedVersion: 2
-    m_Bits: 3072
-  _sizeThreshold: 20
-  _pushForce: 50
-  _damage: 3
-  _growthFactor: 0.1
-  _rollSound: {fileID: 8300000, guid: e84c17e69c3c30c46b177b4a9dafb3d5, type: 3}
-  _destroySound: {fileID: 8300000, guid: 3d4874660189e634593bfd78c83f664f, type: 3}
-  _volumeIncreaseTimeRate: 0.3
-  _id: 0
 --- !u!114 &593892945959538631
 MonoBehaviour:
   m_ObjectHideFlags: 0
