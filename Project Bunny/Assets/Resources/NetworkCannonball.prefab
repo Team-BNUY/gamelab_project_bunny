@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8280415488230926350}
+  - component: {fileID: 5778073387835718462}
   - component: {fileID: 8843889099137211510}
   - component: {fileID: 8489161449178592517}
   - component: {fileID: 8996231008897455303}
   - component: {fileID: 4897359728783406355}
-  - component: {fileID: 5778073387835718462}
   - component: {fileID: 751920713879394536}
   - component: {fileID: 4805950375372168041}
   m_Layer: 13
@@ -37,6 +37,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5778073387835718462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4854422905516743973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f323647c4aa5a3549a5c2865dbb7c510, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _snowballRigidbody: {fileID: 4897359728783406355}
+  _sphereCollider: {fileID: 8996231008897455303}
+  _snowballTransform: {fileID: 8280415488230926350}
+  _trajectoryLineRenderer: {fileID: 0}
+  _damage: 2
+  _isCannonUsable: 1
+  _cannonOffsetPlacement: 0.01
+  _isIceBall: 0
+  _snowHitSound: {fileID: 8300000, guid: b178571a3cfedff43b29e0beae26d73d, type: 3}
+  _iceHitSound: {fileID: 8300000, guid: db18c3d5c94f5d64892b45b728c49b30, type: 3}
 --- !u!33 &8843889099137211510
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -115,29 +137,6 @@ Rigidbody:
   m_Interpolate: 2
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &5778073387835718462
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4854422905516743973}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f323647c4aa5a3549a5c2865dbb7c510, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _snowballRigidbody: {fileID: 4897359728783406355}
-  _sphereCollider: {fileID: 8996231008897455303}
-  _snowballTransform: {fileID: 8280415488230926350}
-  _trajectoryLineRenderer: {fileID: 0}
-  _damage: 2
-  _isCannonUsable: 1
-  _cannonOffsetPlacement: 0.01
-  _isIceBall: 0
-  _snowHitSound: {fileID: 8300000, guid: b178571a3cfedff43b29e0beae26d73d, type: 3}
-  _iceHitSound: {fileID: 8300000, guid: db18c3d5c94f5d64892b45b728c49b30, type: 3}
-  _studentThrower: {fileID: 0}
 --- !u!114 &751920713879394536
 MonoBehaviour:
   m_ObjectHideFlags: 0

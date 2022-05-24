@@ -29,9 +29,9 @@ namespace Networking
         private float _throwAngle;
         private float _mass;
         private float _initialVelocity;
-        private readonly float _collisionCheckRadius = 0.03f;
+        private const float CollisionCheckRadius = 0.03f;
 
-        public NetworkStudentController _studentThrower;
+        public NetworkStudentController StudentThrower { get; private set; }
         private Transform _holdingPlace;
         private bool _hasCollided;
 
@@ -73,13 +73,13 @@ namespace Networking
             if (other.gameObject.TryGetComponent<NetworkCannon>(out _)) return;
             
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var otherStudent)
-                && otherStudent != _studentThrower
+                && otherStudent != StudentThrower
                 && !otherStudent.IsDead)
             {
                 if (_hasCollided) return;
                 _hasCollided = true;
 
-                if (_studentThrower.photonView.IsMine && !_studentThrower.IsInClass)
+                if (StudentThrower.photonView.IsMine && !StudentThrower.IsInClass)
                 {
                     ScoreManager.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.HardWorkerKey);
 
@@ -95,7 +95,7 @@ namespace Networking
                 }
             }
             
-            if (otherStudent && otherStudent == _studentThrower) return;
+            if (otherStudent && otherStudent == StudentThrower) return;
 
             if (!otherStudent)
             {
@@ -104,7 +104,7 @@ namespace Networking
             }
             
             // Play particle effect
-            var prefabToSpawn = _studentThrower.IsInClass ? RoomManager.Instance.SnowballBurst.name : ArenaManager.Instance.SnowballBurst.name;
+            var prefabToSpawn = StudentThrower.IsInClass ? RoomManager.Instance.SnowballBurst.name : ArenaManager.Instance.SnowballBurst.name;
             if (_isIceBall)
             {
                 prefabToSpawn = ArenaManager.Instance.IceballBurst.name;
@@ -221,8 +221,8 @@ namespace Networking
         {
             // TODO: Use OverlapSphereNoAlloc()
             //Measure collision via a small circle at the latest position, dont continue simulating Arc if hit
-            var hits = Physics.OverlapSphere(position, _collisionCheckRadius);
-            hits = hits.ToList().FindAll(hit => hit.gameObject == _studentThrower.gameObject).ToArray();
+            var hits = Physics.OverlapSphere(position, CollisionCheckRadius);
+            hits = hits.ToList().FindAll(hit => hit.gameObject == StudentThrower.gameObject).ToArray();
             return hits.Length > 0;
         }
 
@@ -256,8 +256,8 @@ namespace Networking
         /// <param name="student"></param>
         public void SetSnowballThrower(NetworkStudentController student)
         {
-            _studentThrower = student;
-            Physics.IgnoreCollision(_studentThrower.PlayerCollider, _sphereCollider);
+            StudentThrower = student;
+            Physics.IgnoreCollision(StudentThrower.PlayerCollider, _sphereCollider);
         }
 
         /// <summary>

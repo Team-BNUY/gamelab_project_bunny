@@ -77,7 +77,7 @@ namespace AI.Agents
             
             if (collision.gameObject.TryGetComponent<NetworkSnowball>(out var ball))
             {
-                if (ball._studentThrower.photonView.IsMine)
+                if (ball.StudentThrower.photonView.IsMine)
                 {
                     ScoreManager.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.BullyKey);
                 }
@@ -93,7 +93,7 @@ namespace AI.Agents
             if (!snowball) return;
             
             // Hit by a snowball
-            var thrower = snowball._studentThrower;
+            var thrower = snowball.StudentThrower;
             var throwDirection = thrower.transform.position - transform.position;
             var angle = Vector3.SignedAngle(transform.forward, throwDirection, Vector3.up);
             if (angle < 0 && angle >= -45f || angle >= 0 && angle < 45f)

@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 593892945959538631}
   - component: {fileID: -3006674947755084028}
   - component: {fileID: 5372060593901265294}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: NetworkGiantRollball
   m_TagString: Projectile
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ MonoBehaviour:
   _snowballTransform: {fileID: 5548079061548076500}
   _hitLayers:
     serializedVersion: 2
-    m_Bits: 3584
+    m_Bits: 3072
   _sizeThreshold: 7.5
   _pushForce: 50
   _damage: 3

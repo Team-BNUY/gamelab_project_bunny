@@ -107,7 +107,6 @@ namespace Classroom
             AudioManager.Instance.PlaySync(_openDoorSoundId, 1f);
             AudioManager.Instance.PlaySync(_schoolBellClipId, 0.25f);
         
-        
             student.SetControlledMovement(Vector3.zero, true);
             yield return new WaitForSeconds(WaitTime);
             student.SetControlledMovement(doorPoint.position, true);

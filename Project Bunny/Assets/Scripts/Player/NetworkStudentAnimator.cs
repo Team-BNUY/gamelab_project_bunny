@@ -14,9 +14,9 @@ namespace Player
 
         public void PushRollball()
         {
-            if (_studentController.CurrentInteractable is NetworkRollballThrow rollballThrow)
+            if (_studentController.CurrentInteractable is NetworkRollBallThrow rollballThrow)
             {
-                rollballThrow.PushRollball();
+                rollballThrow.PushRollBall();
             }
         }
 

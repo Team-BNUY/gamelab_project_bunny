@@ -229,7 +229,7 @@ namespace Player
             if (!snowball) return;
 
             // Hit by a snowball
-            var thrower = snowball._studentThrower;
+            var thrower = snowball.StudentThrower;
             var throwDirection = thrower.transform.position - _playerModel.position;
             var angle = Vector3.SignedAngle(_playerModel.forward, throwDirection, Vector3.up);
 

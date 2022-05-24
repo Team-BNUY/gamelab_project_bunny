@@ -23,12 +23,10 @@ namespace Player
         
         private NetworkStudentController _pusher;
         private bool _isGrowing;
-        private bool _canDamage;
         private bool _hasCollided;
         public int _id;
         
-        public bool CanDamage => _canDamage;
-
+        public bool CanDamage { get; private set; }
         public int ID
         {
             get => _id;
@@ -54,7 +52,7 @@ namespace Player
         {
             _isGrowing = other.gameObject.layer == LayerMask.NameToLayer("Ground");
 
-            if (!_canDamage) return;
+            if (!CanDamage) return;
             
             if (other.gameObject.TryGetComponent<NetworkStudentController>(out var player))
             {
@@ -105,7 +103,7 @@ namespace Player
         {
             _pusher = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == playerID);
             _snowballRigidbody.isKinematic = false;
-            _canDamage = true;
+            CanDamage = true;
         }
 
         private void StopKicking()
@@ -167,14 +165,14 @@ namespace Player
         {
             if (stream.IsWriting)
             {
-                stream.SendNext(_canDamage);
+                stream.SendNext(CanDamage);
                 stream.SendNext(_isGrowing);
                 stream.SendNext(_hasCollided);
                 stream.SendNext(_id);
             }
             else
             {
-                _canDamage = (bool) stream.ReceiveNext();
+                CanDamage = (bool) stream.ReceiveNext();
                 _isGrowing = (bool) stream.ReceiveNext();
                 _hasCollided = (bool) stream.ReceiveNext();
                 _id = (int) stream.ReceiveNext();

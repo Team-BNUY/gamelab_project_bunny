@@ -8,18 +8,17 @@ using Random = UnityEngine.Random;
 
 namespace Player
 {
-    public class NetworkRollballThrow : MonoBehaviourPunCallbacks, INetworkInteractable, IPunObservable, INetworkTriggerable
+    public class NetworkRollBallThrow : MonoBehaviourPunCallbacks, INetworkInteractable, IPunObservable, INetworkTriggerable
     {
         [Header("Components")]
         [SerializeField] private Animator _hoverButton;
         [SerializeField] private Transform _playerSeat;
-        [SerializeField] private Transform _rollballSeat;
+        [SerializeField] private Transform _rollBallSeat;
         [SerializeField] private GameObject _aimArrow;
 
         [Header("Properties")] [SerializeField] private int _id;
         [SerializeField] private float _newCameraDistance;
         [SerializeField] [Min(0)] private float _rotationSpeed;
-        private bool _isActive;
         private GameObject _player;
         private NetworkStudentController _currentStudentController;
         private CinemachineFramingTransposer _playerVCamSettings;
@@ -31,7 +30,7 @@ namespace Player
         private float _cooldownTimer;
         private bool _ready;
 
-        public bool IsActive => _isActive;
+        public bool IsActive { get; private set; }
 
         #region Callbacks
 
@@ -51,9 +50,23 @@ namespace Player
         {
             CannonRollBallUpdate();
 
-            if (!_isActive || !_currentStudentController || !_currentStudentController.photonView.IsMine) return;
+            if (!IsActive || !_currentStudentController || !_currentStudentController.photonView.IsMine) return;
 
-            RotateRollballAiming();
+            RotateRollBallAiming();
+        }
+        
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(IsActive);
+                stream.SendNext(_ready);
+            }
+            else
+            {
+                IsActive = (bool) stream.ReceiveNext();
+                _ready = (bool) stream.ReceiveNext();
+            }
         }
 
         #endregion
@@ -71,7 +84,7 @@ namespace Player
                 return;
             }
             
-            if (_isActive || currentStudentController.HasSnowball) return;
+            if (IsActive || currentStudentController.HasSnowball) return;
             
             _hoverButton.enabled = false;
             _hoverButton.gameObject.SetActive(false);
@@ -145,7 +158,7 @@ namespace Player
         /// </summary>
         public void Click()
         {
-            if (!_isActive || !_currentStudentController || !_ready) return;
+            if (!IsActive || !_currentStudentController || !_ready) return;
             
             if (_currentStudentController.photonView.IsMine)
             {
@@ -173,12 +186,32 @@ namespace Player
         {
 
         }
+        
+        public void TriggerableTrigger(NetworkStudentController currentStudentController)
+        {
+            
+        }
+
+        public void TriggerableEnter()
+        {
+            if (IsActive || !_ready) return;
+            
+            _hoverButton.enabled = true;
+            _hoverButton.gameObject.SetActive(true);
+            _hoverButton.Play("EInteract");
+        }
+
+        public void TriggerableExit()
+        {
+            _hoverButton.enabled = false;
+            _hoverButton.gameObject.SetActive(false);
+        }
 
         #endregion
 
         #region CannonBallLogic
 
-        public void PushRollball()
+        public void PushRollBall()
         {
             ThrowSnowball();
             _player = null;
@@ -210,7 +243,7 @@ namespace Player
         /// </summary>
         private void CannonRollBallUpdate()
         {
-            if (_ready || _isActive || !PhotonNetwork.IsMasterClient) return;
+            if (_ready || IsActive || !PhotonNetwork.IsMasterClient) return;
 
             //If there is no cannonball currently loaded, then increase the timer. 
             _cooldownTimer += Time.deltaTime;
@@ -224,7 +257,7 @@ namespace Player
         /// <summary>
         /// Rotate the Slingshot with variable speed towards the mouse cursor.
         /// </summary>
-        private void RotateRollballAiming()
+        private void RotateRollBallAiming()
         {
             var finalRotation = _currentStudentController.PlayerRotation * Quaternion.Euler(0f, 90f, 0f);
             
@@ -260,8 +293,8 @@ namespace Player
         /// </summary>
         private void SpawnRollBall()
         {
-            var currentRollball = PhotonNetwork.Instantiate(ArenaManager.Instance.GiantRollballPrefab.name, _rollballSeat.position, _rollballSeat.rotation);
-            currentRollball.GetComponent<NetworkGiantRollball>().ID = _id;
+            var currentRollBall = PhotonNetwork.Instantiate(ArenaManager.Instance.GiantRollballPrefab.name, _rollBallSeat.position, _rollBallSeat.rotation);
+            currentRollBall.GetComponent<NetworkGiantRollball>().ID = _id;
             photonView.RPC(nameof(ReadyUp), RpcTarget.All, true);
             _cooldownTimer = 0f;
         }
@@ -273,12 +306,12 @@ namespace Player
         {
             if (_ready)
             {
-                var playerRollball = FindObjectsOfType<NetworkGiantRollball>().FirstOrDefault(b => b.ID == _id);
-                if (playerRollball)
+                var playerRollBall = FindObjectsOfType<NetworkGiantRollball>().FirstOrDefault(b => b.ID == _id);
+                if (playerRollBall)
                 {
                     _cooldownTimer = 0f;
-                    playerRollball.photonView.TransferOwnership(_currentStudentController.photonView.Owner);
-                    playerRollball.PushGiantRollball(_currentStudentController);
+                    playerRollBall.photonView.TransferOwnership(_currentStudentController.photonView.Owner);
+                    playerRollBall.PushGiantRollball(_currentStudentController);
                 }
             }
             
@@ -286,11 +319,13 @@ namespace Player
         }
 
         #endregion
-        
+
+        #region RPCs
+
         [PunRPC]
         public void SetActive(bool value, string userId)
         {
-            _isActive = value;
+            IsActive = value;
             _currentStudentController = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == userId);
         }
         
@@ -300,38 +335,6 @@ namespace Player
             _ready = value;
         }
 
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        {
-            if (stream.IsWriting)
-            {
-                stream.SendNext(_isActive);
-                stream.SendNext(_ready);
-            }
-            else
-            {
-                _isActive = (bool) stream.ReceiveNext();
-                _ready = (bool) stream.ReceiveNext();
-            }
-        }
-
-        public void TriggerableTrigger(NetworkStudentController currentStudentController)
-        {
-            
-        }
-
-        public void TriggerableEnter()
-        {
-            if (_isActive || !_ready) return;
-            
-            _hoverButton.enabled = true;
-            _hoverButton.gameObject.SetActive(true);
-            _hoverButton.Play("EInteract");
-        }
-
-        public void TriggerableExit()
-        {
-            _hoverButton.enabled = false;
-            _hoverButton.gameObject.SetActive(false);
-        }
+        #endregion
     }
 }
