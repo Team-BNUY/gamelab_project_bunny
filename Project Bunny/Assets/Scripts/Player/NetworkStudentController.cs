@@ -72,10 +72,12 @@ namespace Player
         [SerializeField] private GameObject _hostCrown;
         [SerializeField] public GameObject _isReadyBubble;
         [SerializeField] private Image[] _hearts;
+        [SerializeField] private SpriteRenderer _digSnowballRadialBar;
         [SerializeField] private int _maxHealth;
         private int _currentHealth;
         private GameObject _currentObjectInHand;
         private INetworkTriggerable _currentTriggerable;
+        private float _diggingBarDecrement;
         
         // Audio
         [Header("Audio")] 
@@ -101,6 +103,8 @@ namespace Player
         private static readonly int HitBack = Animator.StringToHash("HitBack");
         private static readonly int HitLeft = Animator.StringToHash("HitLeft");
         private static readonly int HitRight = Animator.StringToHash("HitRight");
+        private static readonly int Arc2 = Shader.PropertyToID("_Arc2");
+        private static readonly int Property = Shader.PropertyToID("Arc Point 2");
 
         #region Properties
 
@@ -153,6 +157,7 @@ namespace Player
             IsBeingControlled = false;
             _target = Vector3.zero;
             _startGame = false;
+            _diggingBarDecrement = 360f / (_digSnowballMaxTime * 60f);
             
             if (photonView.IsMine)
             {
@@ -445,6 +450,8 @@ namespace Player
             if (_isDigging && !HasSnowball)
             {
                 _digSnowballTimer += Time.deltaTime;
+                var arc2Float = _digSnowballRadialBar.material.GetFloat("_Arc2");
+                _digSnowballRadialBar.material.SetFloat("_Arc2", arc2Float - _diggingBarDecrement);
             }
 
             if (_digSnowballTimer < _digSnowballMaxTime) return;
@@ -462,6 +469,7 @@ namespace Player
             HasSnowball = true;
             _isDigging = false;
             _digSnowballTimer = 0.0f;
+            _digSnowballRadialBar.material.SetFloat("_Arc2", 360f);
             photonView.RPC(nameof(SetDigHashBool_RPC), RpcTarget.All, false);
             photonView.RPC(nameof(SetHasSnowballHashBool_RPC), RpcTarget.All, true);
 
@@ -584,6 +592,7 @@ namespace Player
             {
                 _isDigging = false;
                 _digSnowballTimer = 0.0f;
+                _digSnowballRadialBar.material.SetFloat("_Arc2", 360f);
                 if (photonView.IsMine)
                 {
                     photonView.RPC("SetDigHashBool_RPC", RpcTarget.All, false);
