@@ -311,7 +311,7 @@ namespace Player
                 {
                     _cooldownTimer = 0f;
                     playerRollBall.photonView.TransferOwnership(_currentStudentController.photonView.Owner);
-                    playerRollBall.PushGiantRollball(_currentStudentController);
+                    playerRollBall.PushGiantRollBall(_currentStudentController);
                 }
             }
             

@@ -159,7 +159,7 @@ namespace AI.Core
         /// <param name="value">The boolean value to set the animator parameter</param>
         /// <param name="asAnRpc"></param>
         public void SetAnimatorParameter(string animatorParameter, bool value, bool asAnRpc = false)
-        {
+        {   
             if (asAnRpc)
             {
                 photonView.RPC(nameof(SetBoolRPC), RpcTarget.All, animatorParameter, value);

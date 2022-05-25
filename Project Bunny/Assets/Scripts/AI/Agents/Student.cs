@@ -100,6 +100,8 @@ namespace AI.Agents
                 ScoreManager.IncrementPropertyCounter(PhotonNetwork.LocalPlayer, ScoreManager.BullyKey);
             }
             
+            SetAnimatorParameter("Hit", true, true);
+            
             // Hit by a snowball
             var thrower = snowball.StudentThrower;
             var throwDirection = thrower.transform.position - transform.position;
@@ -121,7 +123,6 @@ namespace AI.Agents
                 SetAnimatorParameter("HitBack", true, true);
             }
 
-            SetAnimatorParameter("Hit", true, true);
             PlayHitAudio(snowball.IsIceBall ? 1 : 0);
         }
 

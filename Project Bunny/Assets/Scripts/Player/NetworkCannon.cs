@@ -23,9 +23,7 @@ namespace Player
         [SerializeField] [Min(0)] private float _rotationSpeed;
         [SerializeField] [Range(0f, 2.0f)] private float _pullIncreaseTimeRate;
         [SerializeField] [Min(0)] private float _pullingFactor = 0.75f;
-        private bool _isActive;
         private GameObject _player;
-        private NetworkStudentController _currentStudentController;
         private CinemachineFramingTransposer _playerVCamSettings;
         private CharacterController _playerCharController;
         private Vector3 _initialBonePosition;
@@ -48,7 +46,8 @@ namespace Player
         [SerializeField] private AudioClip _reloadSound;
         private AudioSource _audioSource;
         
-        public bool IsActive => _isActive;
+        public bool IsActive { get; private set; }
+        public NetworkStudentController CurrentStudentController { get; private set; }
         public Transform CannonBallSeat => _cannonBallSeat;
         
         #region Callbacks
@@ -68,7 +67,7 @@ namespace Player
 
         private void Update()
         {
-            if (!_isActive || !_currentStudentController || !_currentStudentController.photonView.IsMine) return;
+            if (!IsActive || !CurrentStudentController || !CurrentStudentController.photonView.IsMine) return;
 
             RotateSlingShot();
             CannonBallUpdate();
@@ -85,11 +84,11 @@ namespace Player
         {
             if (stream.IsWriting)
             {
-                stream.SendNext(_isActive);
+                stream.SendNext(IsActive);
             }
             else
             {
-                _isActive = (bool) stream.ReceiveNext();
+                IsActive = (bool) stream.ReceiveNext();
             }
         }
 
@@ -102,7 +101,7 @@ namespace Player
         /// </summary>
         public void Enter(NetworkStudentController currentStudentController)
         {
-            if (_isActive)
+            if (IsActive)
             {
                 currentStudentController.CurrentInteractable = null;
                 return;
@@ -113,23 +112,23 @@ namespace Player
             
             //Initialize key variables
             photonView.RPC(nameof(SetActive), RpcTarget.All, true, currentStudentController.PlayerID);
-            photonView.TransferOwnership(_currentStudentController.photonView.Owner);
-            _currentStudentController.IsUsingCannon = true;
-            _player = _currentStudentController.transform.gameObject;
+            photonView.TransferOwnership(CurrentStudentController.photonView.Owner);
+            CurrentStudentController.IsUsingCannon = true;
+            _player = CurrentStudentController.transform.gameObject;
             
             // Idle animation
-            _currentStudentController.SetAnimatorParameter("InteractIdle", true);
-            _currentStudentController.SetAnimatorParameter("UsingInteractable", true);
+            CurrentStudentController.SetAnimatorParameter("InteractIdle", true);
+            CurrentStudentController.SetAnimatorParameter("UsingInteractable", true);
 
             //Setting the new distance of the player camera when assuming control of the Slingshot
-            _playerVCamSettings = _currentStudentController.PlayerVCamFramingTransposer;
+            _playerVCamSettings = CurrentStudentController.PlayerVCamFramingTransposer;
             _playerVCamSettings.m_CameraDistance = _newCameraDistance;
 
             //Disable player controller in order to set the player's position manually
-            _playerCharController = _currentStudentController.CharacterControllerComponent;
+            _playerCharController = CurrentStudentController.CharacterControllerComponent;
             _playerCharController.enabled = false;
             
-            if (_currentStudentController.photonView.IsMine)
+            if (CurrentStudentController.photonView.IsMine)
             {
                 _aimArrow.SetActive(true);
             }
@@ -146,7 +145,7 @@ namespace Player
         /// </summary>
         public void Exit()
         {
-            if (_currentStudentController.photonView.IsMine)
+            if (CurrentStudentController.photonView.IsMine)
             {
                 _aimArrow.SetActive(false);
             }
@@ -156,8 +155,8 @@ namespace Player
             _hoverButton.Play("EInteract");
 
             // Idle animation
-            _currentStudentController.SetAnimatorParameter("InteractIdle", false);
-            _currentStudentController.SetAnimatorParameter("UsingInteractable", false);
+            CurrentStudentController.SetAnimatorParameter("InteractIdle", false);
+            CurrentStudentController.SetAnimatorParameter("UsingInteractable", false);
 
             // If already aiming while exiting, then just throw the current snowball and restore everything
             if (_isAiming)
@@ -176,7 +175,7 @@ namespace Player
 
             //Restore key variables to null/default value
             _player = null;
-            _currentStudentController.IsUsingCannon = false;
+            CurrentStudentController.IsUsingCannon = false;
             photonView.RPC(nameof(SetActive), RpcTarget.All, false, default(string));
 
             //Restoring the original camera distance of the player's camera when quitting control of Slingshot.
@@ -196,7 +195,7 @@ namespace Player
             if (!_hasSnowball) return;
             
             PlaySound(_reloadSound);
-            _currentStudentController.SetAnimatorParameter("Pulling", true);
+            CurrentStudentController.SetAnimatorParameter("Pulling", true);
             _isAiming = true;
         }
 
@@ -207,7 +206,7 @@ namespace Player
         {
             if (!_hasSnowball || !_isAiming) return;
             
-            _currentStudentController.SetAnimatorParameter("Pulling", false);
+            CurrentStudentController.SetAnimatorParameter("Pulling", false);
             ThrowSnowball();
         }
 
@@ -237,16 +236,16 @@ namespace Player
         /// </summary>
         private void RotateSlingShot()
         {
-            var finalRotation = _currentStudentController.PlayerRotation * Quaternion.Euler(0f, 90f, 0f);
+            var finalRotation = CurrentStudentController.PlayerRotation * Quaternion.Euler(0f, 90f, 0f);
 
-            var mousePosition = _currentStudentController.MousePosition;
-            var playerCamera = _currentStudentController.PlayerCamera;
+            var mousePosition = CurrentStudentController.MousePosition;
+            var playerCamera = CurrentStudentController.PlayerCamera;
             var cameraTransform = playerCamera.transform;
             var cameraPosition = cameraTransform.position;
             Physics.Raycast(cameraPosition, cameraTransform.forward, out var hitInfo, float.PositiveInfinity, LayerMask.GetMask("Ground"));
             var distanceToGround = Vector3.Distance(hitInfo.point, cameraPosition);
             var mouseToWorldPosition = playerCamera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, distanceToGround));
-            var playerModel = _currentStudentController.PlayerModel;
+            var playerModel = CurrentStudentController.PlayerModel;
             var playerPosition = playerModel.position;
             var targetDirection = mouseToWorldPosition - playerPosition;
 
@@ -259,11 +258,11 @@ namespace Player
 
             _previousMouseToWorldDirection = Vector3.Slerp(_previousMouseToWorldDirection, targetDirection, Time.deltaTime * 8f);
             
-            _currentStudentController.SetAnimatorParameter("RotationDirection", angle);
+            CurrentStudentController.SetAnimatorParameter("RotationDirection", angle);
             
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, Time.deltaTime * _rotationSpeed);
             _player.transform.position = _playerSeat.position;
-            _currentStudentController.SetPlayerRotation(_playerSeat.rotation * Quaternion.Euler(0f, -90f, 0f));
+            CurrentStudentController.SetPlayerRotation(_playerSeat.rotation * Quaternion.Euler(0f, -90f, 0f));
         }
 
         /// <summary>
@@ -280,7 +279,7 @@ namespace Player
                 _cannonballCollection.Add(snowball);
             }
             
-            _cannonballCollection.ForEach(c => c.SetSnowballThrower(_currentStudentController));
+            _cannonballCollection.ForEach(c => c.SetSnowballThrower(CurrentStudentController));
             _hasSnowball = true;
             _coolDownTimer = 0f;
         }
@@ -348,7 +347,7 @@ namespace Player
 
         public void TriggerableEnter()
         {
-            if (_isActive) return;
+            if (IsActive) return;
             
             _hoverButton.enabled = true;
             _hoverButton.gameObject.SetActive(true);
@@ -384,8 +383,8 @@ namespace Player
         [PunRPC]
         private void SetActive(bool value, string userId)
         {
-            _isActive = value;
-            _currentStudentController = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == userId);
+            IsActive = value;
+            CurrentStudentController = ArenaManager.Instance.AllPlayers.FirstOrDefault(x => x.PlayerID == userId);
         }
 
         #endregion

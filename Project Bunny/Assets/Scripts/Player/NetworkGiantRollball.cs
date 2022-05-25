@@ -71,6 +71,11 @@ namespace Player
             {
                 BreakRollball();
                 
+                if (other.gameObject.TryGetComponent<NetworkCannon>(out var cannon) && cannon.CurrentStudentController)
+                {
+                    cannon.CurrentStudentController.GetDamaged(3);
+                }
+                
                 // Play destroy sound
                 AudioManager.Instance.PlayClipAt(_destroySound, transform.position);
             }
@@ -80,7 +85,7 @@ namespace Player
         /// Let student push the giant snowball
         /// </summary>
         /// <param name="pusher">The player pushing the roll ball</param>
-        public void PushGiantRollball(NetworkStudentController pusher)
+        public void PushGiantRollBall(NetworkStudentController pusher)
         {
             // Play the kick sound
             _audioSource.clip = _rollSound;

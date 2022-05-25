@@ -27,7 +27,8 @@ namespace AI.Actions.StudentActions
             // Resets parameters
             invoked = false;
             _timer = _timeToStandUp;
-            
+            _student.SetAnimatorParameter(_animationTrigger, false);
+
             _student.AnimationState = AnimationState.Idle;
             _student.Gang.InteractWith();
             
@@ -63,7 +64,8 @@ namespace AI.Actions.StudentActions
 
         public override void OnInterrupt()
         {
-            _student.SetAnimatorParameter(_animationTrigger, false);
+            _student.SetAnimatorParameter("Random", 0);
+            _student.SetAnimatorParameter(_animationTrigger, true);
             _student.BeliefStates.RemoveState("hitByRollBall");
             _student.PhysicsCollider.enabled = true;
             _student.Gang.SetFree();
